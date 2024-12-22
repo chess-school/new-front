@@ -5,8 +5,9 @@ import Button from '@mui/material/Button';
 import { useForm, SubmitHandler, Controller, useFormState } from "react-hook-form";
 import axios from 'axios';
 import { notification } from 'antd';
+import { FaGoogle, FaFacebookF, FaApple } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
-import './auth-form.css';
+import './style.scss';
 import { loginValidation, passwordValidation } from './validation';
 import { useNavigate } from 'react-router-dom';
 
@@ -131,17 +132,16 @@ export const AuthForm: React.FC = () => {
     Or sign in with
   </Typography>
   <div className="auth-form__social-login">
-    <div className="auth-form__social-icon" onClick={handleGoogleSignIn}>
-      <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png" alt="Google" width={20} />
-    </div>
-    <div className="auth-form__social-icon" onClick={handleFacebookSignIn}>
-      <img src="https://upload.wikimedia.org/wikipedia/commons/1/1b/Facebook_icon.svg" alt="Facebook" width={20} />
-    </div>
-    <div className="auth-form__social-icon" onClick={handleAppleSignIn}>
-      <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple" width={20} />
-    </div>
-  </div>
-
+        <div className="auth-form__social-icon cursor-pointer" onClick={handleGoogleSignIn}>
+          <FaGoogle size={20} color="#DB4437" />
+        </div>
+        <div className="auth-form__social-icon cursor-pointer" onClick={handleFacebookSignIn}>
+          <FaFacebookF size={20} color="#4267B2" />
+        </div>
+        <div className="auth-form__social-icon cursor-pointer" onClick={handleAppleSignIn}>
+          <FaApple size={20} color="#000000" />
+        </div>
+      </div>
   <div className="auth-form__footer">
     Don’t have an account? <a onClick={() => navigate('/register')}>Sign up</a>
   </div>

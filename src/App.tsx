@@ -1,19 +1,19 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Suspense } from 'react';
-import { AuthPage } from './pages/auth-page';
-import { RegisterPage } from './pages/register-page';
-import { Navbar } from './components/Navbar/Navbar';
-import { Home } from './pages/home-page/home-page';
-import { About } from './pages/about-page/about-page';
-import { Achievements } from './pages/achievements-page/achievements-page';
-import PrivateRoute from './components/PrivateRoute/PrivateRoute';
-import { ProfilePage } from './pages/profile-page/profile-page';
-import { UsersPage } from './pages/users-page/users-page';
-import { StudentsPage } from './pages/students-page/students-page';
-import {GamePage} from './pages/chessgame-page/chessgame-page';
-import { ChessProvider } from './context/ChessContext';
-import AnalysisPage from './pages/analisys-page/analisys-page';
-import ChallengesPage from './pages/challenges-page/challenges-page';
+import { AuthPage } from '@/pages/auth-page';
+import { RegisterPage } from '@/pages/register-page';
+import { Navbar } from '@/components/Navbar/Navbar';
+import { Home } from '@/pages/home-page/home-page';
+import { About } from '@/pages/about-page/about-page';
+import { Achievements } from '@/pages/achievements-page/achievements-page';
+import PrivateRoute from '@/components/PrivateRoute/PrivateRoute';
+import { ProfilePage } from '@/pages/profile-page/profile-page';
+import { UsersPage } from '@/pages/users-page/users-page';
+import { StudentsPage } from '@/pages/students-page/students-page';
+import { GamePage } from '@/pages/chessgame-page/chessgame-page';
+import { ChessProvider } from '@/context/ChessContext';
+import AnalysisPage from '@/pages/analisys-page/analisys-page';
+import ChallengesPage from '@/pages/challenges-page/challenges-page';
 
 function MainLayout() {
   const location = useLocation();
@@ -30,7 +30,6 @@ function MainLayout() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/analysis" element={<ChessProvider><AnalysisPage /></ChessProvider>} />
         <Route path="/chess" element={<ChessProvider><GamePage /></ChessProvider>} />
-        {/* <Route path="/game" element={<GamePage />} /> */}
         <Route path="/challenges" element={<ChallengesPage />} />
 
         <Route element={<PrivateRoute />}>
