@@ -1,0 +1,44 @@
+{
+    "navbar": {
+      "chessSchool": "Chess School",
+      "home": "Home",
+      "aboutUs": "About Us",
+      "achievements": "Achievements",
+      "students": "Students",
+      "users": "Users",
+      "logout": "Logout",
+      "loginOrRegister": "Login/Register",
+      "profile": "Profile"
+    },
+    "homePage": {
+      "welcomeMessage": "Welcome to the Chess School!",
+      "learnMore": "Learn more about our courses"
+    },
+    "aboutPage": {
+      "title": "About Us",
+      "description": "We are a chess school that helps students improve their skills..."
+    },
+    "achievementsPage": {
+      "title": "Our Achievements",
+      "congratulations": "Congratulations to all our champions!"
+    },
+    "profilePage": {
+      "title": "Your Profile",
+      "editProfile": "Edit your profile information",
+      "viewCourses": "View your courses"
+    },
+    "studentsPage": {
+      "title": "Your Students",
+      "addStudent": "Add a new student",
+      "studentList": "List of all students"
+    },
+    "usersPage": {
+      "title": "User Management",
+      "userList": "List of all users",
+      "editUser": "Edit user information"
+    },
+    "errors": {
+      "login": "Invalid email or password"
+    }
+  }
+  

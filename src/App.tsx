@@ -1,35 +1,56 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { Suspense } from 'react';
+import { AuthPage } from './pages/auth-page';
+import { RegisterPage } from './pages/register-page';
+import { Navbar } from './components/Navbar/Navbar';
+import { Home } from './pages/home-page/home-page';
+import { About } from './pages/about-page/about-page';
+import { Achievements } from './pages/achievements-page/achievements-page';
+import PrivateRoute from './components/PrivateRoute/PrivateRoute';
+import { ProfilePage } from './pages/profile-page/profile-page';
+import { UsersPage } from './pages/users-page/users-page';
+import { StudentsPage } from './pages/students-page/students-page';
+import {GamePage} from './pages/chessgame-page/chessgame-page';
+import { ChessProvider } from './context/ChessContext';
+import AnalysisPage from './pages/analisys-page/analisys-page';
+import ChallengesPage from './pages/challenges-page/challenges-page';
 
-function App() {
-  const [count, setCount] = useState(0)
+function MainLayout() {
+  const location = useLocation();
+  const hideNavbar = location.pathname === '/login' || location.pathname === '/register';
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      {!hideNavbar && <Navbar />}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/achievements" element={<Achievements />} />
+        <Route path="/login" element={<AuthPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/analysis" element={<ChessProvider><AnalysisPage /></ChessProvider>} />
+        <Route path="/chess" element={<ChessProvider><GamePage /></ChessProvider>} />
+        {/* <Route path="/game" element={<GamePage />} /> */}
+        <Route path="/challenges" element={<ChallengesPage />} />
+
+        <Route element={<PrivateRoute />}>
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/users" element={<UsersPage />} />
+          <Route path="/students" element={<StudentsPage />} />
+        </Route>
+      </Routes>
     </>
-  )
+  );
 }
 
-export default App
+function App() {
+  return (
+    <Router>
+      <Suspense fallback={<div>Загрузка...</div>}>
+        <MainLayout />
+      </Suspense>
+    </Router>
+  );
+}
+
+export default App;

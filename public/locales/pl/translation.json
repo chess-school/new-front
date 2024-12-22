@@ -1,0 +1,44 @@
+{
+    "navbar": {
+      "chessSchool": "Szkoła Szachowa",
+      "home": "Strona główna",
+      "aboutUs": "O nas",
+      "achievements": "Osiągnięcia",
+      "students": "Uczniowie",
+      "users": "Użytkownicy",
+      "logout": "Wyloguj się",
+      "loginOrRegister": "Zaloguj się / Zarejestruj się",
+      "profile": "Konto"
+    },
+    "homePage": {
+      "welcomeMessage": "Witamy w Szkole Szachowej!",
+      "learnMore": "Dowiedz się więcej o naszych kursach"
+    },
+    "aboutPage": {
+      "title": "O nas",
+      "description": "Jesteśmy szkołą szachową, która pomaga uczniom doskonalić swoje umiejętności..."
+    },
+    "achievementsPage": {
+      "title": "Nasze Osiągnięcia",
+      "congratulations": "Gratulacje dla wszystkich naszych mistrzów!"
+    },
+    "profilePage": {
+      "title": "Twój Profil",
+      "editProfile": "Edytuj informacje o swoim profilu",
+      "viewCourses": "Zobacz swoje kursy"
+    },
+    "studentsPage": {
+      "title": "Twoi Uczniowie",
+      "addStudent": "Dodaj nowego ucznia",
+      "studentList": "Lista wszystkich uczniów"
+    },
+    "usersPage": {
+      "title": "Zarządzanie Użytkownikami",
+      "userList": "Lista wszystkich użytkowników",
+      "editUser": "Edytuj informacje o użytkowniku"
+    },
+    "errors": {
+      "login": "Nieprawidłowy adres e-mail lub hasło"
+    }
+  }
+  
