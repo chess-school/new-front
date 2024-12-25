@@ -39,6 +39,21 @@
     },
     "errors": {
       "login": "Nieprawidłowy adres e-mail lub hasło"
+    },
+    "auth": {
+      "welcome": "Witaj ponownie!",
+      "enter_credentials": "Wprowadź swoje dane logowania, aby uzyskać dostęp do konta",
+      "email": "Email",
+      "password": "Hasło",
+      "remember_me": "Zapamiętaj mnie",
+      "forgot_password": "Zapomniałeś hasła?",
+      "sign_in": "Zaloguj się",
+      "or_sign_in_with": "Lub zaloguj się za pomocą",
+      "no_account": "Nie masz konta?",
+      "sign_up": "Zarejestruj się",
+      "errors": {
+        "login": "Logowanie nie powiodło się. Sprawdź swój email i hasło."
+      }
     }
   }
   

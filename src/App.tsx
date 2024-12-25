@@ -14,6 +14,7 @@ import { GamePage } from '@/pages/chessgame-page/chessgame-page';
 import { ChessProvider } from '@/context/ChessContext';
 import AnalysisPage from '@/pages/analisys-page/analisys-page';
 import ChallengesPage from '@/pages/challenges-page/challenges-page';
+import PuzzleEditor from './components/PuzzleEditor/PuzzleEditor';
 
 function MainLayout() {
   const location = useLocation();
@@ -36,6 +37,7 @@ function MainLayout() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/users" element={<UsersPage />} />
           <Route path="/students" element={<StudentsPage />} />
+          <Route path="/puzzle-editor" element={<PuzzleEditor />} />
         </Route>
       </Routes>
     </>

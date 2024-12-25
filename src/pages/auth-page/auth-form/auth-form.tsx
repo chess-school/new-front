@@ -49,7 +49,7 @@ export const AuthForm: React.FC = () => {
         console.error('Error:', error);
       }
       notification.error({
-        message: t('errors.login'),
+        message: t('auth.errors.login'),
         description: undefined
       });
     }
@@ -71,67 +71,74 @@ export const AuthForm: React.FC = () => {
   };
 
   return (
-    <div className="auth-form">
-  <Typography variant="h4" component="div" className="auth-form__title">
-    Welcome Back!
-  </Typography>
-  <Typography variant="subtitle1" component="div" className="auth-form__subtitle">
-    Enter your credentials to access your account
-  </Typography>
-  <form className="auth-form__form" onSubmit={handleSubmit(onSubmit)}>
-    <Controller
-      control={control}
-      name="email"
-      rules={loginValidation}
-      render={({ field }) => (
-        <TextField
-          label="Email"
-          onChange={(e) => field.onChange(e)}
-          value={field.value}
-          fullWidth
-          size="small"
-          margin="normal"
-          className="auth-form__input"
-          error={!!errors.email?.message}
-          helperText={errors?.email?.message}
+<div className="auth-form">
+      <Typography variant="h4" component="div" className="auth-form__title">
+        {t('auth.welcome')}
+      </Typography>
+      <Typography variant="subtitle1" component="div" className="auth-form__subtitle">
+        {t('auth.enter_credentials')}
+      </Typography>
+      <form className="auth-form__form" onSubmit={handleSubmit(onSubmit)}>
+        <Controller
+          control={control}
+          name="email"
+          rules={loginValidation}
+          render={({ field }) => (
+            <TextField
+              label={t('auth.email')}
+              onChange={(e) => field.onChange(e)}
+              value={field.value}
+              fullWidth
+              size="small"
+              margin="normal"
+              className="auth-form__input"
+              error={!!errors.email?.message}
+              helperText={errors?.email?.message}
+            />
+          )}
         />
-      )}
-    />
-    <Controller
-      control={control}
-      name="password"
-      rules={passwordValidation}
-      render={({ field }) => (
-        <TextField
-          label="Password"
-          type="password"
-          onChange={(e) => field.onChange(e)}
-          value={field.value}
-          fullWidth
-          size="small"
-          margin="normal"
-          className="auth-form__input"
-          error={!!errors.password?.message}
-          helperText={errors?.password?.message}
+        <Controller
+          control={control}
+          name="password"
+          rules={passwordValidation}
+          render={({ field }) => (
+            <TextField
+              label={t('auth.password')}
+              type="password"
+              onChange={(e) => field.onChange(e)}
+              value={field.value}
+              fullWidth
+              size="small"
+              margin="normal"
+              className="auth-form__input"
+              error={!!errors.password?.message}
+              helperText={errors?.password?.message}
+            />
+          )}
         />
-      )}
-    />
-    <Button
-      type="submit"
-      variant="contained"
-      fullWidth
-      className="auth-form__button"
-    >
-      Sign In
-    </Button>
-  </form>
-
-  <div className="auth-form__divider"></div>
-
-  <Typography variant="subtitle1" component="div" style={{ marginBottom: '10px' }}>
-    Or sign in with
-  </Typography>
-  <div className="auth-form__social-login">
+        <div className="auth-form__options">
+          <label>
+            <input type="checkbox" className="auth-form__checkbox" />
+            {t('auth.remember_me')}
+          </label>
+          <a href="/forgot-password" className="auth-form__forgot">
+            {t('auth.forgot_password')}
+          </a>
+        </div>
+        <Button
+          type="submit"
+          variant="contained"
+          fullWidth
+          className="auth-form__button"
+        >
+          {t('auth.sign_in')}
+        </Button>
+      </form>
+      <div className="auth-form__divider"></div>
+      <Typography variant="subtitle1" component="div" style={{ marginBottom: '10px' }}>
+        {t('auth.or_sign_in_with')}
+      </Typography>
+      <div className="auth-form__social-login">
         <div className="auth-form__social-icon cursor-pointer" onClick={handleGoogleSignIn}>
           <FaGoogle size={20} color="#DB4437" />
         </div>
@@ -142,10 +149,9 @@ export const AuthForm: React.FC = () => {
           <FaApple size={20} color="#000000" />
         </div>
       </div>
-  <div className="auth-form__footer">
-    Don’t have an account? <a onClick={() => navigate('/register')}>Sign up</a>
-  </div>
-</div>
-
+      <div className="auth-form__footer">
+        {t('auth.no_account')} <a onClick={() => navigate('/register')}>{t('auth.sign_up')}</a>
+      </div>
+    </div>
   );
 };

@@ -3,16 +3,15 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import HttpBackend from 'i18next-http-backend';
 
-// Конфигурация i18next
 i18n
-  .use(HttpBackend) // Используем http backend для загрузки переводов
+  .use(HttpBackend)
   .use(initReactI18next)
   .init({
     backend: {
-      loadPath: '/locales/{{lng}}/{{ns}}.json', // Путь к файлам переводов
+      loadPath: '/locales/{{lng}}/{{ns}}.json', 
     },
-    lng: 'en', // Язык по умолчанию
-    fallbackLng: 'en', // Язык для резервного случая
+    lng: 'en',
+    fallbackLng: 'en', 
     interpolation: {
       escapeValue: false,
     },

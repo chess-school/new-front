@@ -71,6 +71,32 @@
   box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
 }
 
+.auth-form__options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 16px 0;
+
+  .auth-form__checkbox {
+    color: #4a6aff;
+
+    .MuiCheckbox-root {
+      color: #4a6aff !important;
+    }
+  }
+
+  .auth-form__forgot-password {
+    color: #4a6aff;
+    font-size: 12px;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .auth-form__forgot-password:hover {
+    text-decoration: underline;
+  }
+}
+
 .auth-form__footer {
   margin-top: 20px;
   font-size: 14px;
