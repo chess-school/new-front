@@ -54,6 +54,37 @@
       "errors": {
         "login": "Logowanie nie powiodło się. Sprawdź swój email i hasło."
       }
-    }
+    },
+    "verifyEmail": {
+    "pageTitle": "Zweryfikuj swój adres email",
+    "greeting": "Drogi {{firstName}} {{lastName}},",
+    "sentTo": "Wysłaliśmy wiadomość weryfikacyjną na adres {{email}}. Sprawdź swoją skrzynkę odbiorczą i kliknij link, aby aktywować konto.",
+    "checkingStatus": "Sprawdzanie statusu weryfikacji...",
+    "alreadyVerified": "Email został już zweryfikowany. Ten link jest już nieważny.",
+    "checkError": "Nie udało się sprawdzić statusu weryfikacji. Spróbuj ponownie później.",
+    "resendSuccess": "Wiadomość weryfikacyjna została ponownie wysłana. Sprawdź swoją skrzynkę odbiorczą.",
+    "alreadyVerifiedSuccess": "Twój email został już zweryfikowany.",
+    "resendError": "Nie udało się ponownie wysłać wiadomości weryfikacyjnej. Spróbuj ponownie później.",
+    "resendButton": "Wyślij wiadomość ponownie",
+    "backToRegister": "Powrót do rejestracji"
+  },
+  "profile": {
+    "welcome": "Witamy, {{firstName}} {{lastName}}",
+    "email": "Email",
+    "registrationDate": "Data rejestracji",
+    "roles": "Role",
+    "playerStats": "Statystyki gracza",
+    "rating": "Ocena",
+    "gamesPlayed": "Rozegrane gry",
+    "gamesWon": "Wygrane gry",
+    "gamesDrawn": "Remisy",
+    "gamesLost": "Przegrane gry",
+    "editProfile": "Edytuj profil",
+    "logout": "Wyloguj się",
+    "loading": "Ładowanie...",
+    "errorLoadingProfile": "Błąd ładowania profilu",
+    "playerNotFound": "Nie znaleziono gracza",
+    "profileTitle": "Profil"
   }
+}
   

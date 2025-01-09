@@ -1,0 +1,95 @@
+@use "@/styles/_variables" as vars;
+
+.navbar-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-title {
+  font-size: vars.$font-size-large;
+}
+
+.navbar-menu-button {
+  margin-left: auto;
+}
+
+.navbar-menu-icon {
+  font-size: 24px;
+  color: white;
+}
+
+.navbar-drawer {
+  display: flex;
+  flex-direction: column;
+  padding: vars.$spacing-medium;
+}
+
+.close-button {
+  align-self: flex-end;
+  margin-bottom: vars.$spacing-small;
+}
+
+.close-icon {
+  font-size: 24px;
+  color: red;
+}
+
+.menu-list {
+  width: 100%;
+}
+
+.menu-item {
+  padding: vars.$spacing-small vars.$spacing-medium;
+  display: flex;
+  align-items: center;
+
+  .menu-icon {
+    margin-right: vars.$spacing-small;
+    font-size: 20px;
+    color: vars.$text-color;
+  }
+}
+.navbar-appbar {
+  background-color: vars.$primary-color;
+}
+
+.navbar-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-controls {
+  display: flex;
+  align-items: center;
+}
+
+.login-register-button {
+  background-color: vars.$secondary-color;
+  color: white;
+  margin-right: vars.$spacing-small;
+  padding: vars.$spacing-small vars.$spacing-medium;
+  border-radius: vars.$spacing-small;
+
+  &:hover {
+    background-color: darken(vars.$secondary-color, 10%);
+  }
+}
+
+.logout-button {
+  background-color: #ff3b3b;
+  color: white;
+  padding: vars.$spacing-small vars.$spacing-medium;
+  border-radius: vars.$spacing-small;
+  margin-top: vars.$spacing-large;
+  text-align: center;
+
+  &:hover {
+    background-color: #ff1a1a;
+  }
+}
+
+.language-switcher {
+  margin-top: vars.$spacing-medium;
+}

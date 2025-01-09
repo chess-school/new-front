@@ -15,6 +15,9 @@ import { ChessProvider } from '@/context/ChessContext';
 import AnalysisPage from '@/pages/analisys-page/analisys-page';
 import ChallengesPage from '@/pages/challenges-page/challenges-page';
 import PuzzleEditor from './components/PuzzleEditor/PuzzleEditor';
+import { VerifyEmailPage } from './pages/verify-email-page/verify-email-page';
+import { CoachesPage } from './pages/coaches-page/coaches-page';
+import { RequestsPage } from './pages/requests-page/requests-page';
 
 function MainLayout() {
   const location = useLocation();
@@ -31,13 +34,17 @@ function MainLayout() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/analysis" element={<ChessProvider><AnalysisPage /></ChessProvider>} />
         <Route path="/chess" element={<ChessProvider><GamePage /></ChessProvider>} />
-        <Route path="/challenges" element={<ChallengesPage />} />
+        <Route path="/challenges" element={<ChallengesPage/>}/>
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
+        <Route path="/coaches" element={<CoachesPage />} />
 
         <Route element={<PrivateRoute />}>
+          <Route path="/editor" element={<PuzzleEditor />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/users" element={<UsersPage />} />
           <Route path="/students" element={<StudentsPage />} />
           <Route path="/puzzle-editor" element={<PuzzleEditor />} />
+          <Route path="/inbox" element={<RequestsPage />} />
         </Route>
       </Routes>
     </>
@@ -47,7 +54,7 @@ function MainLayout() {
 function App() {
   return (
     <Router>
-      <Suspense fallback={<div>Загрузка...</div>}>
+      <Suspense fallback={<div>Loading...</div>}>
         <MainLayout />
       </Suspense>
     </Router>

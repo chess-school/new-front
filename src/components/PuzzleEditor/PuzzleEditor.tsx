@@ -9,10 +9,20 @@ interface PuzzleEditorProps {
 }
 
 const PuzzleEditor: React.FC<PuzzleEditorProps> = ({ initialFen }) => {
-  const defaultFen = initialFen || 'start';
-  const [chess] = useState(new Chess(defaultFen === 'start' ? undefined : defaultFen));
-  const [fen, setFen] = useState(chess.fen());
-  const [draggedPiece, setDraggedPiece] = useState<{ type: PieceSymbol; color: Color } | null>(null);
+  // Начальная пустая доска
+  const defaultFen = initialFen || '8/8/8/8/8/8/8/8 w - - 0 1';
+  const [chess] = useState(() => {
+    const instance = new Chess();
+    instance.clear(); // Полностью очищаем доску
+    return instance;
+  });
+  const [fen, setFen] = useState(defaultFen);
+  const [draggedPiece, setDraggedPiece] = useState<{
+    icon: string;
+    type: PieceSymbol;
+    color: Color;
+  } | null>(null);
+  const [cursorStyle, setCursorStyle] = useState<React.CSSProperties | null>(null);
 
   const pieces: { type: PieceSymbol; color: Color; icon: string }[] = [
     { type: 'k', color: 'b', icon: '♚' },
@@ -29,7 +39,6 @@ const PuzzleEditor: React.FC<PuzzleEditorProps> = ({ initialFen }) => {
     { type: 'p', color: 'w', icon: '♙' },
   ];
 
-  // Добавление фигуры на доску
   const handleSquareClick = (square: Square) => {
     if (draggedPiece) {
       chess.put(draggedPiece, square); // Устанавливаем фигуру
@@ -37,7 +46,6 @@ const PuzzleEditor: React.FC<PuzzleEditorProps> = ({ initialFen }) => {
     }
   };
 
-  // Очистка доски
   const clearBoard = () => {
     chess.clear(); // Полностью очищаем доску
     setFen(chess.fen());
@@ -47,7 +55,6 @@ const PuzzleEditor: React.FC<PuzzleEditorProps> = ({ initialFen }) => {
     });
   };
 
-  // Установка начальной позиции
   const setInitialPosition = () => {
     chess.reset(); // Устанавливаем начальную позицию
     setFen(chess.fen());
@@ -57,8 +64,21 @@ const PuzzleEditor: React.FC<PuzzleEditorProps> = ({ initialFen }) => {
     });
   };
 
-  // Сохранение позиции
+  const removeDraggedPiece = () => {
+    setDraggedPiece(null);
+    setCursorStyle(null);
+  };
+
   const savePosition = () => {
+    const kingCount = fen.split('').filter((char) => char.toLowerCase() === 'k').length;
+    if (kingCount < 2) {
+      notification.error({
+        message: 'Некорректная позиция',
+        description: 'На доске должно быть как минимум два короля (белый и чёрный).',
+      });
+      return;
+    }
+
     try {
       chess.load(fen); // Проверяем FEN на валидность
       notification.success({
@@ -80,7 +100,6 @@ const PuzzleEditor: React.FC<PuzzleEditorProps> = ({ initialFen }) => {
       </Typography>
 
       <Box display="flex" alignItems="center">
-        {/* Шахматная доска */}
         <ChessBoard
           position={fen}
           onMove={(_sourceSquare, targetSquare) => {
@@ -89,29 +108,26 @@ const PuzzleEditor: React.FC<PuzzleEditorProps> = ({ initialFen }) => {
           }}
           boardWidth={500}
         />
-
-        {/* Панель фигур */}
         <Box ml={2} display="flex" flexDirection="column">
-  {pieces.map((piece, index) => (
-    <div
-      key={index}
-      draggable
-      onDragStart={() => setDraggedPiece(piece)} // Захват фигуры
-      style={{
-        margin: '5px 0',
-        padding: '10px',
-        textAlign: 'center',
-        backgroundColor: '#e0e0e0',
-        border: '1px solid #ccc',
-        borderRadius: '4px',
-        cursor: 'grab',
-        fontSize: '24px', // Увеличиваем размер иконок
-      }}
-    >
-      {piece.icon}
-    </div>
-  ))}
-</Box>
+          {pieces.map((piece, index) => (
+            <div
+              key={index}
+              onClick={() => setDraggedPiece(piece)}
+              style={{
+                margin: '5px 0',
+                padding: '10px',
+                textAlign: 'center',
+                backgroundColor: draggedPiece === piece ? '#1976d2' : '#e0e0e0',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '24px',
+              }}
+            >
+              {piece.icon}
+            </div>
+          ))}
+        </Box>
       </Box>
 
       <Stack direction="row" spacing={2} style={{ marginTop: 20 }}>
@@ -120,6 +136,9 @@ const PuzzleEditor: React.FC<PuzzleEditorProps> = ({ initialFen }) => {
         </Button>
         <Button variant="contained" color="secondary" onClick={setInitialPosition}>
           Начальная позиция
+        </Button>
+        <Button variant="contained" color="secondary" onClick={removeDraggedPiece}>
+          Удалить приклеенную фигуру
         </Button>
         <Button variant="contained" color="secondary" onClick={savePosition}>
           Сохранить позицию
@@ -132,7 +151,7 @@ const PuzzleEditor: React.FC<PuzzleEditorProps> = ({ initialFen }) => {
         onChange={(e) => {
           const newFen = e.target.value.trim();
           try {
-            chess.load(newFen); // Проверяем валидность введенного FEN
+            chess.load(newFen); // Проверяем валидность FEN
             setFen(newFen);
           } catch {
             notification.error({
@@ -146,6 +165,10 @@ const PuzzleEditor: React.FC<PuzzleEditorProps> = ({ initialFen }) => {
         rows={2}
         style={{ marginTop: 20 }}
       />
+
+      {cursorStyle && draggedPiece && (
+        <div style={cursorStyle}>{draggedPiece.icon}</div>
+      )}
     </Container>
   );
 };

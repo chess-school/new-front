@@ -3,6 +3,7 @@ import { Container, Typography, Button, Paper, Grid } from '@mui/material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import EditProfileForm from '../../components/Profile/EditProfileForm';
+import { useTranslation } from 'react-i18next';
 
 interface User {
   _id: string;
@@ -45,6 +46,7 @@ interface PlayerStats {
 }
 
 export const ProfilePage: React.FC = () => {
+  const { t } = useTranslation();
   const [user, setUser] = useState<User | null>(null);
   const [playerStats, setPlayerStats] = useState<PlayerStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -60,7 +62,6 @@ export const ProfilePage: React.FC = () => {
       });
       setUser(response.data);
 
-      // Проверяем наличие игрока (Player)
       const playerResponse = await axios.get(
         `http://localhost:3000/api/player/${response.data._id}`,
         { headers: { Authorization: `Bearer ${token}` } }
@@ -69,8 +70,8 @@ export const ProfilePage: React.FC = () => {
 
       setIsLoading(false);
     } catch (error) {
-      console.error('Ошибка при получении профиля:', error);
-      setError('Ошибка при загрузке профиля');
+      console.error(t('profile.errorLoadingProfile'), error);
+      setError(t('profile.errorLoadingProfile'));
       setIsLoading(false);
       navigate('/login');
     }
@@ -87,7 +88,7 @@ export const ProfilePage: React.FC = () => {
   };
 
   if (isLoading) {
-    return <Typography>Загрузка...</Typography>;
+    return <Typography>{t('profile.loading')}</Typography>;
   }
 
   if (error) {
@@ -97,37 +98,35 @@ export const ProfilePage: React.FC = () => {
   return (
     <Container>
       <Typography variant="h4" gutterBottom>
-        Личный кабинет
+        {t('profile.profileTitle')}
       </Typography>
       {user ? (
         <>
           <Paper style={{ padding: 20, marginBottom: 20 }}>
             <Typography variant="h6">
-              Добро пожаловать, {user.firstName} {user.lastName}
+              {t('profile.welcome', { firstName: user.firstName, lastName: user.lastName })}
             </Typography>
-            <Typography>Email: {user.email}</Typography>
+            <Typography>{t('profile.email')}: {user.email}</Typography>
             <Typography>
-              Дата регистрации: {new Date(user.registrationDate).toLocaleDateString()}
+              {t('profile.registrationDate')}: {new Date(user.registrationDate).toLocaleDateString()}
             </Typography>
-            <Typography>Роли: {user.roles.join(', ')}</Typography>
+            <Typography>{t('profile.roles')}: {user.roles.join(', ')}</Typography>
           </Paper>
 
           {playerStats && (
             <Paper style={{ padding: 20, marginBottom: 20 }}>
-              <Typography variant="h6">Статистика игрока</Typography>
+              <Typography variant="h6">{t('profile.playerStats')}</Typography>
               <Grid container spacing={2}>
                 {['bullet', 'blitz', 'rapid', 'classic'].map((format) => (
                   <Grid item xs={12} sm={6} md={3} key={format}>
                     <Typography variant="subtitle1">
-                      {format[0].toUpperCase() + format.slice(1)}
+                      {t(`profile.${format}`)}
                     </Typography>
-                    <Typography>Рейтинг: {playerStats[format as keyof PlayerStats].rating}</Typography>
-                    <Typography>
-                      Игры сыграно: {playerStats[format as keyof PlayerStats].gamesPlayed}
-                    </Typography>
-                    <Typography>Победы: {playerStats[format as keyof PlayerStats].gamesWon}</Typography>
-                    <Typography>Ничьи: {playerStats[format as keyof PlayerStats].gamesDrawn}</Typography>
-                    <Typography>Поражения: {playerStats[format as keyof PlayerStats].gamesLost}</Typography>
+                    <Typography>{t('profile.rating')}: {playerStats[format as keyof PlayerStats].rating}</Typography>
+                    <Typography>{t('profile.gamesPlayed')}: {playerStats[format as keyof PlayerStats].gamesPlayed}</Typography>
+                    <Typography>{t('profile.gamesWon')}: {playerStats[format as keyof PlayerStats].gamesWon}</Typography>
+                    <Typography>{t('profile.gamesDrawn')}: {playerStats[format as keyof PlayerStats].gamesDrawn}</Typography>
+                    <Typography>{t('profile.gamesLost')}: {playerStats[format as keyof PlayerStats].gamesLost}</Typography>
                   </Grid>
                 ))}
               </Grid>
@@ -135,7 +134,7 @@ export const ProfilePage: React.FC = () => {
           )}
 
           <Button variant="contained" onClick={() => setIsEditing(true)}>
-            Редактировать профиль
+            {t('profile.editProfile')}
           </Button>
           <Button
             variant="contained"
@@ -143,12 +142,12 @@ export const ProfilePage: React.FC = () => {
             onClick={handleLogout}
             style={{ marginLeft: '10px' }}
           >
-            Выйти
+            {t('profile.logout')}
           </Button>
           {isEditing && <EditProfileForm user={user} onClose={() => setIsEditing(false)} />}
         </>
       ) : (
-        <Typography>Пользователь не найден</Typography>
+        <Typography>{t('profile.playerNotFound')}</Typography>
       )}
     </Container>
   );
