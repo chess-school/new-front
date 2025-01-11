@@ -10,8 +10,9 @@ import {
   ListItemButton,
   CircularProgress,
 } from '@mui/material';
-import axios from 'axios';
 import { notification } from 'antd';
+import { fetchRequests, handleRequest } from '@/api/requests';
+import { createNotification } from '@/api/notifications';
 
 interface Request {
   _id: string;
@@ -21,8 +22,8 @@ interface Request {
     lastName: string;
     email: string;
   };
-  experience?: string; // Сделаем необязательным
-  goals?: string;      // Сделаем необязательным
+  experience?: string;
+  goals?: string;
   createdAt: string;
   status: string;
 }
@@ -32,17 +33,12 @@ export const RequestsPage: React.FC = () => {
   const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchRequests = async () => {
+  const fetchRequestList = async () => {
     try {
       setIsLoading(true);
-      const token = localStorage.getItem('token');
-      const response = await axios.get('/trainer/requests', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      // Проверка данных на массив
-      const data = Array.isArray(response.data) ? response.data : [];
-      setRequests(data);
+      const data = await fetchRequests();
+      console.log('Полученные заявки:', data);
+      setRequests(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Ошибка при загрузке заявок:', error);
       notification.error({
@@ -58,25 +54,15 @@ export const RequestsPage: React.FC = () => {
     if (!selectedRequest) return;
 
     try {
-      const token = localStorage.getItem('token');
-
       // Обновить статус заявки
-      await axios.patch(
-        `/trainer/request?request_id=${selectedRequest._id}`,
-        { status: action },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await handleRequest(selectedRequest._id, action);
 
       // Отправить уведомление студенту
-      await axios.post(
-        '/notifications',
-        {
-          recipient: selectedRequest.student._id,
-          type: 'statusUpdate',
-          content: `Ваша заявка была ${action === 'approved' ? 'принята' : 'отклонена'}`,
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await createNotification({
+        recipient: selectedRequest.student._id,
+        type: 'statusUpdate',
+        content: `Ваша заявка была ${action === 'approved' ? 'принята' : 'отклонена'}`,
+      });
 
       notification.success({
         message: 'Успех',
@@ -84,7 +70,7 @@ export const RequestsPage: React.FC = () => {
       });
 
       // Перезагрузить список заявок
-      fetchRequests();
+      await fetchRequestList();
       setSelectedRequest(null);
     } catch (error) {
       console.error('Ошибка при обработке заявки:', error);
@@ -96,7 +82,7 @@ export const RequestsPage: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchRequests();
+    fetchRequestList();
   }, []);
 
   return (
