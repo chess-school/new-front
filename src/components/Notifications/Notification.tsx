@@ -81,7 +81,6 @@ export const Notifications: React.FC<NotificationsProps> = ({ navigateToRequests
     handleMarkAsRead(notification._id);
     handleMenuClose();
   };
-
   return (
     <div>
       <IconButton color="inherit" onClick={handleMenuOpen}>

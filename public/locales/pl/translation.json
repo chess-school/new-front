@@ -85,6 +85,31 @@
     "errorLoadingProfile": "Błąd ładowania profilu",
     "playerNotFound": "Nie znaleziono gracza",
     "profileTitle": "Profil"
+  },
+  "coaches": {
+    "title": "Trenerzy",
+    "fetchError": "Nie udało się załadować trenerów. Spróbuj ponownie później.",
+    "successMessage": "Twoje zgłoszenie zostało pomyślnie wysłane.",
+    "submitError": "Nie udało się wysłać zgłoszenia. Spróbuj ponownie później.",
+    "submitErrorDescription": "Wystąpił błąd podczas wysyłania zgłoszenia. Spróbuj ponownie później.",
+    "requestSent": "Zgłoszenie wysłane",
+    "apply": "Złóż zgłoszenie",
+    "dialog": {
+      "title": "Złóż zgłoszenie na trenera",
+      "coach": "Trener",
+      "email": "Adres e-mail",
+      "experience": "Doświadczenie (lata)",
+      "goals": "Twoje cele",
+      "certified": "Certyfikowany?",
+      "cancel": "Anuluj",
+      "submit": "Wyślij"
+    },
+    "tableHeaders": {
+      "firstName": "Imię",
+      "lastName": "Nazwisko",
+      "email": "Adres e-mail",
+      "actions": "Akcje"
+    }
   }
 }
   

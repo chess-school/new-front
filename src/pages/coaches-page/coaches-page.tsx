@@ -9,16 +9,24 @@ import {
   TableRow,
   Paper,
   Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
+  // Dialog,
+  // DialogTitle,
+  // DialogContent,
+  // DialogActions,
+  Drawer,
   TextField,
+  Slider,
+  Checkbox,
+  FormControlLabel,
   CircularProgress,
+  IconButton,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { getCoaches, createRequest } from '@/api/coaches';
+import { getCoaches } from '@/api/coaches';
 import { notification } from 'antd';
+import CloseIcon from '@mui/icons-material/Close';
+import { createRequest } from '@/api/requests';
+import { createNotification } from '@/api/notifications';
 
 interface Coach {
   _id: string;
@@ -30,11 +38,12 @@ interface Coach {
 export const CoachesPage: React.FC = () => {
   const { t } = useTranslation();
   const [coaches, setCoaches] = useState<Coach[]>([]);
-  const [openDialog, setOpenDialog] = useState(false);
+  const [openDrawer, setOpenDrawer] = useState(false);
   const [selectedCoach, setSelectedCoach] = useState<Coach | null>(null);
   const [formValues, setFormValues] = useState({
-    experience: '',
+    experience: 0,
     goals: '',
+    certifications: false,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -57,19 +66,26 @@ export const CoachesPage: React.FC = () => {
 
   const handleApply = (coach: Coach) => {
     setSelectedCoach(coach);
-    setOpenDialog(true);
+    setOpenDrawer(true);
   };
 
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
+  const handleCloseDrawer = () => {
+    setOpenDrawer(false);
     setSelectedCoach(null);
-    setFormValues({ experience: '', goals: '' });
+    setFormValues({ experience: 0, goals: '', certifications: false });
     setSuccessMessage(null);
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setFormValues((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = event.target;
+    setFormValues((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+  };
+
+  const handleSliderChange = (event: Event, newValue: number | number[]) => {
+    setFormValues((prev) => ({ ...prev, experience: newValue as number }));
   };
 
   const handleSubmitRequest = async () => {
@@ -77,7 +93,16 @@ export const CoachesPage: React.FC = () => {
 
     try {
       setIsLoading(true);
-      await createRequest(selectedCoach._id, formValues.experience, formValues.goals);
+      await createRequest(
+        selectedCoach._id,
+        formValues.experience.toString(),
+        `${formValues.goals}${formValues.certifications ? ' (Certified)' : ''}`
+      );
+      await createNotification({
+        recipient: selectedCoach._id,
+        type: 'request',
+        content: `Новая заявка получена.`,
+      });
       setSuccessMessage(t('coaches.successMessage'));
       setSubmittedRequests((prev) => [...prev, selectedCoach._id]);
     } catch (error) {
@@ -138,20 +163,32 @@ export const CoachesPage: React.FC = () => {
         </Paper>
       )}
 
-      <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>{t('coaches.dialog.title')}</DialogTitle>
-        <DialogContent>
+      <Drawer anchor="right" open={openDrawer} onClose={handleCloseDrawer}>
+        <div style={{ width: 350, padding: '16px' }}>
+          <IconButton onClick={handleCloseDrawer} style={{ float: 'right' }}>
+            <CloseIcon />
+          </IconButton>
+          <Typography variant="h6" gutterBottom>
+            {t('coaches.dialog.title')}
+          </Typography>
           <Typography gutterBottom>
             {t('coaches.dialog.coach')}: {selectedCoach?.firstName} {selectedCoach?.lastName}
           </Typography>
-          <TextField
-            label={t('coaches.dialog.experience')}
-            name="experience"
+          <Typography gutterBottom>
+            {t('coaches.dialog.email')}: {selectedCoach?.email}
+          </Typography>
+
+          <Typography gutterBottom>{t('coaches.dialog.experience')}</Typography>
+          <Slider
             value={formValues.experience}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
+            onChange={handleSliderChange}
+            step={1}
+            marks
+            min={0}
+            max={20}
+            valueLabelDisplay="auto"
           />
+
           <TextField
             label={t('coaches.dialog.goals')}
             name="goals"
@@ -160,26 +197,36 @@ export const CoachesPage: React.FC = () => {
             fullWidth
             margin="normal"
           />
+
+          <FormControlLabel
+            control={
+              <Checkbox
+                name="certifications"
+                checked={formValues.certifications}
+                onChange={handleChange}
+              />
+            }
+            label={t('coaches.dialog.certified')}
+          />
+
           {successMessage && (
             <Typography color="primary" gutterBottom>
               {successMessage}
             </Typography>
           )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="secondary">
-            {t('coaches.dialog.cancel')}
-          </Button>
+
           <Button
             onClick={handleSubmitRequest}
             color="primary"
             variant="contained"
+            fullWidth
+            style={{ marginTop: '16px' }}
             disabled={isLoading || !!successMessage}
           >
             {t('coaches.dialog.submit')}
           </Button>
-        </DialogActions>
-      </Dialog>
+        </div>
+      </Drawer>
     </Container>
   );
 };

@@ -52,24 +52,27 @@ export const RequestsPage: React.FC = () => {
 
   const handleRequestAction = async (action: 'approved' | 'rejected') => {
     if (!selectedRequest) return;
-
+  
     try {
       // Обновить статус заявки
       await handleRequest(selectedRequest._id, action);
-
+  
       // Отправить уведомление студенту
       await createNotification({
         recipient: selectedRequest.student._id,
-        type: 'statusUpdate',
+        type: 'system',
         content: `Ваша заявка была ${action === 'approved' ? 'принята' : 'отклонена'}`,
+        metadata: {
+          studentName: `${selectedRequest.student.firstName} ${selectedRequest.student.lastName}`,
+          studentEmail: selectedRequest.student.email,
+        },
       });
-
+  
       notification.success({
         message: 'Успех',
         description: `Заявка успешно ${action === 'approved' ? 'принята' : 'отклонена'}.`,
       });
-
-      // Перезагрузить список заявок
+  
       await fetchRequestList();
       setSelectedRequest(null);
     } catch (error) {
@@ -80,6 +83,7 @@ export const RequestsPage: React.FC = () => {
       });
     }
   };
+  
 
   useEffect(() => {
     fetchRequestList();

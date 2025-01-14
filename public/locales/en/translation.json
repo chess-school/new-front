@@ -89,27 +89,30 @@
     "playerNotFound": "Player not found",
     "profileTitle": "Profile"
   },
-  
-    "coaches": {
-      "title": "List of Coaches",
-      "fetchError": "Error fetching coaches:",
-      "tableHeaders": {
-        "firstName": "First Name",
-        "lastName": "Last Name",
-        "email": "Email",
-        "actions": "Actions"
-      },
-      "apply": "Apply",
-      "dialog": {
-        "title": "Apply to Coach",
-        "coach": "Coach",
-        "experience": "Chess Experience",
-        "goals": "Goals",
-        "cancel": "Cancel",
-        "submit": "Submit"
-      },
-      "successMessage": "Request sent successfully!",
-      "submitError": "Error submitting request:"
+  "coaches": {
+    "title": "Coaches",
+    "fetchError": "Failed to fetch coaches. Please try again later.",
+    "successMessage": "Your request has been successfully sent.",
+    "submitError": "Failed to send request. Please try again later.",
+    "submitErrorDescription": "There was an error submitting your request. Please try again later.",
+    "requestSent": "Request Sent",
+    "apply": "Apply",
+    "dialog": {
+      "title": "Apply for Coaching",
+      "coach": "Coach",
+      "email": "Email",
+      "experience": "Experience (years)",
+      "goals": "Your Goals",
+      "certified": "Certified?",
+      "cancel": "Cancel",
+      "submit": "Submit"
+    },
+    "tableHeaders": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "actions": "Actions"
     }
+  }
 }
   
