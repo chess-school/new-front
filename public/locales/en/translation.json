@@ -14,8 +14,43 @@
       "coaches": "Coaches"
     },
     "homePage": {
-      "welcomeMessage": "Welcome to the Chess School!",
-      "learnMore": "Learn more about our courses"
+      "hero": {
+        "title": "Master the Game. Master Your Mind.",
+        "subtitle": "Train your strategic thinking with top online coaches",
+        "cta": "Get Started"
+      },
+      "whyChess": {
+        "title": "Why Chess?",
+        "values": {
+          "analysis": "Analysis",
+          "memory": "Memory",
+          "spirit": "Competitive Spirit"
+        }
+      },
+      "formats": {
+        "title": "Lesson Formats",
+        "individual": {
+          "label": "Individual Lessons",
+          "desc": "Personalized training focused on your level and goals.",
+          "button": "View Schedule"
+        },
+        "group": {
+          "label": "Group Lessons",
+          "desc": "Learn in a group, stay motivated and connected.",
+          "button": "Learn More"
+        }
+      },
+      "coaches": {
+        "title": "Our Coaches",
+        "role": "GM, Individual & Group Lessons",
+        "select": "Choose Coach"
+      },
+      "footer": {
+        "description": "Online platform for strategic development",
+        "privacy": "Privacy",
+        "terms": "Terms",
+        "instagram": "Instagram"
+      }
     },
     "aboutPage": {
       "title": "About Us",
@@ -72,47 +107,68 @@
     "backToRegister": "Back to Registration"
   },
   "profile": {
+    "profileTitle": "Profile",
     "welcome": "Welcome, {{firstName}} {{lastName}}",
     "email": "Email",
     "registrationDate": "Registration Date",
     "roles": "Roles",
-    "playerStats": "Player Statistics",
-    "rating": "Rating",
-    "gamesPlayed": "Games Played",
-    "gamesWon": "Games Won",
-    "gamesDrawn": "Games Drawn",
-    "gamesLost": "Games Lost",
+    "user": "User",
     "editProfile": "Edit Profile",
     "logout": "Logout",
     "loading": "Loading...",
     "errorLoadingProfile": "Error loading profile",
     "playerNotFound": "Player not found",
-    "profileTitle": "Profile"
+    "playerStats": "Player Statistics",
+    "bullet": "Bullet",
+    "blitz": "Blitz",
+    "rapid": "Rapid",
+    "classic": "Classic",
+    "rating": "Rating",
+    "gamesPlayed": "Games Played",
+    "gamesWon": "Games Won",
+    "gamesDrawn": "Games Drawn",
+    "gamesLost": "Games Lost"
   },
   "coaches": {
-    "title": "Coaches",
-    "fetchError": "Failed to fetch coaches. Please try again later.",
-    "successMessage": "Your request has been successfully sent.",
-    "submitError": "Failed to send request. Please try again later.",
-    "submitErrorDescription": "There was an error submitting your request. Please try again later.",
-    "requestSent": "Request Sent",
-    "apply": "Apply",
-    "dialog": {
-      "title": "Apply for Coaching",
-      "coach": "Coach",
-      "email": "Email",
-      "experience": "Experience (years)",
-      "goals": "Your Goals",
-      "certified": "Certified?",
-      "cancel": "Cancel",
-      "submit": "Submit"
-    },
-    "tableHeaders": {
-      "firstName": "First Name",
-      "lastName": "Last Name",
-      "email": "Email",
-      "actions": "Actions"
-    }
+    "title": "Our Coaches",
+    "subtitle": "Choose a coach for chess lessons and start your journey to success!",
+    "searchPlaceholder": "Search by name, experience, or specialization...",
+    "clearFilter": "Clear Filter",
+    "requestTitle": "Request a lesson with coach",
+    "userName": "Your Name",
+    "userEmail": "Your Email",
+    "level": "Your Level",
+    "levelBeginner": "Beginner",
+    "levelIntermediate": "Intermediate",
+    "levelAdvanced": "Advanced",
+    "goals": "Your Goals (e.g., improve openings)",
+    "cancel": "Cancel",
+    "submit": "Send Request",
+    "successMessage": "Thank you! Your request has been sent to the coach. Please wait for a response.",
+    "submitError": "Error submitting request.",
+    "email": "Email",
+    "experience": "Experience",
+    "specialization": "Specialization",
+    "years": "years",
+    "more": "Learn More",
+    "requestSent": "Request Sent"
+  },
+  "profile_edit": {
+    "editTitle": "Edit Profile",
+    "uploadAvatar": "Upload Photo",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password",
+    "updated": "Profile updated successfully",
+    "passwordChanged": "Password changed successfully",
+    "updateFailed": "Failed to update profile",
+    "passwordMismatch": "Password mismatch or missing current password",
+    "cancel": "Cancel",
+    "save": "Save"
   }
 }
   

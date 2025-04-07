@@ -11,8 +11,41 @@
       "profile": "Konto"
     },
     "homePage": {
-      "welcomeMessage": "Witamy w Szkole Szachowej!",
-      "learnMore": "Dowiedz się więcej o naszych kursach"
+      "welcome": {
+        "title": "Witamy w szkole szachowej",
+        "subtitle": "Odkryj swój potencjał dzięki strategicznemu myśleniu i dyscyplinie",
+        "cta": "Zacznij teraz"
+      },
+      "whyChess": {
+        "title": "Dlaczego szachy?",
+        "analysis": {
+          "title": "Myślenie analityczne",
+          "desc": "Szachy uczą analizowania sytuacji i planowania z wyprzedzeniem."
+        },
+        "memory": {
+          "title": "Poprawa pamięci",
+          "desc": "Ćwicz pamięć krótko- i długoterminową dzięki analizie i praktyce."
+        },
+        "competition": {
+          "title": "Zdrowa rywalizacja",
+          "desc": "Rozwijaj ducha sportowego poprzez udział w turniejach."
+        }
+      },
+      "coaches": {
+        "title": "Nasi trenerzy",
+        "subtitle": "Wybierz trenera i rozpocznij swoją szachową przygodę!"
+      },
+      "formats": {
+        "title": "Formaty zajęć",
+        "individual": {
+          "title": "Lekcje indywidualne",
+          "desc": "Zindywidualizowane lekcje dopasowane do twojego poziomu i celów."
+        },
+        "group": {
+          "title": "Lekcje grupowe",
+          "desc": "Ucz się w grupie i rozwijaj się poprzez wspólną naukę."
+        }
+      }
     },
     "aboutPage": {
       "title": "O nas",
@@ -69,47 +102,68 @@
     "backToRegister": "Powrót do rejestracji"
   },
   "profile": {
-    "welcome": "Witamy, {{firstName}} {{lastName}}",
+    "profileTitle": "Profil",
+    "welcome": "Witaj, {{firstName}} {{lastName}}",
     "email": "Email",
     "registrationDate": "Data rejestracji",
     "roles": "Role",
-    "playerStats": "Statystyki gracza",
-    "rating": "Ocena",
-    "gamesPlayed": "Rozegrane gry",
-    "gamesWon": "Wygrane gry",
-    "gamesDrawn": "Remisy",
-    "gamesLost": "Przegrane gry",
+    "user": "Użytkownik",
     "editProfile": "Edytuj profil",
     "logout": "Wyloguj się",
     "loading": "Ładowanie...",
-    "errorLoadingProfile": "Błąd ładowania profilu",
+    "errorLoadingProfile": "Błąd podczas ładowania profilu",
     "playerNotFound": "Nie znaleziono gracza",
-    "profileTitle": "Profil"
+    "playerStats": "Statystyki gracza",
+    "bullet": "Bullet",
+    "blitz": "Blitz",
+    "rapid": "Rapid",
+    "classic": "Klasyczne",
+    "rating": "Ranking",
+    "gamesPlayed": "Rozegrane partie",
+    "gamesWon": "Wygrane partie",
+    "gamesDrawn": "Remisy",
+    "gamesLost": "Przegrane partie"
   },
   "coaches": {
-    "title": "Trenerzy",
-    "fetchError": "Nie udało się załadować trenerów. Spróbuj ponownie później.",
-    "successMessage": "Twoje zgłoszenie zostało pomyślnie wysłane.",
-    "submitError": "Nie udało się wysłać zgłoszenia. Spróbuj ponownie później.",
-    "submitErrorDescription": "Wystąpił błąd podczas wysyłania zgłoszenia. Spróbuj ponownie później.",
-    "requestSent": "Zgłoszenie wysłane",
-    "apply": "Złóż zgłoszenie",
-    "dialog": {
-      "title": "Złóż zgłoszenie na trenera",
-      "coach": "Trener",
-      "email": "Adres e-mail",
-      "experience": "Doświadczenie (lata)",
-      "goals": "Twoje cele",
-      "certified": "Certyfikowany?",
-      "cancel": "Anuluj",
-      "submit": "Wyślij"
-    },
-    "tableHeaders": {
-      "firstName": "Imię",
-      "lastName": "Nazwisko",
-      "email": "Adres e-mail",
-      "actions": "Akcje"
-    }
+    "title": "Nasi Trenerzy",
+    "subtitle": "Wybierz trenera do lekcji szachów i rozpocznij swoją drogę do sukcesu!",
+    "searchPlaceholder": "Szukaj według imienia, doświadczenia lub specjalizacji...",
+    "clearFilter": "Wyczyść Filtr",
+    "requestTitle": "Złóż wniosek o lekcję z trenerem",
+    "userName": "Twoje Imię",
+    "userEmail": "Twój Email",
+    "level": "Twój Poziom",
+    "levelBeginner": "Początkujący",
+    "levelIntermediate": "Średniozaawansowany",
+    "levelAdvanced": "Zaawansowany",
+    "goals": "Twoje Cele (np. poprawa debiutów)",
+    "cancel": "Anuluj",
+    "submit": "Wyślij Wniosek",
+    "successMessage": "Dziękujemy! Twój wniosek został wysłany do trenera. Oczekuj odpowiedzi.",
+    "submitError": "Błąd przy składaniu wniosku.",
+    "email": "Email",
+    "experience": "Doświadczenie",
+    "specialization": "Specjalizacja",
+    "years": "lat",
+    "more": "Więcej",
+    "requestSent": "Wniosek wysłany"
+  },
+  "profile_edit": {
+    "editTitle": "Edytuj profil",
+    "uploadAvatar": "Prześlij zdjęcie",
+    "firstName": "Imię",
+    "lastName": "Nazwisko",
+    "email": "Email",
+    "changePassword": "Zmień hasło",
+    "currentPassword": "Obecne hasło",
+    "newPassword": "Nowe hasło",
+    "confirmPassword": "Potwierdź nowe hasło",
+    "updated": "Profil został zaktualizowany",
+    "passwordChanged": "Hasło zostało zmienione",
+    "updateFailed": "Nie udało się zaktualizować profilu",
+    "passwordMismatch": "Hasła nie pasują lub brak obecnego hasła",
+    "cancel": "Anuluj",
+    "save": "Zapisz"
   }
 }
   

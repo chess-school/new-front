@@ -1,110 +1,144 @@
+.auth-page {
+  height: 100vh;
+  background: radial-gradient(
+    circle at center,
+    #2a2a2a,
+    #1a1a1a
+  ); /* Светлее фон */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+/* Шахматный узор */
+.auth-page::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    45deg,
+    #333333 0px,
+    #333333 30px,
+    #2b2b2b 30px,
+    #2b2b2b 60px
+  );
+  opacity: 0.15; /* Легкий узор */
+  z-index: 0;
+}
+
 .auth-form {
-  width: 40vw;
-  padding: 40px;
-  background: linear-gradient(135deg, #ffffff, #dbe4ff);
-  border-radius: 20px;
-  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+  position: relative;
+  width: 520px;
+  padding: 60px;
+  background: #242424; /* Светлее фон формы */
+  border-radius: 15px;
+  box-shadow: 0px 12px 30px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  margin: auto;
-  transform: translateY(10%);
+  z-index: 1;
 }
 
-.auth-form__title {
-  font-size: 26px;
+.auth-form__label {
+  color: white; // Делаем надписи белыми
+}
+
+/* Логотип и название школы */
+.auth-form__logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.auth-form__icon {
+  color: #ffd700; /* Золотой цвет */
+  font-size: 60px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.auth-form__icon:hover {
+  transform: scale(1.1);
+}
+
+/* Название шахматной школы */
+.auth-form__brand {
+  color: #ffd700;
+  font-size: 18px;
   font-weight: bold;
-  color: #4a6aff;
-  margin-bottom: 10px;
+  font-family: 'Playfair Display', serif;
+}
+
+/* Заголовки */
+.auth-form__title {
+  font-size: 30px;
+  font-weight: bold;
+  color: #ffffff;
+  font-family: 'Playfair Display', serif;
+  margin-bottom: 12px;
 }
 
 .auth-form__subtitle {
   font-size: 16px;
-  color: #6c757d;
+  color: #bbbbbb;
   margin-bottom: 30px;
 }
 
-.auth-form__form {
-  width: 100%;
-  max-width: 360px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+/* Поля ввода */
+.auth-form__label {
+  color: #ffffff; /* Белый цвет для видимости */
+  font-size: 16px;
+  font-weight: bold;
 }
 
 .auth-form__input {
+  background: #2a2a2a;
+  color: white;
+  border: 1px solid #444444;
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+.auth-form__input::placeholder {
+  color: #aaaaaa;
+  font-size: 14px;
+}
+
+.auth-form__input:focus {
+  border-color: #ffd700;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+}
+
+/* Кнопка входа */
+.auth-form__button {
+  background-color: #ffd700; /* Золотой цвет */
+  color: black;
+  padding: 14px;
+  font-size: 18px;
   border-radius: 10px;
-  font-size: 14px;
+  transition: 0.3s;
+  font-weight: bold;
 }
 
-.auth-form__divider {
-  width: 100%;
-  max-width: 360px;
-  height: 1px;
-  background: #e0e0e0;
-  margin: 20px 0;
+.auth-form__button:hover {
+  background-color: #e5c100;
+  box-shadow: 0px 6px 15px rgba(255, 215, 0, 0.3);
 }
 
-.auth-form__social-login {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin-top: 10px;
-}
-
-.auth-form__social-icon {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  background-color: #ffffff;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s, box-shadow 0.3s;
-  cursor: pointer;
-}
-
-.auth-form__social-icon:hover {
-  transform: scale(1.1);
-  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
-}
-
-.auth-form__options {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 16px 0;
-
-  .auth-form__checkbox {
-    color: #4a6aff;
-
-    .MuiCheckbox-root {
-      color: #4a6aff !important;
-    }
-  }
-
-  .auth-form__forgot-password {
-    color: #4a6aff;
-    font-size: 12px;
-    text-decoration: none;
-    cursor: pointer;
-  }
-
-  .auth-form__forgot-password:hover {
-    text-decoration: underline;
-  }
-}
-
-.auth-form__footer {
-  margin-top: 20px;
-  font-size: 14px;
-  color: #6c757d;
-}
-
-.auth-form__footer a {
-  color: #4a6aff;
+/* Кнопка Sign Up */
+.auth-form__signup-link {
+  color: #ffd700;
   text-decoration: none;
   font-weight: bold;
+  cursor: pointer; /* Курсор pointer для Sign Up */
+}
+
+.auth-form__signup-link:hover {
+  text-decoration: underline;
 }

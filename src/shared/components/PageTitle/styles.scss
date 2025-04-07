@@ -1,0 +1,52 @@
+.PageTitle {
+  &__head {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.5rem;
+    margin-bottom: 1.8rem;
+    line-height: 1.1;
+    color: #e0e0e0;
+
+    @media (max-width: 1024px) {
+      font-size: 1.37rem;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 576px) {
+      font-size: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    &--no-margin {
+      margin-bottom: 0;
+    }
+  }
+
+  &__back {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    margin-bottom: 0.3rem;
+    text-decoration: none;
+    transition: 0.3s ease-in-out;
+    display: inline-block;
+    color: #aaaaaa;
+
+    svg {
+      margin-right: 0.6rem;
+      opacity: 0.6;
+      transition: 0.3s ease-in-out;
+      stroke: currentColor;
+    }
+
+    &:hover {
+      color: #d4af37;
+
+      svg {
+        opacity: 1;
+      }
+    }
+
+    &--no-margin {
+      margin-bottom: 0;
+    }
+  }
+}

@@ -18,6 +18,9 @@ import PuzzleEditor from './components/PuzzleEditor/PuzzleEditor';
 import { VerifyEmailPage } from './pages/verify-email-page/verify-email-page';
 import { CoachesPage } from './pages/coaches-page/coaches-page';
 import { RequestsPage } from './pages/requests-page/requests-page';
+// import { Footer } from './components/Footer/Footer';
+import ChessGame from './components/ChessGame/ChessGame';
+import StudentSchedulePage from './pages/students-shedule-page/students-shedule-page';
 
 function MainLayout() {
   const location = useLocation();
@@ -32,6 +35,7 @@ function MainLayout() {
         <Route path="/achievements" element={<Achievements />} />
         <Route path="/login" element={<AuthPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/chess" element={<ChessGame></ChessGame>} />
         <Route path="/analysis" element={<ChessProvider><AnalysisPage /></ChessProvider>} />
         <Route path="/chess" element={<ChessProvider><GamePage /></ChessProvider>} />
         <Route path="/challenges" element={<ChallengesPage/>}/>
@@ -42,11 +46,13 @@ function MainLayout() {
           <Route path="/editor" element={<PuzzleEditor />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/users" element={<UsersPage />} />
+          <Route path="/students-shedule" element={<StudentSchedulePage />} />
           <Route path="/students" element={<StudentsPage />} />
           <Route path="/puzzle-editor" element={<PuzzleEditor />} />
           <Route path="/inbox" element={<RequestsPage />} />
         </Route>
       </Routes>
+      {/* {!hideNavbar && <Footer />} */}
     </>
   );
 }

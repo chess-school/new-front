@@ -1,48 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Button, Paper, Grid } from '@mui/material';
-import axios from 'axios';
+import {
+  Container,
+  Typography,
+  Button,
+  Paper,
+  Grid,
+  CircularProgress,
+} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import EditProfileForm from '../../components/Profile/EditProfileForm';
 import { useTranslation } from 'react-i18next';
+import EditProfileForm from '../../components/Profile/EditProfileForm';
+import { getProfile, getPlayerStats, getAvatarUrl } from '../../api/profile';
+import { User } from '@/types/User';
 
-interface User {
-  _id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  roles: string[];
-  registrationDate: string;
+interface PlayerStatsFormat {
+  rating: number;
+  gamesPlayed: number;
+  gamesWon: number;
+  gamesDrawn: number;
+  gamesLost: number;
 }
 
 interface PlayerStats {
-  bullet: {
-    rating: number;
-    gamesPlayed: number;
-    gamesWon: number;
-    gamesDrawn: number;
-    gamesLost: number;
-  };
-  blitz: {
-    rating: number;
-    gamesPlayed: number;
-    gamesWon: number;
-    gamesDrawn: number;
-    gamesLost: number;
-  };
-  rapid: {
-    rating: number;
-    gamesPlayed: number;
-    gamesWon: number;
-    gamesDrawn: number;
-    gamesLost: number;
-  };
-  classic: {
-    rating: number;
-    gamesPlayed: number;
-    gamesWon: number;
-    gamesDrawn: number;
-    gamesLost: number;
-  };
+  bullet: PlayerStatsFormat;
+  blitz: PlayerStatsFormat;
+  rapid: PlayerStatsFormat;
+  classic: PlayerStatsFormat;
 }
 
 export const ProfilePage: React.FC = () => {
@@ -54,41 +37,42 @@ export const ProfilePage: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
 
-  const fetchUserProfile = async () => {
-    const token = localStorage.getItem('token');
-    try {
-      const response = await axios.get('http://localhost:3000/api/auth/profile', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setUser(response.data);
-
-      const playerResponse = await axios.get(
-        `http://localhost:3000/api/player/${response.data._id}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setPlayerStats(playerResponse.data);
-
-      setIsLoading(false);
-    } catch (error) {
-      console.error(t('profile.errorLoadingProfile'), error);
-      setError(t('profile.errorLoadingProfile'));
-      setIsLoading(false);
-      navigate('/login');
-    }
-  };
-
   useEffect(() => {
-    fetchUserProfile();
-  }, []);
+    const fetchData = async () => {
+      try {
+        const profile = await getProfile();
+        const stats = await getPlayerStats(profile._id);
+
+        setUser(stats.user);
+        setPlayerStats({
+          bullet: stats.bullet,
+          blitz: stats.blitz,
+          rapid: stats.rapid,
+          classic: stats.classic,
+        });
+      } catch (err) {
+        console.error(t('profile.errorLoadingProfile'), err);
+        setError(t('profile.errorLoadingProfile'));
+        navigate('/login');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [t, navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.clear();
     navigate('/login');
   };
 
   if (isLoading) {
-    return <Typography>{t('profile.loading')}</Typography>;
+    return (
+      <Container sx={{ textAlign: 'center', py: 10 }}>
+        <CircularProgress />
+      </Container>
+    );
   }
 
   if (error) {
@@ -96,58 +80,106 @@ export const ProfilePage: React.FC = () => {
   }
 
   return (
-    <Container>
-      <Typography variant="h4" gutterBottom>
-        {t('profile.profileTitle')}
-      </Typography>
-      {user ? (
+    <Container maxWidth="md">
+      {user && (
         <>
-          <Paper style={{ padding: 20, marginBottom: 20 }}>
-            <Typography variant="h6">
-              {t('profile.welcome', { firstName: user.firstName, lastName: user.lastName })}
-            </Typography>
-            <Typography>{t('profile.email')}: {user.email}</Typography>
-            <Typography>
-              {t('profile.registrationDate')}: {new Date(user.registrationDate).toLocaleDateString()}
-            </Typography>
-            <Typography>{t('profile.roles')}: {user.roles.join(', ')}</Typography>
+          {/* Верхняя карточка профиля */}
+          <Paper
+            sx={{
+              p: 4,
+              mb: 4,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: 3,
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <img
+                src={getAvatarUrl(user._id)}
+                alt="avatar"
+                style={{
+                  width: 96,
+                  height: 96,
+                  borderRadius: '50%',
+                  objectFit: 'cover',
+                }}
+              />
+              <div>
+                <Typography variant="h5" fontWeight="bold">
+                  {user.firstName} {user.lastName}
+                </Typography>
+                <Typography color="textSecondary">
+                  {user.roles[0] || 'User'}
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  {user.email}
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  {t('profile.registrationDate')}:{' '}
+                  {new Date(user.registrationDate).toLocaleDateString()}
+                </Typography>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: 12 }}>
+              <Button
+                variant="outlined"
+                onClick={() => setIsEditing(true)}
+              >
+                {t('profile.editProfile')}
+              </Button>
+              <Button
+                variant="contained"
+                color="error"
+                onClick={handleLogout}
+              >
+                {t('profile.logout')}
+              </Button>
+            </div>
           </Paper>
 
+          {/* Статистика */}
           {playerStats && (
-            <Paper style={{ padding: 20, marginBottom: 20 }}>
-              <Typography variant="h6">{t('profile.playerStats')}</Typography>
+            <Paper sx={{ p: 4, mb: 4 }}>
+              <Typography variant="h6" mb={2}>
+                {t('profile.playerStats')}
+              </Typography>
               <Grid container spacing={2}>
-                {['bullet', 'blitz', 'rapid', 'classic'].map((format) => (
-                  <Grid item xs={12} sm={6} md={3} key={format}>
-                    <Typography variant="subtitle1">
-                      {t(`profile.${format}`)}
-                    </Typography>
-                    <Typography>{t('profile.rating')}: {playerStats[format as keyof PlayerStats].rating}</Typography>
-                    <Typography>{t('profile.gamesPlayed')}: {playerStats[format as keyof PlayerStats].gamesPlayed}</Typography>
-                    <Typography>{t('profile.gamesWon')}: {playerStats[format as keyof PlayerStats].gamesWon}</Typography>
-                    <Typography>{t('profile.gamesDrawn')}: {playerStats[format as keyof PlayerStats].gamesDrawn}</Typography>
-                    <Typography>{t('profile.gamesLost')}: {playerStats[format as keyof PlayerStats].gamesLost}</Typography>
+                {Object.entries(playerStats).map(([key, stats]) => (
+                  <Grid item xs={12} sm={6} md={3} key={key}>
+                    <Paper
+                      sx={{
+                        p: 2,
+                        borderRadius: 2,
+                        textAlign: 'center',
+                        backgroundColor: '#f5f7fa',
+                        boxShadow: 2,
+                      }}
+                    >
+                      <Typography variant="h6" fontWeight="bold" gutterBottom>
+                        {t(`profile.${key}`)}
+                      </Typography>
+                      <Typography fontSize={24} fontWeight="bold" gutterBottom>
+                        {stats.rating}
+                      </Typography>
+                      <Typography variant="body2">{t('profile.gamesPlayed')}: {stats.gamesPlayed}</Typography>
+                      <Typography variant="body2">{t('profile.gamesWon')}: {stats.gamesWon}</Typography>
+                      <Typography variant="body2">{t('profile.gamesDrawn')}: {stats.gamesDrawn}</Typography>
+                      <Typography variant="body2">{t('profile.gamesLost')}: {stats.gamesLost}</Typography>
+                    </Paper>
                   </Grid>
                 ))}
               </Grid>
             </Paper>
           )}
 
-          <Button variant="contained" onClick={() => setIsEditing(true)}>
-            {t('profile.editProfile')}
-          </Button>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={handleLogout}
-            style={{ marginLeft: '10px' }}
-          >
-            {t('profile.logout')}
-          </Button>
-          {isEditing && <EditProfileForm user={user} onClose={() => setIsEditing(false)} />}
+          {/* Форма редактирования */}
+          {isEditing && (
+            <EditProfileForm user={user} onClose={() => setIsEditing(false)} />
+          )}
         </>
-      ) : (
-        <Typography>{t('profile.playerNotFound')}</Typography>
       )}
     </Container>
   );

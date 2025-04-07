@@ -34,6 +34,7 @@ export const Navbar: React.FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation();
+  // const { mode, toggleTheme } = useTheme();
 
   const userString = localStorage.getItem('user');
   let user = null;
@@ -53,6 +54,7 @@ export const Navbar: React.FC = () => {
   const isAuthenticated = !!token;
   const isAdmin = user?.roles?.includes('admin');
   const isCoach = user?.roles?.includes('coach');
+  const isStudent = user?.roles?.includes('student');
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -80,6 +82,7 @@ export const Navbar: React.FC = () => {
           <Typography variant="h6" className="navbar-title">
             {t('navbar.chessSchool')}
           </Typography>
+          
           <Box className="navbar-controls" display="flex" alignItems="center">
             {isAuthenticated && (
               <Box display="flex" alignItems="center">
@@ -175,6 +178,22 @@ export const Navbar: React.FC = () => {
                 </ListItemButton>
               </>
             )}
+            {(isCoach || isAdmin || isStudent) && (
+              <>
+              <Divider />
+              <ListItemButton
+                onClick={() => handleMenuClick('/students-shedule')}
+                className="menu-item"
+              >
+                <ListItemIcon>
+                  <TeamOutlined />
+                </ListItemIcon>
+                <ListItemText primary={t('navbar.students-shedule')} />
+              </ListItemButton>
+            </>
+            )
+
+            }
             {isAdmin && (
               <ListItemButton
                 onClick={() => handleMenuClick('/users')}
