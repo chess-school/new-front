@@ -3,10 +3,10 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useForm, SubmitHandler, Controller, useFormState } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { registerUser } from '@/api/register/register'
 import './register-form.css';
 import { loginValidation, passwordValidation, nameValidation } from './validation';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
 interface IRegisterForm {
   firstName: string;
@@ -16,25 +16,33 @@ interface IRegisterForm {
 }
 
 export const RegisterForm: React.FC = () => {
-  const { handleSubmit, control } = useForm<IRegisterForm>();
+  const { handleSubmit, control } = useForm<IRegisterForm>({
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+    },
+  });
   const { errors } = useFormState({ control });
   const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<IRegisterForm> = async (data) => {
     try {
-      const response = await axios.post('http://localhost:3000/api/auth/register', data);
-
-      const { token, user } = response.data;
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
-
-
-      navigate('/profile', { state: user });
+        const response = await registerUser(data);
+        
+        navigate(`/verify-email?token=${response.token}`, {
+            state: {
+                firstName: response.firstName,
+                lastName: response.lastName,
+                email: response.email,
+            },
+        });
     } catch (error) {
-      console.error('Registration failed', error);
-      alert('Registration failed. Please try again.');
+        alert('Registration failed. Please try again.');
     }
-  };
+};
+
 
   return (
     <div className="register-form">
@@ -123,7 +131,7 @@ export const RegisterForm: React.FC = () => {
       </form>
       <div className="auth-form__footer">
         <Typography variant="subtitle1" component="span">
-          Already have an account{" "}
+          Already have an account{' '}
         </Typography>
         <Typography
           variant="subtitle1"
@@ -131,10 +139,9 @@ export const RegisterForm: React.FC = () => {
           sx={{ color: 'blue', cursor: 'pointer' }}
           onClick={() => navigate('/login')} 
         >
-         login
+          login
         </Typography>
       </div>
     </div>
   );
 };
-

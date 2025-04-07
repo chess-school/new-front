@@ -8,11 +8,49 @@
       "users": "Users",
       "logout": "Logout",
       "loginOrRegister": "Login/Register",
-      "profile": "Profile"
+      "profile": "Profile",
+      "challenges": "Create challenge",
+      "chessGame": "ChessGame",
+      "coaches": "Coaches"
     },
     "homePage": {
-      "welcomeMessage": "Welcome to the Chess School!",
-      "learnMore": "Learn more about our courses"
+      "hero": {
+        "title": "Master the Game. Master Your Mind.",
+        "subtitle": "Train your strategic thinking with top online coaches",
+        "cta": "Get Started"
+      },
+      "whyChess": {
+        "title": "Why Chess?",
+        "values": {
+          "analysis": "Analysis",
+          "memory": "Memory",
+          "spirit": "Competitive Spirit"
+        }
+      },
+      "formats": {
+        "title": "Lesson Formats",
+        "individual": {
+          "label": "Individual Lessons",
+          "desc": "Personalized training focused on your level and goals.",
+          "button": "View Schedule"
+        },
+        "group": {
+          "label": "Group Lessons",
+          "desc": "Learn in a group, stay motivated and connected.",
+          "button": "Learn More"
+        }
+      },
+      "coaches": {
+        "title": "Our Coaches",
+        "role": "GM, Individual & Group Lessons",
+        "select": "Choose Coach"
+      },
+      "footer": {
+        "description": "Online platform for strategic development",
+        "privacy": "Privacy",
+        "terms": "Terms",
+        "instagram": "Instagram"
+      }
     },
     "aboutPage": {
       "title": "About Us",
@@ -39,6 +77,98 @@
     },
     "errors": {
       "login": "Invalid email or password"
-    }
+    },
+    "auth": {
+      "welcome": "Welcome Back!",
+      "enter_credentials": "Enter your credentials to access your account",
+      "email": "Email",
+      "password": "Password",
+      "remember_me": "Remember me",
+      "forgot_password": "Forgot Password?",
+      "sign_in": "Sign In",
+      "or_sign_in_with": "Or sign in with",
+      "no_account": "Don’t have an account?",
+      "sign_up": "Sign up",
+      "errors": {
+        "login": "Login failed. Please check your email and password."
+      }
+    },
+    "verifyEmail": {
+    "pageTitle": "Verify Your Email",
+    "greeting": "Dear {{firstName}} {{lastName}},",
+    "sentTo": "We've sent a verification email to {{email}}. Please check your inbox and follow the link to activate your account.",
+    "checkingStatus": "Checking verification status...",
+    "alreadyVerified": "Email is already verified. This link is no longer valid.",
+    "checkError": "Failed to check verification status. Please try again later.",
+    "resendSuccess": "Verification email has been resent. Please check your inbox.",
+    "alreadyVerifiedSuccess": "Your email is already verified.",
+    "resendError": "Failed to resend verification email. Please try again later.",
+    "resendButton": "Resend Verification Email",
+    "backToRegister": "Back to Registration"
+  },
+  "profile": {
+    "profileTitle": "Profile",
+    "welcome": "Welcome, {{firstName}} {{lastName}}",
+    "email": "Email",
+    "registrationDate": "Registration Date",
+    "roles": "Roles",
+    "user": "User",
+    "editProfile": "Edit Profile",
+    "logout": "Logout",
+    "loading": "Loading...",
+    "errorLoadingProfile": "Error loading profile",
+    "playerNotFound": "Player not found",
+    "playerStats": "Player Statistics",
+    "bullet": "Bullet",
+    "blitz": "Blitz",
+    "rapid": "Rapid",
+    "classic": "Classic",
+    "rating": "Rating",
+    "gamesPlayed": "Games Played",
+    "gamesWon": "Games Won",
+    "gamesDrawn": "Games Drawn",
+    "gamesLost": "Games Lost"
+  },
+  "coaches": {
+    "title": "Our Coaches",
+    "subtitle": "Choose a coach for chess lessons and start your journey to success!",
+    "searchPlaceholder": "Search by name, experience, or specialization...",
+    "clearFilter": "Clear Filter",
+    "requestTitle": "Request a lesson with coach",
+    "userName": "Your Name",
+    "userEmail": "Your Email",
+    "level": "Your Level",
+    "levelBeginner": "Beginner",
+    "levelIntermediate": "Intermediate",
+    "levelAdvanced": "Advanced",
+    "goals": "Your Goals (e.g., improve openings)",
+    "cancel": "Cancel",
+    "submit": "Send Request",
+    "successMessage": "Thank you! Your request has been sent to the coach. Please wait for a response.",
+    "submitError": "Error submitting request.",
+    "email": "Email",
+    "experience": "Experience",
+    "specialization": "Specialization",
+    "years": "years",
+    "more": "Learn More",
+    "requestSent": "Request Sent"
+  },
+  "profile_edit": {
+    "editTitle": "Edit Profile",
+    "uploadAvatar": "Upload Photo",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password",
+    "updated": "Profile updated successfully",
+    "passwordChanged": "Password changed successfully",
+    "updateFailed": "Failed to update profile",
+    "passwordMismatch": "Password mismatch or missing current password",
+    "cancel": "Cancel",
+    "save": "Save"
   }
+}
   

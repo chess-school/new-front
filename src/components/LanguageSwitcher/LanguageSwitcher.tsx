@@ -2,7 +2,11 @@ import React from 'react';
 import { Select, MenuItem, SelectChangeEvent } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
-export const LanguageSwitcher: React.FC = () => {
+interface LanguageSwitcherProps {
+  className?: string;
+}
+
+export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ className }) => {
   const { i18n } = useTranslation();
 
   const handleChange = (event: SelectChangeEvent<string>) => {
@@ -15,6 +19,7 @@ export const LanguageSwitcher: React.FC = () => {
       value={i18n.language}
       onChange={handleChange}
       size="small"
+      className={className} 
       style={{ color: 'black', borderColor: 'black' }}
     >
       <MenuItem value="en">EN</MenuItem>

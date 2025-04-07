@@ -5,6 +5,7 @@
     "lib": ["ES2023"],
     "module": "ESNext",
     "skipLibCheck": true,
+    "types": ["node", "react", "react-dom", "react-i18next"],
 
     /* Bundler mode */
     "moduleResolution": "bundler",
