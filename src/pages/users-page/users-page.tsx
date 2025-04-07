@@ -1,168 +1,219 @@
-import React, { useEffect, useState } from 'react';
-import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Paper, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, MenuItem, Select, FormControl, InputLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import {
+  Container,
+  Typography,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  Snackbar,
+  Alert,
+  IconButton,
+} from "@mui/material";
+import { Delete, Edit } from "@mui/icons-material";
+import axios from "axios";
+import CustomTable from "@/shared/components/CustomTable/CustomTable";
+import { User } from "@/types/User";
 
-interface User {
-  _id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  roles: string[];
+interface Column<T> {
+  field: keyof T | "actions";
+  label: string;
+  type?: "text" | "select";
+  options?: string[];
+  render?: (row: T) => JSX.Element;
 }
 
 export const UsersPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [newRole, setNewRole] = useState<string>('');
-  const [actionType, setActionType] = useState<string>('add'); // "add" or "remove"
+  const [newRole, setNewRole] = useState<string>("");
+  const [actionType, setActionType] = useState<string>("add");
   const [open, setOpen] = useState<boolean>(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState<boolean>(false);
+  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "success" | "error" }>({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
+  // 🔥 Загружаем список пользователей
   useEffect(() => {
     const fetchUsers = async () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       try {
-        const response = await axios.get('http://localhost:3000/api/users', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+        const response = await axios.get("http://localhost:3000/api/users", {
+          headers: { Authorization: `Bearer ${token}` },
         });
-        setUsers(response.data);
+
+        setUsers(response.data.map((user: any) => ({
+          id: user._id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          roles: user.roles,
+        })));
       } catch (error) {
-        console.error('Ошибка при получении списка пользователей:', error);
+        console.error("Ошибка при получении списка пользователей:", error);
       }
     };
 
     fetchUsers();
   }, []);
 
+  // 🔥 Открываем модальное окно
   const handleOpen = (user: User) => {
     setSelectedUser(user);
-    setNewRole(''); // Reset role when opening dialog
-    setActionType('add'); // Reset action type
+    setNewRole("");
+    setActionType("add");
     setOpen(true);
   };
 
+  // 🔥 Закрываем модальное окно
   const handleClose = () => {
     setSelectedUser(null);
     setOpen(false);
   };
 
+  // 🔥 Открываем подтверждающее окно удаления аккаунта
+  const handleConfirmDeleteOpen = (user: User) => {
+    setSelectedUser(user);
+    setConfirmDeleteOpen(true);
+  };
+
+  // 🔥 Закрываем подтверждающее окно удаления аккаунта
+  const handleConfirmDeleteClose = () => {
+    setConfirmDeleteOpen(false);
+    setSelectedUser(null);
+  };
+
+  // 🔥 Меняем роль пользователя
   const handleRoleChange = async () => {
-    const token = localStorage.getItem('token');
+    if (!selectedUser) return;
+    const token = localStorage.getItem("token");
 
     try {
-      let apiUrl = '';
-      const requestBody: { userEmail: string; role?: string } = {
-        userEmail: selectedUser?.email || '',
-      };
+      await axios.put(
+        "http://localhost:3000/api/admin/update-role",
+        { userEmail: selectedUser.email, role: newRole, action: actionType },
+        { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
+      );
 
-      if (actionType === 'add') {
-        apiUrl = newRole === 'student'
-          ? 'http://localhost:3000/api/assign-user-to-student'
-          : 'http://localhost:3000/api/admin/assign-coach';
-      } else {
-        apiUrl = 'http://localhost:3000/api/admin/remove-role';
-        requestBody.role = newRole; 
-      }
+      setUsers(users.map(user =>
+        user.id === selectedUser.id
+          ? {
+              ...user,
+              roles: actionType === "add" ? [...user.roles, newRole] : user.roles.filter(role => role !== newRole),
+            }
+          : user
+      ));
 
-      await axios.post(apiUrl, requestBody, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+      setSnackbar({
+        open: true,
+        message: `Роль ${newRole} ${actionType === "add" ? "добавлена" : "удалена"}`,
+        severity: "success",
       });
-
-      setUsers(users.map(user => {
-        if (user._id === selectedUser?._id) {
-          return actionType === 'add'
-            ? { ...user, roles: [...user.roles, newRole] }
-            : { ...user, roles: user.roles.filter(role => role !== newRole) };
-        }
-        return user;
-      }));
 
       handleClose();
     } catch (error) {
-      console.error('Ошибка при изменении роли пользователя:', error);
+      console.error("Ошибка при изменении роли пользователя:", error);
+      setSnackbar({ open: true, message: "Ошибка при изменении роли", severity: "error" });
     }
   };
 
+  // 🔥 Удаление пользователя
+  const handleDeleteUser = async () => {
+    if (!selectedUser) return;
+    const token = localStorage.getItem("token");
+
+    try {
+      await axios.delete(`http://localhost:3000/api/admin/delete-user/${selectedUser.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setUsers(users.filter(user => user.id !== selectedUser.id));
+
+      setSnackbar({ open: true, message: "Пользователь удалён", severity: "success" });
+
+      handleClose();
+      handleConfirmDeleteClose();
+    } catch (error) {
+      console.error("Ошибка при удалении пользователя:", error);
+      setSnackbar({ open: true, message: "Ошибка при удалении пользователя", severity: "error" });
+    }
+  };
+
+  // 🔥 Определяем колонки таблицы
+  const columns: Column<User>[] = [
+    { field: "firstName", label: "Имя", type: "text" },
+    { field: "lastName", label: "Фамилия", type: "text" },
+    { field: "email", label: "Email", type: "text" },
+    { field: "roles", label: "Роль", type: "select", options: ["user", "student", "coach", "admin"] },
+    {
+      field: "actions",
+      label: "Действия",
+      render: (user: User) => (
+        <>
+          <IconButton onClick={() => handleOpen(user)}>
+            <Edit />
+          </IconButton>
+          <IconButton color="error" onClick={() => handleConfirmDeleteOpen(user)}>
+            <Delete />
+          </IconButton>
+        </>
+      ),
+    },
+  ];
+
   return (
     <Container>
-      <Typography variant="h4" gutterBottom>
-        Список пользователей
-      </Typography>
-      <Paper>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Имя</TableCell>
-              <TableCell>Фамилия</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Роль</TableCell>
-              <TableCell>Действия</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {users.map((user) => (
-              <TableRow key={user._id}>
-                <TableCell>{user.firstName}</TableCell>
-                <TableCell>{user.lastName}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{user.roles.join(', ')}</TableCell>
-                <TableCell>
-                  <Button variant="outlined" onClick={() => handleOpen(user)}>
-                    Редактировать
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Paper>
+      <Typography variant="h4" gutterBottom>Список пользователей</Typography>
+      <CustomTable columns={columns} data={users} />
 
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Изменить роль пользователя</DialogTitle>
+      {/* 🔥 Основное модальное окно */}
+      <Dialog open={open} onClose={handleClose} fullWidth>
+        <DialogTitle>Управление пользователем</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Пожалуйста, выберите действие для пользователя: {selectedUser?.firstName} {selectedUser?.lastName}
+            Изменение ролей и управление пользователем: <strong>{selectedUser?.firstName} {selectedUser?.lastName}</strong>
           </DialogContentText>
-          <FormControl component="fieldset">
-            <RadioGroup row value={actionType} onChange={(e) => setActionType(e.target.value)}>
-              <FormControlLabel value="add" control={<Radio />} label="Добавить роль" />
-              <FormControlLabel value="remove" control={<Radio />} label="Удалить роль" />
-            </RadioGroup>
-          </FormControl>
-
           <FormControl fullWidth sx={{ marginTop: 2 }}>
             <InputLabel>Роль</InputLabel>
-            <Select
-              value={newRole}
-              onChange={(e) => setNewRole(e.target.value)}
-              label="Роль"
-            >
-              {actionType === 'add' ? (
-                <>
-                  <MenuItem value="student">Студент</MenuItem>
-                  <MenuItem value="coach">Тренер</MenuItem>
-                </>
-              ) : (
-                selectedUser?.roles.map((role) => (
-                  <MenuItem key={role} value={role}>
-                    {role}
-                  </MenuItem>
-                ))
-              )}
+            <Select value={newRole} onChange={(e) => setNewRole(e.target.value)} label="Роль">
+              <MenuItem value="student">Студент</MenuItem>
+              <MenuItem value="coach">Тренер</MenuItem>
             </Select>
           </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Отмена</Button>
-          <Button onClick={handleRoleChange} color="primary" disabled={!newRole}>
-            Сохранить
-          </Button>
+          <Button onClick={handleClose}>Закрыть</Button>
+          <Button onClick={handleRoleChange} color="primary" disabled={!newRole}>Сохранить</Button>
         </DialogActions>
       </Dialog>
+
+      {/* 🔥 Окно подтверждения удаления */}
+      <Dialog open={confirmDeleteOpen} onClose={handleConfirmDeleteClose}>
+        <DialogTitle>Подтвердите удаление</DialogTitle>
+        <DialogActions>
+          <Button onClick={handleConfirmDeleteClose}>Нет</Button>
+          <Button onClick={handleDeleteUser} color="error">Да</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* 🔥 Уведомление (Snackbar) */}
+      <Snackbar open={snackbar.open} autoHideDuration={4000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
+        <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };

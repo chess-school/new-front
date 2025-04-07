@@ -40,8 +40,8 @@ const ChessGame: React.FC = () => {
     engine.resetGame();
     updateGame();
     notification.success({
-      message: 'Игра сброшена',
-      description: 'Начните новую партию!',
+      message: 'Гру скинуто',
+      description: 'Почніть нову партію!',
     });
   };
   
@@ -51,17 +51,16 @@ const ChessGame: React.FC = () => {
       engine.loadPgn(inputPgn.trim());
       updateGame();
       notification.success({
-        message: 'Партия успешно загружена',
-        description: 'Партия из PGN загружена успешно.',
+        message: 'Партію успішно завантажено',
+        description: 'Партію з PGN завантажено успішно.',
       });
     } catch (error) {
       notification.error({
-        message: 'Ошибка загрузки партии',
-        description: 'Проверьте формат PGN и попробуйте снова.',
+        message: 'Помилка завантаження партії',
+        description: 'Перевірте формат PGN і спробуйте знову.',
       });
     }
   };
-  
 
   const analyzePosition = () => {
     if (engineWorker) {
@@ -133,7 +132,6 @@ const ChessGame: React.FC = () => {
 
   return (
     <Container>
-      <Typography variant="h4" gutterBottom>Шахматная игра</Typography>
       <Paper style={{ padding: 20, marginTop: 20 }}>
         <Chessboard
           position={fen}
@@ -143,7 +141,7 @@ const ChessGame: React.FC = () => {
 
         <Stack direction="row" spacing={2} style={{ marginTop: 20 }}>
           <Button variant="contained" color="primary" onClick={resetGame}>
-            Сбросить игру
+          Скинути гру
           </Button>
           <Button variant="contained" onClick={goToStart} disabled={currentMoveIndex === 0}>
             {'<<'}
@@ -158,7 +156,7 @@ const ChessGame: React.FC = () => {
             {'>>'}
           </Button>
           <Button variant="contained" color="secondary" onClick={analyzePosition}>
-            {analyzing ? 'Анализируется...' : 'Анализировать позицию'}
+            {analyzing ? 'Аналізується...' : 'Аналізувати позицію'}
           </Button>
         </Stack>
 
@@ -174,15 +172,15 @@ const ChessGame: React.FC = () => {
         {variant && (
           <Typography variant="body2" style={{ marginTop: 10 }}>Вариант: {variant}</Typography>
         )}
-        <Typography variant="h6" style={{ marginTop: 20 }}>PGN партии:</Typography>
+        <Typography variant="h6" style={{ marginTop: 20 }}>PGN партії:</Typography>
         <Paper style={{ padding: 10, marginTop: 10, backgroundColor: '#f5f5f5' }}>
           <Typography variant="body2">{pgn}</Typography>
         </Paper>
 
-        <Typography variant="h6" style={{ marginTop: 20 }}>Вставить партию (PGN):</Typography>
+        <Typography variant="h6" style={{ marginTop: 20 }}>Вставити партію(PGN):</Typography>
         <TextField
           fullWidth
-          label="Введите PGN"
+          label="Ввдіть PGN"
           value={inputPgn}
           onChange={(e) => setInputPgn(e.target.value)}
           multiline
@@ -191,7 +189,7 @@ const ChessGame: React.FC = () => {
           style={{ marginTop: 10 }}
         />
         <Button variant="contained" color="info" onClick={loadPgn} style={{ marginTop: 20 }}>
-          Вставить партию
+          Вставити партію
         </Button>
       </Paper>
     </Container>

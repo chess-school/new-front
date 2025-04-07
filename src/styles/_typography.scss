@@ -1,0 +1,26 @@
+h1 {
+  font-size: $font-size-large;
+  font-weight: bold;
+}
+
+h2 {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+p {
+  font-size: $font-size-medium;
+  line-height: 1.5;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}

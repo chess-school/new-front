@@ -1,8 +1,18 @@
-import React, { useState } from 'react';
-import { TextField, Button, Paper, Typography, IconButton } from '@mui/material';
+import React, { useState, ChangeEvent } from 'react';
+import {
+  TextField,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Avatar,
+  Box,
+  Link,
+} from '@mui/material';
 import { updateProfile } from '../../api/profile/auth';
 import { notification } from 'antd';
-import { Edit as EditIcon, Check as CheckIcon } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 
 interface EditProfileProps {
   user: any;
@@ -10,6 +20,8 @@ interface EditProfileProps {
 }
 
 const EditProfileForm: React.FC<EditProfileProps> = ({ user, onClose }) => {
+  const { t } = useTranslation();
+
   const [firstName, setFirstName] = useState(user.firstName);
   const [lastName, setLastName] = useState(user.lastName);
   const [email, setEmail] = useState(user.email);
@@ -17,167 +29,142 @@ const EditProfileForm: React.FC<EditProfileProps> = ({ user, onClose }) => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const [editFields, setEditFields] = useState({
-    firstName: false,
-    lastName: false,
-    email: false,
-    password: false,
-  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | undefined>(user.photoUrl);
 
-  // Функция для включения режима редактирования
-  const toggleEditField = (field: keyof typeof editFields) => {
-    setEditFields((prev) => ({ ...prev, [field]: !prev[field] }));
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      setAvatarPreview(URL.createObjectURL(file));
+    }
   };
 
-  // Функция для обновления профиля
-  const handleUpdateField = async (field: string) => {
+  const handleSubmit = async () => {
     try {
-      // Проверка пароля при смене
-      if (field === 'password') {
-        if (newPassword !== confirmPassword) {
-          notification.error({
-              message: 'Пароли не совпадают',
-              description: undefined
-          });
-          return;
-        }
-        if (!currentPassword) {
-          notification.error({
-              message: 'Укажите текущий пароль',
-              description: undefined
-          });
-          return;
-        }
-
-        // Отправка запроса на смену пароля
-        await updateProfile({ currentPassword, newPassword });
+      if (!showPassword) {
+        await updateProfile({
+          firstName,
+          lastName,
+          email,
+          avatar: selectedFile || undefined,
+        });
         notification.success({
-            message: 'Пароль успешно обновлён',
-            description: undefined
+          message: t('profile_edit.updated'),
+          description: undefined
         });
       } else {
-        // Обновление других полей
-        const updateData: any = {};
-        if (field === 'firstName') updateData.firstName = firstName;
-        if (field === 'lastName') updateData.lastName = lastName;
-        if (field === 'email') updateData.email = email;
-
-        await updateProfile(updateData);
-        notification.success({
-            message: 'Профиль успешно обновлён',
+        if (!currentPassword || newPassword !== confirmPassword) {
+          notification.error({
+            message: t('profile_edit.passwordMismatch'),
             description: undefined
+          });
+          return;
+        }
+
+        await updateProfile({
+          currentPassword,
+          newPassword,
+          avatar: selectedFile || undefined,
+        });
+
+        notification.success({
+          message: t('profile_edit.passwordChanged'),
+          description: undefined
         });
       }
+
       onClose();
       window.location.reload();
     } catch (error) {
-      console.error('Ошибка при обновлении профиля:', error);
+      console.error(error);
       notification.error({
-          message: 'Не удалось обновить профиль',
-          description: undefined
+        message: t('profile_edit.updateFailed'),
+        description: undefined
       });
     }
   };
 
   return (
-    <Paper style={{ padding: 20, marginTop: 20 }}>
-      <Typography variant="h6">Редактировать профиль</Typography>
+    <Dialog open onClose={onClose} fullWidth maxWidth="sm">
+      <DialogTitle>{t('profile_edit.editTitle')}</DialogTitle>
+      <DialogContent>
+        <Box display="flex" alignItems="center" flexDirection="column" mb={2}>
+          <Avatar src={avatarPreview} sx={{ width: 96, height: 96, mb: 1 }} />
+          <Button variant="text" size="small" component="label">
+            {t('profile_edit.uploadAvatar')}
+            <input hidden accept="image/*" type="file" onChange={handleFileChange} />
+          </Button>
+        </Box>
 
-      {/* Поле Имя */}
-      <div style={{ display: 'flex', alignItems: 'center' }}>
         <TextField
-          label="Имя"
+          margin="dense"
+          label={t('profile_edit.firstName')}
+          fullWidth
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
-          fullWidth
-          margin="normal"
-          InputProps={{ readOnly: !editFields.firstName }}
         />
-        <IconButton onClick={() => {
-          if (editFields.firstName) handleUpdateField('firstName');
-          toggleEditField('firstName');
-        }}>
-          {editFields.firstName ? <CheckIcon /> : <EditIcon />}
-        </IconButton>
-      </div>
-
-      {/* Поле Фамилия */}
-      <div style={{ display: 'flex', alignItems: 'center' }}>
         <TextField
-          label="Фамилия"
+          margin="dense"
+          label={t('profile_edit.lastName')}
+          fullWidth
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
-          fullWidth
-          margin="normal"
-          InputProps={{ readOnly: !editFields.lastName }}
         />
-        <IconButton onClick={() => {
-          if (editFields.lastName) handleUpdateField('lastName');
-          toggleEditField('lastName');
-        }}>
-          {editFields.lastName ? <CheckIcon /> : <EditIcon />}
-        </IconButton>
-      </div>
-
-      {/* Поле Email */}
-      <div style={{ display: 'flex', alignItems: 'center' }}>
         <TextField
-          label="Email"
+          margin="dense"
+          label={t('profile_edit.email')}
+          fullWidth
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          fullWidth
-          margin="normal"
-          InputProps={{ readOnly: !editFields.email }}
         />
-        <IconButton onClick={() => {
-          if (editFields.email) handleUpdateField('email');
-          toggleEditField('email');
-        }}>
-          {editFields.email ? <CheckIcon /> : <EditIcon />}
-        </IconButton>
-      </div>
 
-      {/* Поле Новый пароль */}
-      <div style={{ marginTop: 20 }}>
-        <Typography variant="h6">Сменить пароль</Typography>
-        <TextField
-          label="Текущий пароль"
-          type="password"
-          value={currentPassword}
-          onChange={(e) => setCurrentPassword(e.target.value)}
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          label="Новый пароль"
-          type="password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          label="Подтвердите новый пароль"
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          fullWidth
-          margin="normal"
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => handleUpdateField('password')}
-          style={{ marginTop: 20 }}
-        >
-          Обновить пароль
+        {!showPassword && (
+          <Box mt={1}>
+            <Link component="button" variant="body2" onClick={() => setShowPassword(true)}>
+              {t('profile_edit.changePassword')}
+            </Link>
+          </Box>
+        )}
+
+        {showPassword && (
+          <Box mt={2}>
+            <TextField
+              margin="dense"
+              label={t('profile_edit.currentPassword')}
+              fullWidth
+              type="password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+            />
+            <TextField
+              margin="dense"
+              label={t('profile_edit.newPassword')}
+              fullWidth
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+            <TextField
+              margin="dense"
+              label={t('profile_edit.confirmPassword')}
+              fullWidth
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+          </Box>
+        )}
+      </DialogContent>
+
+      <DialogActions>
+        <Button onClick={onClose}>{t('profile_edit.cancel')}</Button>
+        <Button variant="contained" onClick={handleSubmit}>
+          {t('common.save')}
         </Button>
-      </div>
-
-      <Button variant="outlined" onClick={onClose} style={{ marginTop: 20 }}>
-        Отмена
-      </Button>
-    </Paper>
+      </DialogActions>
+    </Dialog>
   );
 };
 

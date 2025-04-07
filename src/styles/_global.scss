@@ -1,0 +1,123 @@
+@use "@/styles/_variables" as vars;
+
+/* ---- Размеры ---- */
+.width-100 {
+  width: 100%;
+}
+
+.height-100 {
+  height: 100%;
+}
+
+/* ---- Курсоры ---- */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-default {
+  cursor: default;
+}
+
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
+/* ---- Текстовые утилиты ---- */
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-wrap {
+  white-space: normal;
+}
+
+.text-nowrap {
+  white-space: nowrap;
+}
+
+.text-ellipsis {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 100%;
+}
+
+.decoration-none {
+  text-decoration: none;
+}
+
+/* ---- Flexbox утилиты ---- */
+.fl {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.fl-inline {
+  display: inline-flex;
+}
+
+.fl-direction-column {
+  flex-direction: column;
+}
+
+.fl-direction-row {
+  flex-direction: row;
+}
+
+.fl-justify-content-center {
+  justify-content: center;
+}
+
+.fl-align-center {
+  align-items: center;
+}
+
+/* ---- Отступы (динамические) ---- */
+$points: 0, 0.25, 0.5, 1, 1.5, 2, 3;
+
+@for $i from 0 to length($points) {
+  $p: nth($points, $i + 1);
+
+  .mt-#{$i} {
+    margin-top: #{$p}rem;
+  }
+
+  .mb-#{$i} {
+    margin-bottom: #{$p}rem;
+  }
+
+  .ml-#{$i} {
+    margin-left: #{$p}rem;
+  }
+
+  .mr-#{$i} {
+    margin-right: #{$p}rem;
+  }
+
+  .pt-#{$i} {
+    padding-top: #{$p}rem;
+  }
+
+  .pb-#{$i} {
+    padding-bottom: #{$p}rem;
+  }
+}
+
+/* ---- Другие утилиты ---- */
+.round-border {
+  border: 1px solid vars.$gray-light;
+  border-radius: 1rem;
+  padding: 0.5rem;
+}
+
+.text-bold {
+  font-weight: 500;
+}
+
+.shadow {
+  box-shadow: 0px 0.2188rem 2.5rem 0px rgba(0, 0, 0, 0.08);
+}
