@@ -1,9 +1,7 @@
-import axios, { AxiosResponse, AxiosError } from 'axios';
+import axios from 'axios';
 import { notification } from 'antd';
 
-// 2. ВАЖНО: Используем переменные окружения для URL
-// Vercel подставит сюда значение из настроек проекта, а локально будет 'http://localhost:3000'
-const API_URL = process.env.REACT_APP_API_URL || process.env.VITE_API_URL || 'http://localhost:3000/api';
+const API_URL = 'http://localhost:3000/api';
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
@@ -15,8 +13,7 @@ const axiosInstance = axios.create({
 
 const reduceMessage = (arr: string[]) => arr?.reduce((acc, item) => (acc += item), '');
 
-// 3. Указываем тип для error. AxiosError<any> - это ошибка axios с любыми данными внутри
-const getIssueMessage = (error: AxiosError<any>, description: string) => {
+const getIssueMessage = (error: any, description: string) => {
   notification.error({
     message: 'Ошибка',
     description,
@@ -26,25 +23,23 @@ const getIssueMessage = (error: AxiosError<any>, description: string) => {
 
 // Настраиваем интерсептор для обработки ошибок
 axiosInstance.interceptors.response.use(
-  // 4. Указываем тип для response
-  (response: AxiosResponse) => response,
-  // 5. Указываем тип для error. Теперь можно безопасно обращаться к error.response
-  (error: AxiosError<any>) => {
+  (response) => response,
+  (error) => {
     // Обработка исключений 401 и 504
-    if (error.response?.status !== 401 && error.response?.status !== 504) {
-      if (error.message === 'Network Error' || !error.response) {
-        return getIssueMessage(error, 'Ошибка сети или сервер недоступен. Попробуйте позже.');
+    if (error?.response?.status !== 401 && error?.response?.status !== 504) {
+      if (error?.message === 'Network Error') {
+        return getIssueMessage(error, 'Ошибка на сервере, попробуйте позже');
       }
 
-      const data = error.response?.data;
-      let message = typeof data === 'string' ? data : '';
+      const data = error?.response?.data;
+      let message = typeof data === 'string' && data;
 
       if (Array.isArray(data)) {
         return getIssueMessage(error, reduceMessage(data));
       }
 
       if (Array.isArray(data?.data)) {
-        return getIssueMessage(error, reduceMessage(data.data));
+        return getIssueMessage(error, reduceMessage(data?.data));
       }
 
       if (data?.detail) {
@@ -53,7 +48,7 @@ axiosInstance.interceptors.response.use(
 
       if (data instanceof Object) {
         const description = Object.keys(data).reduce(
-          (acc, key) => (acc += `${key}: ${data[key]?.[0] || data[key]} `), // добавил пробел для читаемости
+          (acc, key) => (acc += `${key}: ${data[key]?.[0] || data[key]}`),
           ''
         );
         return getIssueMessage(error, description);
