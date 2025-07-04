@@ -1,4 +1,4 @@
-import axios from '..';
+import axiosInstance from '@/api'; 
 
 interface RegisterData {
   firstName: string;
@@ -9,7 +9,7 @@ interface RegisterData {
 
 export const registerUser = async (data: RegisterData) => {
   try {
-    const response = await axios.post('/auth/register', data);
+    const response = await axiosInstance.post('/auth/register', data);
     return response.data;
   } catch (error) {
     console.error('Registration failed', error);

@@ -1,9 +1,9 @@
-import axios from '..';
+import axiosInstance from '@/api'; 
 
 export const createRequest = async (coachId: string, experience: string, goals: string) => {
   try {
     const token = localStorage.getItem('token');
-    const response = await axios.post(
+    const response = await axiosInstance.post(
       '/trainer/request',
       {
         coachId,
