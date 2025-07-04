@@ -62,7 +62,7 @@ export const StudentsPage: React.FC = () => {
       });
 
       const studentDetails = await Promise.all(studentDetailsPromises);
-      setStudents(studentDetails.filter((student) => student !== null));
+      setStudents(studentDetails.filter((student: any) => student !== null));
     } catch (error) {
       console.error('Ошибка при получении списка учеников:', error);
       setStudents([]);

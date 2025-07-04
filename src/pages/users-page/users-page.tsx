@@ -58,7 +58,7 @@ export const UsersPage: React.FC = () => {
         const response = await axiosInstance.get<BackendUser[]>("/users");
 
         // ИСПРАВЛЕНИЕ: Создаем объекты, которые ПОЛНОСТЬЮ соответствуют типу User
-        const mappedUsers: User[] = response.data.map((user) => ({
+        const mappedUsers: User[] = response.data.map((user: any) => ({
           id: user._id,
           firstName: user.firstName,
           lastName: user.lastName,
