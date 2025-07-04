@@ -1,10 +1,12 @@
 export interface ScheduleEvent {
-    _id: string;
-    title: string;
-    type: 'individual_lesson' | 'group_lesson' | 'homework' | 'opening_study' | 'tournament_participation';
-    description?: string;
-    link?: string;
-    date: string;
-    status: 'scheduled' | 'completed' | 'missed';
-  }
+  _id: string;
+  title: string;
+  date: Date; 
+  type: 'individual_lesson' | 'group_lesson' | 'homework' | 'opening_study' | 'tournament_participation';
+  status: 'planned' | 'completed' | 'cancelled';
   
+  coach?: string;
+  student?: string;
+  description?: string;
+  link?: string;
+}

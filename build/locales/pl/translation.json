@@ -1,0 +1,348 @@
+{
+  "navbar": {
+    "chessSchool": "Szkoła Szachowa",
+    "home": "Strona główna",
+    "aboutUs": "O nas",
+    "achievements": "Osiągnięcia",
+    "students": "Uczniowie",
+    "users": "Użytkownicy",
+    "logout": "Wyloguj",
+    "loginOrRegister": "Logowanie / Rejestracja",
+    "profile": "Profil",
+    "challenges": "Stwórz wyzwanie",
+    "chessGame": "Szachownica",
+    "coaches": "Trenerzy",
+    "students-shedule": "Harmonogram ucznia"
+  },
+  "homePage": {
+    "hero": {
+      "title": "Opanuj grę. Opanuj swój umysł.",
+      "subtitle": "Dołącz do naszej międzynarodowej akademii szachowej i uwolnij swój potencjał z najlepszymi trenerami online na świecie.",
+      "start": "Znajdź trenera"
+    },
+    "why": {
+      "title": "Dlaczego warto uczyć się z nami szachów?",
+      "analytics": "Umiejętności analityczne",
+      "descAnalytics": "Rozwijaj krytyczne myślenie i przewidywanie. Naucz się analizować złożone pozycje, obliczać warianty i podejmować świadome decyzje pod presją.",
+      "memory": "Lepsza pamięć",
+      "descMemory": "Wzmacniaj pamięć, zapamiętując debiuty, wzorce taktyczne i teorię końcówek. Szachy to fantastyczny trening dla Twojego mózgu.",
+      "spirit": "Duch sportowy",
+      "descSpirit": "Kształtuj dyscyplinę, cierpliwość i odporność. Naucz się wygrywać z klasą i przegrywać z godnością, szanując przeciwnika i grę."
+    },
+    "howItWorks": {
+      "title": "Jak to działa",
+      "step1Title": "Wybierz trenera",
+      "step1Desc": "Przeglądaj profile naszych certyfikowanych trenerów. Czytaj opinie i znajdź idealnego mentora dla swojego poziomu i celów.",
+      "step2Title": "Zaplanuj lekcję",
+      "step2Desc": "Użyj naszego elastycznego systemu planowania, aby zarezerwować lekcję w dogodnym dla Ciebie terminie. Mamy trenerów w każdej strefie czasowej.",
+      "step3Title": "Zacznij naukę",
+      "step3Desc": "Połącz się z trenerem za pośrednictwem naszej interaktywnej klasy online, wyposażonej w czat wideo i cyfrową szachownicę."
+    },
+    "formats": {
+      "title": "Formaty nauki",
+      "individual": "Lekcje indywidualne",
+      "group": "Zajęcia grupowe",
+      "descIndividual": "Zdobądź pełną uwagę dzięki programowi nauczania dostosowanemu do Twoich mocnych i słabych stron oraz tempa nauki.",
+      "descGroup": "Dołącz do tętniącej życiem społeczności innych uczniów. Ćwicz, rywalizuj i rozwijajcie się razem w atmosferze współpracy.",
+      "schedule": "Zobacz trenerów",
+      "learnMore": "Zobacz zajęcia"
+    },
+    "footer": {
+      "name": "Szkoła Szachowa",
+      "desc": "Platforma online dla strategicznego rozwoju.",
+      "company": "Firma",
+      "about": "O nas",
+      "blog": "Blog",
+      "coaches": "Trenerzy",
+      "resources": "Zasoby",
+      "faq": "FAQ",
+      "contact": "Kontakt",
+      "legal": "Informacje prawne",
+      "privacy": "Prywatność",
+      "terms": "Warunki",
+      "copyright": "© {year} Szkoła Szachowa. Wszelkie prawa zastrzeżone."
+    },
+    "coaches": {
+      "title": "Nasi trenerzy",
+      "selectCoach": "Wybierz trenera"
+    }
+  },
+  "aboutPage": {
+    "mainTitle": "MIND ON BOARD — UMYSŁ NA SZACHOWNICY",
+    "phrases": [
+      "Trenuj umysł jak mistrz.",
+      "Znajduj silne ruchy — także w życiu.",
+      "Naucz się myśleć jak arcymistrz."
+    ],
+    "ctaStudent": "Zostań uczniem",
+    "ctaCoaches": "Zobacz trenerów",
+    "mission": {
+      "title": "Nasza misja",
+      "subtitle": "Koncentrujemy się na rozwijaniu krytycznego umysłu, odpornego charakteru i analitycznego sposobu myślenia.",
+      "points": [
+        "Analizuj ryzyko i korzyści",
+        "Myśl strategicznie i planuj z wyprzedzeniem",
+        "Naucz się wygrywać z klasą i przegrywać z godnością"
+      ]
+    },
+    "whyUs": {
+      "title": "Dlaczego my?",
+      "cards": [
+        {
+          "icon": "🧠",
+          "title": "Lekcje indywidualne",
+          "description": "Pełne skupienie trenera. Program dostosowany do Twojego stylu. Maksymalna efektywność."
+        },
+        {
+          "icon": "👥",
+          "title": "Zajęcia grupowe",
+          "description": "Energia grupy. Wymiana strategii. Przystępna cena."
+        },
+        {
+          "icon": "🏆",
+          "title": "Intensywne kursy turniejowe",
+          "description": "Analiza partii z arcymistrzami. Dogłębne studium debiutów i końcówek. Skupienie na wynikach i zwycięstwie."
+        }
+      ]
+    },
+    "howItWorks": {
+      "title": "Jak wygląda lekcja",
+      "steps": [
+        {
+          "step": "1. Lekcja próbna",
+          "desc": "Wybierz format i wypełnij krótki formularz."
+        },
+        {
+          "step": "2. Sesja online",
+          "desc": "Rozmowa wideo, analiza pozycji i trening mentalny."
+        },
+        {
+          "step": "3. Indywidualny plan",
+          "desc": "Trener ustala cele i strategię Twojego rozwoju."
+        }
+      ]
+    },
+    "testimonials": {
+      "title": "Opinie uczniów",
+      "reviews": [
+        {
+          "name": "Jan",
+          "quote": "Poprawiłem swoje myślenie nie tylko w szachach, ale i w życiu!"
+        },
+        {
+          "name": "Alina",
+          "quote": "Zajęcia pomogły mi wygrać turniej w szkole."
+        },
+        {
+          "name": "Maksymilian",
+          "quote": "Teraz jestem pewny swoich decyzji przy szachownicy."
+        }
+      ]
+    },
+    "ourCoaches": {
+      "title": "Poznaj naszych trenerów",
+      "coaches": [
+        {
+          "name": "GM Aleksiej",
+          "quote": "Strategia to nie tylko figury; to sposób myślenia."
+        },
+        {
+          "name": "IM Olga",
+          "quote": "Szachy uczą widzieć trzy kroki do przodu."
+        }
+      ],
+      "viewAll": "Zobacz wszystkich trenerów"
+    },
+    "finalSlogan": "MOB to początek. Szachy to narzędzie. Zwycięstwo to efekt uboczny."
+  },
+  "achievementsPage": {
+    "title": "Nasze osiągnięcia",
+    "congratulations": "Gratulacje dla wszystkich naszych mistrzów!"
+  },
+  "studentsPage": {
+    "studentsListTitle": "Lista uczniów",
+    "firstName": "Imię",
+    "lastName": "Nazwisko",
+    "email": "E-mail",
+    "actions": "Akcje",
+    "editSchedule": "Edytuj harmonogram",
+    "delete": "Usuń",
+    "studentDeletedSuccess": "Uczeń pomyślnie usunięty",
+    "studentDeletedError": "Nie udało się usunąć ucznia"
+  },
+  "usersPage": {
+    "title": "Zarządzanie użytkownikami",
+    "userList": "Lista wszystkich użytkowników",
+    "editUser": "Edytuj informacje o użytkowniku"
+  },
+  "errors": {
+    "login": "Nieprawidłowy e-mail lub hasło"
+  },
+  "auth": {
+    "welcome": "Witaj z powrotem!",
+    "enter_credentials": "Wprowadź swoje dane, aby uzyskać dostęp do konta",
+    "email": "E-mail",
+    "password": "Hasło",
+    "remember_me": "Zapamiętaj mnie",
+    "forgot_password": "Zapomniałeś hasła?",
+    "sign_in": "Zaloguj się",
+    "or_sign_in_with": "Lub zaloguj się za pomocą",
+    "no_account": "Nie masz konta?",
+    "sign_up": "Zarejestruj się",
+    "errors": {
+      "login": "Logowanie nie powiodło się. Sprawdź swój e-mail i hasło."
+    }
+  },
+  "verifyEmail": {
+    "pageTitle": "Zweryfikuj swój adres e-mail",
+    "greeting": "Drogi/a {{firstName}} {{lastName}},",
+    "sentTo": "Wysłaliśmy e-mail weryfikacyjny na adres {{email}}. Sprawdź swoją skrzynkę odbiorczą i kliknij w link, aby aktywować konto.",
+    "checkingStatus": "Sprawdzanie statusu weryfikacji...",
+    "alreadyVerified": "Adres e-mail został już zweryfikowany. Ten link nie jest już ważny.",
+    "checkError": "Nie udało się sprawdzić statusu weryfikacji. Spróbuj ponownie później.",
+    "resendSuccess": "E-mail weryfikacyjny został wysłany ponownie. Sprawdź swoją skrzynkę odbiorczą.",
+    "alreadyVerifiedSuccess": "Twój adres e-mail jest już zweryfikowany.",
+    "resendError": "Nie udało się wysłać ponownie e-maila weryfikacyjnego. Spróbuj ponownie później.",
+    "resendButton": "Wyślij e-mail weryfikacyjny ponownie",
+    "backToRegister": "Powrót do rejestracji"
+  },
+  "profile": {
+    "title": "Mój profil",
+    "subtitle": "Przeglądaj i zarządzaj szczegółami konta oraz statystykami.",
+    "registrationDate": "Członek od",
+    "editProfile": "Edytuj profil",
+    "logout": "Wyloguj",
+    "loading": "Ładowanie profilu...",
+    "errorLoadingProfile": "Nie udało się załadować profilu. Spróbuj ponownie.",
+    "playerStats": "Statystyki gier",
+    "bullet": "Bullet",
+    "blitz": "Blitz",
+    "rapid": "Rapid",
+    "classic": "Classic",
+    "rating": "Ranking",
+    "games": "Partie",
+    "win": "Wygrane",
+    "draw": "Remisy",
+    "loss": "Porażki"
+  },
+  "coaches": {
+    "title": "Nasi trenerzy",
+    "subtitle": "Znajdź idealnego mentora, który poprowadzi Cię w Twojej szachowej podróży.",
+    "searchByName": "Szukaj po imieniu...",
+    "clearFilter": "Wyczyść",
+    "experience": "Doświadczenie",
+    "price": "Cena za godzinę",
+    "viewProfile": "Zobacz profil",
+    "fetchError": "Nie udało się załadować listy trenerów.",
+    "submitError": "Nie udało się wysłać prośby. Spróbuj ponownie.",
+    "updateFailed": "Nie udało się zaktualizować profilu.",
+    "successMessage": "Twoja prośba została pomyślnie wysłana!",
+    "updated": "Profil został pomyślnie zaktualizowany!",
+    "profileOf": "Profil {coachName}",
+    "bio": "O mnie",
+    "services": "Usługi",
+    "requestTitle": "Wyślij prośbę do {coachName}",
+    "yourName": "Twoje imię",
+    "yourEmail": "Twój e-mail",
+    "level": "Twój obecny poziom",
+    "levelBeginner": "Początkujący",
+    "levelIntermediate": "Średniozaawansowany",
+    "levelAdvanced": "Zaawansowany",
+    "goals": "Jakie są Twoje cele?",
+    "sendRequest": "Wyślij prośbę",
+    "close": "Zamknij",
+    "editProfile": "Edytuj profil",
+    "save": "Zapisz zmiany",
+    "cancel": "Anuluj"
+  },
+  "profile_edit": {
+    "editTitle": "Edytuj profil",
+    "uploadAvatar": "Wgraj zdjęcie",
+    "firstName": "Imię",
+    "lastName": "Nazwisko",
+    "email": "E-mail",
+    "changePassword": "Zmień hasło",
+    "currentPassword": "Obecne hasło",
+    "newPassword": "Nowe hasło",
+    "confirmPassword": "Potwierdź nowe hasło",
+    "updated": "Profil zaktualizowano pomyślnie",
+    "passwordChanged": "Hasło zmieniono pomyślnie",
+    "updateFailed": "Nie udało się zaktualizować profilu",
+    "passwordMismatch": "Hasła nie pasują lub brakuje obecnego hasła",
+    "cancel": "Anuluj",
+    "save": "Zapisz"
+  },
+  "register": {
+    "title": "Rejestracja",
+    "name": "Imię",
+    "lastName": "Nazwisko",
+    "email": "E-mail",
+    "password": "Hasło",
+    "submit": "Zarejestruj się",
+    "haveAccount": "Masz już konto?",
+    "login": "Zaloguj się",
+    "placeholder": {
+      "name": "Wpisz swoje imię",
+      "lastName": "Wpisz swoje nazwisko",
+      "email": "Wpisz swój e-mail",
+      "password": "Wpisz swoje hasło"
+    },
+    "brand": "MOB - Mind Over Board",
+    "error": {
+      "title": "Błąd rejestracji",
+      "description": "Proszę spróbować ponownie."
+    }
+  },
+  "schedule": {
+    "myScheduleTitle": "Mój harmonogram",
+    "myScheduleSubtitle": "Tutaj możesz zobaczyć wszystkie nadchodzące lekcje i zadania.",
+    "editScheduleTitle": "Harmonogram dla {studentName}",
+    "eventDetails": "Szczegóły wydarzenia",
+    "addEvent": "Dodaj wydarzenie",
+    "updateEvent": "Zaktualizuj wydarzenie",
+    "deleteEvent": "Usuń wydarzenie",
+    "close": "Zamknij",
+    "fetchError": "Nie udało się załadować harmonogramu.",
+    "createSuccess": "Wydarzenie dodane pomyślnie!",
+    "createError": "Nie udało się utworzyć wydarzenia. Sprawdź dane.",
+    "deleteSuccess": "Wydarzenie usunięte!",
+    "deleteError": "Nie udało się usunąć wydarzenia.",
+    "fieldRequired": "To pole jest wymagane",
+    "form_title": "Tytuł*",
+    "form_type": "Typ*",
+    "form_description": "Opis",
+    "form_link": "Link (np. do rozmowy wideo)",
+    "form_date": "Data i godzina*",
+    "type_individual": "Lekcja indywidualna",
+    "type_group": "Lekcja grupowa",
+    "type_homework": "Zadanie domowe",
+    "type_opening": "Nauka debiutów",
+    "type_tournament": "Turniej"
+  },
+  "chessGame": {
+    "title": "Szachownica analityczna",
+    "subtitle": "Analizuj swoje partie, badaj warianty i znajduj najlepsze ruchy.",
+    "reset": "Nowa gra",
+    "loadPgn": "Wczytaj PGN",
+    "pgnInputLabel": "Wklej PGN tutaj",
+    "pgnLoadSuccess": "Partia pomyślnie wczytana z PGN.",
+    "pgnLoadError": "Błąd wczytywania. Sprawdź format PGN.",
+    "resetSuccess": "Gra została zresetowana.",
+    "status": "Status gry",
+    "history": "Historia ruchów",
+    "analysis": {
+      "title": "Analiza silnika",
+      "button": "Analizuj pozycję",
+      "analyzing": "Analizowanie...",
+      "evaluation": "Ocena",
+      "bestMove": "Najlepszy ruch"
+    },
+    "game_over": {
+      "checkmate": "Szach-mat! Wygrywa {winner}.",
+      "stalemate": "Pat! Gra zakończona remisem.",
+      "draw": "Remis!",
+      "threefold_repetition": "Remis przez trzykrotne powtórzenie pozycji.",
+      "insufficient_material": "Remis z powodu niewystarczającego materiału."
+    }
+  }
+}
