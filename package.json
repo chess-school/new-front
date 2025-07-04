@@ -20,6 +20,7 @@
     "ajv": "^8.17.1",
     "ajv-keywords": "^5.1.0",
     "antd": "^5.23.1",
+    "axios": "^1.10.0",
     "chess.js": "^1.0.0-beta.8",
     "dayjs": "^1.11.13",
     "dayjs-plugin-utc": "^0.1.2",
