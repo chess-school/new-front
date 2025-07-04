@@ -1,6 +1,6 @@
 import React from 'react';
 import { AuthForm } from './auth-form';
-import './auth-page.css';
+import './styles.scss';
 
 export const AuthPage: React.FC = () => {
     return (

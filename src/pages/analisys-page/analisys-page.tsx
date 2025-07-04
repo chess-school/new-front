@@ -12,7 +12,7 @@ interface Variation {
 }
 export const AnalysisPage: React.FC = () => {
     const location = useLocation();
-    const { history: initialHistory } = location.state as { history: string[] };
+    const initialHistory = (location.state as { history?: string[] })?.history ?? [];
   
     const [chess] = useState(new Chess());
     const [fen, setFen] = useState(chess.fen()); // Добавляем состояние для FEN

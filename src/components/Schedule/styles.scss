@@ -1,0 +1,84 @@
+/* src/styles/Calendar.css */
+
+/* General container */
+.rbc-calendar {
+  color: white;
+}
+
+/* Toolbar (header with navigation) */
+.rbc-toolbar {
+  margin-bottom: 20px;
+}
+.rbc-toolbar .rbc-toolbar-label {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+.rbc-btn-group button {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  transition: all 0.2s ease;
+}
+.rbc-btn-group button:hover,
+.rbc-btn-group button.rbc-active {
+  background: #ffd700 !important;
+  color: black !important;
+  border-color: #ffd700 !important;
+}
+
+/* Calendar grid */
+.rbc-month-view,
+.rbc-time-view,
+.rbc-agenda-view {
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 8px;
+}
+
+/* Headers (days of the week, times) */
+.rbc-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px 5px;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Day cells */
+.rbc-day-bg {
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+.rbc-day-bg:first-child {
+  border-left: none;
+}
+.rbc-off-range-bg {
+  background: rgba(0, 0, 0, 0.2);
+}
+.rbc-today {
+  background-color: rgba(255, 215, 0, 0.15);
+}
+.rbc-date-cell {
+  padding: 5px;
+  text-align: right;
+  color: rgba(255, 255, 255, 0.5);
+}
+.rbc-off-range .rbc-date-cell {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+/* Events */
+.rbc-event {
+  background-color: #3f3f3f !important;
+  border: 1px solid #555 !important;
+  border-radius: 4px;
+  padding: 4px 8px;
+  color: white !important;
+}
+.rbc-event.rbc-selected {
+  background-color: #ffd700 !important;
+  color: black !important;
+}
+
+/* Slot selection */
+.rbc-slot-selection {
+  background-color: rgba(255, 215, 0, 0.4) !important;
+}

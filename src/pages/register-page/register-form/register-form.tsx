@@ -1,146 +1,102 @@
 import React from 'react';
-import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import { useForm, SubmitHandler, Controller, useFormState } from 'react-hook-form';
+import Form from 'antd/es/form';
+import Input from 'antd/es/input';
+import Button from 'antd/es/button';
+import Typography from 'antd/es/typography';
 import { useNavigate } from 'react-router-dom';
-import { registerUser } from '@/api/register/register'
-import './register-form.css';
-import { loginValidation, passwordValidation, nameValidation } from './validation';
-
-interface IRegisterForm {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-}
+import { notification } from 'antd';
+import './styles.scss';
+import { registerUser } from '@/api/register/register';
+import { loginValidation, passwordValidation, nameValidation } from '@/shared/validation/validation';
+import { FaChessKing } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 
 export const RegisterForm: React.FC = () => {
-  const { handleSubmit, control } = useForm<IRegisterForm>({
-    defaultValues: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      password: '',
-    },
-  });
-  const { errors } = useFormState({ control });
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
-  const onSubmit: SubmitHandler<IRegisterForm> = async (data) => {
+  const onFinish = async (values: any) => {
     try {
-        const response = await registerUser(data);
-        
-        navigate(`/verify-email?token=${response.token}`, {
-            state: {
-                firstName: response.firstName,
-                lastName: response.lastName,
-                email: response.email,
-            },
-        });
-    } catch (error) {
-        alert('Registration failed. Please try again.');
+      const response = await registerUser(values);
+      navigate(`/verify-email?token=${response.token}`, {
+        state: {
+          firstName: response.firstName,
+          lastName: response.lastName,
+          email: response.email,
+        },
+      });
+    } catch {
+      notification.error({
+        message: t('register.error.title'),
+        description: t('register.error.description'),
+      });
     }
-};
-
+  };
 
   return (
-    <div className="register-form">
-      <Typography variant="h4" component="div">
-        Регистрация
-      </Typography>
-      <form className="register-form__form" onSubmit={handleSubmit(onSubmit)}>
-        <Controller
-          control={control}
-          name="firstName"
-          rules={nameValidation}
-          render={({ field }) => (
-            <TextField
-              label="Имя"
-              onChange={(e) => field.onChange(e)}
-              value={field.value}
-              fullWidth
-              size="small"
-              margin="normal"
-              error={!!errors.firstName?.message}
-              helperText={errors?.firstName?.message}
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="lastName"
-          rules={nameValidation}
-          render={({ field }) => (
-            <TextField
-              label="Фамилия"
-              onChange={(e) => field.onChange(e)}
-              value={field.value}
-              fullWidth
-              size="small"
-              margin="normal"
-              error={!!errors.lastName?.message}
-              helperText={errors?.lastName?.message}
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="email"
-          rules={loginValidation}
-          render={({ field }) => (
-            <TextField
-              label="Email"
-              onChange={(e) => field.onChange(e)}
-              value={field.value}
-              fullWidth
-              size="small"
-              margin="normal"
-              error={!!errors.email?.message}
-              helperText={errors?.email?.message}
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="password"
-          rules={passwordValidation}
-          render={({ field }) => (
-            <TextField
-              label="Пароль"
-              onChange={(e) => field.onChange(e)}
-              value={field.value}
-              fullWidth
-              size="small"
-              margin="normal"
-              type="password"
-              error={!!errors.password?.message}
-              helperText={errors?.password?.message}
-            />
-          )}
-        />
-        <Button
-          type="submit"
-          variant="contained"
-          fullWidth
-          disableElevation
-          sx={{ marginTop: 2 }}
+    <div className="register-page">
+      <div className="register-form">
+        <div className="register-form__logo" onClick={() => navigate('/')}>
+          <FaChessKing className="register-form__icon" />
+          <Typography.Title level={4} className="register-form__brand">
+          {t('register.brand')}
+          </Typography.Title>
+        </div>
+
+        <Typography.Title level={3} className="register-form__title">{t('register.title')}</Typography.Title>
+
+        <Form
+          name="register"
+          onFinish={onFinish}
+          layout="vertical"
+          className="register-form__form"
+          size="large"
         >
-          Зарегистрироваться
-        </Button>
-      </form>
-      <div className="auth-form__footer">
-        <Typography variant="subtitle1" component="span">
-          Already have an account{' '}
-        </Typography>
-        <Typography
-          variant="subtitle1"
-          component="span"
-          sx={{ color: 'blue', cursor: 'pointer' }}
-          onClick={() => navigate('/login')} 
-        >
-          login
-        </Typography>
+          <Form.Item
+            label={<span className="register-form__label">{t('register.name')}</span>}
+            name="firstName"
+            rules={nameValidation}
+          >
+            <Input placeholder={t('register.placeholder.name')} />
+          </Form.Item>
+
+          <Form.Item
+            label={<span className="register-form__label">{t('register.lastName')}</span>}
+            name="lastName"
+            rules={nameValidation}
+          >
+            <Input placeholder={t('register.placeholder.lastName')} />
+          </Form.Item>
+
+          <Form.Item
+            label={<span className="register-form__label">{t('register.email')}</span>}
+            name="email"
+            rules={loginValidation}
+          >
+            <Input placeholder={t('register.placeholder.email')} />
+          </Form.Item>
+
+          <Form.Item
+            label={<span className="register-form__label">{t('register.password')}</span>}
+            name="password"
+            rules={passwordValidation}
+          >
+            <Input.Password placeholder={t('register.placeholder.password')} />
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit" className="register-form__button" block>
+              {t('register.submit')}
+            </Button>
+          </Form.Item>
+        </Form>
+
+        <div className="register-form__footer register-form__label">
+          {t('register.haveAccount')}{' '}
+          <a className="register-form__signup-link" onClick={() => navigate('/login')}>
+            {t('register.login')}
+          </a>
+        </div>
       </div>
     </div>
   );
