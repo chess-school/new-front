@@ -12,7 +12,7 @@ import { UsersPage } from '@/pages/users-page/users-page';
 import { StudentsPage } from '@/pages/students-page/students-page';
 import { AnalysisPage } from '@/features/Chess/pages/AnalysisPage';
 // import AnalysisPage from '@/pages/analisys-page/analisys-page';
-import ChallengesPage from '@/pages/challenges-page/challenges-page';
+// import ChallengesPage from '@/pages/challenges-page/challenges-page';
 import PuzzleEditor from './components/PuzzleEditor/PuzzleEditor';
 import { VerifyEmailPage } from './pages/verify-email-page/verify-email-page';
 import { CoachesPage } from './pages/coaches-page/coaches-page';
@@ -36,7 +36,7 @@ function MainLayout() {
         {/* <Route path="/chess" element={<ChessGame></ChessGame>} /> */}
         <Route path="/analysis" element={<AnalysisPage />} />
         {/* <Route path="/chess" element={<ChessProvider><GamePage /></ChessProvider>} /> */}
-        <Route path="/challenges" element={<ChallengesPage/>}/>
+        {/* <Route path="/challenges" element={<ChallengesPage/>}/> */}
         <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/coaches" element={<CoachesPage />} />
 
