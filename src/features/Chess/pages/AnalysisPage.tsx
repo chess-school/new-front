@@ -20,54 +20,30 @@ import SkipNextIcon from '@mui/icons-material/SkipNext';
 
 export const AnalysisPage: React.FC = () => {
     const { t } = useTranslation();
-    
-    // Базовая логика игры из хука
     const { fen, history, currentMoveIndex, moveOptions, actions } = useChessGame();
 
-    // Преобразуем историю для отображения с аннотациями (оценками)
-    const [annotatedHistory, setAnnotatedHistory] = useState<AnnotatedMove[]>(history.map(san => ({ san })));
-    useEffect(() => {
-        setAnnotatedHistory(history.map(san => ({ san })));
-    }, [history]);
-
-    // Состояния, специфичные для страницы анализа
+    // Состояния для анализа
+    const [annotatedHistory, setAnnotatedHistory] = useState<AnnotatedMove[]>([]);
     const [inputPgn, setInputPgn] = useState('');
     const [engineWorker, setEngineWorker] = useState<Worker | null>(null);
     const [isLiveAnalyzing, setIsLiveAnalyzing] = useState(false);
     const [liveEvaluation, setLiveEvaluation] = useState<string | null>(null);
     const [liveDepth, setLiveDepth] = useState(0);
-    const [livePV, setLivePV] = useState(''); // Хранит raw UCI-строку
+    const [livePV, setLivePV] = useState(''); // Теперь это будет отформатированная SAN-строка
     const [isEngineOn, setIsEngineOn] = useState(false);
-    
-    // Новые состояния для интерактивности линии анализа
-    const [previewFen, setPreviewFen] = useState<string | null>(null);
-    const [highlightSquares, setHighlightSquares] = useState<{ [key: string]: React.CSSProperties }>({});
 
     const fenRef = useRef(fen);
     useEffect(() => { fenRef.current = fen; }, [fen]);
 
-    // --- ОБНОВЛЕННЫЕ ФУНКЦИИ-ДЕЙСТВИЯ ---
-
-    const clearPreview = () => {
-        setPreviewFen(null);
-        setHighlightSquares({});
-    };
-
+    useEffect(() => {
+        setAnnotatedHistory(history.map(san => ({ san })));
+    }, [history]);
+    
+    // --- Функции-обертки для действий из хука ---
     const resetAnalysisData = () => {
         setLiveEvaluation(null);
         setLiveDepth(0);
         setLivePV('');
-        clearPreview();
-    };
-
-    const handleMoveWithReset = (source: Square, target: Square) => {
-        clearPreview();
-        return actions.handleMove(source, target);
-    };
-
-    const handleGoToMove = (moveIndex: number) => {
-        clearPreview();
-        actions.goToMove(moveIndex);
     };
 
     const handleLoadPgn = () => {
@@ -94,24 +70,12 @@ export const AnalysisPage: React.FC = () => {
         });
     };
 
-    // --- НОВЫЕ ОБРАБОТЧИКИ ДЛЯ ИНТЕРАКТИВНОЙ ЛИНИИ АНАЛИЗА ---
-
-    const handleVariationMoveHover = (from: Square, to: Square) => {
-        setHighlightSquares({
-            [from]: { backgroundColor: 'rgba(255, 255, 0, 0.4)' },
-            [to]: { backgroundColor: 'rgba(255, 255, 0, 0.4)' },
-        });
-    };
-    
-    const handleVariationMoveLeave = () => {
-        setHighlightSquares({});
+    const handleGoToMove = (moveIndex: number) => {
+        actions.goToMove(moveIndex);
+        resetAnalysisData();
     };
 
-    const handleVariationMoveClick = (fen: string) => {
-        setPreviewFen(fen); // Устанавливаем FEN для предпросмотра
-    };
-
-    // --- ЛОГИКА АНАЛИЗА (LIVE) ---
+    // --- Логика анализа ---
 
     const liveAnalyzePosition = useCallback(() => {
         if (engineWorker && !isLiveAnalyzing) {
@@ -130,12 +94,30 @@ export const AnalysisPage: React.FC = () => {
             setIsLiveAnalyzing(false);
         }
     }, [fen, isEngineOn, liveAnalyzePosition, engineWorker]);
-
+    
     const handleToggleEngine = (event: React.ChangeEvent<HTMLInputElement>) => {
         setIsEngineOn(event.target.checked);
     };
 
-    // --- ГЛАВНЫЙ useEffect ДЛЯ ИНИЦИАЛИЗАЦИИ WORKER'А ---
+    // ВОЗВРАЩАЕМ ЭТУ ФУНКЦИЮ
+    const formatUCIToSAN = useCallback((uciLine: string, startFen: string) => {
+        try {
+            const tempGame = new Chess(startFen);
+            const moves = uciLine.split(' ');
+            let sanLine = '';
+            for (const uci of moves) {
+                const moveResult = tempGame.move({ from: uci.substring(0, 2) as Square, to: uci.substring(2, 4) as Square, promotion: uci.length === 5 ? uci.substring(4) : undefined });
+                if (moveResult) {
+                    if (tempGame.turn() === 'b') { // Ход только что сделали белые
+                        sanLine += `${tempGame.moveNumber()}. ${moveResult.san} `;
+                    } else {
+                        sanLine += `${moveResult.san} `;
+                    }
+                } else { break; }
+            }
+            return sanLine.trim();
+        } catch (e) { return uciLine; }
+    }, []);
 
     useEffect(() => {
         const worker = new Worker('/workers/stockfish.js');
@@ -160,14 +142,16 @@ export const AnalysisPage: React.FC = () => {
                     setLiveEvaluation(evalString);
                 }
                 if (pvMatch) {
-                    setLivePV(pvMatch[1]); // Сохраняем raw UCI-строку
+                    // Используем formatUCIToSAN для преобразования
+                    const formattedPV = formatUCIToSAN(pvMatch[1], fenRef.current);
+                    setLivePV(formattedPV);
                 }
             }
             if (message.startsWith('bestmove')) { setIsLiveAnalyzing(false); }
         };
 
         return () => worker.terminate();
-    }, []); // Запускаем только один раз при монтировании компонента
+    }, [formatUCIToSAN]);
 
     return (
         <Box sx={{ bgcolor: '#0e0e0e', color: 'white', minHeight: '100vh', py: { xs: 2, md: 5 } }}>
@@ -180,10 +164,10 @@ export const AnalysisPage: React.FC = () => {
                     <Grid item xs={12} md={7}>
                         <Paper sx={{ p: 2, bgcolor: '#1c1c1c', borderRadius: 4, aspectRatio: '1 / 1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <ChessBoard
-                                fen={previewFen || fen}
-                                onPieceDrop={handleMoveWithReset}
+                                fen={fen}
+                                onPieceDrop={actions.handleMove}
                                 onSquareClick={actions.onSquareClick}
-                                squareStyles={{ ...moveOptions, ...highlightSquares }}
+                                squareStyles={moveOptions}
                             />
                         </Paper>
                     </Grid>
@@ -197,10 +181,6 @@ export const AnalysisPage: React.FC = () => {
                                   isAnalyzing={isLiveAnalyzing}
                                   isEngineOn={isEngineOn}
                                   onToggleEngine={handleToggleEngine}
-                                  startFenForPV={fen}
-                                  onVariationMoveHover={handleVariationMoveHover}
-                                  onVariationMoveLeave={handleVariationMoveLeave}
-                                  onVariationMoveClick={handleVariationMoveClick}
                                 />
                                 <Box sx={{ flexGrow: 1, height: '250px' }}>
                                     <MoveHistory history={annotatedHistory} currentMoveIndex={currentMoveIndex} onMoveClick={handleGoToMove} />

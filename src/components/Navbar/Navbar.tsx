@@ -28,13 +28,12 @@ import {
   CloseOutlined
 } from '@ant-design/icons';
 import './styles.scss';
-import { Notifications } from '../Notifications/Notification';
+import { Notifications } from '@/components/Notifications/Notification';
 
 export const Navbar: React.FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation();
-  // const { mode, toggleTheme } = useTheme();
 
   const userString = localStorage.getItem('user');
   let user = null;
