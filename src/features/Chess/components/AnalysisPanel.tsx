@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Paper, Stack, Typography, Divider, Box, Switch, FormControlLabel } from '@mui/material';
-import { VariationLine } from './variationLine'; // <-- Импортируем новый компонент
+import { VariationLine } from './VariationLine'; // <-- Импортируем новый компонент
 import { Square } from 'chess.js';
 
 interface AnalysisPanelProps {
@@ -20,7 +20,6 @@ interface AnalysisPanelProps {
 }
 
 export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
-  evaluation,
   depth,
   principalVariation,
   isAnalyzing,

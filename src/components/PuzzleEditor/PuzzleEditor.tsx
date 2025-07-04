@@ -77,7 +77,7 @@ const PuzzleEditor: React.FC<PuzzleEditorProps> = ({ initialFen }) => {
   
 
   const updateCastlingRights = (
-    rights: string,
+    _rights: string,
     checked: boolean,
     flag: 'K' | 'Q' | 'k' | 'q'
   ) => {

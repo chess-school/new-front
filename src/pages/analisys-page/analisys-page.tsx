@@ -16,7 +16,7 @@ export const AnalysisPage: React.FC = () => {
   
     const [chess] = useState(new Chess());
     const [fen, setFen] = useState(chess.fen()); // Добавляем состояние для FEN
-    const [history, setHistory] = useState(initialHistory); // Основная линия ходов
+    const [history] = useState(initialHistory); // Основная линия ходов
     const [variations, setVariations] = useState<Variation[]>([]); // Список подвариантов
     const [currentMoveIndex, setCurrentMoveIndex] = useState(initialHistory.length); // Последний ход
     const [evaluations, setEvaluations] = useState<number[]>([]);
