@@ -1,4 +1,4 @@
-import axios from '..';
+import axiosInstance from '@/api'; 
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('token');
@@ -10,7 +10,7 @@ const getAuthHeaders = () => {
 };
 
 export const deleteNotification = async (notificationId: string) => {
-  const response = await axios.delete(
+  const response = await axiosInstance.delete(
     `/notifications?notification_id=${notificationId}`,
     getAuthHeaders()
   );

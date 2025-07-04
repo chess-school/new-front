@@ -1,6 +1,6 @@
-import axios from '..';
+import axiosInstance from '@/api'; 
 
 export const getCoaches = async () => {
-  const response = await axios.get('/coaches');
+  const response = await axiosInstance.get('/coaches');
   return response.data;
 };

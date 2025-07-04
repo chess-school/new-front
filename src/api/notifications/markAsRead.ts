@@ -1,4 +1,4 @@
-import axios from '..';
+import axiosInstance from '@/api'; 
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('token');
@@ -10,7 +10,7 @@ const getAuthHeaders = () => {
 };
 
 export const markAsRead = async (notificationId: string) => {
-  const response = await axios.patch(
+  const response = await axiosInstance.patch(
     `/notifications?notification_id=${notificationId}`,
     {},
     getAuthHeaders()

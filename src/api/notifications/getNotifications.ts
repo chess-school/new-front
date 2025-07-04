@@ -1,4 +1,4 @@
-import axios from '..';
+import axiosInstance from '@/api'; 
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('token');
@@ -10,6 +10,6 @@ const getAuthHeaders = () => {
 };
 
 export const getNotifications = async () => {
-  const response = await axios.get('/notifications', getAuthHeaders());
+  const response = await axiosInstance.get('/notifications', getAuthHeaders());
   return response.data;
 };

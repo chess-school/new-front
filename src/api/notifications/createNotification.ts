@@ -1,4 +1,4 @@
-import axios from '..';
+import axiosInstance from '@/api'; 
 
 export const createNotification = async (data: {
   recipient: string;
@@ -12,7 +12,7 @@ export const createNotification = async (data: {
   }
 
   try {
-    const response = await axios.post('/notifications', data, {
+    const response = await axiosInstance.post('/notifications', data, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
