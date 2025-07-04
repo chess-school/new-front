@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Paper, Button } from '@mui/material';
 import axios from 'axios';
+import { useTranslation } from "react-i18next";
 import EditScheduleModal from '../../components/Schedule/EditScheduleModal';
 
 interface Student {
@@ -11,6 +12,7 @@ interface Student {
 }
 
 export const StudentsPage: React.FC = () => {
+  const { t } = useTranslation();
   const [students, setStudents] = useState<Student[]>([]);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [openModal, setOpenModal] = useState(false);
@@ -80,11 +82,11 @@ export const StudentsPage: React.FC = () => {
           Authorization: `Bearer ${token}`
         }
       });
-      alert('Ученик успешно удалён');
+      alert(t('studentsPage.studentDeletedSuccess'));
       fetchStudents(); // Обновляем список учеников после удаления
     } catch (error) {
       console.error('Ошибка при удалении ученика:', error);
-      alert('Не удалось удалить ученика');
+      alert('studentsPage.studentDeletedError');
     }
   };
 
@@ -95,16 +97,16 @@ export const StudentsPage: React.FC = () => {
   return (
     <Container>
       <Typography variant="h4" gutterBottom>
-        Список учеников
+        {t("studentsPage.studentsListTitle")}
       </Typography>
       <Paper>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Имя</TableCell>
-              <TableCell>Фамилия</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Действия</TableCell>
+              <TableCell>{t("studentsPage.firstName")}</TableCell>
+              <TableCell>{t("studentsPage.lastName")}</TableCell>
+              <TableCell>{t("studentsPage.email")}</TableCell>
+              <TableCell>{t("studentsPage.actions")}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -120,14 +122,14 @@ export const StudentsPage: React.FC = () => {
                     onClick={() => handleEditSchedule(student)}
                     style={{ marginRight: 10 }}
                   >
-                    Редактировать план
+                    {t("studentsPage.editSchedule")}
                   </Button>
                   <Button
                     variant="contained"
                     color="secondary"
                     onClick={() => handleRemoveStudent(student._id)}
                   >
-                    Удалить
+                    {t("studentsPage.delete")}
                   </Button>
                 </TableCell>
               </TableRow>

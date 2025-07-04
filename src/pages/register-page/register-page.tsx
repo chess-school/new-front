@@ -1,6 +1,6 @@
 import React from 'react';
 import { RegisterForm } from './register-form';
-import './register-page.css';
+import './styles.scss';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
 
@@ -10,13 +10,13 @@ export const RegisterPage: React.FC = () => {
 
   return (
     <div className="register-page">
-       <Button 
+       {/* <Button 
         variant="text" 
         onClick={() => navigate('/')} 
         sx={{ position: 'absolute', top: 16, left: 16 }}
       >
         Назад
-      </Button>
+      </Button> */}
 
       <RegisterForm />
     </div>

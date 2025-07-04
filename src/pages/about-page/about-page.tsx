@@ -1,228 +1,230 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Container,
-  Typography,
-  Grid,
-  Paper,
-  Divider,
-  Button,
-  useTheme,
-  Stack,
-} from '@mui/material';
+import React, { useEffect, useState, useMemo } from 'react';
+import { Box, Container, Typography, Grid, Paper, Button, Stack, Divider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { CSSTransition, SwitchTransition } from 'react-transition-group';
 
-const phrases = [
-  'Тренируй мышление, как чемпион.',
-  'Находи сильные ходы — и в жизни.',
-  'Учись думать, как гроссмейстер.',
-];
+// Иконки
+import SchoolIcon from '@mui/icons-material/School';
+import GroupIcon from '@mui/icons-material/Group';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import TrackChangesIcon from '@mui/icons-material/TrackChanges';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
-const testimonials = [
-  { name: 'Иван', quote: 'Улучшил мышление не только в шахматах, но и в жизни!' },
-  { name: 'Алина', quote: 'Занятия помогли мне выиграть турнир в школе.' },
-  { name: 'Максим', quote: 'Теперь я уверен в своих решениях за доской.' },
-];
+// Импорт CSS для анимации (убедитесь, что путь правильный)
+import './styles.scss';
 
-const coaches = [
-  { name: 'GM Алексей', quote: '“Стратегия — это не только фигуры, это мышление.”' },
-  { name: 'IM Ольга', quote: '“Шахматы учат видеть на 3 шага вперёд.”' },
-];
+// Типизация для удобства
+interface Testimonial { name: string; quote: string; }
+interface CoachTeaser { name: string; quote: string; }
+interface WhyUsCard { icon: string; title: string; description: string; }
+interface HowItWorksStep { step: string; desc: string; }
 
 export const About: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
-  const [currentPhrase, setCurrentPhrase] = useState(0);
-  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+
+  // Используем useMemo для безопасного получения и типизации данных из i18next
+  const phrases = useMemo(
+    () => (t('aboutPage.phrases', { returnObjects: true }) as string[]) || [],
+    [t]
+  );
+  
+  const testimonials = useMemo(
+    () => (t('aboutPage.testimonials.reviews', { returnObjects: true }) as Testimonial[]) || [],
+    [t]
+  );
+
+  const coaches = useMemo(
+    () => (t('aboutPage.ourCoaches.coaches', { returnObjects: true }) as CoachTeaser[]) || [],
+    [t]
+  );
+
+  const whyUsCards = useMemo(
+    () => (t('aboutPage.whyUs.cards', { returnObjects: true }) as WhyUsCard[]) || [],
+    [t]
+  );
+  
+  const howItWorksSteps = useMemo(
+    () => (t('aboutPage.howItWorks.steps', { returnObjects: true }) as HowItWorksStep[]) || [],
+    [t]
+  );
+  
+  const missionPoints = useMemo(
+    () => (t('aboutPage.mission.points', { returnObjects: true }) as string[]) || [],
+    [t]
+  );
+
+
+  const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
+  const [currentTestimonialIndex, setCurrentTestimonialIndex] = useState(0);
 
   useEffect(() => {
+    // Эта проверка важна, чтобы избежать ошибок, если данные еще не загрузились
+    if (phrases.length === 0 || testimonials.length === 0) return;
+
     const phraseInterval = setInterval(() => {
-      setCurrentPhrase((prev) => (prev + 1) % phrases.length);
-    }, 3500);
+      setCurrentPhraseIndex((prev) => (prev + 1) % phrases.length);
+    }, 4000);
     const testimonialInterval = setInterval(() => {
-      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+      setCurrentTestimonialIndex((prev) => (prev + 1) % testimonials.length);
     }, 5000);
+    
     return () => {
       clearInterval(phraseInterval);
       clearInterval(testimonialInterval);
     };
-  }, []);
+  }, [phrases.length, testimonials.length]);
 
   return (
-    <Box sx={{ position: 'relative', overflow: 'hidden' }}>
-      <Box
-        sx={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage:
-            'linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url("/images/chess-cinematic-lg.jpg")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          zIndex: 0,
-        }}
-      />
-      <Box sx={{ position: 'relative', color: 'white', py: 14, px: 2, zIndex: 1 }}>
-        <Container maxWidth="lg">
-          <Typography variant="h3" fontWeight="bold" align="center" gutterBottom sx={{ textTransform: 'uppercase' }}>
-            MIND ON BOARD — УМ НА ДОСКЕ
+    <Box sx={{ bgcolor: '#0e0e0e', color: 'white' }}>
+      {/* Hero Section */}
+      <Box sx={{
+        position: 'relative',
+        py: { xs: 10, md: 15 },
+        textAlign: 'center',
+        backgroundImage: 'linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url("/images/chess-cinematic-lg.jpg")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+      }}>
+        <Container maxWidth="md">
+          <Typography variant="h2" component="h1" fontWeight="bold" sx={{ textTransform: 'uppercase', letterSpacing: '2px' }}>
+            {t('aboutPage.mainTitle')}
           </Typography>
-
-          <Typography
-            variant="h6"
-            align="center"
-            sx={{ color: '#FFD700', fontStyle: 'italic', mt: 2, mb: 4 }}
-          >
-            {phrases[currentPhrase]}
-          </Typography>
-
-          <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="center" spacing={2} mb={8}>
-            <Button variant="contained" onClick={() => navigate('/register')} sx={{
-              backgroundColor: '#FFD700', color: '#000', fontWeight: 'bold', px: 4, py: 1.5,
-              borderRadius: '30px', '&:hover': { backgroundColor: '#FFC107' }
-            }}>
-              Стать учеником
+          <Box sx={{ height: '2.5em', my: 2 }}>
+            <SwitchTransition mode="out-in">
+              <CSSTransition key={currentPhraseIndex} timeout={300} classNames="fade">
+                <Typography variant="h5" sx={{ color: '#FFD700', fontStyle: 'italic' }}>
+                  {phrases.length > 0 ? phrases[currentPhraseIndex] : ''}
+                </Typography>
+              </CSSTransition>
+            </SwitchTransition>
+          </Box>
+          <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="center" spacing={2} mt={4}>
+            <Button variant="contained" onClick={() => navigate('/register')} size="large" sx={{ bgcolor: '#FFD700', color: 'black', borderRadius: '30px', px: 5, '&:hover': { bgcolor: '#FFC107' } }}>
+              {t('aboutPage.ctaStudent')}
             </Button>
-            <Button variant="outlined" onClick={() => navigate('/coaches')} sx={{
-              color: '#fff', borderColor: '#ccc', px: 4, py: 1.5, fontWeight: 'bold',
-              borderRadius: '30px', '&:hover': { borderColor: '#fff' }
-            }}>
-              Посмотреть тренеров
+            <Button variant="outlined" onClick={() => navigate('/coaches')} size="large" sx={{ color: 'white', borderColor: 'rgba(255,255,255,0.5)', borderRadius: '30px', px: 5, '&:hover': { borderColor: 'white', bgcolor: 'rgba(255,255,255,0.1)' } }}>
+              {t('aboutPage.ctaCoaches')}
             </Button>
           </Stack>
+        </Container>
+      </Box>
 
-          {/* Миссия */}
-          <Box textAlign="center" mb={10}>
-            <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ color: '#ff4d4d' }}>
-              🎯 Миссия
-            </Typography>
-            <Typography sx={{ maxWidth: 720, mx: 'auto', color: '#ccc', fontSize: '1.1rem' }}>
-              В фокусе ума — <b>критический ум</b>, <b>стойкий характер</b> и <b>аналитический склад ума</b>
-            </Typography>
-            <Box component="ul" sx={{
-              listStyle: 'none', mt: 3, pl: 0, color: '#b3e5c7', fontSize: '1rem',
-              maxWidth: 500, mx: 'auto', textAlign: 'left',
-              '& li::before': { content: '"🟢"', marginRight: '10px' }
-            }}>
-              <li>Анализировать риски</li>
-              <li>Думать стратегически</li>
-              <li>Учиться достойно проигрывать</li>
-            </Box>
-          </Box>
+      {/* Main Content */}
+      <Container maxWidth="lg" sx={{ py: 8 }}>
 
-          {/* Почему MOB */}
-          <Typography variant="h5" fontWeight="bold" align="center" sx={{ mb: 4, color: '#FFD700' }}>
-            ✅ Почему MOB?
+        {/* Mission Section */}
+        <Box sx={{ textAlign: 'center', my: 8 }}>
+          <Stack direction="row" spacing={2} justifyContent="center" alignItems="center" sx={{ color: '#FFD700', mb: 1 }}>
+            <TrackChangesIcon fontSize="large" />
+            <Typography variant="h4" component="h2" fontWeight="bold">{t('aboutPage.mission.title')}</Typography>
+          </Stack>
+          <Typography variant="h6" sx={{ maxWidth: 720, mx: 'auto', color: 'rgba(255,255,255,0.7)', mb: 3 }}>
+            {t('aboutPage.mission.subtitle')}
           </Typography>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center">
+            {missionPoints.map((point, i) => (
+              <Stack direction="row" alignItems="center" spacing={1} key={i}>
+                <CheckCircleOutlineIcon sx={{ color: 'success.main' }}/>
+                <Typography>{point}</Typography>
+              </Stack>
+            ))}
+          </Stack>
+        </Box>
+        
+        <Divider sx={{ my: 8, borderColor: 'rgba(255,255,255,0.2)' }} />
 
+        {/* Why Us Section */}
+        <Box sx={{ my: 8 }}>
+          <Typography variant="h4" component="h2" fontWeight="bold" align="center" sx={{ mb: 6 }}>
+            {t('aboutPage.whyUs.title')}
+          </Typography>
           <Grid container spacing={4}>
-            {[
-              {
-                icon: '🧠',
-                title: 'Индивидуальные занятия',
-                description: [
-                  'Глубокий фокус тренера',
-                  'Программа под ваш стиль',
-                  'Максимальная эффективность',
-                ],
-              },
-              {
-                icon: '👥',
-                title: 'Групповые занятия',
-                description: [
-                  'Энергия группы',
-                  'Обмен стратегиями',
-                  'Доступно по стоимости',
-                ],
-              },
-              {
-                icon: '🏆',
-                title: 'Турнирные интенсивы',
-                description: [
-                  'Разбор партий с гроссмейстерами',
-                  'Анализ дебютов и эндшпиля',
-                  'На результат и победу',
-                ],
-              },
-            ].map((card, i) => (
-              <Grid item xs={12} sm={6} md={4} key={i}>
-                <Paper sx={{
-                  p: 4, backgroundColor: '#1a1f33', borderRadius: 3, textAlign: 'center',
-                  color: '#fff', boxShadow: '0 0 12px rgba(0,0,0,0.2)',
-                  transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05)' }
-                }}>
-                  <Typography fontSize="2.5rem">{card.icon}</Typography>
-                  <Typography variant="h6" fontWeight="bold" mb={1}>{card.title}</Typography>
-                  {card.description.map((line, idx) => (
-                    <Typography key={idx} variant="body2" sx={{ color: '#aaa', mb: 0.5 }}>
-                      {line}
-                    </Typography>
-                  ))}
+            {whyUsCards.map((card, i) => (
+              <Grid item xs={12} md={4} key={i}>
+                <Paper sx={{ p: 4, bgcolor: '#1c1c1c', borderRadius: 4, textAlign: 'center', height: '100%', transition: 'all 0.3s ease', '&:hover': { transform: 'translateY(-10px)', boxShadow: '0 10px 20px rgba(255,215,0,0.15)' }}}>
+                  <Typography fontSize="3rem">{card.icon}</Typography>
+                  <Typography variant="h6" fontWeight="bold" my={1}>{card.title}</Typography>
+                  <Typography sx={{ color: 'rgba(255,255,255,0.6)' }}>{card.description}</Typography>
                 </Paper>
               </Grid>
             ))}
           </Grid>
+        </Box>
 
-          {/* Секция: Как проходит занятие */}
-          <Box textAlign="center" mt={10} mb={6}>
-            <Typography variant="h5" fontWeight="bold" color="#b3e5c7" mb={3}>
-              📚 Как проходит занятие?
-            </Typography>
-            <Grid container spacing={3}>
-              {[
-                { step: '1️⃣ Запись на пробный урок', desc: 'Вы выбираете формат и заполняете анкету' },
-                { step: '2️⃣ Онлайн-занятие', desc: 'Видеосозвон, разбор позиций, тренировка мышления' },
-                { step: '3️⃣ Индивидуальный план', desc: 'Тренер подбирает цели и стратегию роста' },
-              ].map((item, idx) => (
-                <Grid item xs={12} sm={4} key={idx}>
-                  <Paper sx={{
-                    p: 3, backgroundColor: '#13192a', borderRadius: 3, color: '#fff', minHeight: '150px'
-                  }}>
-                    <Typography variant="subtitle1" fontWeight="bold" mb={1}>{item.step}</Typography>
-                    <Typography variant="body2" color="#aaa">{item.desc}</Typography>
-                  </Paper>
-                </Grid>
-              ))}
-            </Grid>
-          </Box>
-
-          {/* Слайдер отзывов */}
-          <Box mt={10} mb={6} textAlign="center">
-            <Typography variant="h5" fontWeight="bold" color="#ffc400" mb={3}>
-              🌟 Отзывы учеников
-            </Typography>
-            <Paper sx={{ p: 4, backgroundColor: '#212636', color: '#fff', borderRadius: 2, maxWidth: 600, mx: 'auto' }}>
-              <Typography fontStyle="italic" fontSize="1.1rem">
-                “{testimonials[currentTestimonial].quote}”
-              </Typography>
-              <Typography fontWeight="bold" mt={2}>
-                — {testimonials[currentTestimonial].name}
-              </Typography>
-            </Paper>
-          </Box>
-
-          {/* Тизер тренеров */}
-          <Box mt={10} mb={6}>
-            <Typography variant="h5" fontWeight="bold" align="center" mb={4}>
-              🧑‍🏫 Познакомьтесь с тренерами
-            </Typography>
-            <Grid container spacing={4}>
-              {coaches.map((coach, idx) => (
-                <Grid item xs={12} sm={6} key={idx}>
-                  <Paper sx={{ p: 3, backgroundColor: '#161c2e', color: '#fff', borderRadius: 2 }}>
-                    <Typography variant="subtitle1" fontWeight="bold">{coach.name}</Typography>
-                    <Typography variant="body2" fontStyle="italic" color="#aaa">{coach.quote}</Typography>
-                  </Paper>
-                </Grid>
-              ))}
-            </Grid>
-          </Box>
-
-          {/* Нижний слоган */}
-          <Divider sx={{ my: 8, borderColor: '#333' }} />
-          <Typography align="center" fontWeight="bold" variant="h6" sx={{ color: '#fff', fontSize: '1.3rem' }}>
-            ♟ Mob — это начало. Шахматы — инструмент. Победа — побочный эффект.
+        {/* How It Works Section */}
+        <Box sx={{ my: 8, py: 6, bgcolor: '#1c1c1c', borderRadius: 4 }}>
+          <Typography variant="h4" component="h2" fontWeight="bold" align="center" sx={{ mb: 6 }}>
+            {t('aboutPage.howItWorks.title')}
           </Typography>
-        </Container>
-      </Box>
+          <Grid container spacing={4} sx={{ px: 4 }}>
+            {howItWorksSteps.map((item, idx) => (
+              <Grid item xs={12} md={4} key={idx}>
+                <Stack direction="row" spacing={2} alignItems="center">
+                  <Typography variant="h2" fontWeight="bold" sx={{ color: '#FFD700', opacity: 0.5 }}>{`0${idx + 1}`}</Typography>
+                  <Box>
+                    <Typography variant="h6" fontWeight="bold">{item.step}</Typography>
+                    <Typography sx={{ color: 'rgba(255,255,255,0.6)' }}>{item.desc}</Typography>
+                  </Box>
+                </Stack>
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
+
+        {/* Testimonials & Coaches */}
+        <Grid container spacing={8} sx={{ my: 8 }}>
+          <Grid item xs={12} md={6}>
+            <Typography variant="h4" component="h2" fontWeight="bold" sx={{ mb: 3 }}>
+              {t('aboutPage.testimonials.title')}
+            </Typography>
+            <Paper sx={{ p: 4, bgcolor: '#1c1c1c', borderRadius: 4, minHeight: 180 }}>
+              <SwitchTransition>
+                <CSSTransition key={currentTestimonialIndex} timeout={300} classNames="fade">
+                  <Box>
+                    {testimonials.length > 0 ? (
+                      <>
+                        <Typography fontStyle="italic" fontSize="1.1rem" sx={{ color: 'rgba(255,255,255,0.8)' }}>
+                          “{testimonials[currentTestimonialIndex].quote}”
+                        </Typography>
+                        <Typography fontWeight="bold" mt={2} sx={{ color: '#FFD700' }}>
+                          — {testimonials[currentTestimonialIndex].name}
+                        </Typography>
+                      </>
+                    ) : null}
+                  </Box>
+                </CSSTransition>
+              </SwitchTransition>
+            </Paper>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <Typography variant="h4" component="h2" fontWeight="bold" sx={{ mb: 3 }}>
+              {t('aboutPage.ourCoaches.title')}
+            </Typography>
+            <Stack spacing={2}>
+              {coaches.map((coach, idx) => (
+                <Paper key={idx} sx={{ p: 2, bgcolor: '#1c1c1c', borderRadius: 2 }}>
+                  <Typography variant="h6" fontWeight="bold">{coach.name}</Typography>
+                  <Typography variant="body2" fontStyle="italic" sx={{ color: 'rgba(255,255,255,0.6)' }}>{coach.quote}</Typography>
+                </Paper>
+              ))}
+              <Button variant="text" onClick={() => navigate('/coaches')} sx={{ color: '#FFD700', alignSelf: 'flex-start' }}>
+                {t('aboutPage.ourCoaches.viewAll')} →
+              </Button>
+            </Stack>
+          </Grid>
+        </Grid>
+
+        <Divider sx={{ my: 8, borderColor: 'rgba(255,255,255,0.2)' }} />
+        
+        <Typography align="center" fontWeight="bold" variant="h5" component="p" sx={{ fontStyle: 'italic' }}>
+          {t('aboutPage.finalSlogan')}
+        </Typography>
+
+      </Container>
     </Box>
   );
 };
