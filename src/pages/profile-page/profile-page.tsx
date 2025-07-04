@@ -15,7 +15,6 @@ import TimerIcon from '@mui/icons-material/Timer'; // Rapid
 import StyleIcon from '@mui/icons-material/Style'; // Classic
 import EditIcon from '@mui/icons-material/Edit';
 import LogoutIcon from '@mui/icons-material/Logout';
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 
 interface PlayerStatsFormat {
   rating: number;

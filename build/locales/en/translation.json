@@ -1,0 +1,350 @@
+{
+    "navbar": {
+      "chessSchool": "Chess School",
+      "home": "Home",
+      "aboutUs": "About Us",
+      "achievements": "Achievements",
+      "students": "Students",
+      "users": "Users",
+      "logout": "Logout",
+      "loginOrRegister": "Login/Register",
+      "profile": "Profile",
+      "challenges": "Create challenge",
+      "chessGame": "ChessGame",
+      "coaches": "Coaches",
+      "students-shedule": "Student Shedule"
+
+    },
+  "homePage": {
+    "hero": {
+      "title": "Master the Game. Master Your Mind.",
+      "subtitle": "Join our international chess academy and unlock your potential with the world's top online coaches.",
+      "start": "Find Your Coach"
+    },
+    "why": {
+      "title": "Why Learn Chess With Us?",
+      "analytics": "Analytical Skills",
+      "descAnalytics": "Develop critical thinking and foresight. Learn to analyze complex positions, calculate variations, and make informed decisions under pressure.",
+      "memory": "Enhanced Memory",
+      "descMemory": "Strengthen your memory by memorizing openings, tactical patterns, and endgame theory. Chess is a fantastic workout for your brain.",
+      "spirit": "Sportsmanship",
+      "descSpirit": "Cultivate discipline, patience, and resilience. Learn to win with grace and lose with dignity, respecting your opponent and the game."
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "step1Title": "Choose a Coach",
+      "step1Desc": "Browse profiles of our certified coaches. Read reviews and find the perfect mentor for your skill level and goals.",
+      "step2Title": "Schedule Your Lesson",
+      "step2Desc": "Use our flexible scheduling system to book a lesson at a time that works for you. We have coaches in every time zone.",
+      "step3Title": "Start Learning",
+      "step3Desc": "Connect with your coach via our interactive online classroom, complete with video chat and a digital chessboard."
+    },
+    "formats": {
+      "title": "Learning Formats",
+      "individual": "Individual Lessons",
+      "group": "Group Classes",
+      "descIndividual": "Get undivided attention with a curriculum tailored to your personal strengths, weaknesses, and learning pace.",
+      "descGroup": "Join a vibrant community of fellow learners. Practice, compete, and grow together in a collaborative environment.",
+      "schedule": "View Coaches",
+      "learnMore": "See Classes"
+    },
+    "footer": {
+      "name": "Chess School",
+      "desc": "An online platform for strategic growth.",
+      "company": "Company",
+      "about": "About Us",
+      "blog": "Blog",
+      "coaches": "Coaches",
+      "resources": "Resources",
+      "faq": "FAQ",
+      "contact": "Contact",
+      "legal": "Legal",
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "copyright": "© {year} Chess School. All rights reserved."
+    },
+    "coaches": {
+      "title": "Our Coaches",
+      "selectCoach": "Select Coach"
+    }
+  },
+  "aboutPage": {
+    "mainTitle": "MIND ON BOARD — YOUR MIND ON THE BOARD",
+    "phrases": [
+      "Train your mind like a champion.",
+      "Find strong moves — in life too.",
+      "Learn to think like a grandmaster."
+    ],
+    "ctaStudent": "Become a Student",
+    "ctaCoaches": "View Coaches",
+    "mission": {
+      "title": "Our Mission",
+      "subtitle": "We focus on developing a critical mind, a resilient character, and an analytical mindset.",
+      "points": [
+        "Analyze risks and rewards",
+        "Think strategically and plan ahead",
+        "Learn to win with grace and lose with dignity"
+      ]
+    },
+    "whyUs": {
+      "title": "Why Choose Us?",
+      "cards": [
+        {
+          "icon": "🧠",
+          "title": "Individual Lessons",
+          "description": "Deep focus from the coach. A program tailored to your style. Maximum efficiency."
+        },
+        {
+          "icon": "👥",
+          "title": "Group Classes",
+          "description": "The energy of a group. Exchange of strategies. Affordable pricing."
+        },
+        {
+          "icon": "🏆",
+          "title": "Tournament Intensives",
+          "description": "Game analysis with Grandmasters. Deep dive into openings and endgames. Focused on results and victory."
+        }
+      ]
+    },
+    "howItWorks": {
+      "title": "How a Lesson Works",
+      "steps": [
+        {
+          "step": "1. Trial Lesson",
+          "desc": "Choose a format and fill out a short form."
+        },
+        {
+          "step": "2. Online Session",
+          "desc": "Video call, position analysis, and mindset training."
+        },
+        {
+          "step": "3. Individual Plan",
+          "desc": "The coach sets goals and a strategy for your growth."
+        }
+      ]
+    },
+    "testimonials": {
+      "title": "Student Testimonials",
+      "reviews": [
+        {
+          "name": "Ivan",
+          "quote": "I've improved my thinking not just in chess, but in life as well!"
+        },
+        {
+          "name": "Alina",
+          "quote": "The lessons helped me win my school tournament."
+        },
+        {
+          "name": "Maxim",
+          "quote": "Now I'm confident in my decisions at the board."
+        }
+      ]
+    },
+    "ourCoaches": {
+      "title": "Meet Our Coaches",
+      "coaches": [
+        {
+          "name": "GM Alexey",
+          "quote": "Strategy is not just about the pieces; it's about the mindset."
+        },
+        {
+          "name": "IM Olga",
+          "quote": "Chess teaches you to see three steps ahead."
+        }
+      ],
+      "viewAll": "View All Coaches"
+    },
+    "finalSlogan": "MOB is the beginning. Chess is the tool. Victory is the side effect."
+  },
+    "achievementsPage": {
+      "title": "Our Achievements",
+      "congratulations": "Congratulations to all our champions!"
+    },
+    "studentsPage": {
+  "studentsListTitle": "Students List",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "email": "Email",
+  "actions": "Actions",
+  "editSchedule": "Edit Schedule",
+  "delete": "Delete",
+  "studentDeletedSuccess": "Student successfully deleted",
+  "studentDeletedError": "Failed to delete student"
+},
+    "usersPage": {
+      "title": "User Management",
+      "userList": "List of all users",
+      "editUser": "Edit user information"
+    },
+    "errors": {
+      "login": "Invalid email or password"
+    },
+    "auth": {
+      "welcome": "Welcome Back!",
+      "enter_credentials": "Enter your credentials to access your account",
+      "email": "Email",
+      "password": "Password",
+      "remember_me": "Remember me",
+      "forgot_password": "Forgot Password?",
+      "sign_in": "Sign In",
+      "or_sign_in_with": "Or sign in with",
+      "no_account": "Don’t have an account?",
+      "sign_up": "Sign up",
+      "errors": {
+        "login": "Login failed. Please check your email and password."
+      }
+    },
+    "verifyEmail": {
+    "pageTitle": "Verify Your Email",
+    "greeting": "Dear {{firstName}} {{lastName}},",
+    "sentTo": "We've sent a verification email to {{email}}. Please check your inbox and follow the link to activate your account.",
+    "checkingStatus": "Checking verification status...",
+    "alreadyVerified": "Email is already verified. This link is no longer valid.",
+    "checkError": "Failed to check verification status. Please try again later.",
+    "resendSuccess": "Verification email has been resent. Please check your inbox.",
+    "alreadyVerifiedSuccess": "Your email is already verified.",
+    "resendError": "Failed to resend verification email. Please try again later.",
+    "resendButton": "Resend Verification Email",
+    "backToRegister": "Back to Registration"
+  },
+  "profile": {
+    "title": "My Profile",
+    "subtitle": "View and manage your account details and statistics.",
+    "registrationDate": "Member since",
+    "editProfile": "Edit Profile",
+    "logout": "Logout",
+    "loading": "Loading profile...",
+    "errorLoadingProfile": "Failed to load profile. Please try again.",
+    "playerStats": "Game Statistics",
+    "bullet": "Bullet",
+    "blitz": "Blitz",
+    "rapid": "Rapid",
+    "classic": "Classic",
+    "rating": "Rating",
+    "games": "Games",
+    "win": "Win",
+    "draw": "Draw",
+    "loss": "Loss"
+},
+  "coaches": {
+    "title": "Our Coaches",
+    "subtitle": "Find the perfect mentor to guide you on your chess journey.",
+    "searchByName": "Search by name...",
+    "clearFilter": "Clear",
+    "experience": "Experience",
+    "price": "Price per hour",
+    "viewProfile": "View Profile",
+    "fetchError": "Failed to load coaches list.",
+    "submitError": "Failed to send the request. Please try again.",
+    "updateFailed": "Failed to update profile.",
+    "successMessage": "Your request has been sent successfully!",
+    "updated": "Profile updated successfully!",
+    "profileOf": "Profile of {coachName}",
+    "bio": "About me",
+    "services": "Services",
+    "requestTitle": "Send a Request to {coachName}",
+    "yourName": "Your Name",
+    "yourEmail": "Your Email",
+    "level": "Your current level",
+    "levelBeginner": "Beginner",
+    "levelIntermediate": "Intermediate",
+    "levelAdvanced": "Advanced",
+    "goals": "What are your goals?",
+    "sendRequest": "Send Request",
+    "close": "Close",
+    "editProfile": "Edit Profile",
+    "save": "Save Changes",
+    "cancel": "Cancel"
+  },
+  "profile_edit": {
+    "editTitle": "Edit Profile",
+    "uploadAvatar": "Upload Photo",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password",
+    "updated": "Profile updated successfully",
+    "passwordChanged": "Password changed successfully",
+    "updateFailed": "Failed to update profile",
+    "passwordMismatch": "Password mismatch or missing current password",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "register": {
+    "title": "Register",
+    "name": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Register",
+    "haveAccount": "Already have an account?",
+    "login": "Log In",
+    "placeholder": {
+      "name": "Enter your first name",
+      "lastName": "Enter your last name",
+      "email": "Enter your email",
+      "password": "Enter your password"
+    },
+    "brand": "MOB - Mind Over Board",
+    "error": {
+      "title": "Registration error",
+      "description": "Please try again."
+    }
+  },
+  "schedule": {
+    "myScheduleTitle": "My Schedule",
+    "myScheduleSubtitle": "Here you can see all your upcoming lessons and tasks.",
+    "editScheduleTitle": "Schedule for {studentName}",
+    "eventDetails": "Event Details",
+    "addEvent": "Add Event",
+    "updateEvent": "Update Event",
+    "deleteEvent": "Delete Event",
+    "close": "Close",
+    "fetchError": "Failed to load schedule.",
+    "createSuccess": "Event successfully added!",
+    "createError": "Failed to create event. Please check the data.",
+    "deleteSuccess": "Event deleted!",
+    "deleteError": "Failed to delete event.",
+    "fieldRequired": "This field is required",
+    "form_title": "Title*",
+    "form_type": "Type*",
+    "form_description": "Description",
+    "form_link": "Link (e.g., for a video call)",
+    "form_date": "Date and Time*",
+ "individual_lesson": "Individual Lesson",
+  "group_lesson": "Group Lesson",
+  "homework": "Homework",
+  "opening_study": "Opening Study",
+  "tournament_participation": "Tournament"
+  },
+  "chessGame": {
+    "title": "Chess Analysis Board",
+    "subtitle": "Analyze your games, explore variations, and find the best moves.",
+    "reset": "New Game",
+    "loadPgn": "Load PGN",
+    "pgnInputLabel": "Paste PGN here",
+    "pgnLoadSuccess": "Game successfully loaded from PGN.",
+    "pgnLoadError": "Error loading game. Please check PGN format.",
+    "resetSuccess": "Game has been reset.",
+    "status": "Game Status",
+    "history": "Move History",
+    "analysis": {
+      "title": "Engine Analysis",
+      "button": "Analyze Position",
+      "analyzing": "Analyzing...",
+      "evaluation": "Evaluation",
+      "bestMove": "Best Move"
+    },
+    "game_over": {
+      "checkmate": "Checkmate! {winner} wins.",
+      "stalemate": "Stalemate! The game is a draw.",
+      "draw": "Draw!",
+      "threefold_repetition": "Draw by threefold repetition.",
+      "insufficient_material": "Draw by insufficient material."
+    }
+  }
+}
+  

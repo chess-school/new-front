@@ -1,12 +1,9 @@
 import React from 'react';
 import { RegisterForm } from './register-form';
 import './styles.scss';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@mui/material';
 
 export const RegisterPage: React.FC = () => {
 
-  const navigate = useNavigate();
 
   return (
     <div className="register-page">

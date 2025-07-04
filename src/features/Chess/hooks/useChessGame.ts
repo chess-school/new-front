@@ -1,7 +1,7 @@
 // src/features/Chess/hooks/useChessGame.ts
 
 import { useState, useMemo, useCallback, useRef } from 'react';
-import { Chess, Square } from 'chess.js';
+import { Square } from 'chess.js';
 import ChessGameEngine from '../engine/ChessGameEngine';
 
 export const useChessGame = (initialFen?: string) => {

@@ -5,9 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { CSSTransition, SwitchTransition } from 'react-transition-group';
 
 // Иконки
-import SchoolIcon from '@mui/icons-material/School';
-import GroupIcon from '@mui/icons-material/Group';
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+// import SchoolIcon from '@mui/icons-material/School';
+// import GroupIcon from '@mui/icons-material/Group';
+// import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import TrackChangesIcon from '@mui/icons-material/TrackChanges';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 

@@ -1,6 +1,6 @@
 // src/features/Chess/components/VariationLine.tsx
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Box, Typography } from '@mui/material';
 import { Chess, Square } from 'chess.js';
 
