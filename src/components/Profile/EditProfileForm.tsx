@@ -161,7 +161,7 @@ const EditProfileForm: React.FC<EditProfileProps> = ({ user, onClose }) => {
       <DialogActions>
         <Button onClick={onClose}>{t('profile_edit.cancel')}</Button>
         <Button variant="contained" onClick={handleSubmit}>
-          {t('common.save')}
+          {t('profile_edit.save')}
         </Button>
       </DialogActions>
     </Dialog>

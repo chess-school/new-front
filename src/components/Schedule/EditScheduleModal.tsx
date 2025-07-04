@@ -1,17 +1,30 @@
+// EditScheduleModal.tsx
 import React, { useEffect, useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
+import {
+    Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, MenuItem,
+    Select, FormControl, InputLabel, Grid, Paper, IconButton, Stack,
+    Typography,
+    Box
+} from '@mui/material';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
 import axios from 'axios';
 import { notification } from 'antd';
+import { useTranslation } from 'react-i18next';
+
+import CloseIcon from '@mui/icons-material/Close';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import SaveIcon from '@mui/icons-material/Save';
+import DeleteIcon from '@mui/icons-material/Delete';
+
+import './styles.scss'; 
 
 const localizer = momentLocalizer(moment);
 
 interface ScheduleEvent {
     _id?: string;
     student: string;
-    coach: string;
+    coach?: string;
     title: string;
     description?: string;
     link?: string;
@@ -26,18 +39,44 @@ interface EditScheduleModalProps {
     student: any;
 }
 
+const formInputStyles = {
+  '& .MuiFilledInput-root': {
+    backgroundColor: 'rgba(255, 255, 255, 0.09)',
+    color: '#fff',
+    '&:hover': {
+      backgroundColor: 'rgba(255, 255, 255, 0.13)',
+    },
+    '&.Mui-focused': {
+      backgroundColor: 'rgba(255, 255, 255, 0.13)',
+    },
+  },
+  '& .MuiInputLabel-root': {
+    color: 'rgba(255, 255, 255, 0.7)',
+    '&.Mui-focused': {
+      color: '#FFD700',
+    },
+  },
+  '& .MuiSelect-icon': {
+    color: 'rgba(255, 255, 255, 0.7)',
+  },
+};
+
+const eventTypes = ["individual_lesson", "group_lesson", "homework", "opening_study", "tournament_participation"];
+
 const EditScheduleModal: React.FC<EditScheduleModalProps> = ({ open, onClose, student }) => {
+    const { t } = useTranslation();
     const [events, setEvents] = useState<ScheduleEvent[]>([]);
-    const [newEvent, setNewEvent] = useState<Partial<ScheduleEvent>>({
-      student: student?._id || '',
-      coach: '',
-      title: '',
-      description: '',
-      link: '',
-      type: '',
-      date: '',
-      status: 'scheduled'
-  });
+    const [selectedEvent, setSelectedEvent] = useState<Partial<ScheduleEvent>>({});
+
+    const studentName = student ? `${student.firstName} ${student.lastName}` : '';
+
+    const resetForm = () => {
+        setSelectedEvent({
+            student: student?._id,
+            status: 'scheduled',
+            title: '', type: '', date: '', description: '', link: ''
+        });
+    };
 
     const fetchSchedule = async () => {
         if (!student?._id) return;
@@ -47,190 +86,168 @@ const EditScheduleModal: React.FC<EditScheduleModalProps> = ({ open, onClose, st
                 headers: { Authorization: `Bearer ${token}` },
             });
             setEvents(response.data);
-        } catch (error: any) {
-            console.error('Помилка отримання розкладу:', error);
+        } catch (error) {
+            notification.error({
+                message: t('schedule.fetchError'),
+                description: undefined
+            });
         }
     };
 
-    const handleAddEvent = async () => {
-      console.log("Попытка создания занятия с данными:", newEvent);
-  
-      if (!newEvent.date || !student._id || !newEvent.type) {
-          notification.error({ message: 'Помилка', description: 'Необхідно заповнити обов’язкові поля (дата, тип заняття).' });
-          console.error("Ошибка: не все обязательные поля заполнены", newEvent);
-          return;
-      }
-  
-      const token = localStorage.getItem('token');
-      try {
-          const response = await axios.post(
-              'http://localhost:3000/api/schedule/create',
-              {
-                  studentId: student._id,
-                  date: new Date(newEvent.date).toISOString(),
-                  title: newEvent.title?.trim() || "",  // Убираем обязательность
-                  description: newEvent.description?.trim() || "",
-                  link: newEvent.link?.trim() || "",
-                  type: newEvent.type,
-                  status: newEvent.status
-              },
-              {
-                  headers: { Authorization: `Bearer ${token}` },
-              }
-          );
-  
-          console.log("Ответ от сервера при создании занятия:", response.data);
-          notification.success({ message: 'Успіх', description: 'Заняття успішно додано!' });
-          fetchSchedule();
-      } catch (error: any) {
-          console.error("Ошибка при создании занятия:", error.response?.data || error.message);
-          notification.error({ 
-              message: 'Помилка створення розкладу', 
-              description: error.response?.data?.msg || 'Не вдалося створити заняття. Перевірте дані та спробуйте ще раз.' 
-          });
-      }
-  };
-  
-
-    const handleDeleteEvent = async () => {
-        if (!newEvent._id) return;
+    const handleSaveEvent = async () => {
+        if (!selectedEvent.date || !selectedEvent.type || !selectedEvent.title) {
+            notification.error({
+                message: t('schedule.fieldRequired'),
+                description: undefined
+            });
+            return;
+        }
 
         const token = localStorage.getItem('token');
+        const payload = {
+            studentId: student._id,
+            date: new Date(selectedEvent.date).toISOString(),
+            title: selectedEvent.title,
+            description: selectedEvent.description || "",
+            link: selectedEvent.link || "",
+            type: selectedEvent.type,
+            status: selectedEvent.status
+        };
+
         try {
-            await axios.delete(`http://localhost:3000/api/schedule/${newEvent._id}`, {
-                headers: { Authorization: `Bearer ${token}` },
+            if (selectedEvent._id) { // Update existing
+                await axios.put(`http://localhost:3000/api/schedule/${selectedEvent._id}`, payload, { headers: { Authorization: `Bearer ${token}` } });
+            } else { // Create new
+                await axios.post('http://localhost:3000/api/schedule/create', payload, { headers: { Authorization: `Bearer ${token}` } });
+            }
+            notification.success({
+                message: t('schedule.createSuccess'),
+                description: undefined
             });
-            notification.success({ message: 'Успіх', description: 'Заняття видалено!' });
             fetchSchedule();
-            setNewEvent({
-                student: student?._id || '',
-                coach: '',
-                title: '',
-                description: '',
-                link: '',
-                type: '',
-                date: '',
-                status: 'scheduled'
-            });
+            resetForm();
         } catch (error: any) {
-            console.error('Помилка видалення заняття:', error);
-            notification.error({ message: 'Помилка', description: 'Не вдалося видалити заняття.' });
+            notification.error({ message: t('schedule.createError'), description: error.response?.data?.msg });
+        }
+    };
+
+    const handleDeleteEvent = async () => {
+        if (!selectedEvent._id) return;
+        const token = localStorage.getItem('token');
+        try {
+            await axios.delete(`http://localhost:3000/api/schedule/${selectedEvent._id}`, { headers: { Authorization: `Bearer ${token}` } });
+            notification.success({
+                message: t('schedule.deleteSuccess'),
+                description: undefined
+            });
+            fetchSchedule();
+            resetForm();
+        } catch (error) {
+            notification.error({
+                message: t('schedule.deleteError'),
+                description: undefined
+            });
         }
     };
 
     const handleSelectSlot = ({ start }: { start: Date }) => {
-        setNewEvent({
-            student: student._id,
-            coach: '',
-            date: moment(start).toISOString(),
-            title: '',
-            description: '',
-            link: '',
-            type: '',
-            status: 'scheduled'
+        setSelectedEvent({
+            ...selectedEvent,
+            _id: undefined, // ensure it's a new event
+            date: moment(start).format('YYYY-MM-DDTHH:mm'),
         });
     };
 
-    const handleSelectEvent = (event: ScheduleEvent) => {
-        setNewEvent({
-            _id: event._id,
-            student: event.student,
-            coach: event.coach,
-            date: event.date,
-            title: event.title,
-            description: event.description || '',
-            link: event.link || '',
-            type: event.type,
-            status: event.status
+    const handleSelectEvent = (event: any) => {
+        setSelectedEvent({
+            ...event,
+            date: moment(event.date).format('YYYY-MM-DDTHH:mm'),
         });
     };
 
     useEffect(() => {
-        if (open) fetchSchedule();
+        if (open) {
+            fetchSchedule();
+            resetForm();
+        }
     }, [open]);
 
-    return (
-        <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
-            <DialogTitle>Редагувати розклад для {student.firstName} {student.lastName}</DialogTitle>
-            <DialogContent>
-                <Calendar
-                    localizer={localizer}
-                    events={events.map(event => ({
-                        ...event,
-                        start: new Date(event.date),
-                        end: new Date(event.date),
-                        title: `${event.title} (${event.type})`
-                    }))}
-                    startAccessor="start"
-                    endAccessor="end"
-                    selectable
-                    onSelectSlot={handleSelectSlot}
-                    onSelectEvent={handleSelectEvent}
-                    views={['month', 'week', 'day']}
-                    style={{ height: 400 }}
-                />
-
-                {/* Название */}
-                <TextField
-                    label="Назва*"
-                    fullWidth
-                    margin="normal"
-                    value={newEvent.title || ''}
-                    onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
-                />
-
-                {/* Тип занятия */}
-                <FormControl fullWidth margin="normal">
-                    <InputLabel>Тип заняття*</InputLabel>
-                    <Select
-                        value={newEvent.type || ''}
-                        onChange={(e) => setNewEvent({ ...newEvent, type: e.target.value })}
-                        displayEmpty
-                    >
-                        <MenuItem value="individual_lesson">Індивідуальне заняття</MenuItem>
-                        <MenuItem value="group_lesson">Групове заняття</MenuItem>
-                        <MenuItem value="homework">Домашнє завдання</MenuItem>
-                        <MenuItem value="opening_study">Робота над дебютом</MenuItem>
-                        <MenuItem value="tournament_participation">Участь у турнірі</MenuItem>
-                    </Select>
-                </FormControl>
-
-                {/* Описание */}
-                <TextField
-                    label="Опис"
-                    fullWidth
-                    margin="normal"
-                    value={newEvent.description || ''}
-                    onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
-                />
-
-                {/* Ссылка */}
-                <TextField
-                    label="Посилання"
-                    fullWidth
-                    margin="normal"
-                    value={newEvent.link || ''}
-                    onChange={(e) => setNewEvent({ ...newEvent, link: e.target.value })}
-                />
-
-                {/* Дата */}
-                <TextField
-                    label="Дата*"
-                    type="datetime-local"
-                    fullWidth
-                    margin="normal"
-                    value={newEvent.date || ''}
-                    onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
-                />
+     return (
+        <Dialog open={open} onClose={onClose} fullWidth maxWidth="lg" PaperProps={{ sx: { bgcolor: '#1c1c1c', color: 'white', borderRadius: 4, backgroundImage: 'none' }}}>
+            <DialogTitle sx={{ m: 0, p: 2, bgcolor: '#2a2a2a' }}>
+                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                    <Typography variant="h6" component="div">{t('schedule.editScheduleTitle', { studentName })}</Typography>
+                    <IconButton aria-label="close" onClick={onClose} sx={{ color: 'grey.500' }}>
+                        <CloseIcon />
+                    </IconButton>
+                </Stack>
+            </DialogTitle>
+            <DialogContent dividers sx={{ borderColor: 'rgba(255,255,255,0.2)', p: {xs: 1, sm: 2, md: 3} }}>
+                <Grid container spacing={3}>
+                    <Grid item xs={12} md={7}>
+                        <Calendar
+                            localizer={localizer}
+                            events={events.map(event => ({ ...event, start: new Date(event.date), end: moment(event.date).add(1, 'hour').toDate() }))}
+                            startAccessor="start" endAccessor="end" selectable
+                            onSelectSlot={handleSelectSlot} onSelectEvent={handleSelectEvent}
+                            views={['month', 'week', 'day']} style={{ height: 500 }}
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={5}>
+                        <Paper sx={{ p: 3, bgcolor: 'transparent', boxShadow: 'none', height: '100%' }}>
+                            <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
+                                {selectedEvent._id ? t('schedule.eventDetails') : t('schedule.addEvent')}
+                            </Typography>
+                            <Stack spacing={2.5}>
+                                <TextField
+                                    label={t('schedule.form_title')} variant="filled" fullWidth
+                                    value={selectedEvent.title || ''}
+                                    onChange={(e) => setSelectedEvent({ ...selectedEvent, title: e.target.value })}
+                                    sx={formInputStyles}
+                                />
+                                <FormControl variant="filled" fullWidth sx={formInputStyles}>
+                                    <InputLabel>{t('schedule.form_type')}</InputLabel>
+                                    <Select value={selectedEvent.type || ''} onChange={(e) => setSelectedEvent({ ...selectedEvent, type: e.target.value })}>
+                                        {eventTypes.map(type => (
+                                            <MenuItem key={type} value={type}>{t(`schedule.${type}`)}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                                <TextField
+                                    label={t('schedule.form_description')} variant="filled" fullWidth multiline rows={3}
+                                    value={selectedEvent.description || ''}
+                                    onChange={(e) => setSelectedEvent({ ...selectedEvent, description: e.target.value })}
+                                    sx={formInputStyles}
+                                />
+                                <TextField
+                                    label={t('schedule.form_link')} variant="filled" fullWidth
+                                    value={selectedEvent.link || ''}
+                                    onChange={(e) => setSelectedEvent({ ...selectedEvent, link: e.target.value })}
+                                    sx={formInputStyles}
+                                />
+                                <TextField
+                                    label={t('schedule.form_date')} type="datetime-local" variant="filled" fullWidth
+                                    value={selectedEvent.date || ''}
+                                    onChange={(e) => setSelectedEvent({ ...selectedEvent, date: e.target.value })}
+                                    InputLabelProps={{ shrink: true }}
+                                    sx={formInputStyles}
+                                />
+                            </Stack>
+                        </Paper>
+                    </Grid>
+                </Grid>
             </DialogContent>
-            <DialogActions>
-                <Button onClick={onClose}>Закрити</Button>
-                <Button onClick={handleAddEvent} variant="contained">Додати заняття</Button>
-                {newEvent._id && (
-                    <Button onClick={handleDeleteEvent} variant="contained" color="secondary">
-                        Видалити
+            <DialogActions sx={{ p: 2, bgcolor: '#2a2a2a' }}>
+                <Button onClick={onClose} sx={{ color: 'grey.500' }}>{t('schedule.close')}</Button>
+                <Box sx={{ flex: '1 1 auto' }} /> 
+                {selectedEvent._id && (
+                    <Button onClick={handleDeleteEvent} variant="outlined" color="error" startIcon={<DeleteIcon />}>
+                        {t('schedule.deleteEvent')}
                     </Button>
                 )}
+                <Button onClick={handleSaveEvent} variant="contained" sx={{ bgcolor: '#FFD700', color: 'black', '&:hover': { bgcolor: '#FFC107' } }} startIcon={selectedEvent._id ? <SaveIcon /> : <AddCircleOutlineIcon />}>
+                    {selectedEvent._id ? t('schedule.updateEvent') : t('schedule.addEvent')}
+                </Button>
             </DialogActions>
         </Dialog>
     );

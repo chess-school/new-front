@@ -1,19 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Chess, Square, PieceSymbol, Color } from 'chess.js';
-import { Container, Stack, Button, TextField, Typography, Box } from '@mui/material';
+import {
+  Checkbox,
+  Container,
+  Stack,
+  Button,
+  TextField,
+  Typography,
+  Box,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  FormGroup,
+  Paper,
+} from '@mui/material';
 import { notification } from 'antd';
 import ChessBoard from '../ChessGame/ChessBoard';
 
 interface PuzzleEditorProps {
-  initialFen?: string; // FEN-позиция для загрузки
+  initialFen?: string;
 }
 
 const PuzzleEditor: React.FC<PuzzleEditorProps> = ({ initialFen }) => {
-  // Начальная пустая доска
   const defaultFen = initialFen || '8/8/8/8/8/8/8/8 w - - 0 1';
+  const [isCursorOnBoard, setIsCursorOnBoard] = useState(false);
   const [chess] = useState(() => {
     const instance = new Chess();
-    instance.clear(); // Полностью очищаем доску
+    instance.clear();
     return instance;
   });
   const [fen, setFen] = useState(defaultFen);
@@ -39,28 +52,97 @@ const PuzzleEditor: React.FC<PuzzleEditorProps> = ({ initialFen }) => {
     { type: 'p', color: 'w', icon: '♙' },
   ];
 
-  const handleSquareClick = (square: Square) => {
-    if (draggedPiece) {
-      chess.put(draggedPiece, square); // Устанавливаем фигуру
-      setFen(chess.fen());
+  const boardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!draggedPiece || !isCursorOnBoard || !boardRef.current) return;
+  
+      const rect = boardRef.current.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+  
+      if (x >= 0 && y >= 0 && x <= rect.width && y <= rect.height) {
+        setCursorStyle({
+          left: x,
+          top: y,
+        });
+      }
+    };
+  
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [draggedPiece, isCursorOnBoard]);
+  
+  
+
+  const updateCastlingRights = (
+    rights: string,
+    checked: boolean,
+    flag: 'K' | 'Q' | 'k' | 'q'
+  ) => {
+    let parts = fen.split(' ');
+    let castling = parts[2] === '-' ? '' : parts[2];
+    if (checked) {
+      castling = (castling + flag).split('').sort().join('');
+    } else {
+      castling = castling.replace(flag, '');
+    }
+    parts[2] = castling || '-';
+    const updatedFen = parts.join(' ');
+    try {
+      chess.load(updatedFen);
+      setFen(updatedFen);
+    } catch {
+      notification.error({
+        message: 'Ошибка рокировки',
+        description: undefined
+      });
     }
   };
 
+  const handleSquareClick = (square: Square) => {
+    const [file, rank] = [square.charCodeAt(0) - 97, 8 - parseInt(square[1])];
+    const board = chess.board();
+    const existingPiece = board[rank][file];
+  
+    if (draggedPiece) {
+      // если фигура уже стоит там — удалим её
+      if (
+        existingPiece &&
+        existingPiece.type === draggedPiece.type &&
+        existingPiece.color === draggedPiece.color
+      ) {
+        chess.remove(square);
+      } else {
+        chess.put(draggedPiece, square);
+      }
+      setFen(chess.fen());
+      return;
+    }
+  
+    if (existingPiece) {
+      chess.remove(square);
+      setFen(chess.fen());
+    }
+  };
+  
+
   const clearBoard = () => {
-    chess.clear(); // Полностью очищаем доску
+    chess.clear();
     setFen(chess.fen());
     notification.success({
-        message: 'Доска очищена!',
-        description: undefined
+      message: 'Доска очищена!',
+      description: undefined
     });
   };
 
   const setInitialPosition = () => {
-    chess.reset(); // Устанавливаем начальную позицию
+    chess.reset();
     setFen(chess.fen());
     notification.success({
-        message: 'Установлена начальная позиция!',
-        description: undefined
+      message: 'Установлена начальная позиция!',
+      description: undefined
     });
   };
 
@@ -74,21 +156,18 @@ const PuzzleEditor: React.FC<PuzzleEditorProps> = ({ initialFen }) => {
     if (kingCount < 2) {
       notification.error({
         message: 'Некорректная позиция',
-        description: 'На доске должно быть как минимум два короля (белый и чёрный).',
+        description: 'На доске должно быть как минимум два короля.',
       });
       return;
     }
 
     try {
-      chess.load(fen); // Проверяем FEN на валидность
-      notification.success({
-        message: 'Позиция успешно сохранена!',
-        description: `FEN: ${fen}`,
-      });
+      chess.load(fen);
+      notification.success({ message: 'Позиция сохранена', description: `FEN: ${fen}` });
     } catch (error) {
       notification.error({
         message: 'Ошибка сохранения',
-        description: 'Некорректная FEN-позиция: ' + (error instanceof Error ? error.message : 'Неизвестная ошибка'),
+        description: 'Некорректная FEN-позиция',
       });
     }
   };
@@ -96,73 +175,142 @@ const PuzzleEditor: React.FC<PuzzleEditorProps> = ({ initialFen }) => {
   return (
     <Container>
       <Typography variant="h4" gutterBottom>
-        Редактор шахматной задачи
+        Редактор шахматной позиции
       </Typography>
 
-      <Box display="flex" alignItems="center">
-        <ChessBoard
-          position={fen}
-          onMove={(_sourceSquare, targetSquare) => {
-            handleSquareClick(targetSquare);
-            return true;
-          }}
-          boardWidth={500}
-        />
-        <Box ml={2} display="flex" flexDirection="column">
-          {pieces.map((piece, index) => (
-            <div
-              key={index}
-              onClick={() => setDraggedPiece(piece)}
-              style={{
-                margin: '5px 0',
-                padding: '10px',
-                textAlign: 'center',
-                backgroundColor: draggedPiece === piece ? '#1976d2' : '#e0e0e0',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '24px',
+      <Box display="flex">
+      <Box
+  onMouseEnter={() => setIsCursorOnBoard(true)}
+  onMouseLeave={() => setIsCursorOnBoard(false)}
+  style={{
+    cursor: draggedPiece ? 'none' : 'default',
+    position: 'relative',
+    width: 500, // такой же как boardWidth
+    height: 500,
+  }}
+>
+  <ChessBoard
+    position={fen}
+    onSquareClick={handleSquareClick}
+    boardWidth={500}
+  />
+  {cursorStyle && draggedPiece && (
+    <div
+      style={{
+        ...cursorStyle,
+        position: 'absolute',
+        pointerEvents: 'none',
+        left: cursorStyle.left,
+        top: cursorStyle.top,
+        fontSize: '32px',
+        zIndex: 1000,
+      }}
+    >
+      {draggedPiece.icon}
+    </div>
+  )}
+</Box>
+
+
+        <Box ml={3} display="flex" flexDirection="column">
+          <Paper elevation={3} style={{ padding: '10px', marginBottom: '20px' }}>
+            <Typography variant="h6" gutterBottom>Фигуры</Typography>
+            <Box display="grid" gridTemplateColumns="repeat(2, 1fr)" gap={1}>
+              {pieces.map((piece, idx) => (
+                <Box
+                  key={idx}
+                  onClick={() => setDraggedPiece(piece)}
+                  style={{
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    padding: 6,
+                    border: '1px solid #aaa',
+                    borderRadius: 4,
+                    fontSize: 24,
+                    backgroundColor: draggedPiece === piece ? '#1976d2' : '#f5f5f5',
+                    color: draggedPiece === piece ? '#fff' : 'inherit',
+                  }}
+                >
+                  {piece.icon}
+                </Box>
+              ))}
+            </Box>
+          </Paper>
+
+          <Paper elevation={3} style={{ padding: '10px', marginBottom: '20px' }}>
+            <Typography variant="h6">Рокировка</Typography>
+            <FormGroup row>
+              <FormControlLabel
+                control={<Checkbox checked={fen.includes('K')} onChange={(e) => updateCastlingRights(fen, e.target.checked, 'K')} />}
+                label="Белые 0-0"
+              />
+              <FormControlLabel
+                control={<Checkbox checked={fen.includes('Q')} onChange={(e) => updateCastlingRights(fen, e.target.checked, 'Q')} />}
+                label="Белые 0-0-0"
+              />
+              <FormControlLabel
+                control={<Checkbox checked={fen.includes('k')} onChange={(e) => updateCastlingRights(fen, e.target.checked, 'k')} />}
+                label="Чёрные 0-0"
+              />
+              <FormControlLabel
+                control={<Checkbox checked={fen.includes('q')} onChange={(e) => updateCastlingRights(fen, e.target.checked, 'q')} />}
+                label="Чёрные 0-0-0"
+              />
+            </FormGroup>
+          </Paper>
+
+          <Paper elevation={3} style={{ padding: '10px' }}>
+            <Typography variant="h6">Ход</Typography>
+            <RadioGroup
+              row
+              value={chess.turn()}
+              onChange={(e) => {
+                const newFen = fen.split(' ');
+                newFen[1] = e.target.value;
+                const updatedFen = newFen.join(' ');
+                try {
+                  chess.load(updatedFen);
+                  setFen(updatedFen);
+                } catch {
+                  notification.error({
+                    message: 'Ошибка изменения хода',
+                    description: undefined
+                  });
+                }
               }}
             >
-              {piece.icon}
-            </div>
-          ))}
+              <FormControlLabel value="w" control={<Radio />} label="Белые" />
+              <FormControlLabel value="b" control={<Radio />} label="Чёрные" />
+            </RadioGroup>
+          </Paper>
         </Box>
       </Box>
 
-      <Stack direction="row" spacing={2} style={{ marginTop: 20 }}>
-        <Button variant="contained" color="primary" onClick={clearBoard}>
-          Очистить доску
-        </Button>
-        <Button variant="contained" color="secondary" onClick={setInitialPosition}>
-          Начальная позиция
-        </Button>
-        <Button variant="contained" color="secondary" onClick={removeDraggedPiece}>
-          Удалить приклеенную фигуру
-        </Button>
-        <Button variant="contained" color="secondary" onClick={savePosition}>
-          Сохранить позицию
-        </Button>
+      <Stack direction="row" spacing={2} mt={3}>
+        <Button variant="contained" onClick={clearBoard}>Очистить доску</Button>
+        <Button variant="contained" onClick={setInitialPosition}>Начальная позиция</Button>
+        <Button variant="contained" onClick={removeDraggedPiece}>Убрать фигуру</Button>
+        <Button variant="contained" color="primary" onClick={savePosition}>Сохранить</Button>
       </Stack>
 
       <TextField
-        label="FEN позиции"
+        label="FEN"
         value={fen}
+        fullWidth
+        multiline
+        rows={2}
         onChange={(e) => {
-          const newFen = e.target.value.trim();
+          const newFen = e.target.value;
           try {
-            chess.load(newFen); // Проверяем валидность FEN
+            chess.load(newFen);
             setFen(newFen);
           } catch {
             notification.error({
               message: 'Некорректный FEN',
-              description: 'Позиция не может быть загружена.',
+              description: undefined
             });
           }
         }}
-        fullWidth
-        multiline
-        rows={2}
         style={{ marginTop: 20 }}
       />
 

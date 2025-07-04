@@ -25,7 +25,7 @@ import {
   PlayCircleOutlined,
   UserOutlined,
   LogoutOutlined,
-  CloseOutlined,
+  CloseOutlined
 } from '@ant-design/icons';
 import './styles.scss';
 import { Notifications } from '../Notifications/Notification';
@@ -127,24 +127,26 @@ export const Navbar: React.FC = () => {
               <ListItemText primary={t('navbar.achievements')} />
             </ListItemButton>
             <ListItemButton onClick={() => handleMenuClick('/coaches')} className="menu-item">
-              <ListItemIcon></ListItemIcon>
+              <ListItemIcon>
+                <TeamOutlined/>
+              </ListItemIcon>
               <ListItemText primary={t('navbar.coaches')} />
             </ListItemButton>
 
             {isAuthenticated && (
               <>
                 <Divider />
-                <ListItemButton
-                  onClick={() => handleMenuClick('/challenges')}
+                {/* <ListItemButton
+                  onClick={() => handleMenuClick('/analysis')}
                   className="menu-item"
                 >
                   <ListItemIcon>
                     <PlayCircleOutlined />
                   </ListItemIcon>
-                  <ListItemText primary={t('navbar.challenges')} />
-                </ListItemButton>
+                  <ListItemText primary={t('navbar.analysis')} />
+                </ListItemButton> */}
                 <ListItemButton
-                  onClick={() => handleMenuClick('/chess')}
+                  onClick={() => handleMenuClick('/analysis')}
                   className="menu-item"
                 >
                   <ListItemIcon>

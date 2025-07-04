@@ -60,7 +60,6 @@ export const CoachesBlock = () => {
                             {coach.firstName} {coach.lastName}
                           </Typography>
                           <Typography variant="body2" color="gray">
-                            GM, Индивидуальные и групповые занятия
                           </Typography>
                           <Box mt={1}>
                             {[...Array(5)].map((_, i) => (
@@ -83,7 +82,7 @@ export const CoachesBlock = () => {
                           <Button variant="contained"   
                           onClick={() => navigate("/coaches", { state: { coach } })}
                           sx={{ backgroundColor: "#FFD700", color: "black" }}>
-                            {t("home.selectCoach")}
+                            {t("homePage.coaches.selectCoach")}
                           </Button>
                         </Box>
                       </Card>
