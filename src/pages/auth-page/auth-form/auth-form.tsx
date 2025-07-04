@@ -1,13 +1,17 @@
 import React from 'react';
-import Form from 'antd/es/form';
+import Form, { FormProps } from 'antd/es/form';
 import Input from 'antd/es/input';
 import Button from 'antd/es/button';
 import Typography from 'antd/es/typography';
 import { FaChessKing } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { notification } from 'antd';
+
+import { loginUser } from '@/api/login';
+
+import { LoginCredentials } from '@/types/Auth'; 
+
 import PageTitle from '@/shared/components/PageTitle';
 import './style.scss';
 
@@ -15,16 +19,22 @@ export const AuthForm: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const onFinish = async (values: { email: string; password: string }) => {
+  const onFinish: FormProps<LoginCredentials>['onFinish'] = async (values) => {
     try {
-      const response = await axios.post('http://localhost:3000/api/auth/login', values);
+      const { token, user } = await loginUser(values);
 
-      const { token, user } = response.data;
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
 
-      navigate('/profile', { state: user });
+      navigate('/profile', { replace: true }); 
+      
+      notification.success({
+        message: t('auth.success.login_title'),
+        description: t('auth.success.welcome_back', { name: user.firstName }),
+      });
+
     } catch (error) {
+      console.error('Login failed on component level:', error);
       notification.error({
         message: t('auth.errors.login'),
         description: t('auth.errors.invalid_credentials'),
@@ -54,6 +64,7 @@ export const AuthForm: React.FC = () => {
           layout="vertical"
           className="auth-form__form"
           size="large"
+          autoComplete="off" 
         >
           <Form.Item
             label={<span className="auth-form__label">{t('auth.email')}</span>}
