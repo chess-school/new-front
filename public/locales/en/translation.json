@@ -1,20 +1,28 @@
 {
-    "navbar": {
-      "chessSchool": "Chess School",
-      "home": "Home",
-      "aboutUs": "About Us",
-      "achievements": "Achievements",
-      "students": "Students",
-      "users": "Users",
-      "logout": "Logout",
-      "loginOrRegister": "Login/Register",
-      "profile": "Profile",
-      "challenges": "Create challenge",
-      "chessGame": "ChessGame",
-      "coaches": "Coaches",
-      "students-shedule": "Student Shedule"
-
-    },
+  "navbar": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "getStarted": "Get Started",
+    "chessSchool": "Chess School",
+    "home": "Home",
+    "aboutUs": "About Us",
+    "achievements": "Achievements",
+    "coaches": "Coaches",
+    "analysis": "Analysis",
+    "chessGame": "Chess Game",
+    "profile": "Profile",
+    "students": "My Students",
+    "students-shedule": "Student's Schedule",
+    "users": "Users"
+  },
+  "common": {
+    "loading": "Loading...",
+    "close": "Close",
+    "delete": "Delete",
+    "save": "Save",
+    "add": "Add"
+  },
   "homePage": {
     "hero": {
       "title": "Master the Game. Master Your Mind.",
@@ -180,6 +188,10 @@
       "login": "Invalid email or password"
     },
     "auth": {
+      "success": {
+      "login_title": "Login Successful",
+      "welcome_back": "Welcome back, {{name}}!"
+    },
       "welcome": "Welcome Back!",
       "enter_credentials": "Enter your credentials to access your account",
       "email": "Email",

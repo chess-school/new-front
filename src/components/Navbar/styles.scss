@@ -1,5 +1,11 @@
 @use '@/styles/_variables' as vars;
 
+// === Основная панель (AppBar) ===
+.navbar-appbar {
+  background-color: vars.$primary-color;
+  box-shadow: none; // Убираем тень для более плоского вида
+}
+
 .navbar-toolbar {
   display: flex;
   justify-content: space-between;
@@ -8,56 +14,7 @@
 
 .navbar-title {
   font-size: vars.$font-size-large;
-}
-
-.navbar-menu-button {
-  margin-left: auto;
-}
-
-.navbar-menu-icon {
-  font-size: 24px;
-  color: white;
-}
-
-.navbar-drawer {
-  display: flex;
-  flex-direction: column;
-  padding: vars.$spacing-medium;
-}
-
-.close-button {
-  align-self: flex-end;
-  margin-bottom: vars.$spacing-small;
-}
-
-.close-icon {
-  font-size: 24px;
-  color: red;
-}
-
-.menu-list {
-  width: 100%;
-}
-
-.menu-item {
-  padding: vars.$spacing-small vars.$spacing-medium;
-  display: flex;
-  align-items: center;
-
-  .menu-icon {
-    margin-right: vars.$spacing-small;
-    font-size: 20px;
-    color: vars.$text-color;
-  }
-}
-.navbar-appbar {
-  background-color: vars.$primary-color;
-}
-
-.navbar-toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  cursor: pointer;
 }
 
 .navbar-controls {
@@ -65,31 +22,78 @@
   align-items: center;
 }
 
-.login-register-button {
+// === Боковое меню (Drawer) ===
+.navbar-drawer {
+  width: 280px;
+  height: 100%; // 👈 ВАЖНО: Задаем высоту, чтобы flex-grow сработал
+  display: flex;
+  flex-direction: column; // Выстраиваем дочерние элементы в колонку
+  // color: white;
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: flex-end; // Прижимаем кнопку закрытия к правому краю
+  padding: vars.$spacing-small;
+}
+
+.close-icon {
+  font-size: 24px;
+  color: #a0a0a0;
+  &:hover {
+    color: white;
+  }
+}
+
+.menu-list {
+  flex-grow: 1; // 👈 ВАЖНО: Заставляет список занять все доступное пространство, толкая нижний блок вниз
+  padding: 0; // Убираем дефолтные отступы у списка
+}
+
+.menu-item {
+  padding: vars.$spacing-small vars.$spacing-medium;
+
+  .MuiListItemIcon-root {
+    color: #a0a0a0;
+  }
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+}
+
+// === Нижний блок в боковом меню (кнопки и язык) ===
+.drawer-bottom-actions {
+  padding: vars.$spacing-medium;
+  border-top: 1px solid rgba(255, 255, 255, 0.12); // Разделитель сверху
+  display: flex;
+  flex-direction: column; // Элементы в колонку
+  gap: vars.$spacing-medium; // Расстояние между кнопкой и переключателем
+}
+
+.get-started-button,
+.logout-button {
+  width: 100%; // Кнопка занимает всю ширину
+  padding: vars.$spacing-small;
+  font-weight: bold;
+}
+
+.get-started-button {
   background-color: vars.$secondary-color;
   color: white;
-  margin-right: vars.$spacing-small;
-  padding: vars.$spacing-small vars.$spacing-medium;
-  border-radius: vars.$spacing-small;
-
   &:hover {
     background-color: darken(vars.$secondary-color, 10%);
   }
 }
 
 .logout-button {
-  background-color: #ff3b3b;
-  color: white;
-  padding: vars.$spacing-small vars.$spacing-medium;
-  border-radius: vars.$spacing-small;
-  margin-top: vars.$spacing-large;
-  text-align: center;
-
+  background-color: transparent;
+  border: 1px solid #ff3b3b;
+  color: #ff3b3b;
   &:hover {
-    background-color: #ff1a1a;
+    background-color: rgba(255, 59, 59, 0.1);
   }
 }
 
 .language-switcher {
-  margin-top: vars.$spacing-medium;
+  align-self: flex-end; // Прижимаем переключатель к правому краю
 }

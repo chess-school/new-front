@@ -1,18 +1,27 @@
 {
   "navbar": {
-    "chessSchool": "Шахова школа",
+    "login": "Увійти",
+    "register": "Реєстрація",
+    "logout": "Вийти",
+    "getStarted": "Почати",
+    "chessSchool": "Шахова Школа",
     "home": "Головна",
     "aboutUs": "Про нас",
     "achievements": "Досягнення",
-    "students": "Учні",
-    "users": "Користувачі",
-    "logout": "Вийти",
-    "loginOrRegister": "Вхід / Реєстрація",
-    "profile": "Профіль",
-    "challenges": "Створити виклик",
-    "chessGame": "Шахова дошка",
     "coaches": "Тренери",
-    "students-shedule": "Розклад учня"
+    "analysis": "Аналіз",
+    "chessGame": "Гра в шахи",
+    "profile": "Профіль",
+    "students": "Мої учні",
+    "students-shedule": "Розклад учня",
+    "users": "Користувачі"
+  },
+  "common": {
+    "loading": "Завантаження...",
+    "close": "Закрити",
+    "delete": "Видалити",
+    "save": "Зберегти",
+    "add": "Додати"
   },
   "homePage": {
     "hero": {
@@ -179,6 +188,10 @@
     "login": "Неправильна електронна пошта або пароль"
   },
   "auth": {
+    "success": {
+    "login_title": "Успішний вхід",
+    "welcome_back": "З поверненням, {{name}}!"
+    },
     "welcome": "З поверненням!",
     "enter_credentials": "Введіть свої дані для доступу до акаунту",
     "email": "Електронна пошта",
