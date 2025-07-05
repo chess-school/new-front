@@ -25,7 +25,8 @@ import {
   PlayCircleOutlined,
   UserOutlined,
   LogoutOutlined,
-  CloseOutlined
+  CloseOutlined,
+  RocketOutlined, 
 } from '@ant-design/icons';
 import './styles.scss';
 import { Notifications } from '@/components/Notifications/Notification';
@@ -37,12 +38,9 @@ export const Navbar: React.FC = () => {
 
   const userString = localStorage.getItem('user');
   let user = null;
-
   try {
-    if (userString && userString !== 'undefined') {
+    if (userString && userString !== 'undefined' && userString !== 'null') {
       user = JSON.parse(userString);
-    } else {
-      console.warn('User data is undefined or not set in localStorage.');
     }
   } catch (error) {
     console.error('Error parsing user from localStorage:', error);
@@ -50,7 +48,7 @@ export const Navbar: React.FC = () => {
   }
 
   const token = localStorage.getItem('token');
-  const isAuthenticated = !!token;
+  const isAuthenticated = !!token && !!user;
   const isAdmin = user?.roles?.includes('admin');
   const isCoach = user?.roles?.includes('coach');
   const isStudent = user?.roles?.includes('student');
@@ -58,7 +56,13 @@ export const Navbar: React.FC = () => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    setIsDrawerOpen(false);
     navigate('/login');
+  };
+
+  const handleGetStarted = () => {
+    setIsDrawerOpen(false);
+    navigate('/register');
   };
 
   const navigateToRequests = () => {
@@ -70,24 +74,30 @@ export const Navbar: React.FC = () => {
   };
 
   const handleMenuClick = (path: string) => {
-    setIsDrawerOpen(false); // Закрываем меню при переходе
+    setIsDrawerOpen(false);
     navigate(path);
   };
 
   return (
     <>
-      <AppBar position="static" color="primary" className="navbar-appbar">
+      <AppBar position="static" className="navbar-appbar">
         <Toolbar className="navbar-toolbar">
-          <Typography variant="h6" className="navbar-title">
+          <Typography variant="h6" className="navbar-title" onClick={() => navigate('/')}>
             {t('navbar.chessSchool')}
           </Typography>
           
-          <Box className="navbar-controls" display="flex" alignItems="center">
-            {isAuthenticated && (
-              <Box display="flex" alignItems="center">
-                <Notifications navigateToRequests={navigateToRequests} />
+          <Box className="navbar-controls">
+            {!isAuthenticated && (
+              <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
+                <Button color="inherit" onClick={() => navigate('/login')}>{t('navbar.login')}</Button>
+                <Button variant="contained" color="secondary" onClick={() => navigate('/register')} sx={{ ml: 1 }}>{t('navbar.register')}</Button>
               </Box>
             )}
+
+            {isAuthenticated && (
+              <Notifications navigateToRequests={navigateToRequests} />
+            )}
+
             <IconButton
               edge="end"
               color="inherit"
@@ -103,119 +113,86 @@ export const Navbar: React.FC = () => {
 
       <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer(false)}>
         <Box className="navbar-drawer">
-          <IconButton onClick={toggleDrawer(false)} className="close-button">
-            <CloseOutlined className="close-icon" />
-          </IconButton>
+          <Box className="drawer-header">
+            <IconButton onClick={toggleDrawer(false)} className="close-button">
+              <CloseOutlined className="close-icon" />
+            </IconButton>
+          </Box>
+          
           <List className="menu-list">
+            {/* Общие пункты меню */}
             <ListItemButton onClick={() => handleMenuClick('/')} className="menu-item">
-              <ListItemIcon>
-                <HomeOutlined />
-              </ListItemIcon>
+              <ListItemIcon><HomeOutlined /></ListItemIcon>
               <ListItemText primary={t('navbar.home')} />
             </ListItemButton>
             <ListItemButton onClick={() => handleMenuClick('/about')} className="menu-item">
-              <ListItemIcon>
-                <InfoCircleOutlined />
-              </ListItemIcon>
+              <ListItemIcon><InfoCircleOutlined /></ListItemIcon>
               <ListItemText primary={t('navbar.aboutUs')} />
             </ListItemButton>
             <ListItemButton onClick={() => handleMenuClick('/achievements')} className="menu-item">
-              <ListItemIcon>
-                <TrophyOutlined />
-              </ListItemIcon>
+              <ListItemIcon><TrophyOutlined /></ListItemIcon>
               <ListItemText primary={t('navbar.achievements')} />
             </ListItemButton>
             <ListItemButton onClick={() => handleMenuClick('/coaches')} className="menu-item">
-              <ListItemIcon>
-                <TeamOutlined/>
-              </ListItemIcon>
+              <ListItemIcon><TeamOutlined /></ListItemIcon>
               <ListItemText primary={t('navbar.coaches')} />
             </ListItemButton>
+            
+            {/* 👇 ВОССТАНОВИЛ РАЗДЕЛИТЕЛИ МЕЖДУ СЕМАНТИЧЕСКИМИ БЛОКАМИ */}
+            {isAuthenticated && <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.12)' }} />}
 
+            {/* Меню для авторизованных пользователей */}
             {isAuthenticated && (
               <>
-                <Divider />
-                {/* <ListItemButton
-                  onClick={() => handleMenuClick('/analysis')}
-                  className="menu-item"
-                >
-                  <ListItemIcon>
-                    <PlayCircleOutlined />
-                  </ListItemIcon>
-                  <ListItemText primary={t('navbar.analysis')} />
-                </ListItemButton> */}
-                <ListItemButton
-                  onClick={() => handleMenuClick('/analysis')}
-                  className="menu-item"
-                >
-                  <ListItemIcon>
-                    <PlayCircleOutlined />
-                  </ListItemIcon>
+                <ListItemButton onClick={() => handleMenuClick('/analysis')} className="menu-item">
+                  <ListItemIcon><PlayCircleOutlined /></ListItemIcon>
                   <ListItemText primary={t('navbar.chessGame')} />
                 </ListItemButton>
-                <ListItemButton
-                  onClick={() => handleMenuClick('/profile')}
-                  className="menu-item"
-                >
-                  <ListItemIcon>
-                    <UserOutlined />
-                  </ListItemIcon>
+                <ListItemButton onClick={() => handleMenuClick('/profile')} className="menu-item">
+                  <ListItemIcon><UserOutlined /></ListItemIcon>
                   <ListItemText primary={t('navbar.profile')} />
                 </ListItemButton>
               </>
             )}
 
+            {(isCoach || isAdmin || isStudent) && <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.12)' }} />}
+            
+            {/* Меню для ролей */}
             {(isCoach || isAdmin) && (
-              <>
-                <Divider />
-                <ListItemButton
-                  onClick={() => handleMenuClick('/students')}
-                  className="menu-item"
-                >
-                  <ListItemIcon>
-                    <TeamOutlined />
-                  </ListItemIcon>
-                  <ListItemText primary={t('navbar.students')} />
-                </ListItemButton>
-              </>
+              <ListItemButton onClick={() => handleMenuClick('/students')} className="menu-item">
+                <ListItemIcon><TeamOutlined /></ListItemIcon>
+                <ListItemText primary={t('navbar.students')} />
+              </ListItemButton>
             )}
             {(isCoach || isAdmin || isStudent) && (
-              <>
-              <Divider />
-              <ListItemButton
-                onClick={() => handleMenuClick('/students-shedule')}
-                className="menu-item"
-              >
-                <ListItemIcon>
-                  <TeamOutlined />
-                </ListItemIcon>
+              <ListItemButton onClick={() => handleMenuClick('/students-shedule')} className="menu-item">
+                <ListItemIcon><TeamOutlined /></ListItemIcon>
                 <ListItemText primary={t('navbar.students-shedule')} />
               </ListItemButton>
-            </>
-            )
-
-            }
+            )}
             {isAdmin && (
-              <ListItemButton
-                onClick={() => handleMenuClick('/users')}
-                className="menu-item"
-              >
-                <ListItemIcon>
-                  <TeamOutlined />
-                </ListItemIcon>
+              <ListItemButton onClick={() => handleMenuClick('/users')} className="menu-item">
+                <ListItemIcon><TeamOutlined /></ListItemIcon>
                 <ListItemText primary={t('navbar.users')} />
               </ListItemButton>
             )}
           </List>
 
-          {isAuthenticated && (
-            <Button onClick={handleLogout} className="logout-button">
-              <LogoutOutlined />
-              {t('navbar.logout')}
-            </Button>
-          )}
+          <Box className="drawer-bottom-actions">
+            {isAuthenticated ? (
+              <Button onClick={handleLogout} className="logout-button">
+                <LogoutOutlined />
+                {t('navbar.logout')}
+              </Button>
+            ) : (
+              <Button onClick={handleGetStarted} className="get-started-button" variant="contained" color="secondary">
+                <RocketOutlined style={{ marginRight: '8px' }}/>
+                {t('navbar.getStarted')}
+              </Button>
+            )}
 
-          <LanguageSwitcher className="language-switcher" />
+            <LanguageSwitcher className="language-switcher" />
+          </Box>
         </Box>
       </Drawer>
     </>

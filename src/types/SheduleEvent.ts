@@ -1,12 +1,13 @@
 export interface ScheduleEvent {
   _id: string;
-  title: string;
-  date: Date; 
-  type: 'individual_lesson' | 'group_lesson' | 'homework' | 'opening_study' | 'tournament_participation';
-  status: 'planned' | 'completed' | 'cancelled';
-  
+  student: string;
   coach?: string;
-  student?: string;
+  title: string;
   description?: string;
   link?: string;
+  type: 'individual_lesson' | 'group_lesson' | 'homework' | 'opening_study' | 'tournament_participation';
+  date: string;
+  status: 'scheduled' | 'completed' | 'cancelled';
 }
+
+export type ScheduleEventPayload = Omit<ScheduleEvent, '_id' | 'coach' | 'student'> & { studentId: string };
