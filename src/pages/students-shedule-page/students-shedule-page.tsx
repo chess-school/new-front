@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { 
   Container, Typography, Paper, Button, Dialog, DialogTitle, 
-  DialogContent, DialogActions, TextField 
+  DialogContent, DialogActions, TextField, CircularProgress, Box
 } from '@mui/material';
-import axios from 'axios';
 import moment from 'moment';
 import { notification } from 'antd';
+
+import { getScheduleByStudent, sendHomework } from '@/api/schedule';
+import { createNotification } from '@/api/notifications';
+
 import ScheduleCalendar from '@/shared/components/Calendar/SheduleCalendar';
 import { ScheduleEvent } from '@/types/SheduleEvent';
-import { createNotification } from '@/api/notifications';
 
 const eventColors: Record<ScheduleEvent['type'], string> = {
   individual_lesson: '#1976D2',
@@ -22,32 +24,37 @@ const MAX_FILE_SIZE_MB = 5;
 
 const StudentSchedulePage: React.FC = () => {
   const [events, setEvents] = useState<ScheduleEvent[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState<ScheduleEvent | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [homeworkText, setHomeworkText] = useState('');
   const [screenshot, setScreenshot] = useState<File | null>(null);
 
-  const studentId = JSON.parse(localStorage.getItem('user') || '{}')._id;
-  const coachId = selectedEvent?.coach; // Получаем ID тренера из события
+  const studentId = useMemo(() => {
+    const userStr = localStorage.getItem('user');
+    return userStr ? JSON.parse(userStr)._id : null;
+  }, []);
 
-  const fetchSchedule = async () => {
-    if (!studentId) return;
-
-    const token = localStorage.getItem('token');
-    try {
-      const response = await axios.get(`http://localhost:3000/api/schedule/student/${studentId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setEvents(response.data);
-    } catch (error: any) {
-      notification.error({ message: 'Помилка', description: 'Не вдалося отримати розклад.' });
-      console.error('Помилка отримання розкладу:', error);
+  const fetchSchedule = useCallback(async () => {
+    if (!studentId) {
+      setLoading(false);
+      return;
     }
-  };
+    setLoading(true);
+    try {
+      const scheduleData = await getScheduleByStudent(studentId);
+      setEvents(scheduleData);
+    } catch (error) {
+      console.error('Ошибка получения расписания:', error);
+      notification.error({ message: 'Ошибка', description: 'Не удалось получить расписание.' });
+    } finally {
+      setLoading(false);
+    }
+  }, [studentId]);
 
   useEffect(() => {
     fetchSchedule();
-  }, []);
+  }, [fetchSchedule]);
 
   const handleSelectEvent = (event: ScheduleEvent) => {
     setSelectedEvent(event);
@@ -62,10 +69,10 @@ const StudentSchedulePage: React.FC = () => {
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      const file = event.target.files[0];
+    const file = event.target.files?.[0];
+    if (file) {
       if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-        notification.error({ message: 'Помилка', description: `Файл не може перевищувати ${MAX_FILE_SIZE_MB}MB` });
+        notification.error({ message: 'Ошибка', description: `Файл не может превышать ${MAX_FILE_SIZE_MB}MB` });
         return;
       }
       setScreenshot(file);
@@ -74,97 +81,79 @@ const StudentSchedulePage: React.FC = () => {
 
   const handleSendHomework = async () => {
     if (!homeworkText.trim() && !screenshot) {
-      notification.error({ message: 'Помилка', description: 'Додайте текст або скріншот перед відправкою.' });
+      notification.error({ message: 'Ошибка', description: 'Добавьте текст или скриншот перед отправкой.' });
       return;
     }
-
-    const formData = new FormData();
-    formData.append('studentId', studentId);
-    formData.append('scheduleId', selectedEvent?._id || '');
-    if (homeworkText) formData.append('homeworkText', homeworkText);
-    if (screenshot) formData.append('screenshot', screenshot);
+    if (!studentId || !selectedEvent) return;
 
     try {
-      const token = localStorage.getItem('token');
-      await axios.post('http://localhost:3000/api/homework/send', formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
+      // 3. Вызываем сервис для отправки ДЗ
+      await sendHomework({
+        studentId,
+        scheduleId: selectedEvent._id,
+        homeworkText: homeworkText.trim() ? homeworkText : undefined,
+        screenshot: screenshot || undefined,
       });
 
-      // Отправка уведомления тренеру
-      await sendMessageToCoach();
+      // 4. После успешной отправки ДЗ, отправляем уведомление
+      if (selectedEvent.coach) {
+        await createNotification({
+          recipient: selectedEvent.coach,
+          type: 'homework_submission',
+          content: `Ученик отправил домашнее задание по теме: "${selectedEvent.title}"`,
+          metadata: { scheduleId: selectedEvent._id },
+        });
+      }
 
-      notification.success({ message: 'Успіх', description: 'Домашнє завдання відправлено тренеру!' });
+      notification.success({ message: 'Успех', description: 'Домашнее задание отправлено тренеру!' });
       handleCloseDialog();
-    } catch (error: any) {
-      console.error('Помилка відправки завдання:', error);
-      notification.error({ message: 'Помилка', description: 'Не вдалося відправити завдання.' });
-    }
-  };
-
-  // Отправка уведомления тренеру
-  const sendMessageToCoach = async () => {
-    if (!coachId) return;
-
-    try {
-      await createNotification({
-        recipient: coachId,
-        type: 'homework_submission',
-        content: `Учень відправив домашнє завдання: ${homeworkText || 'Без тексту'}`,
-        metadata: { scheduleId: selectedEvent?._id },
-      });
-      console.log('Повідомлення відправлено тренеру');
     } catch (error) {
-      console.error('Помилка при відправці повідомлення:', error);
+      console.error('Ошибка отправки задания:', error);
     }
   };
-
+  
   return (
     <Container>
       <Typography variant="h4" gutterBottom>
-        Мій розклад занять
+        Мой расклад занятий
       </Typography>
 
-      {/* Календарь */}
       <Paper style={{ padding: 20, marginTop: 20 }}>
-        <ScheduleCalendar events={events} onSelectEvent={handleSelectEvent} />
+        {loading ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
+              <CircularProgress />
+            </Box>
+        ) : (
+          <ScheduleCalendar events={events} onSelectEvent={handleSelectEvent} />
+        )}
       </Paper>
 
-      {/* Текстовое представление занятий */}
       <Typography variant="h5" style={{ marginTop: 20 }}>
-        Список занять
+        Список занятий
       </Typography>
       <Paper style={{ padding: 20, marginTop: 10 }}>
-        {events.length === 0 ? (
-          <Typography variant="body1">Заняття відсутні</Typography>
-        ) : (
-          events.map(event => (
+        {loading && <Box sx={{ display: 'flex', justifyContent: 'center', py: 5 }}><CircularProgress /></Box>}
+        {!loading && events.length === 0 && (
+          <Typography variant="body1">Занятия отсутствуют</Typography>
+        )}
+        {!loading && events.map(event => (
             <Paper 
               key={event._id} 
-              style={{ 
-                padding: 10, 
-                marginBottom: 10, 
-                cursor: 'pointer', 
-                backgroundColor: eventColors[event.type], 
-                color: 'white' 
-              }} 
+              style={{ padding: 10, marginBottom: 10, cursor: 'pointer', backgroundColor: eventColors[event.type], color: 'white' }} 
               onClick={() => handleSelectEvent(event)}
             >
               <Typography variant="h6">{event.title}</Typography>
               <Typography variant="body2">Дата: {moment(event.date).format('DD/MM/YYYY HH:mm')}</Typography>
-              {event.description && <Typography variant="body2">Опис: {event.description}</Typography>}
-              {event.link && <Typography variant="body2">Посилання: <a href={event.link} target="_blank" rel="noopener noreferrer">{event.link}</a></Typography>}
+              {event.description && <Typography variant="body2">Описание: {event.description}</Typography>}
+              {event.link && <Typography variant="body2">Ссылка: <a href={event.link} target="_blank" rel="noopener noreferrer" style={{ color: 'white' }}>{event.link}</a></Typography>}
               <Typography variant="body2">Статус: {event.status}</Typography>
             </Paper>
           ))
-        )}
+        }
       </Paper>
 
-      {/* Модальное окно */}
       <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth maxWidth="sm">
-        <DialogTitle>Деталі заняття</DialogTitle>
+        <DialogTitle>Детали занятия</DialogTitle>
         <DialogContent>
           {selectedEvent && (
             <>
@@ -172,15 +161,15 @@ const StudentSchedulePage: React.FC = () => {
                 {selectedEvent.title}
               </Typography>
               <Typography variant="body2">Дата: {moment(selectedEvent.date).format('DD/MM/YYYY HH:mm')}</Typography>
-              {selectedEvent.description && <Typography variant="body2">Опис: {selectedEvent.description}</Typography>}
-              {selectedEvent.link && <Typography variant="body2">Посилання: <a href={selectedEvent.link} target="_blank" rel="noopener noreferrer">{selectedEvent.link}</a></Typography>}
+              {selectedEvent.description && <Typography variant="body2">Описание: {selectedEvent.description}</Typography>}
+              {selectedEvent.link && <Typography variant="body2">Ссылка: <a href={selectedEvent.link} target="_blank" rel="noopener noreferrer">{selectedEvent.link}</a></Typography>}
               <Typography variant="body2">Статус: {selectedEvent.status}</Typography>
 
               {selectedEvent.type === 'homework' && (
-                <>
-                  <Typography variant="h6" style={{ marginTop: 10 }}>Відправити домашнє завдання</Typography>
+                <Box mt={2}>
+                  <Typography variant="h6" style={{ marginTop: 10 }}>Отправить домашнее задание</Typography>
                   <TextField
-                    label="Текст завдання"
+                    label="Текст задания"
                     fullWidth
                     multiline
                     rows={3}
@@ -188,17 +177,21 @@ const StudentSchedulePage: React.FC = () => {
                     onChange={(e) => setHomeworkText(e.target.value)}
                     margin="normal"
                   />
-                  <input type="file" accept="image/*" onChange={handleFileUpload} />
-                </>
+                  <Button variant="contained" component="label">
+                    Загрузить скриншот
+                    <input type="file" hidden accept="image/*" onChange={handleFileUpload} />
+                  </Button>
+                  {screenshot && <Typography variant="caption" display="block" mt={1}>{screenshot.name}</Typography>}
+                </Box>
               )}
             </>
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>Закрити</Button>
+          <Button onClick={handleCloseDialog}>Закрыть</Button>
           {selectedEvent?.type === 'homework' && (
             <Button onClick={handleSendHomework} variant="contained" color="primary">
-              Відправити
+              Отправить
             </Button>
           )}
         </DialogActions>
