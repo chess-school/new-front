@@ -1,18 +1,15 @@
-// src/pages/students-page/students-page.tsx
-
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Paper, Button } from '@mui/material';
+import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Paper, Button, CircularProgress } from '@mui/material';
 import { useTranslation } from "react-i18next";
-import { notification } from 'antd'; // Используем Antd notification для консистентности
+import { notification } from 'antd';
 
-// 1. Импортируем наши новые API-функции
 import { 
   getStudentIdsByCoach, 
   getStudentDetails, 
   removeStudentFromCoach 
 } from '@/api/coaches';
 
-import { Student } from '@/types/Student'; // Импортируем тип
+import { Student } from '@/types/Student';
 import EditScheduleModal from '../../components/Schedule/EditScheduleModal';
 
 export const StudentsPage: React.FC = () => {
@@ -20,15 +17,13 @@ export const StudentsPage: React.FC = () => {
   const [students, setStudents] = useState<Student[]>([]);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [openModal, setOpenModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); // Добавим состояние загрузки
+  const [isLoading, setIsLoading] = useState(true);
 
-  // 2. Используем useMemo для безопасного получения email
   const coachEmail = useMemo(() => {
     const userStr = localStorage.getItem('user');
     return userStr ? JSON.parse(userStr).email : null;
   }, []);
 
-  // 3. Оборачиваем логику загрузки в useCallback
   const fetchStudents = useCallback(async () => {
     if (!coachEmail) {
       setIsLoading(false);
@@ -37,26 +32,18 @@ export const StudentsPage: React.FC = () => {
 
     setIsLoading(true);
     try {
-      // Шаг 1: Получаем ID всех студентов
       const studentIds = await getStudentIdsByCoach(coachEmail);
 
       if (!Array.isArray(studentIds) || studentIds.length === 0) {
-        setStudents([]);
-        return;
-      }
+  setStudents([]);
+  return;
+}
 
-      // Шаг 2: Параллельно запрашиваем детали по каждому ID
-      // Стало (правильно)
-const studentDetailsPromises = studentIds.map((studentIdObject: any) => {
-  // Извлекаем строку ID из объекта. Если это уже строка, то используем ее.
-  const idString = studentIdObject._id || studentIdObject;
-  
-  // Передаем в API-функцию ТОЛЬКО строку
-  return getStudentDetails(coachEmail, idString);
-});      
-const studentDetails = await Promise.all(studentDetailsPromises);
+      const studentDetailsPromises = studentIds.map(id => getStudentDetails(coachEmail, id));
+
       
-      // Отфильтровываем тех, по кому не удалось получить данные (null)
+      const studentDetails = await Promise.all(studentDetailsPromises);
+      
       setStudents(studentDetails.filter((student): student is Student => student !== null));
 
     } catch (error) {
@@ -72,21 +59,17 @@ const studentDetails = await Promise.all(studentDetailsPromises);
   }, [coachEmail, t]);
 
 
-  // 4. Логика удаления ученика
   const handleRemoveStudent = async (studentId: string) => {
     if (!coachEmail) return;
-
     try {
       await removeStudentFromCoach(coachEmail, studentId);
       notification.success({
         message: t('studentsPage.studentDeletedSuccess'),
         description: undefined
       });
-      // Обновляем список учеников, отфильтровывая удаленного локально для быстрого UI
       setStudents(prevStudents => prevStudents.filter(s => s._id !== studentId));
     } catch (error) {
       console.error('Ошибка при удалении ученика:', error);
-      // Ошибка уже должна показываться интерсептором axios
     }
   };
 
@@ -117,7 +100,10 @@ const studentDetails = await Promise.all(studentDetailsPromises);
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={4} align="center">{t('common.loading')}</TableCell>
+                <TableCell colSpan={4} align="center">
+                  <CircularProgress />
+                  <Typography sx={{ mt: 1 }}>{t('common.loading')}</Typography>
+                </TableCell>
               </TableRow>
             ) : students.length > 0 ? (
               students.map((student) => (
