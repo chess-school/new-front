@@ -1,23 +1,13 @@
 import axiosInstance from '@/api'; 
 
-export const createNotification = async (data: {
+interface NotificationPayload {
   recipient: string;
   type: string;
   content: string;
   metadata?: { [key: string]: any };
-}) => {
-  const token = localStorage.getItem('token');
-  if (!token) {
-    throw new Error('Токен авторизации отсутствует');
-  }
+}
 
-  try {
-    const response = await axiosInstance.post('/notifications', data, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+export const createNotification = async (data: NotificationPayload) => {
+    const response = await axiosInstance.post('/notifications', data);
     return response.data;
-  } catch (error) {
-    console.error('Ошибка при создании уведомления:', error);
-    throw error;
-  }
 };
