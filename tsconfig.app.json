@@ -34,5 +34,5 @@
     "allowSyntheticDefaultImports": true,
     "incremental": true 
   },
-  "include": ["src"]
+  "include": ["src", "notifications"]
 }

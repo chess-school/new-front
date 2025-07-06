@@ -19,6 +19,8 @@ import { CoachesPage } from './pages/coaches-page/coaches-page';
 import { RequestsPage } from './pages/requests-page/requests-page';
 // import { Footer } from './components/Footer/Footer';
 import StudentSchedulePage from './pages/students-shedule-page/students-shedule-page';
+import { CssBaseline } from '@mui/material';
+
 
 function MainLayout() {
   const location = useLocation();
@@ -26,6 +28,7 @@ function MainLayout() {
 
   return (
     <>
+    <CssBaseline /> 
       {!hideNavbar && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />

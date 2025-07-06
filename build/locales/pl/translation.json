@@ -1,18 +1,27 @@
 {
-  "navbar": {
+ "navbar": {
+    "login": "Zaloguj się",
+    "register": "Zarejestruj się",
+    "logout": "Wyloguj się",
+    "getStarted": "Zacznij teraz",
     "chessSchool": "Szkoła Szachowa",
     "home": "Strona główna",
     "aboutUs": "O nas",
     "achievements": "Osiągnięcia",
-    "students": "Uczniowie",
-    "users": "Użytkownicy",
-    "logout": "Wyloguj",
-    "loginOrRegister": "Logowanie / Rejestracja",
-    "profile": "Profil",
-    "challenges": "Stwórz wyzwanie",
-    "chessGame": "Szachownica",
     "coaches": "Trenerzy",
-    "students-shedule": "Harmonogram ucznia"
+    "analysis": "Analiza",
+    "chessGame": "Gra w szachy",
+    "profile": "Profil",
+    "students": "Moi uczniowie",
+    "students-shedule": "Harmonogram ucznia",
+    "users": "Użytkownicy"
+  },
+  "common": {
+    "loading": "Ładowanie...",
+    "close": "Zamknij",
+    "delete": "Usuń",
+    "save": "Zapisz",
+    "add": "Dodaj"
   },
   "homePage": {
     "hero": {
@@ -179,6 +188,10 @@
     "login": "Nieprawidłowy e-mail lub hasło"
   },
   "auth": {
+    "success": {
+    "login_title": "Logowanie udane",
+    "welcome_back": "Witaj z powrotem, {{name}}!"
+    },
     "welcome": "Witaj z powrotem!",
     "enter_credentials": "Wprowadź swoje dane, aby uzyskać dostęp do konta",
     "email": "E-mail",
