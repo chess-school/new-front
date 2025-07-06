@@ -47,7 +47,7 @@ export const StudentsPage: React.FC = () => {
 
       // Шаг 2: Параллельно запрашиваем детали по каждому ID
       // Стало (правильно)
-      const studentDetailsPromises = studentIds.map((id: any) => getStudentDetails(coachEmail, id._id || id));
+      const studentDetailsPromises = studentIds.map(id => getStudentDetails(coachEmail, id));
       const studentDetails = await Promise.all(studentDetailsPromises);
       
       // Отфильтровываем тех, по кому не удалось получить данные (null)
