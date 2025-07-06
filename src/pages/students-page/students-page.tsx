@@ -47,8 +47,14 @@ export const StudentsPage: React.FC = () => {
 
       // Шаг 2: Параллельно запрашиваем детали по каждому ID
       // Стало (правильно)
-      const studentDetailsPromises = studentIds.map(id => getStudentDetails(coachEmail, id));
-      const studentDetails = await Promise.all(studentDetailsPromises);
+const studentDetailsPromises = studentIds.map((studentIdObject: any) => {
+  // Извлекаем строку ID из объекта. Если это уже строка, то используем ее.
+  const idString = studentIdObject._id || studentIdObject;
+  
+  // Передаем в API-функцию ТОЛЬКО строку
+  return getStudentDetails(coachEmail, idString);
+});      
+const studentDetails = await Promise.all(studentDetailsPromises);
       
       // Отфильтровываем тех, по кому не удалось получить данные (null)
       setStudents(studentDetails.filter((student): student is Student => student !== null));
