@@ -10,7 +10,7 @@ import {
   Box,
   Link,
 } from '@mui/material';
-import { updateProfile } from '../../api/profile/auth';
+import { updateProfile } from '@/api/profile';
 import { notification } from 'antd';
 import { useTranslation } from 'react-i18next';
 

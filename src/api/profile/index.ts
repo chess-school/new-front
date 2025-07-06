@@ -1,5 +1,4 @@
-export {getProfile} from './auth';
-export {updateProfile} from './auth';
-export {getPlayerStats} from './auth';
-export {getAvatarUrl} from './auth';
-
+export {getProfile} from './getProfile';
+export {updateProfile} from './updateProfile';
+export {getAvatarUrl} from './getAvatarUrl';
+export {getPlayerStats} from './getPlayerStats';
