@@ -16,7 +16,7 @@ import { AnalysisPage } from '@/features/Chess/pages/AnalysisPage';
 import PuzzleEditor from './components/PuzzleEditor/PuzzleEditor';
 import { VerifyEmailPage } from './pages/verify-email-page/verify-email-page';
 import { CoachesPage } from './pages/coaches-page/coaches-page';
-import { RequestsPage } from './pages/requests-page/requests-page';
+import { InboxPage } from './pages/inbox-page/inbox-page';
 // import { Footer } from './components/Footer/Footer';
 import StudentSchedulePage from './pages/students-shedule-page/students-shedule-page';
 import { CssBaseline } from '@mui/material';
@@ -50,7 +50,7 @@ function MainLayout() {
           <Route path="/students-shedule" element={<StudentSchedulePage />} />
           <Route path="/students" element={<StudentsPage />} />
           <Route path="/puzzle-editor" element={<PuzzleEditor />} />
-          <Route path="/inbox" element={<RequestsPage />} />
+          <Route path="/inbox" element={<InboxPage />} />
         </Route>
       </Routes>
       {/* {!hideNavbar && <Footer />} */}

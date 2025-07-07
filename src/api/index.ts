@@ -6,12 +6,10 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 const axiosInstance = axios.create({
   baseURL: API_URL,
   withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
 
 const reduceMessage = (arr: string[]) => arr?.reduce((acc, item) => (acc += item), '');
+
 const getIssueMessage = (error: AxiosError<any>, description: string) => {
   notification.error({
     message: 'Ошибка',
@@ -60,7 +58,7 @@ axiosInstance.interceptors.response.use(
 
       if (data instanceof Object) {
         const description = Object.keys(data).reduce(
-          (acc, key) => (acc += `${key}: ${data[key]?.[0] || data[key]} `), // добавил пробел для читаемости
+          (acc, key) => (acc += `${key}: ${data[key]?.[0] || data[key]} `),
           ''
         );
         return getIssueMessage(error, description);

@@ -7,6 +7,9 @@ import {
   ListItemText,
   ListItemSecondaryAction,
   IconButton as MuiIconButton,
+  Divider,
+  Box,
+  Typography
 } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -27,60 +30,68 @@ interface NotificationsProps {
 export const Notifications: React.FC<NotificationsProps> = ({ navigateToRequests }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [unreadCount, setUnreadCount] = useState(0);
 
   const open = Boolean(anchorEl);
+  const unreadCount = notifications.filter(n => !n.read).length;
 
-  // Fetch notifications
   const fetchNotifications = async () => {
     try {
       const data = await getNotifications();
-      setNotifications(data);
-      setUnreadCount(data.filter((notif: Notification) => !notif.read).length);
+      setNotifications(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Ошибка при получении уведомлений:', error);
     }
   };
 
-  // Mark notification as read
-  const handleMarkAsRead = async (notificationId: string) => {
-    try {
-      await markAsRead(notificationId);
-      fetchNotifications();
-    } catch (error) {
-      console.error('Ошибка при пометке уведомления как прочитанного:', error);
-    }
-  };
-
-  // Delete notification
-  const handleDeleteNotification = async (notificationId: string) => {
-    try {
-      await deleteNotification(notificationId);
-      fetchNotifications();
-    } catch (error) {
-      console.error('Ошибка при удалении уведомления:', error);
-    }
-  };
-
   useEffect(() => {
     fetchNotifications();
+    const interval = setInterval(fetchNotifications, 30000); // Обновляем каждые 30 секунд
+    return () => clearInterval(interval); // Очищаем интервал при размонтировании
   }, []);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
+    // При открытии можно пометить видимые как прочитанные или просто обновить
+    fetchNotifications(); 
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
 
+  // 👇 ИСПРАВЛЕНИЕ: Добавляем `event` в аргументы
+  const handleDeleteNotification = async (event: React.MouseEvent, notificationId: string) => {
+    event.stopPropagation(); // 👈 ГЛАВНОЕ ИСПРАВЛЕНИЕ! Останавливаем всплытие.
+    try {
+      await deleteNotification(notificationId);
+      // Оптимистичное обновление UI для мгновенной реакции
+      setNotifications(prev => prev.filter(n => n._id !== notificationId));
+    } catch (error) {
+      console.error('Ошибка при удалении уведомления:', error);
+    }
+  };
+
   const handleNotificationClick = (notification: Notification) => {
-    if (notification.type === 'request') {
+    // Помечаем как прочитанное, только если оно не было прочитано
+    if (!notification.read) {
+      markAsRead(notification._id);
+      // Оптимистичное обновление
+      setNotifications(prev => prev.map(n => n._id === notification._id ? { ...n, read: true } : n));
+    }
+
+    // Если это заявка, переходим во "Входящие"
+    if (notification.type === 'request' || notification.type === 'homework_submission') {
       navigateToRequests();
     }
-    handleMarkAsRead(notification._id);
+    
     handleMenuClose();
   };
+  
+  const handleViewAllClick = () => {
+    navigateToRequests();
+    handleMenuClose();
+  }
+
   return (
     <div>
       <IconButton color="inherit" onClick={handleMenuOpen}>
@@ -94,38 +105,48 @@ export const Notifications: React.FC<NotificationsProps> = ({ navigateToRequests
         onClose={handleMenuClose}
         PaperProps={{
           style: {
-            maxHeight: 48 * 4.5,
+            maxHeight: 300,
             width: '400px',
           },
         }}
       >
+        <Box sx={{ p: 2, borderBottom: '1px solid #eee' }}>
+            <Typography variant="h6">Уведомления</Typography>
+        </Box>
         {notifications.length === 0 ? (
-          <MenuItem onClick={handleMenuClose}>Уведомлений нет</MenuItem>
+          <MenuItem disabled>Уведомлений нет</MenuItem>
         ) : (
           notifications.map((notification) => (
             <MenuItem
               key={notification._id}
               onClick={() => handleNotificationClick(notification)}
+              sx={{ 
+                bgcolor: notification.read ? 'transparent' : 'action.hover',
+                whiteSpace: 'normal',
+                alignItems: 'flex-start'
+              }}
             >
               <ListItemText
                 primary={notification.content}
                 secondary={new Date(notification.createdAt).toLocaleString()}
-                style={{
-                  textDecoration: notification.read ? 'line-through' : 'none',
-                }}
               />
               <ListItemSecondaryAction>
+                {/* 👇 Передаем `event` в обработчик */}
                 <MuiIconButton
                   edge="end"
                   aria-label="delete"
-                  onClick={() => handleDeleteNotification(notification._id)}
+                  onClick={(event) => handleDeleteNotification(event, notification._id)}
                 >
-                  <DeleteIcon />
+                  <DeleteIcon fontSize="small" />
                 </MuiIconButton>
               </ListItemSecondaryAction>
             </MenuItem>
           ))
         )}
+        <Divider />
+        <MenuItem onClick={handleViewAllClick}>
+            <ListItemText primary="Посмотреть все во 'Входящих'" sx={{ textAlign: 'center' }} />
+        </MenuItem>
       </Menu>
     </div>
   );

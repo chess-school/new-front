@@ -21,7 +21,9 @@
     "close": "Закрити",
     "delete": "Видалити",
     "save": "Зберегти",
-    "add": "Додати"
+    "add": "Додати",
+    "filterByStatus": "Фільтрувати за статусом"
+
   },
   "homePage": {
     "hero": {
@@ -309,7 +311,7 @@
   "schedule": {
     "myScheduleTitle": "Мій розклад",
     "myScheduleSubtitle": "Тут ви можете переглянути всі ваші майбутні уроки та завдання.",
-    "editScheduleTitle": "Розклад для {studentName}",
+    "editScheduleTitle": "Розклад для {{studentName}}",
     "eventDetails": "Деталі події",
     "addEvent": "Додати подію",
     "updateEvent": "Оновити подію",
@@ -326,12 +328,35 @@
     "form_description": "Опис",
     "form_link": "Посилання (напр. для відеодзвінка)",
     "form_date": "Дата та час*",
- "individual_lesson": "Individual Lesson",
-  "group_lesson": "Group Lesson",
-  "homework": "Homework",
-  "opening_study": "Opening Study",
-  "tournament_participation": "Tournament"
+      "eventTypes": {
+        "individual_lesson": "Індивідуальний урок",
+        "group_lesson": "Груповий урок",
+        "homework": "Домашнє завдання",
+        "opening_study": "Вивчення дебютів",
+        "tournament_participation": "Турнір"
+      }
   },
+      "studentSchedule": {
+      "myScheduleTitle": "Мій Розклад",
+      "eventListTitle": "Список Подій",
+      "noEventsForDay": "Немає подій для відображення.",
+      "showAllEvents": "Показати всі події",
+      "eventsForDate": "Події на {{date}}",
+      "eventDetails": "Деталі Події",
+      "sendHomeworkTitle": "Надіслати домашнє завдання",
+      "uploadScreenshot": "Завантажити скріншот",
+      "send": "Надіслати",
+      "form_link": "Посилання",
+      "form_description": "Опис",
+      "homeworkSentSuccess": "Домашнє завдання успішно надіслано!"
+    },
+    "status": {
+      "scheduled": "Заплановано",
+      "pending": "Очікує перевірки",
+      "completed": "Завершено",
+      "approved": "Схвалено",
+      "rejected": "На доопрацювання"
+    },
   "chessGame": {
     "title": "Шахова аналітична дошка",
     "subtitle": "Аналізуйте свої партії, досліджуйте варіанти та знаходьте найкращі ходи.",
@@ -357,5 +382,55 @@
       "threefold_repetition": "Нічия через триразове повторення.",
       "insufficient_material": "Нічия через недостатність матеріалу."
     }
-  }
+  },
+   "inbox": {
+      "title": "Вхідні",
+      "empty": "Список порожній",
+      "selectItemPrompt": "Виберіть елемент для перегляду деталей",
+      "loading": "Завантаження...",
+      "tabs": {
+        "requests": "Заявки",
+        "homework": "Домашні завдання"
+      },
+      "details": {
+        "email": "Email",
+        "sent": "Надіслано",
+        "experience": "Досвід",
+        "goals": "Цілі",
+        "notSpecified": "Не вказано",
+        "student": "Студент",
+        "responseText": "Текст відповіді",
+        "screenshot": "Скріншот",
+        "screenshotAlt": "Скріншот домашнього завдання",
+        "feedback": "Ваш відгук",
+        "commentLabel": "Коментар"
+      },
+      "list": {
+        "requestSecondary": "Заявка від {{date}}",
+        "homeworkSecondary": "ДЗ: {{title}}"
+      },
+      "actions": {
+        "approve": "Прийняти",
+        "reject": "Відхилити",
+        "sendForRevision": "Відправити на доопрацювання"
+      },
+      "errors": {
+        "loadFailed": "Не вдалося завантажити елементи",
+        "loadScreenshotFailed": "Не вдалося завантажити скріншот",
+        "handleRequestFailed": "Помилка обробки заявки",
+        "reviewHomeworkFailed": "Помилка під час перевірки ДЗ",
+          "fileTooLarge": "Розмір файлу не може перевищувати {{size}}MB.",
+        "emptyHomework": "Будь ласка, додайте текст або скріншот перед відправкою.",
+        "fetchSchedule": "Не вдалося завантажити розклад.",
+        "sendHomework": "Не вдалося надіслати домашнє завдання."
+      },
+      "success": {
+        "requestHandled": "Заявку {{action}}",
+        "homeworkReviewed": "ДЗ перевірено",
+        "actions": {
+          "approved": "прийнято",
+          "rejected": "відхилено"
+        }
+      }
+    }
 }

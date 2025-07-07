@@ -21,7 +21,8 @@
     "close": "Zamknij",
     "delete": "Usuń",
     "save": "Zapisz",
-    "add": "Dodaj"
+    "add": "Dodaj",
+    "filterByStatus": "Filtruj wg statusu"
   },
   "homePage": {
     "hero": {
@@ -309,7 +310,7 @@
   "schedule": {
     "myScheduleTitle": "Mój harmonogram",
     "myScheduleSubtitle": "Tutaj możesz zobaczyć wszystkie nadchodzące lekcje i zadania.",
-    "editScheduleTitle": "Harmonogram dla {studentName}",
+    "editScheduleTitle": "Harmonogram dla {{studentName}}",
     "eventDetails": "Szczegóły wydarzenia",
     "addEvent": "Dodaj wydarzenie",
     "updateEvent": "Zaktualizuj wydarzenie",
@@ -326,12 +327,35 @@
     "form_description": "Opis",
     "form_link": "Link (np. do rozmowy wideo)",
     "form_date": "Data i godzina*",
-    "type_individual": "Lekcja indywidualna",
-    "type_group": "Lekcja grupowa",
-    "type_homework": "Zadanie domowe",
-    "type_opening": "Nauka debiutów",
-    "type_tournament": "Turniej"
+      "eventTypes": {
+        "individual_lesson": "Lekcja indywidualna",
+        "group_lesson": "Lekcja grupowa",
+        "homework": "Zadanie domowe",
+        "opening_study": "Nauka debiutów",
+        "tournament_participation": "Turniej"
+      }
   },
+   "studentSchedule": {
+      "myScheduleTitle": "Mój Harmonogram",
+      "eventListTitle": "Lista Wydarzeń",
+      "noEventsForDay": "Brak wydarzeń do wyświetlenia.",
+      "showAllEvents": "Pokaż wszystkie wydarzenia",
+      "eventsForDate": "Wydarzenia na {{date}}",
+      "eventDetails": "Szczegóły Wydarzenia",
+      "sendHomeworkTitle": "Prześlij pracę domową",
+      "uploadScreenshot": "Załaduj zrzut ekranu",
+      "send": "Wyślij",
+      "form_link": "Link",
+      "form_description": "Opis",
+      "homeworkSentSuccess": "Praca domowa została pomyślnie przesłana!"
+    },
+    "status": {
+      "scheduled": "Zaplanowane",
+      "pending": "Oczekuje na sprawdzenie",
+      "completed": "Ukończone",
+      "approved": "Zatwierdzone",
+      "rejected": "Do poprawy"
+    },
   "chessGame": {
     "title": "Szachownica analityczna",
     "subtitle": "Analizuj swoje partie, badaj warianty i znajduj najlepsze ruchy.",
@@ -357,5 +381,55 @@
       "threefold_repetition": "Remis przez trzykrotne powtórzenie pozycji.",
       "insufficient_material": "Remis z powodu niewystarczającego materiału."
     }
-  }
+  },
+  "inbox": {
+      "title": "Skrzynka odbiorcza",
+      "empty": "Lista jest pusta",
+      "selectItemPrompt": "Wybierz element, aby zobaczyć szczegóły",
+      "loading": "Ładowanie...",
+      "tabs": {
+        "requests": "Wnioski",
+        "homework": "Prace domowe"
+      },
+      "details": {
+        "email": "Email",
+        "sent": "Wysłano",
+        "experience": "Doświadczenie",
+        "goals": "Cele",
+        "notSpecified": "Nie podano",
+        "student": "Student",
+        "responseText": "Tekst odpowiedzi",
+        "screenshot": "Zrzut ekranu",
+        "screenshotAlt": "Zrzut ekranu pracy domowej",
+        "feedback": "Twoja opinia",
+        "commentLabel": "Komentarz"
+      },
+      "list": {
+        "requestSecondary": "Wniosek z dnia {{date}}",
+        "homeworkSecondary": "PD: {{title}}"
+      },
+      "actions": {
+        "approve": "Zaakceptuj",
+        "reject": "Odrzuć",
+        "sendForRevision": "Wyślij do poprawki"
+      },
+      "errors": {
+        "loadFailed": "Nie udało się załadować elementów",
+        "loadScreenshotFailed": "Nie udało się załadować zrzutu ekranu",
+        "handleRequestFailed": "Błąd przetwarzania wniosku",
+        "reviewHomeworkFailed": "Błąd podczas sprawdzania pracy domowej",
+        "fileTooLarge": "Rozmiar pliku nie może przekraczać {{size}}MB.",
+        "emptyHomework": "Dodaj tekst lub zrzut ekranu przed wysłaniem.",
+        "fetchSchedule": "Nie udało się załadować harmonogramu.",
+        "sendHomework": "Nie udało się przesłać pracy domowej."
+      },
+      "success": {
+        "requestHandled": "Wniosek {{action}}",
+        "homeworkReviewed": "Praca domowa sprawdzona",
+        "actions": {
+          "approved": "zaakceptowano",
+          "rejected": "odrzucono"
+        }
+      }
+    }
 }

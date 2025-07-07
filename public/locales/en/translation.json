@@ -21,7 +21,8 @@
     "close": "Close",
     "delete": "Delete",
     "save": "Save",
-    "add": "Add"
+    "add": "Add",
+    "filterByStatus": "Filter by status"
   },
   "homePage": {
     "hero": {
@@ -309,7 +310,7 @@
   "schedule": {
     "myScheduleTitle": "My Schedule",
     "myScheduleSubtitle": "Here you can see all your upcoming lessons and tasks.",
-    "editScheduleTitle": "Schedule for {studentName}",
+    "editScheduleTitle": "Schedule for {{studentName}}",
     "eventDetails": "Event Details",
     "addEvent": "Add Event",
     "updateEvent": "Update Event",
@@ -326,12 +327,35 @@
     "form_description": "Description",
     "form_link": "Link (e.g., for a video call)",
     "form_date": "Date and Time*",
- "individual_lesson": "Individual Lesson",
-  "group_lesson": "Group Lesson",
-  "homework": "Homework",
-  "opening_study": "Opening Study",
-  "tournament_participation": "Tournament"
+      "eventTypes": {
+        "individual_lesson": "Individual Lesson",
+        "group_lesson": "Group Lesson",
+        "homework": "Homework",
+        "opening_study": "Opening Study",
+        "tournament_participation": "Tournament"
+      }
   },
+  "studentSchedule": {
+      "myScheduleTitle": "My Schedule",
+      "eventListTitle": "Event List",
+      "noEventsForDay": "No events to display.",
+      "showAllEvents": "Show all events",
+      "eventsForDate": "Events for {{date}}",
+      "eventDetails": "Event Details",
+      "sendHomeworkTitle": "Submit Homework",
+      "uploadScreenshot": "Upload Screenshot",
+      "send": "Send",
+      "form_link": "Link",
+      "form_description": "Description",
+      "homeworkSentSuccess": "Homework submitted successfully!"
+    },
+    "status": {
+      "scheduled": "Scheduled",
+      "pending": "Pending Review",
+      "completed": "Completed",
+      "approved": "Approved",
+      "rejected": "For Revision"
+    },
   "chessGame": {
     "title": "Chess Analysis Board",
     "subtitle": "Analyze your games, explore variations, and find the best moves.",
@@ -357,6 +381,56 @@
       "threefold_repetition": "Draw by threefold repetition.",
       "insufficient_material": "Draw by insufficient material."
     }
-  }
+  },
+  "inbox": {
+      "title": "Inbox",
+      "empty": "The list is empty",
+      "selectItemPrompt": "Select an item to view details",
+      "loading": "Loading...",
+      "tabs": {
+        "requests": "Requests",
+        "homework": "Homework"
+      },
+      "details": {
+        "email": "Email",
+        "sent": "Sent",
+        "experience": "Experience",
+        "goals": "Goals",
+        "notSpecified": "Not specified",
+        "student": "Student",
+        "responseText": "Response text",
+        "screenshot": "Screenshot",
+        "screenshotAlt": "Homework screenshot",
+        "feedback": "Your feedback",
+        "commentLabel": "Comment"
+      },
+      "list": {
+        "requestSecondary": "Request from {{date}}",
+        "homeworkSecondary": "HW: {{title}}"
+      },
+      "actions": {
+        "approve": "Approve",
+        "reject": "Reject",
+        "sendForRevision": "Send for revision"
+      },
+      "errors": {
+        "loadFailed": "Failed to load items",
+        "loadScreenshotFailed": "Failed to load screenshot",
+        "handleRequestFailed": "Error processing request",
+        "reviewHomeworkFailed": "Error reviewing homework",
+        "fileTooLarge": "File size cannot exceed {{size}}MB.",
+        "emptyHomework": "Please add text or a screenshot before submitting.",
+        "fetchSchedule": "Failed to load schedule.",
+        "sendHomework": "Failed to submit homework."
+      },
+      "success": {
+        "requestHandled": "Request {{action}}",
+        "homeworkReviewed": "Homework reviewed",
+        "actions": {
+          "approved": "approved",
+          "rejected": "rejected"
+        }
+      }
+    }
 }
   

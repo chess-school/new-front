@@ -1,113 +1,111 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    Button,
-    TextField,
-    MenuItem,
-    Select,
-    FormControl,
-    InputLabel,
-    Grid,
-    Paper,
-    IconButton,
-    Stack,
-    Typography,
-    Box,
-    SelectChangeEvent,
+    Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField,
+    MenuItem, Select, FormControl, InputLabel, Grid, Paper, IconButton,
+    Stack, Typography, Box, SelectChangeEvent, Tooltip,
 } from '@mui/material';
 import { Calendar, momentLocalizer, Event as BigCalendarEvent } from 'react-big-calendar';
 import moment from 'moment';
 import { notification } from 'antd';
 import { useTranslation } from 'react-i18next';
 
+// MUI Icons
 import CloseIcon from '@mui/icons-material/Close';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EventNoteIcon from '@mui/icons-material/EventNote';
+import PeopleIcon from '@mui/icons-material/People';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 
-// 1. Импортируем наши API-функции из сервисного слоя
-import { 
-  getScheduleByStudent, 
-  createScheduleEvent, 
-  updateScheduleEvent, 
-  deleteScheduleEvent 
+// Local Imports
+import {
+  getScheduleByStudent, createScheduleEvent,
+  updateScheduleEvent, deleteScheduleEvent
 } from '@/api/schedule';
-
-// 2. Импортируем необходимые типы
 import { Student } from '@/types/Student';
 import { ScheduleEvent, ScheduleEventPayload } from '@/types/SheduleEvent';
 
-// 3. Импортируем стили для календаря
-import 'react-big-calendar/lib/css/react-big-calendar.css';
-import './styles.scss'; 
+// SCSS Styles
+import './styles.scss';
 
 const localizer = momentLocalizer(moment);
+
+// Иконки для типов событий
+const eventTypeIcons = {
+  individual_lesson: <EventNoteIcon fontSize="small" />,
+  group_lesson: <PeopleIcon fontSize="small" />,
+  homework: <AssignmentIcon fontSize="small" />,
+  opening_study: <MenuBookIcon fontSize="small" />,
+  tournament_participation: <EmojiEventsIcon fontSize="small" />,
+};
+
+const eventTypes: (keyof typeof eventTypeIcons)[] = [
+    "individual_lesson", "group_lesson", "homework",
+    "opening_study", "tournament_participation"
+];
+
+// Кастомный компонент для отображения события в календаре
+const CustomEvent: React.FC<{ event: BigCalendarEvent & Partial<ScheduleEvent> }> = ({ event }) => {
+  const eventType = event.type as keyof typeof eventTypeIcons;
+  if (!eventType) return null;
+
+  const icon = eventTypeIcons[eventType];
+  const className = `custom-event rbc-event--${eventType}`;
+
+  return (
+    <Tooltip title={event.description || event.title} placement="top">
+      <div className={className}>
+        {icon}
+        <Typography variant="caption" noWrap component="span">{event.title}</Typography>
+      </div>
+    </Tooltip>
+  );
+};
+
 
 interface EditScheduleModalProps {
     open: boolean;
     onClose: () => void;
-    student: Student;
+    student: Student | null;
 }
-
-// Константы и стили вынесены за пределы компонента
-const formInputStyles = {
-  '& .MuiFilledInput-root': {
-    backgroundColor: 'rgba(255, 255, 255, 0.09)',
-    color: '#fff',
-    '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.13)' },
-    '&.Mui-focused': { backgroundColor: 'rgba(255, 255, 255, 0.13)' },
-  },
-  '& .MuiInputLabel-root': {
-    color: 'rgba(255, 255, 255, 0.7)',
-    '&.Mui-focused': { color: '#FFD700' },
-  },
-  '& .MuiSelect-icon': { color: 'rgba(255, 255, 255, 0.7)' },
-};
-
-const eventTypes: ScheduleEvent['type'][] = [
-  "individual_lesson", 
-  "group_lesson", 
-  "homework", 
-  "opening_study", 
-  "tournament_participation"
-];
 
 const EditScheduleModal: React.FC<EditScheduleModalProps> = ({ open, onClose, student }) => {
     const { t } = useTranslation();
     const [events, setEvents] = useState<ScheduleEvent[]>([]);
     const [selectedEvent, setSelectedEvent] = useState<Partial<ScheduleEvent>>({});
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
-    const studentName = student ? `${student.firstName} ${student.lastName}` : '';
+    if (!student) return null;
 
-    // Функция сброса формы, обернута в useCallback для оптимизации
+    const studentName = `${student.firstName} ${student.lastName}`;
+
     const resetForm = useCallback(() => {
         setSelectedEvent({
-            student: student?._id,
-            status: 'scheduled',
-            title: '', 
-            type: 'individual_lesson',
-            date: '', 
-            description: '', 
-            link: ''
+            student: student._id, status: 'scheduled',
+            title: '', type: 'individual_lesson', date: '',
+            description: '', link: ''
         });
+        setSelectedDate(null);
     }, [student]);
 
-    // Функция загрузки расписания
     const fetchSchedule = useCallback(async () => {
-        if (!student?._id) return;
+        if (!student._id) return;
         try {
             const studentSchedule = await getScheduleByStudent(student._id);
             setEvents(studentSchedule);
         } catch (error) {
             console.error('Failed to fetch schedule:', error);
-            // Уведомление об ошибке покажется автоматически из axios-интерсептора
+            notification.error({
+                message: t('schedule.fetchError'),
+                description: undefined
+            });
         }
-    }, [student]);
-
-    // Функция сохранения (создания/обновления) события
+    }, [student, t]);
+    
+    // --- ПОЛНАЯ ЛОГИКА СОХРАНЕНИЯ ---
     const handleSaveEvent = async () => {
         const { date, type, title } = selectedEvent;
         if (!date || !type || !title) {
@@ -129,23 +127,24 @@ const EditScheduleModal: React.FC<EditScheduleModalProps> = ({ open, onClose, st
         };
 
         try {
-            if (selectedEvent._id) {
-                await updateScheduleEvent(selectedEvent._id, payload);
+            const isUpdating = !!selectedEvent._id;
+            if (isUpdating) {
+                await updateScheduleEvent(selectedEvent._id!, payload);
             } else {
                 await createScheduleEvent(payload);
             }
             notification.success({
-                message: t('schedule.saveSuccess'),
+                message: t(isUpdating ? 'schedule.updateSuccess' : 'schedule.createSuccess'),
                 description: undefined
             });
-            fetchSchedule();
+            await fetchSchedule();
             resetForm();
         } catch (error) {
             console.error('Failed to save event:', error);
         }
     };
-
-    // Функция удаления события
+    
+    // --- ПОЛНАЯ ЛОГИКА УДАЛЕНИЯ ---
     const handleDeleteEvent = async () => {
         if (!selectedEvent._id) return;
         try {
@@ -154,92 +153,96 @@ const EditScheduleModal: React.FC<EditScheduleModalProps> = ({ open, onClose, st
                 message: t('schedule.deleteSuccess'),
                 description: undefined
             });
-            fetchSchedule();
+            await fetchSchedule();
             resetForm();
         } catch (error) {
             console.error('Failed to delete event:', error);
         }
     };
 
-    // Обработчики календаря
-    const handleSelectSlot = ({ start }: { start: Date }) => {
+    useEffect(() => {
+        if (open && student) {
+            fetchSchedule();
+            resetForm();
+        }
+    }, [open, student, fetchSchedule, resetForm]);
+
+    const handleSelectSlot = useCallback(({ start }: { start: Date }) => {
         resetForm();
+        setSelectedDate(start);
         setSelectedEvent(prev => ({
             ...prev,
             date: moment(start).format('YYYY-MM-DDTHH:mm'),
         }));
-    };
+    }, [resetForm]);
 
-    const handleSelectEvent = (event: BigCalendarEvent & Partial<ScheduleEvent>) => {
+    const handleSelectEvent = useCallback((event: BigCalendarEvent & Partial<ScheduleEvent>) => {
+        setSelectedDate(event.date ? new Date(event.date) : null);
         setSelectedEvent({
             ...event,
             date: event.date ? moment(event.date).format('YYYY-MM-DDTHH:mm') : '',
         });
-    };
-    
-    // Эффект для загрузки данных при открытии модального окна
-    useEffect(() => {
-        if (open) {
-            fetchSchedule();
-            resetForm();
-        }
-    }, [open, fetchSchedule, resetForm]);
+    }, []);
 
-    // Преобразование данных для компонента календаря
     const calendarEvents = events.map(event => ({
-      ...event,
-      id: event._id,
-      start: new Date(event.date),
-      end: moment(event.date).add(1, 'hour').toDate(),
-      title: event.title
+      ...event, id: event._id, start: new Date(event.date),
+      end: moment(event.date).add(1, 'hour').toDate(), title: event.title,
     }));
     
-    // Обработчики формы для контролируемых компонентов
+    const dayPropGetter = useCallback((date: Date) => ({
+        className: (selectedDate && moment(date).isSame(selectedDate, 'day'))
+            ? 'rbc-selected-slot-custom'
+            : '',
+    }), [selectedDate]);
+
     const handleFormInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setSelectedEvent(prev => ({ ...prev, [name]: value }));
     };
     
     const handleTypeChange = (e: SelectChangeEvent<string>) => {
-        const value = e.target.value as ScheduleEvent['type'];
-        setSelectedEvent(prev => ({ ...prev, type: value }));
+        setSelectedEvent(prev => ({ ...prev, type: e.target.value as ScheduleEvent['type'] }));
     };
 
     return (
-        <Dialog open={open} onClose={onClose} fullWidth maxWidth="lg" PaperProps={{ sx: { bgcolor: '#1c1c1c', color: 'white', borderRadius: 4, backgroundImage: 'none' }}}>
-            <DialogTitle sx={{ m: 0, p: 2, bgcolor: '#2a2a2a' }}>
+        <Dialog open={open} onClose={onClose} fullWidth maxWidth="lg" className="schedule-dialog">
+            <DialogTitle className="schedule-dialog__header">
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <Typography variant="h6" component="div">{t('schedule.editScheduleTitle', { studentName })}</Typography>
-                    <IconButton aria-label="close" onClick={onClose} sx={{ color: 'grey.500' }}>
+                    <IconButton aria-label="close" onClick={onClose} className="schedule-dialog__close-btn">
                         <CloseIcon />
                     </IconButton>
                 </Stack>
             </DialogTitle>
-            <DialogContent dividers sx={{ borderColor: 'rgba(255,255,255,0.2)', p: {xs: 1, sm: 2, md: 3} }}>
+            <DialogContent dividers className="schedule-dialog__content">
                 <Grid container spacing={3}>
                     <Grid item xs={12} md={7}>
                         <Calendar
                             localizer={localizer}
                             events={calendarEvents}
-                            startAccessor="start" endAccessor="end" selectable
-                            onSelectSlot={handleSelectSlot} onSelectEvent={handleSelectEvent}
-                            views={['month', 'week', 'day']} style={{ height: 500 }}
+                            startAccessor="start" endAccessor="end"
+                            selectable onSelectSlot={handleSelectSlot}
+                            onSelectEvent={handleSelectEvent}
+                            components={{ event: CustomEvent }}
+                            dayPropGetter={dayPropGetter}
+                            className="schedule-calendar"
                         />
                     </Grid>
                     <Grid item xs={12} md={5}>
-                        <Paper component="form" sx={{ p: 3, bgcolor: 'transparent', boxShadow: 'none', height: '100%' }}>
-                            <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
-                                {selectedEvent._id ? t('schedule.eventDetails') : t('schedule.addEvent')}
+                        <Paper component="form" className="event-form" onSubmit={(e) => { e.preventDefault(); handleSaveEvent(); }}>
+                            <Typography variant="h6" className="event-form__header">
+                                {selectedEvent._id
+                                    ? t('schedule.eventDetails')
+                                    : selectedDate
+                                    ? t('schedule.addEventForDate', { date: moment(selectedDate).format('MMMM Do, YYYY') })
+                                    : t('schedule.addEvent')
+                                }
                             </Typography>
-                            <Stack spacing={2.5}>
-                                <TextField
-                                    name="title"
-                                    label={t('schedule.form_title')} variant="filled" fullWidth
-                                    value={selectedEvent.title || ''}
-                                    onChange={handleFormInputChange}
-                                    sx={formInputStyles}
-                                />
-                                <FormControl variant="filled" fullWidth sx={formInputStyles}>
+                            <Stack spacing={2.5} className="event-form__fields">
+                                <TextField name="title" label={t('schedule.form_title')} variant="filled" fullWidth
+                                    value={selectedEvent.title || ''} onChange={handleFormInputChange} className="event-form__field"/>
+                                
+                                <FormControl variant="filled" fullWidth className="event-form__field">
                                     <InputLabel>{t('schedule.form_type')}</InputLabel>
                                     <Select name="type" value={selectedEvent.type || ''} onChange={handleTypeChange}>
                                         {eventTypes.map(type => (
@@ -247,42 +250,30 @@ const EditScheduleModal: React.FC<EditScheduleModalProps> = ({ open, onClose, st
                                         ))}
                                     </Select>
                                 </FormControl>
-                                <TextField
-                                    name="description"
-                                    label={t('schedule.form_description')} variant="filled" fullWidth multiline rows={3}
-                                    value={selectedEvent.description || ''}
-                                    onChange={handleFormInputChange}
-                                    sx={formInputStyles}
-                                />
-                                <TextField
-                                    name="link"
-                                    label={t('schedule.form_link')} variant="filled" fullWidth
-                                    value={selectedEvent.link || ''}
-                                    onChange={handleFormInputChange}
-                                    sx={formInputStyles}
-                                />
-                                <TextField
-                                    name="date"
-                                    label={t('schedule.form_date')} type="datetime-local" variant="filled" fullWidth
-                                    value={selectedEvent.date || ''}
-                                    onChange={handleFormInputChange}
-                                    InputLabelProps={{ shrink: true }}
-                                    sx={formInputStyles}
-                                />
+                                
+                                <TextField name="description" label={t('schedule.form_description')} variant="filled" fullWidth multiline rows={3}
+                                    value={selectedEvent.description || ''} onChange={handleFormInputChange} className="event-form__field"/>
+
+                                <TextField name="link" label={t('schedule.form_link')} variant="filled" fullWidth
+                                    value={selectedEvent.link || ''} onChange={handleFormInputChange} className="event-form__field"/>
+                                
+                                <TextField name="date" label={t('schedule.form_date')} type="datetime-local" variant="filled" fullWidth
+                                    value={selectedEvent.date || ''} onChange={handleFormInputChange}
+                                    InputLabelProps={{ shrink: true }} className="event-form__field"/>
                             </Stack>
                         </Paper>
                     </Grid>
                 </Grid>
             </DialogContent>
-            <DialogActions sx={{ p: 2, bgcolor: '#2a2a2a' }}>
-                <Button onClick={onClose} sx={{ color: 'grey.500' }}>{t('common.close')}</Button>
+            <DialogActions className="schedule-dialog__actions">
+                <Button onClick={onClose} className="action-button action-button--close">{t('common.close')}</Button>
                 <Box sx={{ flex: '1 1 auto' }} /> 
                 {selectedEvent._id && (
-                    <Button onClick={handleDeleteEvent} variant="outlined" color="error" startIcon={<DeleteIcon />}>
+                    <Button onClick={handleDeleteEvent} variant="outlined" startIcon={<DeleteIcon />} className="action-button action-button--delete">
                         {t('common.delete')}
                     </Button>
                 )}
-                <Button onClick={handleSaveEvent} variant="contained" sx={{ bgcolor: '#FFD700', color: 'black', '&:hover': { bgcolor: '#FFC107' } }} startIcon={selectedEvent._id ? <SaveIcon /> : <AddCircleOutlineIcon />}>
+                <Button onClick={handleSaveEvent} variant="contained" startIcon={selectedEvent._id ? <SaveIcon /> : <AddCircleOutlineIcon />} className="action-button action-button--save">
                     {selectedEvent._id ? t('common.save') : t('common.add')}
                 </Button>
             </DialogActions>

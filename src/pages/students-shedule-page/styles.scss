@@ -1,0 +1,292 @@
+/* ---=== Student Schedule V2 - Global Styles ===--- */
+
+// -- Переменные для согласованности
+$color-success: #66bb6a;
+$color-info: #42a5f5;
+$color-warning: #ffa726;
+$color-error: #ef5350;
+
+$color-bg-main: #1f2937;
+$color-bg-paper: #374151;
+$color-bg-surface: #4b5563;
+$color-border: rgba(255, 255, 255, 0.1);
+$color-text-primary: #f9fafb;
+$color-text-secondary: #9ca3af;
+
+/* 1. Стили для основной страницы StudentSchedulePage */
+.student-schedule-v2-page {
+  background-color: $color-bg-main;
+  min-height: 100vh;
+  padding: 32px 0 80px;
+}
+.page-title {
+  color: $color-text-primary;
+  font-weight: bold;
+  margin-bottom: 24px;
+}
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  .loader {
+    color: #ffd700 !important;
+  }
+}
+
+/* 2. Стили для импортированного компонента календаря StudentSchedule */
+/* 
+   Класс-обертка .student-schedule-component и его отступы УДАЛЕНЫ. 
+   Теперь отступ управляется через .schedule-paper
+*/
+.schedule-paper {
+  background-color: $color-bg-paper;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.schedule-calendar-standalone.rbc-calendar {
+  height: 600px;
+  background-color: transparent;
+  border: none;
+  color: $color-text-primary;
+
+  .rbc-toolbar button {
+    background-color: $color-bg-surface;
+    color: $color-text-primary;
+    border: none;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
+    &:hover,
+    &.rbc-active {
+      background-color: #ffd700 !important;
+      color: #000 !important;
+    }
+  }
+  .rbc-header {
+    color: $color-text-secondary;
+  }
+  .rbc-off-range-bg {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+  .rbc-today {
+    background-color: rgba(255, 215, 0, 0.08);
+  }
+
+  .rbc-day-bg,
+  .rbc-time-header,
+  .rbc-time-content > * > * > .rbc-time-slot {
+    border-color: $color-border;
+  }
+}
+
+.custom-event {
+  // Стили для событий ВНУТРИ календаря
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  padding: 2px 4px;
+  border-radius: 4px;
+  color: #fff;
+  overflow: hidden;
+  font-size: 0.75rem;
+  transition: background-color 0.2s ease;
+  @mixin event-style($color) {
+    background-color: rgba($color, 0.8);
+    &:hover {
+      background-color: $color;
+    }
+  }
+  &.rbc-event--individual_lesson {
+    @include event-style($color-info);
+  }
+  &.rbc-event--group_lesson {
+    @include event-style($color-success);
+  }
+  &.rbc-event--homework {
+    @include event-style($color-warning);
+  }
+  &.rbc-event--opening_study {
+    @include event-style(#ab47bc);
+  }
+  &.rbc-event--tournament_participation {
+    @include event-style($color-error);
+  }
+}
+
+/* 3. Панель фильтров на StudentSchedulePage */
+.list-controls-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 40px;
+  margin-bottom: 24px;
+}
+.event-controls {
+  padding: 8px;
+  background-color: $color-bg-paper;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-radius: 12px;
+}
+.event-controls__label {
+  color: $color-text-secondary;
+  padding: 0 8px;
+}
+.filter-toggle-button.MuiToggleButton-root {
+  color: $color-text-secondary;
+  border-color: transparent;
+  text-transform: none;
+  border-radius: 8px !important;
+  &.Mui-selected {
+    color: #000;
+    background-color: #ffd700;
+  }
+}
+
+/* 4. Список и карточки событий на StudentSchedulePage */
+.event-list {
+  display: grid;
+  gap: 16px;
+}
+.event-list__empty {
+  padding: 32px;
+  text-align: center;
+  background-color: $color-bg-paper;
+  border-radius: 12px;
+  .MuiTypography-root {
+    color: $color-text-secondary;
+  }
+}
+.event-card {
+  background-color: $color-bg-surface;
+  padding: 16px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+  border: 1px solid $color-border;
+  border-left-width: 4px;
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    border-color: $color-text-primary;
+  }
+
+  &.event-card--success {
+    border-left-color: $color-success;
+  }
+  &.event-card--info {
+    border-left-color: $color-info;
+  }
+  &.event-card--warning {
+    border-left-color: $color-warning;
+  }
+  &.event-card--error {
+    border-left-color: $color-error;
+  }
+}
+.event-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+.event-card__title {
+  font-weight: 600;
+  color: $color-text-primary;
+}
+.event-card__date,
+.event-card__description {
+  color: $color-text-secondary;
+  font-size: 0.875rem;
+}
+.event-card__description {
+  margin-top: 8px;
+}
+
+/* 5. Модальное окно и глобальные стили для Chip */
+.MuiChip-root {
+  color: #fff !important;
+  &.MuiChip-colorSuccess {
+    background-color: $color-success;
+  }
+  &.MuiChip-colorInfo {
+    background-color: $color-info;
+  }
+  &.MuiChip-colorWarning {
+    background-color: $color-warning;
+  }
+  &.MuiChip-colorError {
+    background-color: $color-error;
+  }
+}
+.details-dialog .MuiPaper-root {
+  background-color: $color-bg-surface;
+  color: $color-text-primary;
+  border-radius: 16px;
+}
+.details-dialog__header {
+  border-bottom: 4px solid;
+  &.details-dialog__header--success {
+    border-color: $color-success;
+  }
+  &.details-dialog__header--info {
+    border-color: $color-info;
+  }
+  &.details-dialog__header--warning {
+    border-color: $color-warning;
+  }
+  &.details-dialog__header--error {
+    border-color: $color-error;
+  }
+}
+.details-dialog__content {
+  a {
+    color: $color-info;
+  }
+}
+.details-dialog__info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.details-dialog__title {
+  font-weight: bold;
+}
+.homework-form {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid $color-border;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  .MuiFilledInput-root {
+    background: rgba(0, 0, 0, 0.2);
+  }
+  .MuiButton-outlined {
+    color: $color-text-secondary;
+    border-color: rgba(255, 255, 255, 0.3);
+    text-transform: none;
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.08);
+    }
+  }
+}
+.details-dialog__actions {
+  padding: 16px 24px;
+  .MuiButton-containedPrimary {
+    background-color: $color-info;
+  }
+}

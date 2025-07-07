@@ -1,0 +1,130 @@
+/* ---=== Student Schedule Page Styles ===--- */
+
+// 1. Стили для всей страницы
+.student-schedule-page {
+  background-color: #0e0e0e;
+  color: white;
+  min-height: 100vh;
+  padding: 64px 0; // Аналог py: 8
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 40px; // Аналог mb: 5
+}
+
+.page-header__title {
+  font-weight: bold;
+}
+
+.page-header__subtitle {
+  margin-top: 8px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+// Контейнер для календаря
+.schedule-paper {
+  background-color: #1c1c1c;
+  border-radius: 16px; // Аналог borderRadius: 4
+  padding: 32px; // Аналог p: 4
+}
+
+// 2. Стилизация компонента react-big-calendar (Идентичны стилям из EditScheduleModal)
+.schedule-calendar {
+  height: 600px;
+}
+
+.rbc-calendar {
+  background-color: #1c1c1c;
+  color: #e0e0e0;
+  border: none; // Убираем лишнюю рамку, т.к. она уже есть у .schedule-paper
+
+  // Навигация
+  .rbc-toolbar {
+    margin-bottom: 1.5rem;
+    button {
+      background-color: #424242;
+      color: #fff;
+      border: none;
+      transition: background-color 0.2s ease;
+      &:hover,
+      &:active,
+      &.rbc-active {
+        background-color: #ffd700 !important;
+        color: #000 !important;
+        box-shadow: none !important;
+      }
+    }
+  }
+
+  // Общие стили для сетки
+  .rbc-header,
+  .rbc-month-view,
+  .rbc-time-view {
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+  .rbc-day-bg + .rbc-day-bg {
+    border-left-color: rgba(255, 255, 255, 0.12);
+  }
+
+  // Ячейки
+  .rbc-today {
+    background-color: rgba(255, 215, 0, 0.1);
+  }
+}
+
+// 3. Кастомизация событий (Идентична стилям из EditScheduleModal)
+.custom-event {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  padding: 2px 4px;
+  border-radius: 4px;
+  color: #fff;
+  overflow: hidden;
+  font-size: 12px;
+  cursor: pointer;
+
+  .MuiTypography-root {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  @mixin event-style($color) {
+    background-color: rgba($color, 0.2);
+    border-left: 3px solid $color;
+    &:hover {
+      background-color: rgba($color, 0.4);
+    }
+  }
+
+  &.rbc-event--individual_lesson {
+    @include event-style(#42a5f5);
+  } // Blue
+  &.rbc-event--group_lesson {
+    @include event-style(#ab47bc);
+  } // Purple
+  &.rbc-event--homework {
+    @include event-style(#ffa726);
+  } // Orange
+  &.rbc-event--opening_study {
+    @include event-style(#26a69a);
+  } // Teal
+  &.rbc-event--tournament_participation {
+    @include event-style(#ef5350);
+  } // Red
+}
+
+// 4. Стили для индикатора загрузки
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 600px;
+}
+
+.loader {
+  color: #ffd700 !important; // Акцентный цвет
+}
