@@ -16,6 +16,41 @@
     "students-shedule": "Harmonogram ucznia",
     "users": "Użytkownicy"
   },
+  "auth": {
+    "sign_in": "Zaloguj się",
+    "no_account": "Nie masz konta?",
+    "sign_up": "Zarejestruj się",
+    "success": {
+      "login_title": "Logowanie udane",
+      "welcome_back": "Witaj z powrotem, {{name}}!"
+    },
+    "errors": {
+      "login": "Logowanie nieudane",
+      "invalid_credentials": "Wprowadzony e-mail lub hasło jest nieprawidłowe."
+    }
+  },
+  "register": {
+    "title": "Zarejestruj się",
+    "name": "Imię",
+    "lastName": "Nazwisko",
+    "submit": "Zarejestruj",
+    "haveAccount": "Masz już konto?",
+    "login": "Zaloguj się",
+    "placeholder": {
+      "name": "Wprowadź swoje imię",
+      "lastName": "Wprowadź swoje nazwisko"
+    },
+    "error": {
+      "title": "Rejestracja nie powiodła się",
+      "description": "Wystąpił błąd. Spróbuj ponownie później."
+    }
+  },
+  "validation": {
+    "required": "To pole jest wymagane",
+    "invalid_email": "Wprowadź poprawny adres e-mail",
+    "password_length": "Hasło musi mieć co najmniej 6 znaków",
+    "name_invalid": "Wprowadź poprawne imię"
+  },
   "common": {
     "loading": "Ładowanie...",
     "close": "Zamknij",
@@ -23,8 +58,13 @@
     "save": "Zapisz",
     "add": "Dodaj",
     "filterByStatus": "Filtruj wg statusu",
-    "brand": "MOB - Mind Over Board"
-
+    "brand": "MOB - Mind Over Board",
+    "email": "E-mail",
+    "password": "Hasło",
+    "placeholder": {
+      "email": "Wprowadź swój e-mail",
+      "password": "Wprowadź swoje hasło"
+    }
   },
   "homePage": {
     "hero": {
@@ -190,31 +230,6 @@
   "errors": {
     "login": "Nieprawidłowy e-mail lub hasło"
   },
-"auth": {
-    "success": {
-      "login_title": "Logowanie udane",
-      "welcome_back": "Witaj z powrotem, {{name}}!"
-    },
-    "welcome": "Witaj z powrotem!",
-    "enter_credentials": "Wprowadź swoje dane, aby uzyskać dostęp do konta",
-    "email": "E-mail",
-    "password": "Hasło",
-    "email_placeholder": "Wprowadź swój e-mail",
-    "password_placeholder": "Wprowadź swoje hasło",
-    "remember_me": "Zapamiętaj mnie",
-    "forgot_password": "Zapomniałeś hasła?",
-    "sign_in": "Zaloguj się",
-    "or_sign_in_with": "Lub zaloguj się za pomocą",
-    "no_account": "Nie masz konta?",
-    "sign_up": "Zarejestruj się",
-    "errors": {
-      "login": "Logowanie nie powiodło się",
-      "invalid_credentials": "Wprowadzony e-mail lub hasło jest nieprawidłowe.",
-      "required": "To pole jest wymagane",
-      "invalid_email": "Proszę wprowadzić poprawny adres e-mail",
-      "password_length": "Hasło musi mieć co najmniej 6 znaków"
-    }
-  },
   "verifyEmail": {
     "pageTitle": "Zweryfikuj swój adres e-mail",
     "greeting": "Drogi/a {{firstName}} {{lastName}},",
@@ -293,27 +308,6 @@
     "passwordMismatch": "Hasła nie pasują lub brakuje obecnego hasła",
     "cancel": "Anuluj",
     "save": "Zapisz"
-  },
-  "register": {
-    "title": "Rejestracja",
-    "name": "Imię",
-    "lastName": "Nazwisko",
-    "email": "E-mail",
-    "password": "Hasło",
-    "submit": "Zarejestruj się",
-    "haveAccount": "Masz już konto?",
-    "login": "Zaloguj się",
-    "placeholder": {
-      "name": "Wpisz swoje imię",
-      "lastName": "Wpisz swoje nazwisko",
-      "email": "Wpisz swój e-mail",
-      "password": "Wpisz swoje hasło"
-    },
-    "brand": "MOB - Mind Over Board",
-    "error": {
-      "title": "Błąd rejestracji",
-      "description": "Proszę spróbować ponownie."
-    }
   },
   "schedule": {
     "myScheduleTitle": "Mój harmonogram",
