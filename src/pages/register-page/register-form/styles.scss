@@ -1,104 +1,78 @@
-.register-page {
-  height: 100vh;
-  background: radial-gradient(circle at center, #222222, #111111);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-}
-.register-form__logo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-  margin-bottom: 20px;
-}
-.register-form__brand {
-  color: #ffd700;
-  font-size: 18px;
-  font-weight: bold;
-  font-family: 'Playfair Display', serif;
-}
-.register-form__icon {
-  color: #ffd700; /* Золотой цвет */
-  font-size: 60px;
-  transition: transform 0.3s ease-in-out;
-}
+@use '@/styles/variables' as var;
+@use '@/styles/breakpoints' as bp;
 
-.register-form__icon:hover {
-  transform: scale(1.1);
-}
-
-/* Шахматный узор */
-.register-page::before {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: repeating-linear-gradient(
-    45deg,
-    #333333 0px,
-    #333333 30px,
-    #2b2b2b 30px,
-    #2b2b2b 60px
-  );
-  opacity: 0.15; /* Легкий узор */
-  z-index: 0;
-}
-
+// Общий контейнер формы
 .register-form {
   position: relative;
-  width: 520px;
-  padding: 60px;
-  background: #242424;
+  max-width: 520px;
+  width: 100%;
+  padding: var.$spacing-xl;
+  background: var.$color-dark-form-bg;
   border-radius: 15px;
-  box-shadow: 0px 12px 30px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   z-index: 1;
+
+  @include bp.nmd {
+    padding: var.$spacing-l var.$spacing-m;
+  }
+
+  @include bp.nsm {
+    padding: var.$spacing-m var.$spacing-s;
+    box-shadow: none;
+  }
 }
 
 .register-form__label {
-  color: white;
-  font-size: 16px;
+  color: var.$color-text-primary-dark-theme;
+  font-size: var.$font-size-medium;
   font-weight: bold;
+
+  @include bp.nsm {
+    font-size: var.$font-size-small;
+  }
 }
 
-.register-form__title {
-  font-size: 30px;
-  font-weight: bold;
-  color: #ffffff;
-  margin-bottom: 12px;
-}
-
+// Форма
 .register-form__form {
   width: 100%;
 }
 
+// Кнопка
 .register-form__button {
-  background-color: #ffd700;
+  background-color: var.$color-gold;
   color: black;
-  padding: 14px;
-  font-size: 18px;
+  font-size: 1.125rem;
   border-radius: 10px;
   transition: 0.3s;
   font-weight: bold;
+  border: none;
+
+  &:hover {
+    background-color: var.$color-gold-hover;
+    box-shadow: 0px 6px 15px rgba(255, 215, 0, 0.3);
+  }
+
+  @include bp.nsm {
+    font-size: var.$font-size-medium;
+  }
 }
 
-.register-form__button:hover {
-  background-color: #e5c100;
-  box-shadow: 0px 6px 15px rgba(255, 215, 0, 0.3);
+.register-form__footer {
+  margin-top: var.$spacing-medium;
+  font-size: 0.9375rem;
 }
 
 .register-form__signup-link {
-  color: #ffd700;
+  color: var.$color-gold;
   text-decoration: none;
   font-weight: bold;
   cursor: pointer;
-}
 
-.register-form__signup-link:hover {
-  text-decoration: underline;
+  &:hover {
+    text-decoration: underline;
+  }
 }

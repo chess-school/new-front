@@ -22,7 +22,9 @@
     "delete": "Usuń",
     "save": "Zapisz",
     "add": "Dodaj",
-    "filterByStatus": "Filtruj wg statusu"
+    "filterByStatus": "Filtruj wg statusu",
+    "brand": "MOB - Mind Over Board"
+
   },
   "homePage": {
     "hero": {
@@ -188,15 +190,17 @@
   "errors": {
     "login": "Nieprawidłowy e-mail lub hasło"
   },
-  "auth": {
+"auth": {
     "success": {
-    "login_title": "Logowanie udane",
-    "welcome_back": "Witaj z powrotem, {{name}}!"
+      "login_title": "Logowanie udane",
+      "welcome_back": "Witaj z powrotem, {{name}}!"
     },
     "welcome": "Witaj z powrotem!",
     "enter_credentials": "Wprowadź swoje dane, aby uzyskać dostęp do konta",
     "email": "E-mail",
     "password": "Hasło",
+    "email_placeholder": "Wprowadź swój e-mail",
+    "password_placeholder": "Wprowadź swoje hasło",
     "remember_me": "Zapamiętaj mnie",
     "forgot_password": "Zapomniałeś hasła?",
     "sign_in": "Zaloguj się",
@@ -204,7 +208,11 @@
     "no_account": "Nie masz konta?",
     "sign_up": "Zarejestruj się",
     "errors": {
-      "login": "Logowanie nie powiodło się. Sprawdź swój e-mail i hasło."
+      "login": "Logowanie nie powiodło się",
+      "invalid_credentials": "Wprowadzony e-mail lub hasło jest nieprawidłowe.",
+      "required": "To pole jest wymagane",
+      "invalid_email": "Proszę wprowadzić poprawny adres e-mail",
+      "password_length": "Hasło musi mieć co najmniej 6 znaków"
     }
   },
   "verifyEmail": {

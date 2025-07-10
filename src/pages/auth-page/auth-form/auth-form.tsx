@@ -2,11 +2,10 @@ import React from 'react';
 import Form, { FormProps } from 'antd/es/form';
 import Input from 'antd/es/input';
 import Button from 'antd/es/button';
-import Typography from 'antd/es/typography';
-import { FaChessKing } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { notification } from 'antd';
+import { AuthFormHeader } from '@/shared/components/AuthFormHeader/AuthFormHeader';
 
 import { loginUser } from '@/api/login';
 
@@ -47,17 +46,8 @@ export const AuthForm: React.FC = () => {
       <div className="auth-form">
         <PageTitle text={t('auth.welcome')} />
 
-        <div className="auth-form__logo" onClick={() => navigate('/')}>
-          <FaChessKing className="auth-form__icon" />
-          <Typography.Title level={4} className="auth-form__brand">
-            MOB - Mind Over Board
-          </Typography.Title>
-        </div>
-
-        <Typography.Text className="auth-form__subtitle">
-          {t('auth.enter_credentials')}
-        </Typography.Text>
-
+        <AuthFormHeader title={t('auth.sign_in')} />
+        
         <Form
           name="login"
           onFinish={onFinish}
