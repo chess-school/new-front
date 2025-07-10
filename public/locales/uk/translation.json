@@ -22,7 +22,8 @@
     "delete": "Видалити",
     "save": "Зберегти",
     "add": "Додати",
-    "filterByStatus": "Фільтрувати за статусом"
+    "filterByStatus": "Фільтрувати за статусом",
+    "brand": "MOB - Mind Over Board"
 
   },
   "homePage": {
@@ -189,15 +190,17 @@
   "errors": {
     "login": "Неправильна електронна пошта або пароль"
   },
-  "auth": {
+"auth": {
     "success": {
-    "login_title": "Успішний вхід",
-    "welcome_back": "З поверненням, {{name}}!"
+      "login_title": "Успішний вхід",
+      "welcome_back": "З поверненням, {{name}}!"
     },
     "welcome": "З поверненням!",
     "enter_credentials": "Введіть свої дані для доступу до акаунту",
     "email": "Електронна пошта",
     "password": "Пароль",
+    "email_placeholder": "Введіть вашу пошту",
+    "password_placeholder": "Введіть ваш пароль",
     "remember_me": "Запам'ятати мене",
     "forgot_password": "Забули пароль?",
     "sign_in": "Увійти",
@@ -205,7 +208,11 @@
     "no_account": "Немає акаунту?",
     "sign_up": "Зареєструватися",
     "errors": {
-      "login": "Помилка входу. Перевірте свою пошту та пароль."
+      "login": "Помилка входу",
+      "invalid_credentials": "Введено невірну електронну адресу або пароль.",
+      "required": "Це поле є обов'язковим",
+      "invalid_email": "Будь ласка, введіть дійсну електронну адресу",
+      "password_length": "Пароль повинен містити щонайменше 6 символів"
     }
   },
   "verifyEmail": {
