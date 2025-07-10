@@ -1,0 +1,120 @@
+@use '@/styles/variables' as var;
+@use '@/styles/breakpoints' as bp;
+
+.auth-form-container {
+  position: relative;
+  max-width: 520px;
+  width: 100%;
+  padding: 3rem 3.5rem;
+  background: var.$color-dark-form-bg;
+  border-radius: 15px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  z-index: 1;
+
+  @include bp.nsm {
+    padding: 2rem 1.5rem;
+    box-shadow: none;
+  }
+}
+
+.auth-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: var.$spacing-s;
+}
+
+.auth-header__icon {
+  color: var.$color-gold;
+  font-size: 3.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.auth-header__brand {
+  color: var.$color-gold !important;
+  font-size: 1.1rem !important;
+  font-family: 'Playfair Display', serif;
+}
+
+.auth-header__title {
+  color: var.$color-text-primary-dark-theme !important;
+  font-family: 'Playfair Display', serif;
+  margin-bottom: 1.5rem !important;
+}
+
+.auth-form-body {
+  width: 100%;
+
+  .ant-input-affix-wrapper,
+  .ant-input {
+    background-color: var.$color-dark-secondary !important;
+    border: 1px solid var.$color-dark-border !important;
+    border-radius: 8px !important;
+  }
+
+  .ant-input-affix-wrapper .ant-input {
+    background-color: transparent !important;
+  }
+
+  .ant-input {
+    color: var.$color-text-primary-dark-theme !important;
+    &::placeholder {
+      color: var.$color-text-secondary-dark-theme !important;
+    }
+  }
+
+  .ant-input-affix-wrapper:focus-within,
+  .ant-input:focus {
+    border-color: var.$color-gold !important;
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.5) !important;
+  }
+
+  .ant-input-password-icon {
+    color: var.$color-text-secondary-dark-theme !important;
+  }
+}
+
+.auth-form-label {
+  color: var.$color-text-primary-dark-theme;
+  font-size: var.$font-size-medium;
+  font-weight: bold;
+  display: block;
+  text-align: left;
+}
+
+.auth-form-button {
+  background-color: var.$color-gold;
+  color: black;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 10px;
+  border: none;
+  padding: 1rem 0 !important;
+  height: auto !important;
+
+  &:hover {
+    background-color: var.$color-gold-hover;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.25);
+  }
+}
+
+.auth-form-footer {
+  margin-top: 1rem;
+  color: var.$color-text-secondary-dark-theme;
+}
+
+.auth-form-link {
+  color: var.$color-gold;
+  text-decoration: none;
+  font-weight: bold;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

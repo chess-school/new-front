@@ -1,33 +1,22 @@
 import { Rule } from 'antd/es/form';
+import { TFunction } from 'i18next'; 
 
-const REQUIRED_FIELD = 'Обязательно для заполнения';
-
-export const nameValidation: Rule[] = [
-  { required: true, message: REQUIRED_FIELD },
+export const nameValidation = (t: TFunction): Rule[] => [
+  { required: true, message: t('validation.required') },
   {
     validator: (_, value) =>
       value && value.length >= 2
         ? Promise.resolve()
-        : Promise.reject(new Error('Имя или фамилия должны содержать минимум 2 символа')),
+        : Promise.reject(new Error(t('validation.name_length'))), 
   },
 ];
 
-export const loginValidation: Rule[] = [
-  { required: true, message: REQUIRED_FIELD },
-  {
-    validator: (_, value) =>
-      /[а-яА-Я]/.test(value)
-        ? Promise.reject(new Error('Логин не может содержать русские буквы'))
-        : Promise.resolve(),
-  },
+export const loginValidation = (t: TFunction): Rule[] => [
+  { required: true, message: t('validation.required') },
+  { type: 'email', message: t('validation.invalid_email') },
 ];
 
-export const passwordValidation: Rule[] = [
-  { required: true, message: REQUIRED_FIELD },
-  {
-    validator: (_, value) =>
-      value && value.length >= 6
-        ? Promise.resolve()
-        : Promise.reject(new Error('Пароль должен быть длиннее 6 символов')),
-  },
+export const passwordValidation = (t: TFunction): Rule[] => [
+  { required: true, message: t('validation.required') },
+  { min: 6, message: t('validation.password_length') }, 
 ];

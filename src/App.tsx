@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Suspense } from 'react';
 import { AuthPage } from '@/pages/auth-page';
-import { RegisterPage } from '@/pages/register-page';
 import { Navbar } from '@/components/Navbar/Navbar';
 import { Home } from '@/pages/home-page/home-page';
 import { About } from '@/pages/about-page/about-page';
@@ -35,7 +34,7 @@ function MainLayout() {
         <Route path="/about" element={<About />} />
         <Route path="/achievements" element={<Achievements />} />
         <Route path="/login" element={<AuthPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/register" element={<AuthPage />} />
         {/* <Route path="/chess" element={<ChessGame></ChessGame>} /> */}
         <Route path="/analysis" element={<AnalysisPage />} />
         {/* <Route path="/chess" element={<ChessProvider><GamePage /></ChessProvider>} /> */}

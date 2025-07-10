@@ -1,13 +1,7 @@
 import axiosInstance from '@/api'; 
+import { RegistrationData } from '@/types/Auth';
 
-interface RegisterData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-}
-
-export const registerUser = async (data: RegisterData) => {
+export const registerUser = async (data: RegistrationData) => {
   try {
     const response = await axiosInstance.post('/auth/register', data);
     return response.data;

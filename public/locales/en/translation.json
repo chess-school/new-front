@@ -1,4 +1,10 @@
 {
+  "validation": {
+    "required": "This field is required",
+    "invalid_email": "Please enter a valid email address",
+    "password_length": "Password must be at least 6 characters long",
+    "name_invalid": "Please enter a valid name"
+  },
   "navbar": {
     "login": "Login",
     "register": "Register",
@@ -23,8 +29,13 @@
     "save": "Save",
     "add": "Add",
     "filterByStatus": "Filter by status",
-    "brand": "MOB - Mind Over Board"
-
+    "brand": "MOB - Mind Over Board",
+    "email": "Email",
+    "password": "Password",
+    "placeholder": {
+      "email": "Enter your email",
+      "password": "Enter your password"
+    }
   },
   "homePage": {
     "hero": {
@@ -191,28 +202,16 @@
       "login": "Invalid email or password"
     },
 "auth": {
+    "sign_in": "Sign In",
+    "no_account": "Don't have an account?",
+    "sign_up": "Sign up",
     "success": {
       "login_title": "Login Successful",
       "welcome_back": "Welcome back, {{name}}!"
     },
-    "welcome": "Welcome Back!",
-    "enter_credentials": "Enter your credentials to access your account",
-    "email": "Email",
-    "password": "Password",
-    "email_placeholder": "Enter your email",
-    "password_placeholder": "Enter your password",
-    "remember_me": "Remember me",
-    "forgot_password": "Forgot Password?",
-    "sign_in": "Sign In",
-    "or_sign_in_with": "Or sign in with",
-    "no_account": "Don’t have an account?",
-    "sign_up": "Sign up",
     "errors": {
       "login": "Login failed",
-      "invalid_credentials": "The email or password you entered is incorrect.",
-      "required": "This field is required",
-      "invalid_email": "Please enter a valid email address",
-      "password_length": "Password must be at least 6 characters long"
+      "invalid_credentials": "The email or password you entered is incorrect."
     }
   },
     "verifyEmail": {
@@ -298,20 +297,16 @@
     "title": "Sign Up",
     "name": "First Name",
     "lastName": "Last Name",
-    "email": "Email",
-    "password": "Password",
     "submit": "Register",
     "haveAccount": "Already have an account?",
     "login": "Sign In",
     "placeholder": {
       "name": "Enter your first name",
-      "lastName": "Enter your last name",
-      "email": "Enter your email",
-      "password": "Enter your password"
+      "lastName": "Enter your last name"
     },
     "error": {
-      "title": "Registration error",
-      "description": "Please try again."
+      "title": "Registration Failed",
+      "description": "An error occurred. Please try again later."
     }
   },
   "schedule": {
