@@ -50,32 +50,42 @@
 .auth-form-body {
   width: 100%;
 
-  .ant-input-affix-wrapper,
+  // Сначала стилизуем ОБЫЧНЫЙ инпут (не пароль), чтобы он не сломался
   .ant-input {
-    background-color: var.$color-dark-secondary !important;
+    background: var.$color-dark-secondary !important;
+    color: var.$color-text-primary-dark-theme !important;
     border: 1px solid var.$color-dark-border !important;
     border-radius: 8px !important;
-  }
 
-  .ant-input-affix-wrapper .ant-input {
-    background-color: transparent !important;
-  }
-
-  .ant-input {
-    color: var.$color-text-primary-dark-theme !important;
     &::placeholder {
       color: var.$color-text-secondary-dark-theme !important;
     }
   }
 
+  // Теперь стилизуем ОБЕРТКУ для Input.Password
+  .ant-input-affix-wrapper {
+    background: var.$color-dark-secondary !important;
+    border: 1px solid var.$color-dark-border !important;
+    border-radius: 8px !important;
+
+    // Иконка глаза тоже должна быть светлой
+    .ant-input-password-icon {
+      color: var.$color-text-secondary-dark-theme !important;
+    }
+  }
+
+  // КЛЮЧЕВОЙ ФИКС: Делаем <input> ВНУТРИ Input.Password полностью прозрачным и без рамки
+  .ant-input-affix-wrapper .ant-input {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important; // Убираем любые тени
+  }
+
+  // Обводка при фокусе применяется к обоим типам полей
   .ant-input-affix-wrapper:focus-within,
   .ant-input:focus {
     border-color: var.$color-gold !important;
     box-shadow: 0 0 8px rgba(255, 215, 0, 0.5) !important;
-  }
-
-  .ant-input-password-icon {
-    color: var.$color-text-secondary-dark-theme !important;
   }
 }
 
