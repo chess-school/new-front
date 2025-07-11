@@ -42,17 +42,33 @@ export const AuthForm: React.FC<AuthFormProps> = ({ mode }) => {
     }
   };
 
-  const handleRegister: FormProps<RegistrationData>['onFinish'] = async (values) => {
-    try {
-      const response = await registerUser(values);
-      navigate(`/verify-email?token=${response.token}`);
-    } catch (error) {
-      notification.error({
-        message: t('register.error.title'),
-        description: t('register.error.description'),
-      });
-    }
-  };
+const handleRegister: FormProps<RegistrationData>['onFinish'] = async (values) => {
+  try {
+    const response = await registerUser(values);
+
+    const registeredEmail = response.email;
+
+    navigate('/verify-email', {
+      replace: true, 
+      state: {
+        email: registeredEmail,
+        firstName: values.firstName,
+        lastName: values.lastName,
+      },
+    });
+
+    notification.success({
+      message: t('register.success.title'),
+      description: t('register.success.description'),
+    });
+
+  } catch (error) {
+    notification.error({
+      message: t('register.error.title'),
+      description: (error as any).response?.data?.msg || t('register.error.description'),
+    });
+  }
+};
 
   return (
     <div className="auth-form-container">
