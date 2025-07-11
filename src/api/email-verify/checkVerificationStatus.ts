@@ -1,6 +1,8 @@
 import axiosInstance from '@/api';
 
-export const checkVerificationStatus = async (token: string): Promise<{ emailVerified: boolean }> => {
-  const response = await axiosInstance.post('/auth/check-verification', { token });
+export const checkVerificationStatus = async (email: string): Promise<{ emailVerified: boolean }> => {
+  const response = await axiosInstance.get('/auth/check-verification', {
+    params: { email }, 
+  });
   return response.data;
 };
