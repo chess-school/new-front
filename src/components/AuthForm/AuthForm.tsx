@@ -72,7 +72,6 @@ const handleRegister: FormProps<RegistrationData>['onFinish'] = async (values) =
 
   return (
     <div className="auth-form-container">
-      {/* --- Шапка формы --- */}
       <div className="auth-header" onClick={() => navigate('/')}>
         <FaChessKing className="auth-header__icon" />
         <Typography.Title level={4} className="auth-header__brand">
