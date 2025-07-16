@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
   Container, Typography, Paper, Button, Dialog, DialogTitle,
   DialogContent, DialogActions, TextField, CircularProgress, Box, Chip, Link as MuiLink,
@@ -22,7 +22,7 @@ import { createNotification } from '@/api/notifications';
 import { ScheduleEvent } from '@/types/SheduleEvent';
 
 // Импортируем готовый компонент календаря
-import StudentSchedule from '@/components/StudentSchedule/StudentsSchedule'; // <-- Убедитесь, что путь правильный
+import StudentSchedule from '@/components/StudentSchedule/StudentsSchedule';
 
 // Styles
 import 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -164,7 +164,6 @@ const HomeworkDialog: React.FC<{
   );
 };
 
-
 // --- === ГЛАВНЫЙ КОМПОНЕНТ СТРАНИЦЫ === ---
 const StudentSchedulePage: React.FC = () => {
   const { t } = useTranslation();
@@ -173,33 +172,55 @@ const StudentSchedulePage: React.FC = () => {
   const [selectedEventForDialog, setSelectedEventForDialog] = useState<ScheduleEvent | null>(null);
   const [statusFilters, setStatusFilters] = useState<string[]>([]);
 
-  const studentId = useMemo(() => {
-    const userStr = localStorage.getItem('user');
-    return userStr ? JSON.parse(userStr)._id : null;
-  }, []);
+  // Переносим логику получения ID и загрузку данных в один useEffect.
+  useEffect(() => {
+    const fetchScheduleForStudent = async () => {
+      const userStr = localStorage.getItem('user');
+      let studentId = null;
+      try {
+        if (userStr && userStr !== 'undefined' && userStr !== 'null') {
+            studentId = JSON.parse(userStr)._id;
+        }
+      } catch (error) {
+        console.error("Ошибка парсинга пользователя из localStorage:", error);
+      }
+      
+      if (!studentId) {
+        setLoading(false);
+        notification.error({
+          message: t('errors.userNotFound'),
+          description: undefined
+        });
+        return;
+      }
+      
+      setLoading(true);
+      try {
+        const scheduleData = await getScheduleByStudent(studentId);
+        setAllEvents(scheduleData);
+      } catch (error) {
+        console.error('Ошибка при загрузке расписания:', error);
+        notification.error({
+          message: t('errors.fetchSchedule'),
+          description: undefined
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const fetchSchedule = useCallback(async () => {
-    if (!studentId) { setLoading(false); return; }
-    setLoading(true);
-    try {
-      const scheduleData = await getScheduleByStudent(studentId);
-      setAllEvents(scheduleData);
-    } catch (error) {
-      console.error('Error fetching schedule:', error);
-      notification.error({
-        message: t('errors.fetchSchedule'),
-        description: undefined
-      });
-    } finally { setLoading(false); }
-  }, [studentId, t]);
-
-  useEffect(() => { fetchSchedule(); }, [fetchSchedule]);
+    fetchScheduleForStudent();
+  }, [t]); // Зависимость от 't' нужна для доступа к переводам в notification.
 
   const handleOpenDialog = (event: ScheduleEvent) => setSelectedEventForDialog(event);
   const handleCloseDialog = () => setSelectedEventForDialog(null);
   
   const handleSendHomework = async (homeworkText: string, screenshot: File | null) => {
+    // Получаем ID студента снова, чтобы не хранить его в состоянии
+    const userStr = localStorage.getItem('user');
+    const studentId = userStr ? JSON.parse(userStr)._id : null;
     if (!studentId || !selectedEventForDialog) return;
+
     try {
       await sendHomework({
         studentId,
@@ -221,9 +242,15 @@ const StudentSchedulePage: React.FC = () => {
         description: undefined
       });
       handleCloseDialog();
-      await fetchSchedule();
+      // Чтобы не делать еще один запрос к API, можно обновить состояние локально.
+      // Это быстрее для пользователя.
+      setAllEvents(prevEvents => 
+        prevEvents.map(event => 
+          event._id === selectedEventForDialog._id ? { ...event, status: 'pending' } : event
+        )
+      );
     } catch (error) {
-      console.error('Error sending homework:', error);
+      console.error('Ошибка при отправке ДЗ:', error);
       notification.error({
         message: t('errors.sendHomework'),
         description: undefined
@@ -244,7 +271,11 @@ const StudentSchedulePage: React.FC = () => {
       <Container maxWidth="lg">
         <Typography variant="h4" component="h1" className="page-title">{t('studentSchedule.myScheduleTitle')}</Typography>
 
-        <StudentSchedule />
+        {/* Передаем отфильтрованные данные и обработчик в дочерний компонент календаря */}
+        <StudentSchedule 
+          events={filteredEvents} 
+          onSelectEvent={handleOpenDialog} 
+        />
 
         <Box className="list-controls-container">
             <Typography variant="h5" component="h2">{t('studentSchedule.eventListTitle')}</Typography>

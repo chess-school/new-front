@@ -1,13 +1,12 @@
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import { notification } from 'antd';
-
 import i18n from '@/i18n'; 
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'; 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'; 
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
-  withCredentials: true,
+  withCredentials: true, 
 });
 
 const reduceMessage = (arr: string[]) => arr?.reduce((acc, item) => (acc += item), '');
@@ -25,12 +24,10 @@ axiosInstance.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    
     const language = i18n.language; 
     if (language) {
       config.headers['Accept-Language'] = language;
     }
-    
     return config;
   },
   (error) => {
@@ -41,7 +38,22 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => response,
   (error: AxiosError<any>) => {
-    if (error.response?.status !== 401 && error.response?.status !== 504) {
+
+    if (error.response?.status === 401) {
+      notification.error({
+        message: 'Сессия истекла',
+        description: error.response?.data?.message || 'Пожалуйста, войдите в систему снова.',
+      });
+      
+      localStorage.removeItem('token');
+      localStorage.removeItem('user'); 
+      
+      window.location.href = '/login'; 
+
+      return new Promise(() => {});
+    }
+    
+    if (error.response?.status !== 504) { 
       if (error.message === 'Network Error' || !error.response) {
         return getIssueMessage(error, 'Ошибка сети или сервер недоступен. Попробуйте позже.');
       }

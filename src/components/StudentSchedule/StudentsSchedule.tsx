@@ -1,18 +1,25 @@
-import React, { useEffect, useState, useMemo } from 'react';
+// Файл: components/StudentSchedule/StudentsSchedule.tsx
+
+import React, { useMemo } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
-import { Box, Paper, CircularProgress, Tooltip, Typography } from '@mui/material';
+import { Paper, Tooltip, Typography } from '@mui/material';
+
+// Иконки
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import PeopleIcon from '@mui/icons-material/People';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
-import { getScheduleByStudent } from '@/api/schedule';
+
+// Типы
 import { ScheduleEvent } from '@/types/SheduleEvent';
 
+// Стили
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './styles.scss';
 
+// --- НАСТРОЙКИ И УТИЛИТЫ ---
 const localizer = momentLocalizer(moment);
 
 const eventTypeIcons = {
@@ -23,17 +30,11 @@ const eventTypeIcons = {
   tournament_participation: <EmojiEventsIcon fontSize="small" />,
 };
 
-interface CalendarDisplayEvent {
-  _id: string;
-  type: keyof typeof eventTypeIcons;
-  title?: string;
-  start?: Date;
-  end?: Date;
-  description?: string;
-}
+// --- КОМПОНЕНТЫ ДЛЯ КАЛЕНДАРЯ ---
 
-const CustomEvent: React.FC<{ event: CalendarDisplayEvent }> = ({ event }) => {
-  const icon = eventTypeIcons[event.type];
+// Наш кастомный компонент для события в календаре
+const CustomEvent: React.FC<{ event: ScheduleEvent & { start?: Date; end?: Date; } }> = ({ event }) => {
+  const icon = eventTypeIcons[event.type as keyof typeof eventTypeIcons];
   const className = `custom-event rbc-event--${event.type}`;
   return (
     <Tooltip title={event.description || event.title} placement="top">
@@ -45,67 +46,37 @@ const CustomEvent: React.FC<{ event: CalendarDisplayEvent }> = ({ event }) => {
   );
 };
 
-const StudentSchedule: React.FC = () => {
-  const [events, setEvents] = useState<ScheduleEvent[]>([]);
-  const [loading, setLoading] = useState(true);
+// --- ОСНОВНОЙ КОМПОНЕНТ КАЛЕНДАРЯ ---
 
-  const studentId = useMemo(() => {
-    const userStr = localStorage.getItem('user');
-    try {
-      if (userStr && userStr !== 'undefined' && userStr !== 'null') {
-        return JSON.parse(userStr)._id;
-      }
-    } catch (error) { console.error("Failed to parse user from localStorage:", error); }
-    return null;
-  }, []);
+// Определяем, какие пропсы будет принимать наш компонент
+interface StudentScheduleProps {
+  events: ScheduleEvent[]; // Массив событий для отображения
+  onSelectEvent: (event: ScheduleEvent) => void; // Функция, которая вызовется при клике на событие
+}
 
-  useEffect(() => {
-    const fetchSchedule = async () => {
-      if (!studentId) {
-        setLoading(false);
-        return;
-      }
-      setLoading(true);
-      try {
-        const scheduleData = await getScheduleByStudent(studentId);
-        setEvents(scheduleData);
-      } catch (error) {
-        console.error('Error fetching student schedule:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchSchedule();
-  }, [studentId]); 
-  
-  const calendarEvents: CalendarDisplayEvent[] = useMemo(() => {
+const StudentSchedule: React.FC<StudentScheduleProps> = ({ events, onSelectEvent }) => {
+
+  // Преобразуем входящие события в формат, который понимает react-big-calendar
+  const calendarEvents = useMemo(() => {
     return events.map(event => ({
-      _id: event._id,
+      ...event, // Копируем все поля из нашего оригинального события
       start: new Date(event.date),
-      end: moment(event.date).add(1, 'hour').toDate(),
-      title: event.title,
-      type: event.type as keyof typeof eventTypeIcons,
-      description: event.description,
+      end: moment(event.date).add(1, 'hour').toDate(), // Длительность 1 час для примера
     }));
-  }, [events]);
+  }, [events]); // Этот хук будет перезапускаться только если изменится пропс events
 
   return (
-    <Paper className="schedule-paper">
-      {loading ? (
-        <Box className="loader-container">
-          <CircularProgress className="loader" />
-        </Box>
-      ) : (
+    <Paper className="schedule-paper" style={{ height: '70vh', padding: '16px' }}>
         <Calendar
           localizer={localizer}
-          events={calendarEvents}
+          events={calendarEvents} // <-- Используем преобразованные события
           startAccessor="start"
           endAccessor="end"
           views={['month', 'week', 'day', 'agenda']}
           components={{ event: CustomEvent as any }}
+          onSelectEvent={onSelectEvent} // <-- Привязываем обработчик клика
           className="schedule-calendar-standalone"
         />
-      )}
     </Paper>
   );
 };

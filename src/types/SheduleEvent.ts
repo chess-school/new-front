@@ -7,7 +7,8 @@ export interface ScheduleEvent {
   link?: string;
   type: 'individual_lesson' | 'group_lesson' | 'homework' | 'opening_study' | 'tournament_participation';
   date: string;
-  status: 'scheduled' | 'completed' | 'cancelled';
+  // status: 'scheduled' | 'completed' | 'cancelled';
+  status: 'scheduled' | 'completed' | 'cancelled' | 'pending' | 'approved' | 'rejected';
 }
 
 export type ScheduleEventPayload = Omit<ScheduleEvent, '_id' | 'coach' | 'student'> & { studentId: string };
