@@ -44,7 +44,7 @@ interface Homework {
 type InboxItem = Request | Homework;
 type ViewType = 'requests' | 'homework';
 
-const isRequest = (item: InboxItem): item is Request => 'goals' in item || 'experience' in item;
+const isRequest = (item: InboxItem): item is Request => 'createdAt' in item;
 
 export const InboxPage: React.FC = () => {
   const { t } = useTranslation();
@@ -187,7 +187,7 @@ export const InboxPage: React.FC = () => {
     } else {
       return (
         <>
-          <Typography variant="h5" gutterBottom>{selectedItem.schedule.title}</Typography>
+          <Typography variant="h5" gutterBottom>{selectedItem.schedule?.title || t('inbox.list.untitled')}</Typography>
           <Typography variant="subtitle1" color="text.secondary" gutterBottom>
             {t('inbox.details.student')}: {selectedItem.student.firstName} {selectedItem.student.lastName}
           </Typography>
@@ -262,12 +262,16 @@ export const InboxPage: React.FC = () => {
                   <ListItemButton key={item._id} selected={selectedItem?._id === item._id} onClick={() => setSelectedItem(item)}>
                     <ListItemText
                       primaryTypographyProps={{ style: { fontWeight: selectedItem?._id === item._id ? 'bold' : 'normal' } }}
-                      primary={`${item.student.firstName} ${item.student.lastName}`}
-                      secondary={
-                        isRequest(item) 
-                          ? t('inbox.list.requestSecondary', { date: new Date(item.createdAt).toLocaleDateString() }) 
-                          : t('inbox.list.homeworkSecondary', { title: item.schedule.title })
-                      }
+primary={
+    item.student 
+    ? `${item.student.firstName} ${item.student.lastName}`
+    : t('inbox.unknownStudent', 'Unknown Student')
+}                     
+secondary={
+  isRequest(item) 
+    ? t('inbox.list.requestSecondary', { date: new Date(item.createdAt).toLocaleDateString() }) 
+    : t('inbox.list.homeworkSecondary', { title: item.schedule?.title || t('inbox.list.untitled', 'Без темы') })
+}
                     />
                   </ListItemButton>
                 )) : <Typography sx={{ p: 2, textAlign: 'center' }}>{t('inbox.empty')}</Typography>}
