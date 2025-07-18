@@ -1,25 +1,22 @@
-# Имя вашего workflow
 name: Mirror to Personal Repo
 
-# Условие запуска: при каждом push в ветку 'main'
-# Замените 'main' на имя вашей основной ветки, если оно другое (например, 'master')
 on:
   push:
     branches:
-      - dev
+      - main # Или ваша основная ветка
 
 jobs:
   mirror:
     runs-on: ubuntu-latest
     steps:
-      # 1. Клонируем репозиторий-источник (из организации)
-      - name: Checkout source repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          # fetch-depth: 0 гарантирует, что мы получим всю историю коммитов
           fetch-depth: 0
 
-      # 2. Делаем push в репозиторий-приемник (ваш личный)
-      - name: Push to mirror repo
-        run: |
-          git push --mirror https://${{ secrets.PAT_FOR_MIRROR }}@github.com/NikitaSemenukha/mirror-front.git
+      - uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          # Логин вашего личного аккаунта и имя репозитория-приемника
+          target_repo_url: github.com/NikitaSemenukha/mirror-front.git
+
+          # Имя секрета, в котором хранится ваш PAT
+          pat: ${{ secrets.PAT_FOR_MIRROR }}
