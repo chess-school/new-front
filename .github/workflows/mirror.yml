@@ -1,30 +1,37 @@
-name: Mirror to Personal Repo
+name: Mirror Main Branch to Personal Repo
 
 on:
   push:
     branches:
-      - dev # Или ваша основная ветка
+      - dev
 
 jobs:
-  mirroring:
+  mirror-main-branch:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout source repository
+      - name: Checkout Source Repo
         uses: actions/checkout@v4
         with:
-          # Скачиваем полную историю
-          fetch-depth: 0
+          fetch-depth: 1
 
-      - name: Mirror to personal repository
-        uses: wearerequired/git-mirror-action@v1
-        env:
-          # ЯВНО указываем токен для аутентификации.
-          # Это токен для ДОСТУПА к ЦЕЛЕВОМУ репозиторию (вашему личному)
-          SSH_PRIVATE_KEY: ${{ secrets.PAT_FOR_MIRROR }}
-        with:
-          # Откуда клонировать (текущий репозиторий)
-          source-repo: 'https://github.com/${{ github.repository }}.git'
+      - name: Push only main branch to Mirror Repo
+        run: |
+          # Клонируем репозиторий-зеркало в отдельную папку
+          git clone "https://x-access-token:${{ secrets.PAT_FOR_MIRROR }}@github.com/NikitaSemenukha/mirror-front.git" mirror-repo
 
-          # Куда зеркалировать
-          # ВАЖНО: Используем аутентификацию через токен в URL
-          destination-repo: 'https://x-access-token:${{ secrets.PAT_FOR_MIRROR }}@github.com/NikitaSemenukha/mirror-front.git'
+          # Копируем все файлы из исходного репозитория (кроме .git) в папку с зеркалом
+          rsync -av --delete --exclude '.git/' ./ mirror-repo/
+
+          # Заходим в папку зеркала и коммитим изменения
+          cd mirror-repo
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+
+          # Если изменений нет, команда git diff вернет код 1, поэтому `|| exit 0`
+          if ! git diff --quiet; then
+            git add .
+            git commit -m "Sync from source repository [${{ github.sha }}]"
+            git push
+          else
+            echo "No changes to sync."
+          fi
