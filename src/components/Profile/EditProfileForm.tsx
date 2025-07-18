@@ -19,7 +19,7 @@ interface EditProfileProps {
   onClose: () => void;
 }
 
-const EditProfileForm: React.FC<EditProfileProps> = ({ user, onClose }) => {
+export const EditProfileForm: React.FC<EditProfileProps> = ({ user, onClose }) => {
   const { t } = useTranslation();
 
   const [firstName, setFirstName] = useState(user.firstName);
@@ -167,5 +167,3 @@ const EditProfileForm: React.FC<EditProfileProps> = ({ user, onClose }) => {
     </Dialog>
   );
 };
-
-export default EditProfileForm;

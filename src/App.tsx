@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { Suspense } from 'react';
 import { AuthPage } from '@/pages/auth-page';
 import { Navbar } from '@/components/Navbar/Navbar';
@@ -23,7 +23,8 @@ import { CssBaseline } from '@mui/material';
 
 function MainLayout() {
   const location = useLocation();
-  const hideNavbar = location.pathname === '/login' || location.pathname === '/register';
+  const authPaths = ['/login', '/register'];
+  const hideNavbar = authPaths.includes(location.pathname);
 
   return (
     <>
@@ -45,6 +46,7 @@ function MainLayout() {
         <Route element={<PrivateRoute />}>
           <Route path="/editor" element={<PuzzleEditor />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/profile/:userId" element={<ProfilePage />} />
           <Route path="/users" element={<UsersPage />} />
           <Route path="/students-shedule" element={<StudentSchedulePage />} />
           <Route path="/students" element={<StudentsPage />} />
@@ -59,11 +61,9 @@ function MainLayout() {
 
 function App() {
   return (
-    <Router>
-      <Suspense fallback={<div>Loading...</div>}>
-        <MainLayout />
-      </Suspense>
-    </Router>
+    <Suspense fallback={<div>Loading...</div>}>
+      <MainLayout />
+    </Suspense>
   );
 }
 

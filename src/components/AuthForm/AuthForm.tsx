@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Form, { FormProps } from 'antd/es/form';
 import Input from 'antd/es/input';
 import Button from 'antd/es/button';
@@ -14,6 +14,7 @@ import { LoginCredentials, RegistrationData } from '@/types/Auth';
 import { loginValidation, passwordValidation, nameValidation } from '@/shared/validation';
 
 import './styles.scss';
+import { AuthContext } from '@/context/AuthContext';
 
 interface AuthFormProps {
   mode: 'login' | 'register';
@@ -22,14 +23,23 @@ interface AuthFormProps {
 export const AuthForm: React.FC<AuthFormProps> = ({ mode }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const auth = useContext(AuthContext);
+
+  if (!auth) {
+    throw new Error("AuthForm must be used within an AuthProvider");
+  }
+  const { login: authLogin } = auth;
+
   const isLoginMode = mode === 'login';
 
   const handleLogin: FormProps<LoginCredentials>['onFinish'] = async (values) => {
     try {
       const { token, user } = await loginUser(values);
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
+      
+      authLogin(token, user);
+      
       navigate('/profile', { replace: true });
+      
       notification.success({
         message: t('auth.success.login_title'),
         description: t('auth.success.welcome_back', { name: user.firstName }),
@@ -37,38 +47,37 @@ export const AuthForm: React.FC<AuthFormProps> = ({ mode }) => {
     } catch (error) {
       notification.error({
         message: t('auth.errors.login'),
-        description: t('auth.errors.invalid_credentials'),
+        description: (error as any).response?.data?.msg || t('auth.errors.invalid_credentials'),
       });
     }
   };
 
-const handleRegister: FormProps<RegistrationData>['onFinish'] = async (values) => {
-  try {
-    const response = await registerUser(values);
+  const handleRegister: FormProps<RegistrationData>['onFinish'] = async (values) => {
+    try {
+      const response = await registerUser(values);
+      const registeredEmail = response.email;
 
-    const registeredEmail = response.email;
+      navigate('/verify-email', {
+        replace: true, 
+        state: {
+          email: registeredEmail,
+          firstName: values.firstName,
+          lastName: values.lastName,
+        },
+      });
 
-    navigate('/verify-email', {
-      replace: true, 
-      state: {
-        email: registeredEmail,
-        firstName: values.firstName,
-        lastName: values.lastName,
-      },
-    });
+      notification.success({
+        message: t('register.success.title'),
+        description: t('register.success.description'),
+      });
 
-    notification.success({
-      message: t('register.success.title'),
-      description: t('register.success.description'),
-    });
-
-  } catch (error) {
-    notification.error({
-      message: t('register.error.title'),
-      description: (error as any).response?.data?.msg || t('register.error.description'),
-    });
-  }
-};
+    } catch (error) {
+      notification.error({
+        message: t('register.error.title'),
+        description: (error as any).response?.data?.msg || t('register.error.description'),
+      });
+    }
+  };
 
   return (
     <div className="auth-form-container">
@@ -82,7 +91,6 @@ const handleRegister: FormProps<RegistrationData>['onFinish'] = async (values) =
         {isLoginMode ? t('auth.sign_in') : t('register.title')}
       </Typography.Title>
       
-      {/* --- Тело формы --- */}
       <Form
         name={mode}
         onFinish={isLoginMode ? handleLogin : handleRegister}
@@ -117,7 +125,6 @@ const handleRegister: FormProps<RegistrationData>['onFinish'] = async (values) =
         </Form.Item>
       </Form>
       
-      {/* --- Подвал формы --- */}
       <div className="auth-form-footer">
         {isLoginMode ? (
           <>
