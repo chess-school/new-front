@@ -3,17 +3,28 @@ name: Mirror to Personal Repo
 on:
   push:
     branches:
-      - dev
+      - dev # Или ваша основная ветка
 
 jobs:
-  mirror:
+  mirroring:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout source repo
+      - name: Checkout source repository
         uses: actions/checkout@v4
         with:
+          # Скачиваем полную историю
           fetch-depth: 0
 
-      - name: Push to mirror repo
-        run: |
-          git push --mirror https://${{ secrets.PAT_FOR_MIRROR }}@github.com/NikitaSemenukha/mirror-front.git
+      - name: Mirror to personal repository
+        uses: wearerequired/git-mirror-action@v1
+        env:
+          # ЯВНО указываем токен для аутентификации.
+          # Это токен для ДОСТУПА к ЦЕЛЕВОМУ репозиторию (вашему личному)
+          SSH_PRIVATE_KEY: ${{ secrets.PAT_FOR_MIRROR }}
+        with:
+          # Откуда клонировать (текущий репозиторий)
+          source-repo: 'https://github.com/${{ github.repository }}.git'
+
+          # Куда зеркалировать
+          # ВАЖНО: Используем аутентификацию через токен в URL
+          destination-repo: 'https://x-access-token:${{ secrets.PAT_FOR_MIRROR }}@github.com/NikitaSemenukha/mirror-front.git'
