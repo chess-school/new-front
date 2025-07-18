@@ -1,37 +1,48 @@
-name: Mirror Main Branch to Personal Repo
+name: Build and Deploy to Vercel Mirror
 
 on:
   push:
+    # Запускать только при пуше в вашу главную ветку (замените 'main', если нужно)
     branches:
       - dev
 
 jobs:
-  mirror-main-branch:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Source Repo
+      # 1. Скачиваем исходный код
+      - name: Checkout
         uses: actions/checkout@v4
+
+      # 2. Настраиваем Node.js (укажите свою версию)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          fetch-depth: 1
+          node-version: '20'
+          # Опционально: кэшируем зависимости для ускорения
+          cache: 'npm'
 
-      - name: Push only main branch to Mirror Repo
-        run: |
-          # Клонируем репозиторий-зеркало в отдельную папку
-          git clone "https://x-access-token:${{ secrets.PAT_FOR_MIRROR }}@github.com/NikitaSemenukha/mirror-front.git" mirror-repo
+      # 3. Устанавливаем зависимости
+      - name: Install dependencies
+        run: npm ci # 'npm ci' быстрее и надежнее для CI/CD чем 'npm install'
 
-          # Копируем все файлы из исходного репозитория (кроме .git) в папку с зеркалом
-          rsync -av --delete --exclude '.git/' ./ mirror-repo/
+      # 4. Собираем проект
+      - name: Build project
+        run: npm run build # Убедитесь, что команда сборки в package.json называется 'build'
 
-          # Заходим в папку зеркала и коммитим изменения
-          cd mirror-repo
-          git config user.name "GitHub Action"
-          git config user.email "action@github.com"
+      # 5. Деплоим результат сборки в репозиторий-зеркало
+      - name: Deploy to mirror repository
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          # Ваш PAT, который мы уже добавили в секреты
+          personal_token: ${{ secrets.PAT_FOR_MIRROR }}
 
-          # Если изменений нет, команда git diff вернет код 1, поэтому `|| exit 0`
-          if ! git diff --quiet; then
-            git add .
-            git commit -m "Sync from source repository [${{ github.sha }}]"
-            git push
-          else
-            echo "No changes to sync."
-          fi
+          # Репозиторий, куда нужно опубликовать билд
+          external_repository: NikitaSemenukha/mirror-front
+
+          # Ветка в репозитории-зеркале, куда будут попадать файлы
+          publish_branch: main
+
+          # Папка с результатом сборки.
+          # !!! ИЗМЕНИТЕ './dist' на вашу папку, если она называется иначе (например, './build' или './out')
+          publish_dir: ./dist
