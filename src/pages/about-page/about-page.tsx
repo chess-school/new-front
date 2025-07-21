@@ -5,16 +5,11 @@ import { useTranslation } from 'react-i18next';
 import { CSSTransition, SwitchTransition } from 'react-transition-group';
 
 // Иконки
-// import SchoolIcon from '@mui/icons-material/School';
-// import GroupIcon from '@mui/icons-material/Group';
-// import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import TrackChangesIcon from '@mui/icons-material/TrackChanges';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
-// Импорт CSS для анимации (убедитесь, что путь правильный)
 import './styles.scss';
 
-// Типизация для удобства
 interface Testimonial { name: string; quote: string; }
 interface CoachTeaser { name: string; quote: string; }
 interface WhyUsCard { icon: string; title: string; description: string; }
@@ -24,7 +19,6 @@ export const About: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  // Используем useMemo для безопасного получения и типизации данных из i18next
   const phrases = useMemo(
     () => (t('aboutPage.phrases', { returnObjects: true }) as string[]) || [],
     [t]
