@@ -19,6 +19,8 @@ import { InboxPage } from './pages/inbox-page/inbox-page';
 // import { Footer } from './components/Footer/Footer';
 import StudentSchedulePage from './pages/students-shedule-page/students-shedule-page';
 import { CssBaseline } from '@mui/material';
+import { ProfilePageById } from './pages/profile-page/profile-test';
+import GuestRoute from './components/GuestRoute/GuestRoute';
 
 function MainLayout() {
   const location = useLocation();
@@ -33,8 +35,10 @@ function MainLayout() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/achievements" element={<Achievements />} />
-        <Route path="/login" element={<AuthPage />} />
-        <Route path="/register" element={<AuthPage />} />
+        <Route element={<GuestRoute />}>
+          <Route path="/login" element={<AuthPage />} />
+          <Route path="/register" element={<AuthPage />} />
+        </Route>
         {/* <Route path="/chess" element={<ChessGame></ChessGame>} /> */}
         <Route path="/analysis" element={<AnalysisPage />} />
         {/* <Route path="/chess" element={<ChessProvider><GamePage /></ChessProvider>} /> */}
@@ -44,8 +48,17 @@ function MainLayout() {
 
         <Route element={<PrivateRoute />}>
           <Route path="/editor" element={<PuzzleEditor />} />
-          {/* <Route path="/profile" element={<ProfilePage />} /> */}
-          <Route path="/profile/:userId" element={<ProfilePage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route 
+            path="/profile/:userId" 
+            element={<ProfilePage />} 
+            key={location.pathname}
+          />          
+          <Route 
+            path="/profile-test/:userId" 
+            element={<ProfilePageById />} 
+            key={location.pathname} 
+          />
           <Route path="/users" element={<UsersPage />} />
           <Route path="/students-shedule" element={<StudentSchedulePage />} />
           <Route path="/students" element={<StudentsPage />} />
