@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -12,6 +12,7 @@ import {
   Box,
   Button,
   ListItemIcon,
+  CircularProgress,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useNavigate } from 'react-router-dom';
@@ -30,32 +31,40 @@ import {
 } from '@ant-design/icons';
 import './styles.scss';
 import { Notifications } from '@/components/Notifications/Notification';
+import { AuthContext } from '@/context/AuthContext';
 
 export const Navbar: React.FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const userString = localStorage.getItem('user');
-  let user = null;
-  try {
-    if (userString && userString !== 'undefined' && userString !== 'null') {
-      user = JSON.parse(userString);
-    }
-  } catch (error) {
-    console.error('Error parsing user from localStorage:', error);
-    user = null;
+  // Получаем данные и состояние загрузки из AuthContext
+  const auth = useContext(AuthContext);
+
+  // Рендерим упрощенный Navbar-загрузчик, пока AuthContext не готов
+  if (!auth || auth.loading) {
+    return (
+        <AppBar position="static" className="navbar-appbar">
+            <Toolbar className="navbar-toolbar" sx={{ justifyContent: 'space-between' }}>
+                <Typography variant="h6" className="navbar-title">
+                    {t('navbar.chessSchool')}
+                </Typography>
+                <CircularProgress color="inherit" size={24} />
+            </Toolbar>
+        </AppBar>
+    );
   }
 
-  const token = localStorage.getItem('token');
-  const isAuthenticated = !!token && !!user;
+  // Деструктурируем данные после того, как убедились, что auth загружен
+  const { isAuthenticated, user, logout } = auth;
+
+  // Вычисляем роли на основе актуальных данных из контекста
   const isAdmin = user?.roles?.includes('admin');
   const isCoach = user?.roles?.includes('coach');
   const isStudent = user?.roles?.includes('student');
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    if(logout) logout();
     setIsDrawerOpen(false);
     navigate('/login');
   };
@@ -75,7 +84,12 @@ export const Navbar: React.FC = () => {
 
   const handleMenuClick = (path: string) => {
     setIsDrawerOpen(false);
-    navigate(path);
+    // Динамически формируем ссылку на профиль
+    if (path === '/profile' && user?._id) {
+      navigate(`/profile/${user._id}`);
+    } else {
+      navigate(path);
+    }
   };
 
   return (
@@ -138,7 +152,6 @@ export const Navbar: React.FC = () => {
               <ListItemText primary={t('navbar.coaches')} />
             </ListItemButton>
             
-            {/* 👇 ВОССТАНОВИЛ РАЗДЕЛИТЕЛИ МЕЖДУ СЕМАНТИЧЕСКИМИ БЛОКАМИ */}
             {isAuthenticated && <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.12)' }} />}
 
             {/* Меню для авторизованных пользователей */}

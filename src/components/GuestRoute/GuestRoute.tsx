@@ -5,12 +5,9 @@ import { AuthContext } from '@/context/AuthContext';
 
 const GuestRoute: React.FC = () => {
   const auth = useContext(AuthContext);
+  if (!auth) throw new Error("GuestRoute must be used within an AuthProvider");
 
-  if (!auth) {
-    throw new Error("GuestRoute must be used within an AuthProvider");
-  }
-
-  const { isAuthenticated, loading } = auth;
+  const { isAuthenticated, user, loading } = auth;
 
   if (loading) {
     return (
@@ -19,8 +16,9 @@ const GuestRoute: React.FC = () => {
       </Box>
     );
   }
-  if (isAuthenticated) {
-    return <Navigate to="/profile" replace />;
+
+  if (isAuthenticated && user) {
+    return <Navigate to={`/profile/${user._id}`} replace />;
   }
 
   return <Outlet />;

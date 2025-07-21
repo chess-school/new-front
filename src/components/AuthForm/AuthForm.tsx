@@ -38,8 +38,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({ mode }) => {
       
       authLogin(token, user);
       
-      navigate(`/profile/${user._id}`, { replace: true }); 
-      
+      // navigate(`/profile/${user._id}`, { replace: true }); 
+      // navigate(`/profile`, { replace: true }); 
+      navigate(`/profile-test/${user._id}`, { replace: true }); 
+
       notification.success({
         message: t('auth.success.login_title'),
         description: t('auth.success.welcome_back', { name: user.firstName }),
