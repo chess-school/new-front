@@ -20,7 +20,6 @@ import { InboxPage } from './pages/inbox-page/inbox-page';
 import StudentSchedulePage from './pages/students-shedule-page/students-shedule-page';
 import { CssBaseline } from '@mui/material';
 
-
 function MainLayout() {
   const location = useLocation();
   const authPaths = ['/login', '/register'];
@@ -45,7 +44,7 @@ function MainLayout() {
 
         <Route element={<PrivateRoute />}>
           <Route path="/editor" element={<PuzzleEditor />} />
-          <Route path="/profile" element={<ProfilePage />} />
+          {/* <Route path="/profile" element={<ProfilePage />} /> */}
           <Route path="/profile/:userId" element={<ProfilePage />} />
           <Route path="/users" element={<UsersPage />} />
           <Route path="/students-shedule" element={<StudentSchedulePage />} />
