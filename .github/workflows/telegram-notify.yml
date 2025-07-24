@@ -24,20 +24,26 @@ jobs:
           fetch-depth: 2
 
       # Шаг 2: Получаем информацию о последнем коммите
-      - name: Get commit information
+      - name: Get commit information and escape markdown
         id: commit_info
         run: |
-          # Получаем автора коммита
-          AUTHOR=$(git log -1 --pretty=format:'%an')
-          # Получаем сообщение коммита
-          MESSAGE=$(git log -1 --pretty=format:'%s')
-          # Получаем короткий хеш коммита
-          HASH=$(git log -1 --pretty=format:'%h')
-          # Ссылка на коммит
-          URL="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
+          # Эта функция будет экранировать все специальные символы MarkdownV2
+          escape_markdown() {
+            echo "$1" | sed -e 's/_/\\_/g' -e 's/\*/\\*/g' -e 's/\[/\\[/g' -e 's/\]/\\]/g' -e 's/(/\\(/g' -e 's/)/\\)/g' -e 's/~/\\~/g' -e 's/`/\\`/g' -e 's/>/\\>/g' -e 's/#/\\#/g' -e 's/+/\\+/g' -e 's/-/\\-/g' -e 's/=/\\=/g' -e 's/|/\\|/g' -e 's/{/\\{/g' -e 's/}/\\}/g' -e 's/\./\\./g' -e 's/!/\\!/g'
+          }
 
-          # Экранируем специальные символы для JSON
-          MESSAGE=$(echo "$MESSAGE" | sed 's/"/\\"/g' | sed "s/'/\\'/g")
+          # Получаем сырые данные
+          RAW_AUTHOR=$(git log -1 --pretty=format:'%an')
+          RAW_MESSAGE=$(git log -1 --pretty=format:'%s')
+          RAW_HASH=$(git log -1 --pretty=format:'%h')
+
+          # Экранируем данные перед использованием
+          AUTHOR=$(escape_markdown "$RAW_AUTHOR")
+          MESSAGE=$(escape_markdown "$RAW_MESSAGE")
+          HASH=$(escape_markdown "$RAW_HASH")
+
+          # Ссылка на коммит не нуждается в экранировании
+          URL="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
 
           # Передаем переменные в следующие шаги
           echo "commit_author=$AUTHOR" >> $GITHUB_OUTPUT
@@ -49,16 +55,13 @@ jobs:
       - name: Send Telegram message
         uses: appleboy/telegram-action@master
         with:
-          # Используем наши секреты
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-
-          # Форматируем сообщение. Используем MarkdownV2 для красивого оформления.
-          format: markdownv2
+          format: markdownv2 # Продолжаем использовать markdownv2, т.к. мы все экранировали
           message: |
             *Новый коммит в ветке `dev`* 🚀
 
             *Автор:* ${{ steps.commit_info.outputs.commit_author }}
-            *Сообщение:* \`${{ steps.commit_info.outputs.commit_message }}\`
+            *Сообщение:* `${{ steps.commit_info.outputs.commit_message }}`
 
             [Посмотреть коммит \(`${{ steps.commit_info.outputs.commit_hash }}\`\)]\(${{ steps.commit_info.outputs.commit_url }}\)
