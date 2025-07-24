@@ -107,7 +107,6 @@ export const InboxPage: React.FC = () => {
     fetchScreenshot();
     setReviewComment('');
   
-    // Cleanup function
     return () => {
       if (objectUrl) {
         URL.revokeObjectURL(objectUrl);
