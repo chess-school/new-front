@@ -19,7 +19,6 @@ import { InboxPage } from './pages/inbox-page/inbox-page';
 // import { Footer } from './components/Footer/Footer';
 import StudentSchedulePage from './pages/students-shedule-page/students-shedule-page';
 import { CssBaseline } from '@mui/material';
-import { ProfilePageById } from './pages/profile-page/profile-test';
 import GuestRoute from './components/GuestRoute/GuestRoute';
 
 function MainLayout() {
@@ -53,12 +52,7 @@ function MainLayout() {
             path="/profile/:userId" 
             element={<ProfilePage />} 
             key={location.pathname}
-          />          
-          <Route 
-            path="/profile-test/:userId" 
-            element={<ProfilePageById />} 
-            key={location.pathname} 
-          />
+          /> 
           <Route path="/users" element={<UsersPage />} />
           <Route path="/students-shedule" element={<StudentSchedulePage />} />
           <Route path="/students" element={<StudentsPage />} />

@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { User } from '@/types/User';
 import { getProfile } from '@/api/profile';
 
@@ -22,12 +22,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true); 
 
+  const logout = useCallback(() => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
+    setIsAuthenticated(false);
+  }, []);
+
   useEffect(() => {
     const checkAuthStatus = async () => {
+      setLoading(true);
       const token = localStorage.getItem('token');
       if (token) {
         try {
-          const profile = await getProfile();
+          const profile = await getProfile(); 
           setUser(profile);
           setIsAuthenticated(true);
         } catch (error) {
@@ -39,19 +47,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     checkAuthStatus();
-  }, []);
+  }, [logout]);
 
   const login = (token: string, userData: User) => {
     localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(userData)); 
+    localStorage.setItem('user', JSON.stringify(userData));
+    
+    setUser(userData); 
     setIsAuthenticated(true);
-  };
-
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setUser(null);
-    setIsAuthenticated(false);
   };
 
   const refetchUser = async () => {
