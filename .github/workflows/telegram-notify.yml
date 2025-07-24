@@ -1,0 +1,64 @@
+# Имя нашего рабочего процесса, отображается в GitHub Actions
+name: Telegram Notification
+
+# Триггер: на что реагирует наш процесс
+on:
+  push:
+    # Запускать только при пуше в ветку 'main'
+    branches:
+      - dev
+    # Если ваша основная ветка называется 'master', замените 'main' на 'master'
+
+# Задачи, которые будут выполняться
+jobs:
+  send_notification:
+    # Запускаем на последней версии Ubuntu
+    runs-on: ubuntu-latest
+
+    steps:
+      # Шаг 1: Получаем доступ к коду репозитория
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          # Нам нужна история коммитов, чтобы получить сообщение последнего коммита
+          fetch-depth: 2
+
+      # Шаг 2: Получаем информацию о последнем коммите
+      - name: Get commit information
+        id: commit_info
+        run: |
+          # Получаем автора коммита
+          AUTHOR=$(git log -1 --pretty=format:'%an')
+          # Получаем сообщение коммита
+          MESSAGE=$(git log -1 --pretty=format:'%s')
+          # Получаем короткий хеш коммита
+          HASH=$(git log -1 --pretty=format:'%h')
+          # Ссылка на коммит
+          URL="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
+
+          # Экранируем специальные символы для JSON
+          MESSAGE=$(echo "$MESSAGE" | sed 's/"/\\"/g' | sed "s/'/\\'/g")
+
+          # Передаем переменные в следующие шаги
+          echo "commit_author=$AUTHOR" >> $GITHUB_OUTPUT
+          echo "commit_message=$MESSAGE" >> $GITHUB_OUTPUT
+          echo "commit_hash=$HASH" >> $GITHUB_OUTPUT
+          echo "commit_url=$URL" >> $GITHUB_OUTPUT
+
+      # Шаг 3: Формируем и отправляем сообщение в Telegram
+      - name: Send Telegram message
+        uses: appleboy/telegram-action@master
+        with:
+          # Используем наши секреты
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+
+          # Форматируем сообщение. Используем MarkdownV2 для красивого оформления.
+          format: markdownv2
+          message: |
+            *Новый коммит в ветке `dev`* 🚀
+
+            *Автор:* ${{ steps.commit_info.outputs.commit_author }}
+            *Сообщение:* \`${{ steps.commit_info.outputs.commit_message }}\`
+
+            [Посмотреть коммит \(`${{ steps.commit_info.outputs.commit_hash }}\`\)]\(${{ steps.commit_info.outputs.commit_url }}\)
