@@ -63,5 +63,3 @@ jobs:
 
             *Автор:* ${{ steps.commit_info.outputs.commit_author }}
             *Сообщение:* `${{ steps.commit_info.outputs.commit_message }}`
-
-            [Посмотреть коммит \(`${{ steps.commit_info.outputs.commit_hash }}\`\)]\(${{ steps.commit_info.outputs.commit_url }}\)
