@@ -1,3 +1,4 @@
+// engine/ChessGameEngine.ts (ОНОВЛЕНА ВЕРСІЯ)
 
 import { Chess, Square, Move } from 'chess.js';
 
@@ -46,9 +47,18 @@ export class ChessGameEngine {
     };
   }
 
-  handleMove(source: Square, target: Square): Move | null {
+  // --- КЛЮЧОВА ЗМІНА ТУТ ---
+  // Додаємо третій, необов'язковий аргумент `promotionPiece`
+  handleMove(source: Square, target: Square, promotionPiece?: string): Move | null {
     try {
-      const move = this.game.move({ from: source, to: target, promotion: 'q' });
+      // Використовуємо `promotionPiece`. Якщо він не переданий,
+      // `chess.js` автоматично вибере ферзя ('q'), що є хорошою поведінкою за замовчуванням.
+      const move = this.game.move({ 
+        from: source, 
+        to: target, 
+        promotion: promotionPiece 
+      });
+
       if (move) {
         this.fullHistory = this.game.history();
       }
@@ -65,8 +75,9 @@ export class ChessGameEngine {
 
   loadPgn(pgn: string): boolean {
     try {
+      // Скидаємо гру перед завантаженням нового PGN, щоб уникнути конфліктів
+      this.game.reset(); 
       this.game.loadPgn(pgn);
-
       this.fullHistory = this.game.history(); 
       return true; 
     } catch (e) {
@@ -76,26 +87,27 @@ export class ChessGameEngine {
   }
   
   goToMove(moveIndex: number): void {
+    // Створюємо нову гру з початкової позиції
     const tempGame = new Chess();
+    // Проходимо по повній історії до потрібного ходу
     for (let i = 0; i < moveIndex; i++) {
         if (this.fullHistory[i]) {
             tempGame.move(this.fullHistory[i]);
         }
     }
+    // Замінюємо основний об'єкт гри на тимчасовий
     this.game = tempGame;
   }
 
   uciToSan(uci: string): string | null {
-    const move = this.game.move({
+    // Цей метод можна спростити, оскільки він не повинен змінювати стан гри
+    const tempGame = new Chess(this.game.fen());
+    const move = tempGame.move({
       from: uci.substring(0, 2),
       to: uci.substring(2, 4),
       promotion: uci.length === 5 ? uci.substring(4) : undefined,
     });
-    if (move) {
-      this.game.undo();
-      return move.san;
-    }
-    return null;
+    return move ? move.san : null;
   }
 }
 

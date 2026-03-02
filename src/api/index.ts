@@ -2,7 +2,7 @@ import axios, { AxiosResponse, AxiosError } from 'axios';
 import { notification } from 'antd';
 import i18n from '@/i18n'; 
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'; 
+const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3000/api') + '/v2'; 
 
 const axiosInstance = axios.create({
   baseURL: API_URL,

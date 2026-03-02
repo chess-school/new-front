@@ -32,19 +32,27 @@ export const AuthForm: React.FC<AuthFormProps> = ({ mode }) => {
 
   const isLoginMode = mode === 'login';
 
-  const handleLogin: FormProps<LoginCredentials>['onFinish'] = async (values) => {
+const handleLogin: FormProps<LoginCredentials>['onFinish'] = async (values) => {
     try {
-      const { token, user } = await loginUser(values);
+      const loginResponse = await loginUser(values); 
       
-      authLogin(token, user);
+      const fullUserProfile = await authLogin(loginResponse);
+      console.log(fullUserProfile.uuid);
       
-      navigate(`/profile/${user._id}`, { replace: true }); 
-      // navigate(`/profile`, { replace: true }); 
+      if (fullUserProfile && fullUserProfile.uuid) {
+               setTimeout(() => {
+            navigate(`/profile/${fullUserProfile.uuid}`, { replace: true });
+        }, 0);
 
-      notification.success({
-        message: t('auth.success.login_title'),
-        description: t('auth.success.welcome_back', { name: user.firstName }),
-      });
+        notification.success({
+            message: t('auth.success.login_title'),
+            description: t('auth.success.welcome_back', { name: fullUserProfile.firstName }),
+        });
+      } else {
+        // Защита на случай, если что-то пошло совсем не так
+        throw new Error("Failed to retrieve user profile after login.");
+      }
+
     } catch (error) {
       notification.error({
         message: t('auth.errors.login'),

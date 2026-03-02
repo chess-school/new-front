@@ -1,5 +1,3 @@
-import { User } from './User'; 
-
 export interface LoginCredentials {
   email: string;
   password: string;
@@ -7,7 +5,10 @@ export interface LoginCredentials {
 
 export interface LoginResponse {
   token: string;
-  user: User;
+  user: { 
+    uuid: string;
+    roles: string[];
+  };
 }
 
 export interface RegistrationData {

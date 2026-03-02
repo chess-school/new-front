@@ -1,0 +1,1 @@
+export { getRandomPuzzle } from './getRandomPuzzle';

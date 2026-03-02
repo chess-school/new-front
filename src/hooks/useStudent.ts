@@ -10,6 +10,7 @@ export const useAuthUser = () => {
 
   return { 
     userId: auth.user?._id, 
+    userUuid: auth.user?.uuid,  
     user: auth.user, 
     isAuthLoading: auth.loading 
   };

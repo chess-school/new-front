@@ -58,10 +58,9 @@ export const Navbar: React.FC = () => {
   // Деструктурируем данные после того, как убедились, что auth загружен
   const { isAuthenticated, user, logout } = auth;
 
-  // Вычисляем роли на основе актуальных данных из контекста
-  const isAdmin = user?.roles?.includes('admin');
-  const isCoach = user?.roles?.includes('coach');
-  const isStudent = user?.roles?.includes('student');
+  const isAdmin = !!user?.roles?.includes('ADMIN');
+  const isCoach = !!user?.roles?.includes('COACH');
+  const isStudent = isAuthenticated;
 
   const handleLogout = () => {
     if(logout) logout();
@@ -82,16 +81,16 @@ export const Navbar: React.FC = () => {
     setIsDrawerOpen(open);
   };
 
-  const handleMenuClick = (path: string) => {
+ const handleMenuClick = (path: string) => {
     setIsDrawerOpen(false);
-    // Динамически формируем ссылку на профиль
-    if (path === '/profile' && user?._id) {
-      navigate(`/profile/${user._id}`);
+    
+    // Правильная навигация на профиль, используя uuid
+    if (path === '/profile' && user?.uuid) {
+      navigate(`/profile/${user.uuid}`);
     } else {
       navigate(path);
     }
   };
-
   return (
     <>
       <AppBar position="static" className="navbar-appbar">

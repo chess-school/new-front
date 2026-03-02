@@ -1,28 +1,26 @@
-// src/pages/profile-page/components/ProfileHeader.tsx
-
 import React from 'react';
-import { Paper, Stack, Avatar, Box, Typography, Tooltip, Chip, Button, Link as MuiLink } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
-import { User } from '@/types/User';
-import { getPrimaryRole } from '@/utils';
+import { Paper, Stack, Avatar, Box, Typography, Tooltip, Chip, Button } from '@mui/material';
+import { User } from '@/types/User'; // Используем алиас для консистентности
+import { getPrimaryRole } from '@/utils'; // Предполагается, что эта утилита у вас есть
 import EditIcon from '@mui/icons-material/Edit';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SendIcon from '@mui/icons-material/Send';
+import { useTranslation } from 'react-i18next'; // Используем хук для t
 
 interface ProfileHeaderProps {
   user: User;
-  coach: User | null;
   avatarUrl: string;
   isMyProfile: boolean;
   onEdit: () => void;
   onLogout: () => void;
-  t: (key: string) => string;
+  // coach и t теперь опциональны или берутся из хука
 }
 
-export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user, coach, avatarUrl, isMyProfile, onEdit, onLogout, t }) => {
+export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user, avatarUrl, isMyProfile, onEdit, onLogout }) => {
+  const { t } = useTranslation();
   const primaryRole = getPrimaryRole(user.roles);
   const otherRoles = user.roles.filter(role => role !== primaryRole);
-  const roleChipColor = { admin: 'secondary', coach: 'primary', student: 'success', user: 'default' }[primaryRole] as "secondary" | "primary" | "success" | "default";
+  const roleChipColor = { ADMIN: 'secondary', COACH: 'primary', USER: 'default' }[primaryRole] as "secondary" | "primary" | "default" | undefined;
   
   return (
     <Paper sx={{ p: { xs: 2, md: 4 }, mb: 4, bgcolor: '#1c1c1c', borderRadius: 4, color: 'white' }}>
@@ -35,8 +33,10 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user, coach, avata
               <Chip label={primaryRole} color={roleChipColor} size="small" sx={{ textTransform: 'capitalize' }} />
             </Tooltip>
           </Stack>
-          {coach && <Typography sx={{color: 'rgba(255,255,255,0.7)', mt: 1}}>Coach: <MuiLink component={RouterLink} to={`/profile/${coach._id}`} color="inherit" sx={{textDecoration: 'underline'}}>{coach.firstName} {coach.lastName}</MuiLink></Typography>}
-          <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.5)', mt: 0.5 }}>{t('profile.registrationDate')}: {new Date(user.registrationDate).toLocaleDateString()}</Typography>
+          
+          <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.5)', mt: 0.5 }}>
+            {t('profile.registrationDate')}: {new Date(user.createdAt).toLocaleDateString()}
+          </Typography>
         </Box>
         <Stack direction="row" spacing={2} sx={{ mt: { xs: 3, md: 0 } }}>
             {isMyProfile ? (
@@ -45,7 +45,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user, coach, avata
                     <Button variant="contained" color="error" onClick={onLogout} startIcon={<LogoutIcon />}>{t('profile.logout')}</Button>
                 </>
             ) : (
-                primaryRole === 'coach' && <Button variant="contained" color="primary" startIcon={<SendIcon />}>Send Request</Button>
+                primaryRole === 'COACH' && <Button variant="contained" color="primary" startIcon={<SendIcon />}>Send Request</Button>
             )}
         </Stack>
       </Stack>
