@@ -16,6 +16,28 @@
     "students-shedule": "Harmonogram ucznia",
     "users": "Użytkownicy"
   },
+   "puzzles": {
+    "title": "Trener taktyki",
+    "loading": "Ładowanie zadania...",
+    "loadError": "Nie udało się załadować zadania",
+    "yourTurn": "Twój ruch",
+    "correct": "Prawidłowo!",
+    "wrongMove": "Błędny ruch, spróbuj ponownie!",
+    "solved": "Zadanie rozwiązane!",
+    "newPuzzle": "Nowe zadanie",
+    "ratingLabel": "Ranking zadania:"
+  },
+    "climb": {
+    "title": "Wspinaczka Rankingowa",
+    "description": "Osiągnij jak najwyższy ranking zadań w 3 minuty.",
+    "start": "Rozpocznij wspinaczkę",
+    "playAgain": "Zagraj ponownie",
+    "solved": "Rozwiązane",
+    "highestRating": "Najwyższy",
+    "gameOver": "Czas minął!",
+    "yourScore": "Twój wynik",
+    "finalScore": "Wynik końcowy"
+  },
   "auth": {
     "sign_in": "Zaloguj się",
     "no_account": "Nie masz konta?",

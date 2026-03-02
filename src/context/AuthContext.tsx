@@ -1,12 +1,13 @@
-import React, { createContext, useState, useEffect, ReactNode, useCallback } from 'react';
-import { User } from '@/types/User';
-import { getProfile } from '@/api/profile';
+import React, { createContext, useState, useEffect, ReactNode, useCallback, useContext } from 'react';
+import { User } from '@/types/User'; 
+import { getMyProfile } from '@/api/profile';
+import { LoginResponse } from '@/types/Auth';
 
 interface AuthContextType {
-  isAuthenticated: boolean;
   user: User | null;
   loading: boolean;
-  login: (token: string, userData: User) => void;
+  isAuthenticated: boolean;
+  login: (loginResponse: LoginResponse) => Promise<User>;
   logout: () => void;
   refetchUser: () => Promise<void>;
 }
@@ -18,49 +19,59 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true); 
 
   const logout = useCallback(() => {
     localStorage.removeItem('token');
-    localStorage.removeItem('user');
     setUser(null);
-    setIsAuthenticated(false);
   }, []);
 
   useEffect(() => {
     const checkAuthStatus = async () => {
       setLoading(true);
       const token = localStorage.getItem('token');
-      if (token) {
-        try {
-          const profile = await getProfile(); 
-          setUser(profile);
-          setIsAuthenticated(true);
-        } catch (error) {
-          console.error('Session token is invalid, logging out.', error);
-          logout(); 
-        }
+      
+      if (!token) {
+        setLoading(false);
+        return;
       }
-      setLoading(false);
-    };
 
+      try {
+        const profile = await getMyProfile();
+        setUser(profile);
+      } catch (error) {
+        console.error('Session check failed, token is invalid. Logging out.', error);
+        logout(); 
+      } finally {
+        setLoading(false);
+      }
+    };
     checkAuthStatus();
   }, [logout]);
 
-  const login = (token: string, userData: User) => {
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(userData));
+  const login = useCallback(async (loginResponse: LoginResponse) => {
+    if (!loginResponse || !loginResponse.token) {
+      throw new Error("Invalid login response");
+    }
     
-    setUser(userData); 
-    setIsAuthenticated(true);
-  };
-
-  const refetchUser = async () => {
+    localStorage.setItem('token', loginResponse.token);
+    
+    try {
+        const fullUserProfile = await getMyProfile();
+        setUser(fullUserProfile);
+        return fullUserProfile;
+    } catch (error) {
+        console.error("Failed to fetch profile after login. Rolling back.", error);
+        logout();
+        throw error;
+    }
+  }, [logout]);
+  
+  const refetchUser = useCallback(async () => {
     setLoading(true);
     try {
-        const profile = await getProfile();
+        const profile = await getMyProfile();
         setUser(profile);
     } catch (error) {
         console.error("Failed to refetch user data", error);
@@ -68,7 +79,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } finally {
         setLoading(false);
     }
-  }
+  }, [logout]);
+
+  const isAuthenticated = !!user;
 
   const value = {
     isAuthenticated,
@@ -80,4 +93,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+
+export const useAuth = () => {
+    const context = useContext(AuthContext);
+    if (context === undefined) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+    return context;
 };

@@ -20,7 +20,6 @@ export const updateProfile = async (data: UpdateProfilePayload): Promise<User> =
     }
   });
 
-  const response = await axiosInstance.put('/auth/profile', formData);
-  return response.data;
+  const response = await axiosInstance.put('/users/me', formData);
+  return response.data.user;
 };
-
