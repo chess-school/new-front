@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { Chess, Square } from 'chess.js';
-import { Container, Typography, Grid, Box, Paper, Stack, Button } from '@mui/material';
+import { Container, Typography, Grid, Box, Paper, Button } from '@mui/material';
 import { notification } from 'antd';
 import { useTranslation } from 'react-i18next';
 

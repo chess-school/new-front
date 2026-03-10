@@ -5,6 +5,28 @@
     "password_length": "Password must be at least 6 characters long",
     "name_invalid": "Please enter a valid name"
   },
+ "puzzles": {
+    "title": "Puzzle Trainer",
+    "loading": "Loading puzzle...",
+    "loadError": "Failed to load puzzle",
+    "yourTurn": "Your turn to move",
+    "correct": "Correct!",
+    "wrongMove": "Wrong move, try again!",
+    "solved": "Puzzle solved!",
+    "newPuzzle": "New Puzzle",
+    "ratingLabel": "Puzzle Rating:"
+  },
+  "climb": {
+    "title": "Rating Climb",
+    "description": "Reach the highest puzzle rating you can in 3 minutes.",
+    "start": "Start Climb",
+    "playAgain": "Play Again",
+    "solved": "Solved",
+    "highestRating": "Highest",
+    "gameOver": "Time's up!",
+    "yourScore": "Your score",
+    "finalScore": "Final score"
+  },
   "navbar": {
     "login": "Login",
     "register": "Register",

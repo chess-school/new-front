@@ -7,7 +7,7 @@ import { About } from '@/pages/about-page/about-page';
 import { Achievements } from '@/pages/achievements-page/achievements-page';
 import PrivateRoute from '@/components/PrivateRoute/PrivateRoute';
 // import { ProfilePage } from '@/pages/profile-page/profile-page';
-import { UsersPage } from '@/pages/users-page/users-page';
+// import { UsersPage } from '@/pages/users-page/users-page';
 import { StudentsPage } from '@/pages/students-page/students-page';
 import { AnalysisPage } from '@/features/Chess/pages/AnalysisPage';
 // import AnalysisPage from '@/pages/analisys-page/analisys-page';
@@ -50,7 +50,7 @@ function MainLayout() {
         <Route path="/analysis" element={<AnalysisPage />} />
         <Route path="/rating" element={<RatingClimbPage />} />
         <Route path="/survival" element={<SurvivalModePage />} />
-
+        <Route path="/puzzles" element={<PuzzlePage />} />
         {/* <Route path="/chess" element={<ChessProvider><GamePage /></ChessProvider>} /> */}
         {/* <Route path="/challenges" element={<ChallengesPage/>}/> */}
         <Route path="/verify-email" element={<VerifyEmailPage />} />
@@ -64,7 +64,7 @@ function MainLayout() {
             element={<TestProfileV2Page />}
             key={location.pathname}
           />
-          <Route path="/users" element={<UsersPage />} />
+          {/* <Route path="/users" element={<UsersPage />} /> */}
           <Route path="/students-shedule" element={<StudentSchedulePage />} />
           <Route path="/students" element={<StudentsPage />} />
           {/* <Route path="/puzzle-editor" element={<PuzzleEditor />} /> */}

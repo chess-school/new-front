@@ -148,12 +148,11 @@ export const SurvivalModePage: React.FC = () => {
                         <Paper sx={{ p: 2, bgcolor: '#1c1c1c', borderRadius: 4, aspectRatio: '1 / 1', position: 'relative' }}>
                             {isGameActive && puzzle ? (
                                 <>
-                                    <ChessBoard
-                                        fen={fen}
-                                        onPieceDrop={handleMove}
-                                        boardOrientation={orientation}
-                                        onSquareClick={() => {}}
-                                    />
+<ChessBoard
+                                    fen={fen}
+                                    onMove={handleMove}
+                                    boardOrientation={orientation}
+                                />
                                     <LinearProgress variant="determinate" value={timerProgress} color="primary" sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '8px' }}/>
                                 </>
                             ) : (
