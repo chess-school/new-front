@@ -158,11 +158,10 @@ export const RatingClimbPage: React.FC = () => {
                     <Grid item xs={12} sm={8} md={7}>
                         <Paper sx={{ p: 2, bgcolor: '#1c1c1c', borderRadius: 4, aspectRatio: '1 / 1', position: 'relative' }}>
                             {isGameActive && puzzle ? (
-                                <ChessBoard
+<ChessBoard
                                     fen={fen}
-                                    onPieceDrop={handleMove}
+                                    onMove={handleMove}
                                     boardOrientation={orientation}
-                                    onSquareClick={() => {}}
                                 />
                             ) : (
                                 <Stack justifyContent="center" alignItems="center" height="100%">

@@ -14,7 +14,7 @@ interface DashboardProps {
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({ user, coach, schedule, loadingCoach, loadingSchedule }) => {
-  const isStudentView = user.roles.includes('student') || user.roles.includes('user');
+  const isStudentView = user.roles.includes('USER');
 
   if (!isStudentView) {
     return (

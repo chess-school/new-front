@@ -7,4 +7,3 @@ function l(){var t=this.constructor.getDerivedStateFromProps(this.props,this.sta
 
 The above lifecycles should be removed. Learn more about this warning here:
 https://fb.me/react-async-component-lifecycle-hooks`)}if(typeof t.getDerivedStateFromProps=="function"&&(e.componentWillMount=l,e.componentWillReceiveProps=p),typeof e.getSnapshotBeforeUpdate=="function"){if(typeof e.componentDidUpdate!="function")throw new Error("Cannot polyfill getSnapshotBeforeUpdate() for components that do not define componentDidUpdate() on the prototype");e.componentWillUpdate=r;var c=e.componentDidUpdate;e.componentDidUpdate=function(f,u,d){var h=this.__reactInternalSnapshotFlag?this.__reactInternalSnapshot:d;c.call(this,f,u,h)}}return t}export{y as p};
-//# sourceMappingURL=react-lifecycles-compat-AfN2QaV3.js.map
