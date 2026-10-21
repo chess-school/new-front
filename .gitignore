@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Настройки окружения — локальные; шаблон в .env.example
+.env
+.env.*
+!.env.example
