@@ -16,7 +16,7 @@ import {
 // Универсальный тип строки таблицы. Гарантирует наличие `id`.
 interface RowData {
   id: string | number;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 // ИСПРАВЛЕНИЕ: Мы экспортируем этот тип, чтобы другие компоненты могли его использовать.
@@ -86,7 +86,7 @@ const CustomTable = <T extends RowData>({ columns, data }: CustomTableProps<T>) 
               <TableRow key={row.id}>
                 {columns.map((column) => (
                   <TableCell key={String(column.field)}>
-                    {column.render ? column.render(row) : row[column.field as keyof T]}
+                    {column.render ? column.render(row) : String(row[column.field as keyof T] ?? "")}
                   </TableCell>
                 ))}
               </TableRow>

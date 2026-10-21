@@ -1,0 +1,241 @@
+// Тёмная тема react-big-calendar для всей платформы (подключается вместе с ScheduleCalendar).
+// Цвета — CSS-переменные из src/index.css (та же палитра, что в src/theme/tokens.ts).
+
+.rbc-calendar {
+  color: var(--text-primary);
+  font-family: inherit;
+  background: transparent;
+}
+
+// --- Панель навигации
+.rbc-toolbar {
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+
+  .rbc-toolbar-label {
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: -0.01em;
+    order: -1;
+    flex-basis: 100%;
+    text-align: left;
+    padding: 0;
+
+    @media (min-width: 720px) {
+      order: 0;
+      flex-basis: auto;
+      text-align: center;
+    }
+  }
+
+  .rbc-btn-group {
+    display: inline-flex;
+    padding: 3px;
+    border-radius: 10px;
+    background: var(--bg-raised);
+    border: 1px solid var(--border-subtle);
+
+    > button + button {
+      margin-left: 2px;
+    }
+  }
+
+  button {
+    color: var(--text-secondary);
+    background: transparent;
+    border: none !important;
+    border-radius: 7px !important;
+    padding: 6px 12px;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+
+    &:hover,
+    &:focus {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.06);
+      box-shadow: none;
+    }
+
+    &.rbc-active,
+    &:active {
+      color: #1a1405;
+      background: var(--accent-gold) !important;
+      box-shadow: none !important;
+    }
+  }
+}
+
+// --- Сетка
+.rbc-month-view,
+.rbc-time-view,
+.rbc-agenda-view table.rbc-agenda-table {
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--bg-surface);
+}
+
+.rbc-header {
+  padding: 8px 4px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border-subtle) !important;
+
+  + .rbc-header {
+    border-left: 1px solid var(--border-subtle);
+  }
+}
+
+.rbc-month-row + .rbc-month-row,
+.rbc-day-bg + .rbc-day-bg,
+.rbc-time-header-content,
+.rbc-time-content,
+.rbc-time-content > * + * > *,
+.rbc-timeslot-group,
+.rbc-day-slot .rbc-time-slot,
+.rbc-agenda-view table.rbc-agenda-table tbody > tr > td + td,
+.rbc-agenda-view table.rbc-agenda-table tbody > tr + tr {
+  border-color: var(--border-subtle) !important;
+}
+
+.rbc-off-range {
+  color: var(--text-secondary);
+  opacity: 0.55;
+}
+
+.rbc-off-range-bg {
+  background: rgba(1, 4, 9, 0.35);
+}
+
+.rbc-today {
+  background: rgba(227, 179, 65, 0.08);
+}
+
+.rbc-date-cell {
+  padding: 4px 8px;
+  font-size: 0.8rem;
+
+  &.rbc-now {
+    font-weight: 800;
+    color: var(--accent-gold);
+  }
+
+  > a,
+  > button {
+    color: inherit;
+  }
+}
+
+.rbc-current-time-indicator {
+  background-color: var(--accent-gold);
+}
+
+.rbc-time-gutter,
+.rbc-label {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
+
+.rbc-allday-cell {
+  display: none; // занятия всегда со временем
+}
+
+// --- События (цвет фона задаёт eventPropGetter, здесь — форма)
+.rbc-event,
+.rbc-day-slot .rbc-background-event {
+  border: none !important;
+  border-radius: 6px !important;
+  padding: 2px 6px !important;
+  font-size: 0.78rem;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+
+  &.rbc-selected {
+    outline: 2px solid var(--accent-gold);
+    outline-offset: 1px;
+  }
+
+  &:focus {
+    outline: 2px solid var(--accent-gold);
+  }
+}
+
+.rbc-show-more {
+  color: var(--accent-gold);
+  background: transparent;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.rbc-overlay {
+  background: rgba(22, 27, 34, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  color: var(--text-primary);
+
+  .rbc-overlay-header {
+    border-bottom: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    font-weight: 600;
+  }
+}
+
+.rbc-slot-selection {
+  background: rgba(227, 179, 65, 0.2);
+  color: var(--text-primary);
+}
+
+// Выбранный день в форме занятия (EditScheduleModal)
+.rbc-selected-slot-custom {
+  background-color: rgba(227, 179, 65, 0.14) !important;
+  box-shadow: inset 0 0 0 1px rgba(227, 179, 65, 0.6);
+}
+
+// Содержимое события в EditScheduleModal
+.custom-event {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  overflow: hidden;
+  font-size: 12px;
+  cursor: pointer;
+
+  .MuiTypography-root {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+// Телефон: компактнее и без горизонтального скролла страницы
+@media (max-width: 600px) {
+  .rbc-toolbar button {
+    padding: 5px 9px;
+    font-size: 0.78rem;
+  }
+
+  .rbc-header {
+    font-size: 0.65rem;
+    letter-spacing: 0;
+  }
+
+  .rbc-date-cell {
+    padding: 2px 4px;
+  }
+
+  .rbc-event {
+    font-size: 0.68rem;
+    padding: 1px 3px !important;
+  }
+}

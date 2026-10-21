@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom'; 
-// import { ThemeProvider } from '@/shared/theme/ThemeProvider';
+import { AppThemeProvider } from '@/theme';
 import { AuthProvider } from '@/context/AuthContext.tsx';
 import '@/styles'; 
 import './index.css';
@@ -15,11 +15,11 @@ const root = createRoot(rootElement);
 root.render(
   <StrictMode>
     <BrowserRouter> 
-      {/* <ThemeProvider>  */}
+      <AppThemeProvider>
         <AuthProvider>
           <App />
         </AuthProvider>
-      {/* </ThemeProvider> */}
+      </AppThemeProvider>
     </BrowserRouter>
   </StrictMode>
 );

@@ -1,10 +1,10 @@
 .PageTitle {
   &__head {
-    font-family: 'Montserrat', sans-serif;
+    font-family: inherit;
     font-size: 1.5rem;
     margin-bottom: 1.8rem;
     line-height: 1.1;
-    color: #e0e0e0;
+    color: var(--text-primary);
 
     @media (max-width: 1024px) {
       font-size: 1.37rem;
@@ -22,13 +22,13 @@
   }
 
   &__back {
-    font-family: 'Montserrat', sans-serif;
+    font-family: inherit;
     font-size: 1rem;
     margin-bottom: 0.3rem;
     text-decoration: none;
     transition: 0.3s ease-in-out;
     display: inline-block;
-    color: #aaaaaa;
+    color: var(--text-secondary);
 
     svg {
       margin-right: 0.6rem;
@@ -38,7 +38,7 @@
     }
 
     &:hover {
-      color: #d4af37;
+      color: var(--accent-gold);
 
       svg {
         opacity: 1;

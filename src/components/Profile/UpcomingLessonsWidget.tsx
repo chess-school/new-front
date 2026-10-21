@@ -13,7 +13,7 @@ interface UpcomingLessonsWidgetProps {
 const DISPLAY_LIMIT = 3;
 
 export const UpcomingLessonsWidget: React.FC<UpcomingLessonsWidgetProps> = ({ schedule, isLoading }) => {
-  if (isLoading) return <Paper sx={{ p: 2, bgcolor: '#2a2a2a', borderRadius: 3, height: '100%' }}><Skeleton variant="rectangular" height={240} sx={{bgcolor: 'grey.700', borderRadius: 2}} /></Paper>;
+  if (isLoading) return <Paper sx={{ p: 2, borderRadius: 3, height: '100%' }}><Skeleton variant="rectangular" height={240} sx={{ borderRadius: 2 }} /></Paper>;
 
   const upcomingEvents = schedule
     .filter(event => new Date(event.date) >= new Date())
@@ -22,9 +22,9 @@ export const UpcomingLessonsWidget: React.FC<UpcomingLessonsWidgetProps> = ({ sc
   const displayedEvents = upcomingEvents.slice(0, DISPLAY_LIMIT);
   
   return (
-    <Paper sx={{ p: 2, bgcolor: '#2a2a2a', color: 'white', borderRadius: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Paper sx={{ p: 2, borderRadius: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Stack direction="row" spacing={2} alignItems="center" mb={2}>
-        <EventIcon sx={{ color: '#FFD700' }}/>
+        <EventIcon sx={{ color: 'primary.main' }}/>
         <Typography variant="h6">Upcoming Lessons</Typography>
       </Stack>
       <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
@@ -34,14 +34,14 @@ export const UpcomingLessonsWidget: React.FC<UpcomingLessonsWidgetProps> = ({ sc
           </Stack>
         ) : (
           <Box sx={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-            <Typography sx={{color: 'grey.500'}}>No upcoming lessons.</Typography>
+            <Typography color="text.secondary">No upcoming lessons.</Typography>
           </Box>
         )}
       </Box>
       {upcomingEvents.length > DISPLAY_LIMIT && (
         <>
-            <Divider sx={{ my: 2, borderColor: 'rgba(255, 255, 255, 0.12)' }}/>
-            <Button component={RouterLink} to="/students-shedule" fullWidth endIcon={<ArrowForwardIcon />} sx={{ color: '#FFD700', justifyContent: 'space-between' }}>
+            <Divider sx={{ my: 2 }}/>
+            <Button component={RouterLink} to="/students-shedule" fullWidth endIcon={<ArrowForwardIcon />} sx={{ color: 'primary.main', justifyContent: 'space-between' }}>
                 View Full Schedule ({upcomingEvents.length})
             </Button>
         </>

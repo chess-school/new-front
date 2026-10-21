@@ -13,6 +13,7 @@ import StarIcon from "@mui/icons-material/Star";
 import { useTranslation } from "react-i18next";
 import { getCoachesByEmail } from "@/api/coaches";
 import { Coach } from "@/types/Coach";
+import { PageContainer } from "@/shared/components/ui/PageHeader";
 
 
 export const CoachesBlock = () => {
@@ -29,66 +30,60 @@ export const CoachesBlock = () => {
         fetchCoaches();
       }, []);
 
+    if (coaches.length === 0) return null;
+
     return (
-              <Box py={10} px={2} sx={{ backgroundColor: "#111" }}>
-                <Typography variant="h4" fontWeight="bold" textAlign="center" mb={6}>
-                  {t("homePage.coaches.title")}
-                </Typography>
-                <Grid container spacing={4} justifyContent="center">
-                  {coaches.map((coach) => (
-                    <Grid item xs={12} sm={6} md={3} key={coach._id}>
-                      <Card
-                        sx={{
-                          backgroundColor: "#1a1a1a",
-                          color: "white",
-                          borderRadius: 3,
-                          boxShadow: 4,
-                          position: "relative",
-                          '&:hover .hoverAction': {
-                            opacity: 1,
-                          },
-                        }}
-                      >
-                        <CardMedia
-                          component="img"
-                          height="200"
-                          image={coach.photoUrl || "/images/default-avatar.png"}
-                          alt={`${coach.firstName} ${coach.lastName}`}
-                        />
-                        <CardContent>
-                          <Typography variant="h6">
-                            {coach.firstName} {coach.lastName}
-                          </Typography>
-                          <Typography variant="body2" color="gray">
-                          </Typography>
-                          <Box mt={1}>
-                            {[...Array(5)].map((_, i) => (
-                              <StarIcon key={i} sx={{ color: "#FFD700", fontSize: 20 }} />
-                            ))}
-                          </Box>
-                        </CardContent>
-                        <Box
-                          className="hoverAction"
-                          sx={{
-                            position: "absolute",
-                            bottom: 16,
-                            left: 0,
-                            right: 0,
-                            textAlign: "center",
-                            opacity: 0,
-                            transition: "0.3s",
-                          }}
-                        >
-                          <Button variant="contained"   
-                          onClick={() => navigate("/coaches", { state: { coach } })}
-                          sx={{ backgroundColor: "#FFD700", color: "black" }}>
-                            {t("homePage.coaches.selectCoach")}
-                          </Button>
-                        </Box>
-                      </Card>
-                    </Grid>
-                  ))}
-                </Grid>
-              </Box>
+      <PageContainer>
+        <Typography variant="h3" component="h2" textAlign="center" mb={{ xs: 4, md: 6 }}>
+          {t("homePage.coaches.title")}
+        </Typography>
+        <Grid container spacing={2.5} justifyContent="center">
+          {coaches.map((coach) => (
+            <Grid item xs={12} sm={6} md={3} key={coach._id}>
+              <Card
+                sx={{
+                  overflow: 'hidden',
+                  position: "relative",
+                  '&:hover': { borderColor: 'rgba(227,179,65,0.35)', transform: 'translateY(-4px)' },
+                  '&:hover .hoverAction, &:focus-within .hoverAction': { opacity: 1 },
+                }}
+              >
+                <CardMedia
+                  component="img"
+                  height="220"
+                  image={coach.photoUrl || "/images/default-avatar.png"}
+                  alt={`${coach.firstName} ${coach.lastName}`}
+                  sx={{ objectFit: 'cover', bgcolor: 'surface.raised' }}
+                />
+                <CardContent>
+                  <Typography variant="h6">
+                    {coach.firstName} {coach.lastName}
+                  </Typography>
+                  <Box mt={0.5} aria-hidden>
+                    {[...Array(5)].map((_, i) => (
+                      <StarIcon key={i} sx={{ color: "primary.main", fontSize: 18 }} />
+                    ))}
+                  </Box>
+                </CardContent>
+                <Box
+                  className="hoverAction"
+                  sx={{
+                    px: 2,
+                    pb: 2,
+                    // На сенсорных экранах наведения нет — кнопка видна всегда
+                    opacity: { xs: 1, md: 0 },
+                    transition: "opacity .25s ease",
+                  }}
+                >
+                  <Button variant="contained" fullWidth
+                    onClick={() => navigate("/coaches", { state: { coach } })}>
+                    {t("homePage.coaches.selectCoach")}
+                  </Button>
+                </Box>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </PageContainer>
     )
 }

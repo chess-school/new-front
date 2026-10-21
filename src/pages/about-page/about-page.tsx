@@ -71,35 +71,35 @@ export const About: React.FC = () => {
   }, [phrases.length, testimonials.length]);
 
   return (
-    <Box sx={{ bgcolor: '#0e0e0e', color: 'white' }}>
+    <Box>
       {/* Hero Section */}
       <Box sx={{
         position: 'relative',
         py: { xs: 10, md: 15 },
         textAlign: 'center',
-        backgroundImage: 'linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url("/images/chess-cinematic-lg.jpg")',
+        backgroundImage: 'radial-gradient(ellipse at 20% 0%, rgba(227,179,65,0.16) 0%, transparent 55%), linear-gradient(rgba(13,17,23,0.82), #0d1117), url("/images/chess-cinematic-lg.jpg")',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
+        backgroundAttachment: { xs: 'scroll', md: 'fixed' },
       }}>
         <Container maxWidth="md">
-          <Typography variant="h2" component="h1" fontWeight="bold" sx={{ textTransform: 'uppercase', letterSpacing: '2px' }}>
+          <Typography variant="h2" component="h1">
             {t('aboutPage.mainTitle')}
           </Typography>
-          <Box sx={{ height: '2.5em', my: 2 }}>
+          <Box sx={{ minHeight: '2.5em', my: 2 }}>
             <SwitchTransition mode="out-in">
               <CSSTransition key={currentPhraseIndex} timeout={300} classNames="fade">
-                <Typography variant="h5" sx={{ color: '#FFD700', fontStyle: 'italic' }}>
+                <Typography variant="h5" sx={{ color: 'primary.main', fontStyle: 'italic', fontWeight: 500 }}>
                   {phrases.length > 0 ? phrases[currentPhraseIndex] : ''}
                 </Typography>
               </CSSTransition>
             </SwitchTransition>
           </Box>
           <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="center" spacing={2} mt={4}>
-            <Button variant="contained" onClick={() => navigate('/register')} size="large" sx={{ bgcolor: '#FFD700', color: 'black', borderRadius: '30px', px: 5, '&:hover': { bgcolor: '#FFC107' } }}>
+            <Button variant="contained" onClick={() => navigate('/register')} size="large" sx={{ px: 5 }}>
               {t('aboutPage.ctaStudent')}
             </Button>
-            <Button variant="outlined" onClick={() => navigate('/coaches')} size="large" sx={{ color: 'white', borderColor: 'rgba(255,255,255,0.5)', borderRadius: '30px', px: 5, '&:hover': { borderColor: 'white', bgcolor: 'rgba(255,255,255,0.1)' } }}>
+            <Button variant="outlined" color="inherit" onClick={() => navigate('/coaches')} size="large" sx={{ px: 5 }}>
               {t('aboutPage.ctaCoaches')}
             </Button>
           </Stack>
@@ -107,15 +107,15 @@ export const About: React.FC = () => {
       </Box>
 
       {/* Main Content */}
-      <Container maxWidth="lg" sx={{ py: 8 }}>
+      <Container maxWidth="lg" sx={{ py: { xs: 4, md: 8 } }}>
 
         {/* Mission Section */}
         <Box sx={{ textAlign: 'center', my: 8 }}>
-          <Stack direction="row" spacing={2} justifyContent="center" alignItems="center" sx={{ color: '#FFD700', mb: 1 }}>
+          <Stack direction="row" spacing={2} justifyContent="center" alignItems="center" sx={{ color: 'primary.main', mb: 1 }}>
             <TrackChangesIcon fontSize="large" />
             <Typography variant="h4" component="h2" fontWeight="bold">{t('aboutPage.mission.title')}</Typography>
           </Stack>
-          <Typography variant="h6" sx={{ maxWidth: 720, mx: 'auto', color: 'rgba(255,255,255,0.7)', mb: 3 }}>
+          <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 720, mx: 'auto', mb: 3, fontWeight: 400 }}>
             {t('aboutPage.mission.subtitle')}
           </Typography>
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center">
@@ -128,7 +128,7 @@ export const About: React.FC = () => {
           </Stack>
         </Box>
         
-        <Divider sx={{ my: 8, borderColor: 'rgba(255,255,255,0.2)' }} />
+        <Divider sx={{ my: { xs: 5, md: 8 } }} />
 
         {/* Why Us Section */}
         <Box sx={{ my: 8 }}>
@@ -138,10 +138,10 @@ export const About: React.FC = () => {
           <Grid container spacing={4}>
             {whyUsCards.map((card, i) => (
               <Grid item xs={12} md={4} key={i}>
-                <Paper sx={{ p: 4, bgcolor: '#1c1c1c', borderRadius: 4, textAlign: 'center', height: '100%', transition: 'all 0.3s ease', '&:hover': { transform: 'translateY(-10px)', boxShadow: '0 10px 20px rgba(255,215,0,0.15)' }}}>
+                <Paper sx={{ p: 4, borderRadius: 3, textAlign: 'center', height: '100%', transition: 'transform .25s ease, border-color .25s ease', '&:hover': { transform: 'translateY(-4px)', borderColor: 'rgba(227,179,65,0.35)' }}}>
                   <Typography fontSize="3rem">{card.icon}</Typography>
                   <Typography variant="h6" fontWeight="bold" my={1}>{card.title}</Typography>
-                  <Typography sx={{ color: 'rgba(255,255,255,0.6)' }}>{card.description}</Typography>
+                  <Typography color="text.secondary">{card.description}</Typography>
                 </Paper>
               </Grid>
             ))}
@@ -149,18 +149,18 @@ export const About: React.FC = () => {
         </Box>
 
         {/* How It Works Section */}
-        <Box sx={{ my: 8, py: 6, bgcolor: '#1c1c1c', borderRadius: 4 }}>
+        <Box sx={{ my: { xs: 5, md: 8 }, py: { xs: 4, md: 6 }, bgcolor: 'background.paper', border: 1, borderColor: 'divider', borderRadius: 3 }}>
           <Typography variant="h4" component="h2" fontWeight="bold" align="center" sx={{ mb: 6 }}>
             {t('aboutPage.howItWorks.title')}
           </Typography>
-          <Grid container spacing={4} sx={{ px: 4 }}>
+          <Grid container spacing={4} sx={{ px: { xs: 2.5, md: 4 } }}>
             {howItWorksSteps.map((item, idx) => (
               <Grid item xs={12} md={4} key={idx}>
                 <Stack direction="row" spacing={2} alignItems="center">
-                  <Typography variant="h2" fontWeight="bold" sx={{ color: '#FFD700', opacity: 0.5 }}>{`0${idx + 1}`}</Typography>
+                  <Typography variant="h2" component="span" sx={{ color: 'primary.main', opacity: 0.6, fontWeight: 800 }}>{`0${idx + 1}`}</Typography>
                   <Box>
                     <Typography variant="h6" fontWeight="bold">{item.step}</Typography>
-                    <Typography sx={{ color: 'rgba(255,255,255,0.6)' }}>{item.desc}</Typography>
+                    <Typography color="text.secondary">{item.desc}</Typography>
                   </Box>
                 </Stack>
               </Grid>
@@ -169,21 +169,21 @@ export const About: React.FC = () => {
         </Box>
 
         {/* Testimonials & Coaches */}
-        <Grid container spacing={8} sx={{ my: 8 }}>
+        <Grid container spacing={{ xs: 5, md: 8 }} sx={{ my: { xs: 2, md: 8 } }}>
           <Grid item xs={12} md={6}>
             <Typography variant="h4" component="h2" fontWeight="bold" sx={{ mb: 3 }}>
               {t('aboutPage.testimonials.title')}
             </Typography>
-            <Paper sx={{ p: 4, bgcolor: '#1c1c1c', borderRadius: 4, minHeight: 180 }}>
+            <Paper sx={{ p: 4, borderRadius: 3, minHeight: 180 }}>
               <SwitchTransition>
                 <CSSTransition key={currentTestimonialIndex} timeout={300} classNames="fade">
                   <Box>
                     {testimonials.length > 0 ? (
                       <>
-                        <Typography fontStyle="italic" fontSize="1.1rem" sx={{ color: 'rgba(255,255,255,0.8)' }}>
+                        <Typography fontStyle="italic" fontSize="1.1rem" color="text.primary">
                           “{testimonials[currentTestimonialIndex].quote}”
                         </Typography>
-                        <Typography fontWeight="bold" mt={2} sx={{ color: '#FFD700' }}>
+                        <Typography fontWeight="bold" mt={2} color="primary">
                           — {testimonials[currentTestimonialIndex].name}
                         </Typography>
                       </>
@@ -200,21 +200,21 @@ export const About: React.FC = () => {
             </Typography>
             <Stack spacing={2}>
               {coaches.map((coach, idx) => (
-                <Paper key={idx} sx={{ p: 2, bgcolor: '#1c1c1c', borderRadius: 2 }}>
+                <Paper key={idx} sx={{ p: 2 }}>
                   <Typography variant="h6" fontWeight="bold">{coach.name}</Typography>
-                  <Typography variant="body2" fontStyle="italic" sx={{ color: 'rgba(255,255,255,0.6)' }}>{coach.quote}</Typography>
+                  <Typography variant="body2" fontStyle="italic" color="text.secondary">{coach.quote}</Typography>
                 </Paper>
               ))}
-              <Button variant="text" onClick={() => navigate('/coaches')} sx={{ color: '#FFD700', alignSelf: 'flex-start' }}>
+              <Button variant="text" onClick={() => navigate('/coaches')} sx={{ alignSelf: 'flex-start' }}>
                 {t('aboutPage.ourCoaches.viewAll')} →
               </Button>
             </Stack>
           </Grid>
         </Grid>
 
-        <Divider sx={{ my: 8, borderColor: 'rgba(255,255,255,0.2)' }} />
+        <Divider sx={{ my: { xs: 5, md: 8 } }} />
         
-        <Typography align="center" fontWeight="bold" variant="h5" component="p" sx={{ fontStyle: 'italic' }}>
+        <Typography align="center" fontWeight="bold" variant="h5" component="p" sx={{ fontStyle: 'italic', color: 'primary.main' }}>
           {t('aboutPage.finalSlogan')}
         </Typography>
 

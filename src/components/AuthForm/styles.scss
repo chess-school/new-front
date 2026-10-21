@@ -1,14 +1,19 @@
 @use '@/styles/variables' as var;
 @use '@/styles/breakpoints' as bp;
 
+// Стеклянная карточка входа; поля и кнопки antd окрашены темой (src/theme/AppThemeProvider)
 .auth-form-container {
   position: relative;
-  max-width: 520px;
+  max-width: 440px;
   width: 100%;
-  padding: 3rem 3.5rem;
-  background: var.$color-dark-form-bg;
-  border-radius: 15px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+  padding: 2.75rem 2.5rem 2.25rem;
+  box-sizing: border-box;
+  background: rgba(22, 27, 34, 0.72);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: var.$border-subtle;
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(227, 179, 65, 0.04) inset;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -16,112 +21,85 @@
   z-index: 1;
 
   @include bp.nsm {
-    padding: 2rem 1.5rem;
-    box-shadow: none;
+    padding: 2rem 1.25rem 1.5rem;
   }
 }
 
 .auth-header {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  gap: 0.6rem;
   cursor: pointer;
-  margin-bottom: var.$spacing-s;
+  margin-bottom: 1.75rem;
 }
 
 .auth-header__icon {
-  color: var.$color-gold;
-  font-size: 3.5rem;
-  margin-bottom: 0.5rem;
+  color: #1a1405;
+  font-size: 1.25rem;
+  width: 40px;
+  height: 40px;
+  padding: 9px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #f0c453 0%, #c4972a 100%);
+  box-shadow: 0 6px 18px rgba(227, 179, 65, 0.3);
 }
 
 .auth-header__brand {
-  color: var.$color-gold !important;
+  color: var.$color-text-primary-dark-theme !important;
   font-size: 1.1rem !important;
-  font-family: 'Playfair Display', serif;
+  font-weight: 700 !important;
+  margin: 0 !important;
 }
 
 .auth-header__title {
   color: var.$color-text-primary-dark-theme !important;
-  font-family: 'Playfair Display', serif;
-  margin-bottom: 1.5rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em;
+  margin: 0 0 1.75rem !important;
 }
 
 .auth-form-body {
   width: 100%;
+  text-align: left;
 
-  // Сначала стилизуем ОБЫЧНЫЙ инпут (не пароль), чтобы он не сломался
+  .ant-form-item {
+    margin-bottom: 1.1rem;
+  }
+
+  .ant-input-affix-wrapper,
   .ant-input {
-    background: var.$color-dark-secondary !important;
-    color: var.$color-text-primary-dark-theme !important;
-    border: 1px solid var.$color-dark-border !important;
-    border-radius: 8px !important;
-
-    &::placeholder {
-      color: var.$color-text-secondary-dark-theme !important;
-    }
-  }
-
-  // Теперь стилизуем ОБЕРТКУ для Input.Password
-  .ant-input-affix-wrapper {
-    background: var.$color-dark-secondary !important;
-    border: 1px solid var.$color-dark-border !important;
-    border-radius: 8px !important;
-
-    // Иконка глаза тоже должна быть светлой
-    .ant-input-password-icon {
-      color: var.$color-text-secondary-dark-theme !important;
-    }
-  }
-
-  // КЛЮЧЕВОЙ ФИКС: Делаем <input> ВНУТРИ Input.Password полностью прозрачным и без рамки
-  .ant-input-affix-wrapper .ant-input {
-    background-color: transparent !important;
-    border: none !important;
-    box-shadow: none !important; // Убираем любые тени
-  }
-
-  // Обводка при фокусе применяется к обоим типам полей
-  .ant-input-affix-wrapper:focus-within,
-  .ant-input:focus {
-    border-color: var.$color-gold !important;
-    box-shadow: 0 0 8px rgba(255, 215, 0, 0.5) !important;
+    background: var.$color-dark-form-bg;
   }
 }
 
 .auth-form-label {
-  color: var.$color-text-primary-dark-theme;
-  font-size: var.$font-size-medium;
-  font-weight: bold;
+  color: var.$color-text-secondary-dark-theme;
+  font-size: 0.85rem;
+  font-weight: 600;
   display: block;
   text-align: left;
 }
 
 .auth-form-button {
-  background-color: var.$color-gold;
-  color: black;
-  font-size: 1.1rem;
-  font-weight: bold;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1405 !important;
+  height: 48px !important;
   border-radius: 10px;
-  border: none;
-  padding: 1rem 0 !important;
-  height: auto !important;
-
-  &:hover {
-    background-color: var.$color-gold-hover;
-    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.25);
-  }
+  box-shadow: 0 10px 26px rgba(227, 179, 65, 0.22);
 }
 
 .auth-form-footer {
-  margin-top: 1rem;
+  margin-top: 0.5rem;
   color: var.$color-text-secondary-dark-theme;
+  font-size: 0.92rem;
 }
 
 .auth-form-link {
   color: var.$color-gold;
   text-decoration: none;
-  font-weight: bold;
+  font-weight: 600;
   cursor: pointer;
 
   &:hover {

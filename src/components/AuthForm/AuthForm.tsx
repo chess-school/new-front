@@ -15,6 +15,11 @@ import { loginValidation, passwordValidation, nameValidation } from '@/shared/va
 
 import './styles.scss';
 import { AuthContext } from '@/context/AuthContext';
+import { isAxiosError } from 'axios';
+
+/** Сообщение бэкенда из ошибки запроса ({ msg } в ответе), если оно есть */
+const apiErrorMsg = (error: unknown): string | undefined =>
+  isAxiosError<{ msg?: string }>(error) ? error.response?.data?.msg : undefined;
 
 interface AuthFormProps {
   mode: 'login' | 'register';
@@ -56,7 +61,7 @@ const handleLogin: FormProps<LoginCredentials>['onFinish'] = async (values) => {
     } catch (error) {
       notification.error({
         message: t('auth.errors.login'),
-        description: (error as any).response?.data?.msg || t('auth.errors.invalid_credentials'),
+        description: apiErrorMsg(error) || t('auth.errors.invalid_credentials'),
       });
     }
   };
@@ -83,7 +88,7 @@ const handleLogin: FormProps<LoginCredentials>['onFinish'] = async (values) => {
     } catch (error) {
       notification.error({
         message: t('register.error.title'),
-        description: (error as any).response?.data?.msg || t('register.error.description'),
+        description: apiErrorMsg(error) || t('register.error.description'),
       });
     }
   };

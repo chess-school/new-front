@@ -4,7 +4,7 @@ interface NotificationPayload {
   recipient: string;
   type: string;
   content: string;
-  metadata?: { [key: string]: any };
+  metadata?: Record<string, unknown>;
 }
 
 export const createNotification = async (data: NotificationPayload) => {

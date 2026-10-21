@@ -1,30 +1,26 @@
+/* Палитра продублирована из src/theme/tokens.ts для SCSS-страниц и стороннего CSS */
 :root {
-  --background-light: #ffffff;
-  --background-dark: #1d1d1d;
-  --text-primary-light: #000000;
-  --text-primary-dark: #ffffff;
-  --navbar-light: #f4f4f4;
-  --navbar-dark: #222222;
-  --button-primary-light: #ffd700;
-  --button-primary-dark: #e5c100;
-}
+  --bg-canvas: #0d1117;
+  --bg-surface: #161b22;
+  --bg-raised: #1c2128;
+  --bg-overlay: #262c36;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-default: rgba(255, 255, 255, 0.12);
+  --text-primary: #f0f6fc;
+  --text-secondary: #8b949e;
+  --accent-gold: #e3b341;
+  --accent-emerald: #3fb950;
+  --accent-red: #f85149;
 
-[data-theme='light'] {
-  --background: var(--background-light);
-  --text-primary: var(--text-primary-light);
-  --navbar: var(--navbar-light);
-  --button-primary: var(--button-primary-light);
-}
-
-[data-theme='dark'] {
-  --background: var(--background-dark);
-  --text-primary: var(--text-primary-dark);
-  --navbar: var(--navbar-dark);
-  --button-primary: var(--button-primary-dark);
+  /* Старые имена — на них ссылаются стили страниц */
+  --background: var(--bg-canvas);
+  --navbar: var(--bg-surface);
+  --button-primary: var(--accent-gold);
+  color-scheme: dark;
 }
 
 body {
-  background-color: var(--background);
+  margin: 0;
+  background-color: var(--bg-canvas);
   color: var(--text-primary);
-  transition: background-color 0.3s, color 0.3s;
 }

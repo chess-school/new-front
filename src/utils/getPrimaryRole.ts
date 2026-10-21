@@ -5,7 +5,10 @@ export const ROLE_PRIORITY: { [key: string]: number } = {
   user: 1,
 };
 
+// Роли приходят с бэкенда заглавными (ADMIN, COACH, USER) — сравниваем без учёта регистра,
+// а возвращаем роль в исходном виде
 export const getPrimaryRole = (roles: string[] = []): string => {
   if (roles.length === 0) return 'user';
-  return [...roles].sort((a, b) => (ROLE_PRIORITY[b] || 0) - (ROLE_PRIORITY[a] || 0))[0];
+  const priority = (role: string) => ROLE_PRIORITY[role.toLowerCase()] || 0;
+  return [...roles].sort((a, b) => priority(b) - priority(a))[0];
 };

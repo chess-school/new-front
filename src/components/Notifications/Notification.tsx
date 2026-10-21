@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useTranslation } from 'react-i18next';
 import { getNotifications, markAsRead, deleteNotification } from '@/api/notifications';
 
 interface Notification {
@@ -30,6 +31,7 @@ interface NotificationsProps {
 export const Notifications: React.FC<NotificationsProps> = ({ navigateToRequests }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const { t } = useTranslation();
 
   const open = Boolean(anchorEl);
   const unreadCount = notifications.filter(n => !n.read).length;
@@ -94,7 +96,7 @@ export const Notifications: React.FC<NotificationsProps> = ({ navigateToRequests
 
   return (
     <div>
-      <IconButton color="inherit" onClick={handleMenuOpen}>
+      <IconButton onClick={handleMenuOpen} aria-label={t('notifications.title', 'Notifications')} sx={{ color: 'text.primary' }}>
         <Badge badgeContent={unreadCount} color="error">
           <NotificationsIcon />
         </Badge>
@@ -103,18 +105,15 @@ export const Notifications: React.FC<NotificationsProps> = ({ navigateToRequests
         anchorEl={anchorEl}
         open={open}
         onClose={handleMenuClose}
-        PaperProps={{
-          style: {
-            maxHeight: 300,
-            width: '400px',
-          },
-        }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        PaperProps={{ sx: { maxHeight: 420, width: 400, maxWidth: 'calc(100vw - 32px)' } }}
       >
-        <Box sx={{ p: 2, borderBottom: '1px solid #eee' }}>
-            <Typography variant="h6">Уведомления</Typography>
+        <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
+            <Typography variant="h6">{t('notifications.title', 'Notifications')}</Typography>
         </Box>
         {notifications.length === 0 ? (
-          <MenuItem disabled>Уведомлений нет</MenuItem>
+          <MenuItem disabled>{t('notifications.empty', 'No notifications')}</MenuItem>
         ) : (
           notifications.map((notification) => (
             <MenuItem
@@ -123,7 +122,8 @@ export const Notifications: React.FC<NotificationsProps> = ({ navigateToRequests
               sx={{ 
                 bgcolor: notification.read ? 'transparent' : 'action.hover',
                 whiteSpace: 'normal',
-                alignItems: 'flex-start'
+                alignItems: 'flex-start',
+                pr: 6,
               }}
             >
               <ListItemText
@@ -145,7 +145,7 @@ export const Notifications: React.FC<NotificationsProps> = ({ navigateToRequests
         )}
         <Divider />
         <MenuItem onClick={handleViewAllClick}>
-            <ListItemText primary="Посмотреть все во 'Входящих'" sx={{ textAlign: 'center' }} />
+            <ListItemText primary={t('notifications.viewAll', 'View all in Inbox')} primaryTypographyProps={{ color: 'primary', fontWeight: 600 }} sx={{ textAlign: 'center' }} />
         </MenuItem>
       </Menu>
     </div>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Typography, Button, Box, CircularProgress } from '@mui/material';
+import { Typography, Button, Box, CircularProgress, Paper } from '@mui/material';
+import MarkEmailUnreadRoundedIcon from '@mui/icons-material/MarkEmailUnreadRounded';
 import { useTranslation } from 'react-i18next';
 
 import { checkVerificationStatus, resendVerificationEmail } from '@/api/email-verify';
@@ -58,8 +59,8 @@ export const VerifyEmailPage: React.FC = () => {
       setSuccessMessage(t('verifyEmail.resendSuccess'));
       setResendDisabled(true);
       setTimeout(() => setResendDisabled(false), 120000); 
-    } catch (error: any) {
-      if (error.response?.status === 429) {
+    } catch (error) {
+      if ((error as { response?: { status?: number } }).response?.status === 429) {
         setErrorMessage(t('verifyEmail.resendErrorTooMany'));
       } else {
         setErrorMessage(t('verifyEmail.resendError'));
@@ -70,8 +71,11 @@ export const VerifyEmailPage: React.FC = () => {
   };
   
   return (
-    <Box textAlign="center" mt={5} p={2}>
-      {isPolling && <CircularProgress sx={{ mb: 2 }} />}
+    <Box sx={{ px: 2, py: { xs: 4, md: 8 }, display: 'flex', justifyContent: 'center' }}>
+    <Paper sx={{ textAlign: 'center', p: { xs: 3, sm: 5 }, maxWidth: 560, width: '100%', borderRadius: 4 }}>
+      <Box sx={{ width: 64, height: 64, mx: 'auto', mb: 2.5, borderRadius: '50%', display: 'grid', placeItems: 'center', bgcolor: 'rgba(227,179,65,0.12)', color: 'primary.main' }}>
+        {isPolling ? <CircularProgress size={28} /> : <MarkEmailUnreadRoundedIcon />}
+      </Box>
       <Typography variant="h4" gutterBottom>
         {t('verifyEmail.pageTitle')}
       </Typography>
@@ -81,7 +85,7 @@ export const VerifyEmailPage: React.FC = () => {
       <Typography variant="body1" gutterBottom>
         {t('verifyEmail.sentTo', { email: email || t('verifyEmail.yourEmail') })}
       </Typography>
-      <Typography variant="body1" color="text.secondary" sx={{ mt: 2, maxWidth: '600px', mx: 'auto' }}>
+      <Typography variant="body1" color="text.secondary" sx={{ mt: 2 }}>
         {t('verifyEmail.instruction')}
       </Typography>
 
@@ -107,9 +111,10 @@ export const VerifyEmailPage: React.FC = () => {
         {isLoading ? t('verifyEmail.sending') : t('verifyEmail.resendButton')}
       </Button>
       
-      <Typography variant="caption" display="block">
+      <Typography variant="caption" display="block" color="text.secondary">
         {t('verifyEmail.didNotReceive')}
       </Typography>
+    </Paper>
     </Box>
   );
 };

@@ -1,363 +1,175 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Container, Typography, Grid, Card, CardContent, Button, Dialog, DialogTitle,
-  DialogContent, DialogActions, TextField, Select, MenuItem, InputLabel,
-  FormControl, Divider, Box, Stack, Chip, Avatar, IconButton, InputAdornment, Paper,
-  CardMedia
-} from '@mui/material';
-import { getCoaches } from '@/api/coaches';
-import { notification } from 'antd';
-import { useTranslation } from 'react-i18next';
-import { createRequest } from '@/api/requests';
-
-// Icons
-import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import CloseIcon from '@mui/icons-material/Close';
-import EditIcon from '@mui/icons-material/Edit';
-import SendIcon from '@mui/icons-material/Send';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Alert, Box, Button, Card, InputAdornment, Skeleton, Stack, TextField, Typography } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import ManageAccountsRoundedIcon from '@mui/icons-material/ManageAccountsRounded';
+import { useTranslation } from 'react-i18next';
+import { PageContainer, PageHeader } from '@/shared/components/ui/PageHeader';
+import { CoachDto, CoachRequestStatus, getCoaches, getSentCoachRequests } from '@/api/coaches';
+import { useAuth } from '@/context/AuthContext';
+import { CoachCard } from './CoachCard';
+import { CoachProfileDialog } from './CoachProfileDialog';
+import { MyCoachProfileDialog } from './MyCoachProfileDialog';
 
-interface Coach {
-  _id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  photoUrl?: string;
-  coachProfile?: {
-    title?: string;
-    experience?: string;
-    bio?: string;
-    price?: number;
-    services?: string[];
-  };
-}
+const PAGE_SIZE = 12;
+const SEARCH_DEBOUNCE_MS = 300;
 
-// Helper for styling form inputs
-const formInputStyles = {
-  '& .MuiInputBase-root': {
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    '&:hover': {
-      backgroundColor: 'rgba(255, 255, 255, 0.12)',
-    }
-  },
-  '& .MuiInputLabel-root': {
-    color: 'rgba(255, 255, 255, 0.6)'
-  },
-  '& .MuiInputBase-input': {
-    color: 'white'
-  },
-   '& .MuiSelect-icon': {
-    color: 'rgba(255, 255, 255, 0.6)'
-  }
-};
-
-
+/**
+ * Каталог тренеров: поиск по имени (на сервере), «Показать ещё», профиль тренера с заявкой
+ * «хочу заниматься». Тренер редактирует здесь свой профиль. Статус моих заявок — на карточках.
+ */
 export const CoachesPage: React.FC = () => {
-  const { t } = useTranslation();
-  const [coaches, setCoaches] = useState<Coach[]>([]);
-  const [selectedCoach, setSelectedCoach] = useState<Coach | null>(null);
-  const [filter, setFilter] = useState('');
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [showForm, setShowForm] = useState(false);
-  const [isEditMode, setIsEditMode] = useState(false);
+  const { t, i18n } = useTranslation();
+  const { user, isAuthenticated } = useAuth();
+  const isCoach = !!user?.roles?.includes('COACH');
 
-  const currentUserEmail = localStorage.getItem('email');
+  const [search, setSearch] = useState('');
+  const [query, setQuery] = useState('');
+  const [coaches, setCoaches] = useState<CoachDto[]>([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [selected, setSelected] = useState<CoachDto | null>(null);
+  const [editOpen, setEditOpen] = useState(false);
+  const [requests, setRequests] = useState<Record<string, CoachRequestStatus>>({});
+  const requestSeq = useRef(0);
 
-  const [formValues, setFormValues] = useState({
-    userName: '',
-    userEmail: '',
-    experienceLevel: 'Intermediate', // Using a key for state
-    goals: '',
-  });
-
-  const [editProfile, setEditProfile] = useState({
-    title: '',
-    experience: '',
-    bio: '',
-    price: '',
-    services: '',
-  });
-
+  // Поиск — с задержкой, чтобы не запрашивать на каждую букву
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getCoaches();
-        setCoaches(data);
-      } catch (error) {
-        notification.error({
-          message: t('coaches.fetchError'),
-          description: undefined
-        });
-      }
-    };
-    fetchData();
-  }, [t]);
+    const timer = setTimeout(() => setQuery(search.trim()), SEARCH_DEBOUNCE_MS);
+    return () => clearTimeout(timer);
+  }, [search]);
 
-  const handleOpenDialog = (coach: Coach) => {
-    setSelectedCoach(coach);
-    setIsDialogOpen(true);
-    setShowForm(false);
-    setIsEditMode(false);
-
-    setEditProfile({
-      title: coach.coachProfile?.title || '',
-      experience: coach.coachProfile?.experience || '',
-      bio: coach.coachProfile?.bio || '',
-      price: coach.coachProfile?.price?.toString() || '',
-      services: (coach.coachProfile?.services || []).join(', '),
-    });
-  };
-
-  const handleCloseDialog = () => {
-    setIsDialogOpen(false);
-    setTimeout(() => {
-      setSelectedCoach(null);
-      setShowForm(false);
-      setIsEditMode(false);
-      setFormValues({ userName: '', userEmail: '', experienceLevel: 'Intermediate', goals: '' });
-    }, 300);
-  };
-
-  const handleSendRequest = async () => {
-    if (!selectedCoach) return;
-    
+  const load = useCallback(async (nextPage: number, append: boolean) => {
+    const seq = ++requestSeq.current;
+    if (append) setLoadingMore(true);
+    else setStatus('loading');
     try {
-      setIsLoading(true);
-      await createRequest(selectedCoach._id, formValues.experienceLevel, formValues.goals);
-      notification.success({
-        message: t('coaches.successMessage'),
-        description: undefined
-      });
-      handleCloseDialog();
-    } catch (error) {
-      notification.error({
-        message: t('coaches.submitError'),
-        description: undefined
-      });
+      const result = await getCoaches({ page: nextPage, limit: PAGE_SIZE, q: query });
+      if (seq !== requestSeq.current) return; // ответ устаревшего поиска
+      setCoaches((prev) => (append ? [...prev, ...result.data.filter((c) => !prev.some((p) => p._id === c._id))] : result.data));
+      setPage(result.pagination.currentPage);
+      setTotalPages(result.pagination.totalPages);
+      setTotal(result.pagination.totalCoaches);
+      setStatus('ready');
+    } catch {
+      // «Показать ещё» при ошибке просто остаётся доступной; первая страница — экран ошибки с повтором
+      if (seq === requestSeq.current && !append) setStatus('error');
     } finally {
-      setIsLoading(false);
+      if (seq === requestSeq.current) setLoadingMore(false);
     }
-  };
+    // Язык — в зависимостях: тексты профилей приходят локализованными
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, i18n.language]);
 
-  const handleSaveEdit = async () => {
-    console.log("Saving profile:", editProfile);
-    notification.success({
-      message: t('coaches.updated'),
-      description: undefined
-    });
-    handleCloseDialog();
-  };
+  useEffect(() => { void load(1, false); }, [load]);
 
-  const filteredCoaches = coaches.filter((c) =>
-    `${c.firstName} ${c.lastName}`.toLowerCase().includes(filter.toLowerCase())
-  );
+  // Мои заявки — статус «отправлена / ваш тренер» на карточках
+  const loadRequests = useCallback(async () => {
+    if (!isAuthenticated) { setRequests({}); return; }
+    try {
+      const sent = await getSentCoachRequests();
+      // Ответ отсортирован от новых к старым: статус пары — по последней заявке.
+      // После отказа можно отправить новую — такой тренер без статуса
+      const latest: Record<string, CoachRequestStatus> = {};
+      const seen = new Set<string>();
+      for (const r of sent) {
+        const coachId = typeof r.coach === 'string' ? r.coach : r.coach._id;
+        if (seen.has(coachId)) continue;
+        seen.add(coachId);
+        if (r.status !== 'rejected') latest[coachId] = r.status;
+      }
+      setRequests(latest);
+    } catch {
+      setRequests({});
+    }
+  }, [isAuthenticated]);
+  useEffect(() => { void loadRequests(); }, [loadRequests]);
 
-  const coachName = selectedCoach ? `${selectedCoach.firstName} ${selectedCoach.lastName}` : '';
-  
+  const myId = user?._id;
+  const isMe = useCallback((coach: CoachDto) => !!myId && coach.user._id === myId, [myId]);
+  const skeletons = useMemo(() => Array.from({ length: 6 }, (_, i) => i), []);
+
   return (
-    <Box sx={{ bgcolor: '#0e0e0e', color: 'white', minHeight: '100vh', py: 8 }}>
-      <Container maxWidth="lg">
-        <Box sx={{ textAlign: 'center', mb: 8 }}>
-          <Typography variant="h2" component="h1" fontWeight="bold">{t('coaches.title')}</Typography>
-          <Typography variant="h6" sx={{ mt: 1, color: 'rgba(255, 255, 255, 0.7)' }}>
-            {t('coaches.subtitle')}
-          </Typography>
-        </Box>
+    <PageContainer maxWidth={1200}>
+      <PageHeader
+        eyebrow={t('navbar.coaches')}
+        title={t('coaches.title')}
+        subtitle={t('coaches.subtitle')}
+        actions={(
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} sx={{ width: { xs: '100%', sm: 'auto' } }}>
+            <TextField
+              size="small"
+              placeholder={t('coaches.searchByName')}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              sx={{ width: { xs: '100%', sm: 280 } }}
+              inputProps={{ 'aria-label': t('coaches.searchByName'), maxLength: 100 }}
+              InputProps={{ startAdornment: <InputAdornment position="start"><SearchIcon sx={{ color: 'text.secondary' }} /></InputAdornment> }}
+            />
+            {isCoach && (
+              <Button variant="outlined" color="inherit" startIcon={<ManageAccountsRoundedIcon />} onClick={() => setEditOpen(true)}>
+                {t('coachesPage.myProfile', 'My coach profile')}
+              </Button>
+            )}
+          </Stack>
+        )}
+      />
 
-        <Box sx={{ mb: 5, maxWidth: '600px', mx: 'auto' }}>
-          <TextField
-            fullWidth
-            variant="outlined"
-            placeholder={t('coaches.searchByName')}
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                borderRadius: '30px',
-                backgroundColor: '#1c1c1c',
-                '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.2)' },
-                '&:hover fieldset': { borderColor: '#FFD700' },
-                '&.Mui-focused fieldset': { borderColor: '#FFD700' },
-              },
-              '& .MuiInputBase-input': { color: 'white' },
-            }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon sx={{ color: 'rgba(255, 255, 255, 0.5)' }} />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Box>
-
-        <Grid container spacing={4}>
-          {filteredCoaches.map((coach) => (
-            <Grid item xs={12} sm={6} md={4} key={coach._id}>
-              <Card sx={{
-                bgcolor: '#1c1c1c',
-                color: 'white',
-                borderRadius: 4,
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                '&:hover': {
-                  transform: 'translateY(-8px)',
-                  boxShadow: '0 12px 24px rgba(255, 215, 0, 0.2)'
-                }
-              }}>
-                <CardMedia
-                  component="img"
-                  height="250"
-                  image={coach.photoUrl || '/images/default-avatar.png'}
-                  alt={`${coach.firstName} ${coach.lastName}`}
-                />
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Typography variant="h5" component="div" fontWeight="bold">
-                    {coach.firstName} {coach.lastName}
-                  </Typography>
-                  <Typography variant="body1" sx={{ color: '#FFD700', mb: 2 }}>
-                    {coach.coachProfile?.title || 'Chess Master'}
-                  </Typography>
-                  <Stack spacing={1}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', color: 'rgba(255,255,255,0.7)' }}>
-                      <WorkHistoryIcon fontSize="small" sx={{ mr: 1 }} />
-                      <Typography variant="body2">{coach.coachProfile?.experience || 'N/A'}</Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', color: 'rgba(255,255,255,0.7)' }}>
-                      <AttachMoneyIcon fontSize="small" sx={{ mr: 1 }} />
-                      <Typography variant="body2">{coach.coachProfile?.price ? `${coach.coachProfile.price}$ / hour` : 'Contact for price'}</Typography>
-                    </Box>
-                  </Stack>
-                </CardContent>
-                <Box sx={{ p: 2, pt: 0 }}>
-                  <Button
-                    variant="contained"
-                    fullWidth
-                    onClick={() => handleOpenDialog(coach)}
-                    sx={{ 
-                      backgroundColor: '#FFD700', color: 'black', fontWeight: 'bold', borderRadius: '20px',
-                      '&:hover': { backgroundColor: '#FFC107' }
-                    }}
-                  >
-                    {t('coaches.viewProfile')}
-                  </Button>
-                </Box>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-
-        {/* --- DIALOG MODAL - KEY CHANGES BELOW --- */}
-        <Dialog open={isDialogOpen} onClose={handleCloseDialog} fullWidth maxWidth="md" PaperProps={{
-          sx: { bgcolor: '#1c1c1c', color: 'white', borderRadius: 4, backgroundImage: 'none' }
-        }}>
-          {selectedCoach && ( // Ensure selectedCoach exists before rendering
-          <>
-            <DialogTitle sx={{ p: 3, pb: 1 }}>
-              <Stack direction="row" justifyContent="space-between" alignItems="center">
-                <Typography variant="h5" fontWeight="bold">
-                  {isEditMode ? t('coaches.editProfile') : t('coaches.profileOf', { coachName })}
-                </Typography>
-                <IconButton onClick={handleCloseDialog} sx={{ color: 'rgba(255,255,255,0.7)' }}>
-                  <CloseIcon />
-                </IconButton>
-              </Stack>
-            </DialogTitle>
-            <DialogContent>
-              {isEditMode ? (
-                <Stack spacing={2} sx={{ pt: 1 }}>
-                  {/* Edit form remains the same */}
-                </Stack>
-              ) : (
-                <>
-                  <Grid container spacing={4} sx={{ pt: 1 }}>
-                    <Grid item xs={12} md={4}>
-                      <Avatar src={selectedCoach.photoUrl || '/images/default-avatar.png'} sx={{ width: '100%', height: 'auto', aspectRatio: '1 / 1', borderRadius: 3 }} variant="rounded" />
-                    </Grid>
-                    <Grid item xs={12} md={8}>
-                      <Stack spacing={2.5}>
-                        <Box>
-                          <Typography fontWeight="bold" color="#FFD700">{t('coaches.bio')}</Typography>
-                          <Typography sx={{ color: 'rgba(255,255,255,0.8)', whiteSpace: 'pre-wrap' }}>
-                            {selectedCoach.coachProfile?.bio || <span style={{ color: 'rgba(255,255,255,0.5)', fontStyle: 'italic' }}>No bio provided.</span>}
-                          </Typography>
-                        </Box>
-                        <Box>
-                          <Typography fontWeight="bold" color="#FFD700">{t('coaches.services')}</Typography>
-                          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
-                            {selectedCoach.coachProfile?.services?.length ? selectedCoach.coachProfile.services.map(s => <Chip key={s} label={s} sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: 'white' }}/>) : <Typography sx={{ color: 'rgba(255,255,255,0.5)', fontStyle: 'italic' }}>No services listed.</Typography>}
-                          </Box>
-                        </Box>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-
-                  <Divider sx={{ my: 3, borderColor: 'rgba(255,255,255,0.2)' }} />
-                  
-                  <Box>
-                    {!showForm ? (
-                      <Button fullWidth variant="outlined" onClick={() => setShowForm(true)} sx={{ color: '#FFD700', borderColor: '#FFD700', '&:hover': { borderColor: '#FFC107', bgcolor: 'rgba(255, 215, 0, 0.1)' }}}>
-                        {t('coaches.requestTitle', { coachName: selectedCoach.firstName })}
-                      </Button>
-                    ) : (
-                      <Paper elevation={0} sx={{ p: {xs: 2, sm: 3}, bgcolor: 'rgba(0,0,0,0.25)', borderRadius: 2 }}>
-                        <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-                          {t('coaches.requestTitle', { coachName })}
-                        </Typography>
-                        <Stack spacing={2}>
-                          <TextField fullWidth label={t('coaches.yourName')} value={formValues.userName} onChange={(e) => setFormValues({ ...formValues, userName: e.target.value })} variant="filled" sx={formInputStyles} />
-                          <TextField fullWidth label={t('coaches.yourEmail')} value={formValues.userEmail} onChange={(e) => setFormValues({ ...formValues, userEmail: e.target.value })} variant="filled" sx={formInputStyles} />
-                          <FormControl fullWidth variant="filled" sx={formInputStyles}>
-                            <InputLabel id="level-select-label">{t('coaches.level')}</InputLabel>
-                            <Select
-                              labelId="level-select-label"
-                              value={formValues.experienceLevel}
-                              onChange={(e) => setFormValues({ ...formValues, experienceLevel: e.target.value })}
-                            >
-                              <MenuItem value="Beginner">{t('coaches.levelBeginner')}</MenuItem>
-                              <MenuItem value="Intermediate">{t('coaches.levelIntermediate')}</MenuItem>
-                              <MenuItem value="Advanced">{t('coaches.levelAdvanced')}</MenuItem>
-                            </Select>
-                          </FormControl>
-                          <TextField fullWidth multiline rows={3} label={t('coaches.goals')} value={formValues.goals} onChange={(e) => setFormValues({ ...formValues, goals: e.target.value })} variant="filled" sx={formInputStyles} />
-                        </Stack>
-                      </Paper>
-                    )}
-                  </Box>
-                </>
-              )}
-            </DialogContent>
-            <DialogActions sx={{ p: 3, pt: 2 }}>
-              {isEditMode ? (
-                <>
-                  <Button onClick={() => setIsEditMode(false)} sx={{ color: 'rgba(255,255,255,0.7)' }}>{t('coaches.cancel')}</Button>
-                  <Button variant="contained" onClick={handleSaveEdit} startIcon={<EditIcon />} sx={{ bgcolor: '#FFD700', color: 'black', '&:hover': { bgcolor: '#FFC107' } }}>{t('coaches.save')}</Button>
-                </>
-              ) : showForm ? (
-                <>
-                  <Button variant="outlined" onClick={() => setShowForm(false)} sx={{ color: 'rgba(255,255,255,0.7)', borderColor: 'rgba(255,255,255,0.3)' }}>
-                    {t('coaches.cancel')}
-                  </Button>
-                  <Button variant="contained" onClick={handleSendRequest} disabled={isLoading} startIcon={<SendIcon />} sx={{ bgcolor: '#FFD700', color: 'black', '&:hover': { bgcolor: '#FFC107' } }}>
-                    {t('coaches.sendRequest')}
-                  </Button>
-                </>
-              ) : (
-                selectedCoach.email === currentUserEmail && (
-                  <Button variant="text" onClick={() => setIsEditMode(true)} startIcon={<EditIcon />} sx={{ color: '#FFD700' }}>
-                    {t('coaches.editProfile')}
-                  </Button>
-                )
-              )}
-            </DialogActions>
-          </>
+      {status === 'error' ? (
+        <Alert severity="error" action={<Button color="inherit" size="small" onClick={() => void load(1, false)}>{t('coachesPage.retry', 'Retry')}</Button>}>
+          {t('coaches.fetchError')}
+        </Alert>
+      ) : (
+        <>
+          {status === 'ready' && query && (
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              {t('coachesPage.found', { count: total, defaultValue: 'Found: {{count}}' })}
+            </Typography>
           )}
-        </Dialog>
-      </Container>
-    </Box>
+          <Box sx={{ display: 'grid', gap: 2.5, gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))', md: 'repeat(3, minmax(0, 1fr))' } }}>
+            {status === 'loading'
+              ? skeletons.map((i) => (
+                <Card key={i} sx={{ p: 2.5 }} aria-hidden>
+                  <Stack direction="row" spacing={2} alignItems="center">
+                    <Skeleton variant="circular" width={64} height={64} />
+                    <Box sx={{ flex: 1 }}><Skeleton width="70%" height={28} /><Skeleton width="50%" /></Box>
+                  </Stack>
+                  <Skeleton sx={{ mt: 2 }} /><Skeleton width="80%" /><Skeleton variant="rounded" height={36} sx={{ mt: 2 }} />
+                </Card>
+              ))
+              : coaches.map((coach) => (
+                <CoachCard key={coach._id} coach={coach} requestStatus={requests[coach._id]} isMe={isMe(coach)} onOpen={setSelected} />
+              ))}
+          </Box>
+
+          {status === 'ready' && coaches.length === 0 && (
+            <Box sx={{ textAlign: 'center', py: 8 }}>
+              <Typography variant="h6">{query ? t('coachesPage.nothingFound', 'No coaches match your search') : t('coachesPage.empty', 'No coaches yet')}</Typography>
+              {query && <Button sx={{ mt: 1 }} onClick={() => setSearch('')}>{t('coaches.clearFilter')}</Button>}
+            </Box>
+          )}
+          {status === 'ready' && page < totalPages && (
+            <Box sx={{ textAlign: 'center', mt: 3 }}>
+              <Button variant="outlined" color="inherit" onClick={() => void load(page + 1, true)} disabled={loadingMore}>
+                {t('coachesPage.loadMore', 'Show more')}
+              </Button>
+            </Box>
+          )}
+        </>
+      )}
+
+      <CoachProfileDialog
+        coach={selected}
+        onClose={() => setSelected(null)}
+        isAuthenticated={isAuthenticated}
+        isMe={!!selected && isMe(selected)}
+        requestStatus={selected ? requests[selected._id] : undefined}
+        onRequested={(coachId) => setRequests((r) => ({ ...r, [coachId]: 'pending' }))}
+        onEditMyProfile={() => { setSelected(null); setEditOpen(true); }}
+      />
+      {isCoach && <MyCoachProfileDialog open={editOpen} onClose={() => setEditOpen(false)} onSaved={() => void load(1, false)} />}
+    </PageContainer>
   );
 };

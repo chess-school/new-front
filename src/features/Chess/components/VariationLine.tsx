@@ -1,8 +1,7 @@
-// src/features/Chess/components/VariationLine.tsx
-
 import React, { useMemo } from 'react';
 import { Box, Typography } from '@mui/material';
 import { Chess, Square } from 'chess.js';
+import { tokens } from '@/theme/tokens';
 
 interface VariationLineProps {
   uciLine: string;
@@ -53,7 +52,7 @@ export const VariationLine: React.FC<VariationLineProps> = ({
         }
       }
       return result;
-    } catch (e) {
+    } catch {
       return [];
     }
   }, [uciLine, startFen]);
@@ -61,7 +60,7 @@ export const VariationLine: React.FC<VariationLineProps> = ({
   return (
     <Box 
       onMouseLeave={onMoveLeave}
-      sx={{ display: 'flex', flexWrap: 'wrap', gap: '0 8px', whiteSpace: 'normal', lineHeight: '1.8' }}
+      sx={{ display: 'flex', flexWrap: 'wrap', gap: '0 6px', whiteSpace: 'normal', lineHeight: '1.8', fontFamily: tokens.font.mono }}
     >
       {parsedMoves.map((move, index) => (
         <Typography
@@ -71,9 +70,11 @@ export const VariationLine: React.FC<VariationLineProps> = ({
           onMouseEnter={() => onMoveHover(move.from, move.to)}
           sx={{
             cursor: 'pointer',
-            p: '1px 4px',
-            borderRadius: '4px',
-            '&:hover': { bgcolor: 'rgba(255, 215, 0, 0.3)' },
+            p: '1px 6px',
+            borderRadius: 1,
+            fontFamily: 'inherit',
+            fontSize: '0.9rem',
+            '&:hover': { bgcolor: tokens.accent.goldSoft, color: 'primary.main' },
           }}
         >
           {index > 0 && index % 2 === 0 && `${Math.floor(index / 2) + 1}. `}
