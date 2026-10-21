@@ -13,7 +13,7 @@ interface NextLessonWidgetProps {
 
 export const NextLessonWidget: React.FC<NextLessonWidgetProps> = ({ schedule, isLoading, onEventSelect }) => {
   if (isLoading) {
-    return <Paper sx={{ p: 2, bgcolor: '#2a2a2a', borderRadius: 3 }}><Skeleton variant="rectangular" height={150} sx={{bgcolor: 'grey.700', borderRadius: 2}} /></Paper>;
+    return <Paper sx={{ p: 2, borderRadius: 3 }}><Skeleton variant="rectangular" height={150} sx={{ borderRadius: 2 }} /></Paper>;
   }
   
   // Находим ОДНО, самое ближайшее будущее событие
@@ -33,8 +33,8 @@ export const NextLessonWidget: React.FC<NextLessonWidgetProps> = ({ schedule, is
         />
       ) : (
         // Если уроков нет - показываем сообщение
-        <Paper sx={{ p: 4, bgcolor: '#2a2a2a', color: 'white', borderRadius: 3, textAlign: 'center' }}>
-            <Typography sx={{color: 'grey.500'}}>You have no upcoming lessons.</Typography>
+        <Paper sx={{ p: 4, borderRadius: 3, textAlign: 'center' }}>
+            <Typography color="text.secondary">You have no upcoming lessons.</Typography>
         </Paper>
       )}
 
@@ -47,7 +47,7 @@ export const NextLessonWidget: React.FC<NextLessonWidgetProps> = ({ schedule, is
             endIcon={<ArrowForwardIcon />}
             sx={{ 
                 mt: 2,
-                color: '#FFD700',
+                color: 'primary.main',
                 justifyContent: 'flex-start',
                 p: 1
             }}

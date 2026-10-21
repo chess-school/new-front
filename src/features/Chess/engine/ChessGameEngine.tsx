@@ -13,7 +13,7 @@ export interface IGameStatus {
 
 export class ChessGameEngine {
   private game: Chess;
-  private fullHistory: string[] = []; 
+  private fullHistory: string[] = [];
 
   constructor(fen?: string) {
     this.game = fen ? new Chess(fen) : new Chess();
@@ -63,14 +63,14 @@ export class ChessGameEngine {
         this.fullHistory = this.game.history();
       }
       return move;
-    } catch (e) {
+    } catch {
       return null;
     }
   }
 
   resetGame(): void {
     this.game.reset();
-    this.fullHistory = []; 
+    this.fullHistory = [];
   }
 
   loadPgn(pgn: string): boolean {
@@ -78,7 +78,7 @@ export class ChessGameEngine {
       // Скидаємо гру перед завантаженням нового PGN, щоб уникнути конфліктів
       this.game.reset(); 
       this.game.loadPgn(pgn);
-      this.fullHistory = this.game.history(); 
+      this.fullHistory = this.game.history();
       return true; 
     } catch (e) {
       console.error("Invalid PGN:", e); 

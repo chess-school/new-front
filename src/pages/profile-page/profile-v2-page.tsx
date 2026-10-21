@@ -6,12 +6,20 @@ import { useParams, Navigate } from 'react-router-dom';
 import { ProfileHeader } from '@/components/Profile/ProfileHeader'; // Укажите правильный путь
 import { EditProfileForm } from '@/components/Profile/EditProfileForm'; // Укажите правильный путь
 
-import { Container, CircularProgress, Box, Typography } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { CircularProgress, Box, Typography, Grid, Paper } from '@mui/material';
+import MenuBookRoundedIcon from '@mui/icons-material/MenuBookRounded';
+import ExtensionRoundedIcon from '@mui/icons-material/ExtensionRounded';
+import QueryStatsRoundedIcon from '@mui/icons-material/QueryStatsRounded';
+import EventNoteRoundedIcon from '@mui/icons-material/EventNoteRounded';
+import { PageContainer } from '@/shared/components/ui/PageHeader';
 
 export const TestProfileV2Page: React.FC = () => {
   const { uuid } = useParams<{ uuid: string }>();
   const { user: loggedInUser, loading, isAuthenticated, logout, refetchUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
+  const { t } = useTranslation();
 
   // Во время первоначальной загрузки показываем индикатор
   if (loading) {
@@ -28,21 +36,27 @@ export const TestProfileV2Page: React.FC = () => {
   // Пока мы не умеем грузить чужие профили, показываем только свой
   if (!isMyProfile) {
       return (
-          <Container>
-              <h1>Viewing another user's profile</h1>
-              <p>User UUID from URL: {uuid}</p>
-              <p>This functionality is not yet implemented.</p>
-          </Container>
+          <PageContainer maxWidth={720}>
+              <Paper sx={{ p: 4, textAlign: 'center' }}>
+                  <Typography variant="h5">{t('profile.otherTitle', "Viewing another user's profile")}</Typography>
+                  <Typography color="text.secondary" sx={{ mt: 1 }}>{t('profile.otherNotImplemented', 'This functionality is not yet implemented.')}</Typography>
+              </Paper>
+          </PageContainer>
       );
   }
   
   const userToDisplay = loggedInUser;
   const avatarUrl = getAvatarUrl(userToDisplay.uuid);
   const handleLogout = () => logout();
+  const quickLinks = [
+    { to: '/books', icon: <MenuBookRoundedIcon />, label: t('nav.books', 'Books & courses') },
+    { to: '/puzzles', icon: <ExtensionRoundedIcon />, label: t('nav.puzzles', 'Puzzles') },
+    { to: '/analysis', icon: <QueryStatsRoundedIcon />, label: t('nav.analysis', 'Analysis') },
+    { to: '/students-shedule', icon: <EventNoteRoundedIcon />, label: t('nav.schedule', 'Schedule & homework') },
+  ];
 
   return (
-    <Box sx={{ bgcolor: '#0e0e0e', color: 'white', minHeight: '100vh', py: 5 }}>
-        <Container maxWidth="lg">
+    <PageContainer maxWidth={1100}>
           <ProfileHeader 
             user={userToDisplay}
             avatarUrl={avatarUrl}
@@ -50,13 +64,24 @@ export const TestProfileV2Page: React.FC = () => {
             onEdit={() => setIsEditing(true)}
             onLogout={handleLogout}
           />
-          
-          <Box sx={{ textAlign: 'center', mt: 4, p: 2, bgcolor: '#1c1c1c', borderRadius: 2 }}>
-            <Typography variant="h6">My Dashboard</Typography>
-            <Typography sx={{ color: 'grey.500', mt: 1 }}>
-              Upcoming lessons and statistics widgets will be displayed here.
-            </Typography>
-          </Box>
+
+          <Typography variant="h6" sx={{ mb: 2 }}>{t('profile.quickLinks', 'Continue training')}</Typography>
+          <Grid container spacing={2}>
+            {quickLinks.map((link) => (
+              <Grid item xs={12} sm={6} md={3} key={link.to}>
+                <Paper component={RouterLink} to={link.to} sx={{
+                  p: 2.5, display: 'flex', alignItems: 'center', gap: 2, height: '100%', textDecoration: 'none', color: 'text.primary',
+                  transition: 'border-color .2s ease, transform .2s ease',
+                  '&:hover': { borderColor: 'rgba(227,179,65,0.35)', transform: 'translateY(-2px)' },
+                }}>
+                  <Box sx={{ width: 42, height: 42, flexShrink: 0, borderRadius: 2, display: 'grid', placeItems: 'center', bgcolor: 'rgba(227,179,65,0.12)', color: 'primary.main' }}>
+                    {link.icon}
+                  </Box>
+                  <Typography fontWeight={600}>{link.label}</Typography>
+                </Paper>
+              </Grid>
+            ))}
+          </Grid>
           
           {isEditing && (
               <EditProfileForm
@@ -66,7 +91,6 @@ export const TestProfileV2Page: React.FC = () => {
               />
           )}
 
-      </Container>
-    </Box>
+    </PageContainer>
   );
 };

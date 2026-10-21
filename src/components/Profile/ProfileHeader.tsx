@@ -23,26 +23,29 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user, avatarUrl, i
   const roleChipColor = { ADMIN: 'secondary', COACH: 'primary', USER: 'default' }[primaryRole] as "secondary" | "primary" | "default" | undefined;
   
   return (
-    <Paper sx={{ p: { xs: 2, md: 4 }, mb: 4, bgcolor: '#1c1c1c', borderRadius: 4, color: 'white' }}>
+    <Paper sx={{
+      p: { xs: 3, md: 4 }, mb: 4, borderRadius: 4, position: 'relative', overflow: 'hidden',
+      background: 'radial-gradient(ellipse 60% 120% at 0% 0%, rgba(227,179,65,0.12), transparent 60%), #161b22',
+    }}>
       <Stack direction={{ xs: 'column', md: 'row' }} spacing={4} alignItems="center">
-        <Avatar src={avatarUrl} alt={`${user.firstName} ${user.lastName}`} sx={{ width: 120, height: 120, border: '4px solid #FFD700' }} />
+        <Avatar src={avatarUrl} alt={`${user.firstName} ${user.lastName}`} sx={{ width: { xs: 96, md: 120 }, height: { xs: 96, md: 120 }, border: '3px solid', borderColor: 'primary.main', boxShadow: '0 0 0 6px rgba(227,179,65,0.12)' }} />
         <Box sx={{ flexGrow: 1, textAlign: { xs: 'center', md: 'left' } }}>
-          <Stack direction="row" spacing={2} alignItems="center" justifyContent={{xs: 'center', md: 'flex-start'}}>
-            <Typography variant="h4" fontWeight="bold">{user.firstName} {user.lastName}</Typography>
+          <Stack direction="row" spacing={1.5} alignItems="center" justifyContent={{xs: 'center', md: 'flex-start'}} flexWrap="wrap" useFlexGap>
+            <Typography variant="h4">{user.firstName} {user.lastName}</Typography>
             <Tooltip title={otherRoles.length > 0 ? `Also: ${otherRoles.join(', ')}` : ''} arrow>
               <Chip label={primaryRole} color={roleChipColor} size="small" sx={{ textTransform: 'capitalize' }} />
             </Tooltip>
           </Stack>
           
-          <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.5)', mt: 0.5 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
             {t('profile.registrationDate')}: {new Date(user.createdAt).toLocaleDateString()}
           </Typography>
         </Box>
-        <Stack direction="row" spacing={2} sx={{ mt: { xs: 3, md: 0 } }}>
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: { xs: 1, md: 0 }, width: { xs: '100%', sm: 'auto' } }}>
             {isMyProfile ? (
                 <>
-                    <Button variant="outlined" onClick={onEdit} startIcon={<EditIcon />} sx={{ color: '#FFD700', borderColor: 'rgba(255, 215, 0, 0.5)', '&:hover': {borderColor: '#FFD700'} }}>{t('profile.editProfile')}</Button>
-                    <Button variant="contained" color="error" onClick={onLogout} startIcon={<LogoutIcon />}>{t('profile.logout')}</Button>
+                    <Button variant="outlined" onClick={onEdit} startIcon={<EditIcon />}>{t('profile.editProfile')}</Button>
+                    <Button variant="outlined" color="error" onClick={onLogout} startIcon={<LogoutIcon />}>{t('profile.logout')}</Button>
                 </>
             ) : (
                 primaryRole === 'COACH' && <Button variant="contained" color="primary" startIcon={<SendIcon />}>Send Request</Button>

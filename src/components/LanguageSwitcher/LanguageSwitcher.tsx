@@ -19,12 +19,14 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ className })
       value={i18n.language}
       onChange={handleChange}
       size="small"
-      className={className} 
-      style={{ color: 'black', borderColor: 'black' }}
+      className={className}
+      fullWidth
+      inputProps={{ 'aria-label': 'Language' }}
+      sx={{ fontSize: '0.85rem', '& .MuiSelect-select': { py: 0.75 } }}
     >
-      <MenuItem value="en">EN</MenuItem>
-      <MenuItem value="pl">PL</MenuItem>
-      <MenuItem value="uk">UA</MenuItem>
+      <MenuItem value="en">English</MenuItem>
+      <MenuItem value="pl">Polski</MenuItem>
+      <MenuItem value="uk">Українська</MenuItem>
     </Select>
   );
 };

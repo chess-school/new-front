@@ -14,7 +14,26 @@
     "wrongMove": "Wrong move, try again!",
     "solved": "Puzzle solved!",
     "newPuzzle": "New Puzzle",
-    "ratingLabel": "Puzzle Rating:"
+    "ratingLabel": "Puzzle Rating:",
+    "whiteToMove": "White to move",
+    "blackToMove": "Black to move",
+    "noneForFilter": "No puzzles for this filter yet.",
+    "openBook": "open the book",
+    "showSolution": "Show solution",
+    "solutionShown": "Solution shown — analyze it on the board.",
+    "source": {
+      "lichess": "Lichess",
+      "book": "From digitized books",
+      "all": "All"
+    },
+    "subtitle": "Find the best move. After every puzzle, review it with the engine.",
+    "tabs": {
+      "puzzle": "Puzzle",
+      "source": "Source"
+    },
+    "hint": "Hint",
+    "sourceLabel": "Puzzle source",
+    "chatTitle": "Puzzle · {{rating}}"
   },
   "climb": {
     "title": "Rating Climb",
@@ -25,7 +44,8 @@
     "highestRating": "Highest",
     "gameOver": "Time's up!",
     "yourScore": "Your score",
-    "finalScore": "Final score"
+    "finalScore": "Final score",
+    "timeLeft": "Time"
   },
   "navbar": {
     "login": "Login",
@@ -42,7 +62,39 @@
     "profile": "Profile",
     "students": "My Students",
     "students-shedule": "Student's Schedule",
-    "users": "Users"
+    "users": "Users",
+    "digitizer": "Digitizer & Courses",
+    "puzzleBooks": "Puzzle Books"
+  },
+  "nav": {
+    "main": "Main navigation",
+    "openMenu": "Open menu",
+    "groups": {
+      "training": "Training",
+      "my": "My learning",
+      "coach": "Coaching",
+      "school": "School"
+    },
+    "books": "Books & courses",
+    "puzzles": "Puzzles",
+    "rating": "Rating climb",
+    "survival": "Survival",
+    "analysis": "Analysis",
+    "database": "Games database",
+    "schedule": "Schedule & homework",
+    "inbox": "Inbox",
+    "profile": "Profile",
+    "students": "My students",
+    "review": "Review work",
+    "digitizer": "PDF digitizer",
+    "courseBuilder": "Course builder",
+    "play": "Play online"
+  },
+  "roles": {
+    "admin": "Administrator",
+    "coach": "Coach",
+    "user": "Student",
+    "student": "Student"
   },
   "common": {
     "loading": "Loading...",
@@ -63,7 +115,9 @@
     "hero": {
       "title": "Master the Game. Master Your Mind.",
       "subtitle": "Join our international chess academy and unlock your potential with the world's top online coaches.",
-      "start": "Find Your Coach"
+      "start": "Find Your Coach",
+      "badge": "Online chess school",
+      "tryPuzzles": "Solve a puzzle"
     },
     "why": {
       "title": "Why Learn Chess With Us?",
@@ -110,6 +164,16 @@
     "coaches": {
       "title": "Our Coaches",
       "selectCoach": "Select Coach"
+    },
+    "platform": {
+      "puzzles": "Puzzles",
+      "puzzlesDesc": "Thousands of tactics with rating, survival mode and instant engine review.",
+      "analysis": "Analysis board",
+      "analysisDesc": "Stockfish evaluation, best-move arrows, opening book and master games.",
+      "books": "Books & courses",
+      "booksDesc": "Digitized puzzle books from your coach — solve them chapter by chapter.",
+      "schedule": "Lessons & homework",
+      "scheduleDesc": "Your lesson schedule, assignments and coach feedback in one place."
     }
   },
   "aboutPage": {
@@ -202,7 +266,10 @@
   },
     "achievementsPage": {
       "title": "Our Achievements",
-      "congratulations": "Congratulations to all our champions!"
+      "congratulations": "Congratulations to all our champions!",
+      "subtitle": "Tournament results and milestones of our students",
+      "comingSoon": "Coming soon",
+      "comingSoonDesc": "We are preparing a showcase of our students' achievements."
     },
     "studentsPage": {
   "studentsListTitle": "Students List",
@@ -213,7 +280,51 @@
   "editSchedule": "Edit Schedule",
   "delete": "Delete",
   "studentDeletedSuccess": "Student successfully deleted",
-  "studentDeletedError": "Failed to delete student"
+  "studentDeletedError": "Failed to delete student",
+  "fetchError": "Failed to load students.",
+  "noStudents": "You have no students yet. Enroll a registered user into one of your courses.",
+  "nothingFound": "No students match the filters.",
+  "retry": "Retry",
+  "student": "Student",
+  "enrollments": "Courses",
+  "course": "Course",
+  "group": "Group",
+  "noGroup": "No group",
+  "status": "Status",
+  "allStatuses": "All statuses",
+  "allCourses": "All courses",
+  "search": "Search by name or email",
+  "progress": "Course progress",
+  "paid": "Paid",
+  "rowsPerPage": "Rows per page:",
+  "noCourses": "You have no courses yet — create a course first.",
+  "enrollmentStatus": {
+    "pending_payment": "Awaiting payment",
+    "pending_approval": "Awaiting approval",
+    "active": "Active",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "refunded": "Refunded"
+  },
+  "enroll": {
+    "title": "Enroll student",
+    "email": "Student email",
+    "emailHelp": "The student must already be registered on the site",
+    "emailError": "Enter a valid email",
+    "required": "Required field",
+    "startDate": "Start date (optional)",
+    "submit": "Enroll",
+    "success": "Student enrolled"
+  },
+  "enrollment": {
+    "changeStatusTo": "Mark as: {{status}}",
+    "changeGroup": "Change group",
+    "remove": "Remove from course",
+    "removeTitle": "Remove enrollment?",
+    "removeText": "The student will be removed from the course \"{{course}}\" and from its group; upcoming private lessons for it are cancelled. A paid enrollment cannot be removed — mark it as cancelled instead.",
+    "updated": "Enrollment updated",
+    "removed": "Enrollment removed"
+  }
 },
     "usersPage": {
       "title": "User Management",
@@ -266,8 +377,11 @@
     "games": "Games",
     "win": "Win",
     "draw": "Draw",
-    "loss": "Loss"
-},
+    "loss": "Loss",
+    "otherTitle": "Viewing another user's profile",
+    "otherNotImplemented": "This functionality is not yet implemented.",
+    "quickLinks": "Continue training"
+  },
   "coaches": {
     "title": "Our Coaches",
     "subtitle": "Find the perfect mentor to guide you on your chess journey.",
@@ -351,6 +465,19 @@
     "form_description": "Description",
     "form_link": "Link (e.g., for a video call)",
     "form_date": "Date and Time*",
+    "addEventForDate": "New lesson on {{date}}",
+    "updateSuccess": "Lesson updated!",
+    "newLesson": "New lesson",
+    "form_duration": "Duration, minutes",
+    "form_status": "Status",
+    "durationError": "Enter 5–600 minutes",
+    "linkError": "The link must start with http:// or https://",
+    "lessonStatus": {
+      "scheduled": "Scheduled",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "missed": "Missed"
+    },
       "eventTypes": {
         "individual_lesson": "Individual Lesson",
         "group_lesson": "Group Lesson",
@@ -371,7 +498,14 @@
       "send": "Send",
       "form_link": "Link",
       "form_description": "Description",
-      "homeworkSentSuccess": "Homework submitted successfully!"
+      "homeworkSentSuccess": "Homework submitted successfully!",
+      "upcoming": "Upcoming lessons",
+      "noUpcoming": "No upcoming lessons.",
+      "duration": "{{minutes}} min",
+      "noHomework": "No homework for this lesson.",
+      "openHomework": "Open homework",
+      "hasHomework": "Homework",
+      "pageSubtitle": "Lessons with your coach and homework to hand in."
     },
     "status": {
       "scheduled": "Scheduled",
@@ -404,7 +538,23 @@
       "draw": "Draw!",
       "threefold_repetition": "Draw by threefold repetition.",
       "insufficient_material": "Draw by insufficient material."
-    }
+    },
+    "tabs": {
+      "moves": "Moves",
+      "book": "Opening book",
+      "games": "Games"
+    },
+    "noBookData": "No opening book data for this position",
+    "noGames": "No games found for this position",
+    "noMoves": "Make a move on the board or load a PGN",
+    "gamesLoadError": "Failed to load games for this position",
+    "gameLoaded": "{{white}} — {{black}} loaded",
+    "commentStart": "Comment on the starting position…",
+    "commentMove": "Comment on {{move}}…",
+    "commentLabel": "Move comment",
+    "copyPgn": "Copy PGN with comments",
+    "pgnCopied": "PGN copied to clipboard",
+    "copyPgnTree": "Copy PGN (variations, glyphs, comments)"
   },
   "inbox": {
       "title": "Inbox",
@@ -442,6 +592,7 @@
         "loadScreenshotFailed": "Failed to load screenshot",
         "handleRequestFailed": "Error processing request",
         "reviewHomeworkFailed": "Error reviewing homework",
+        "commentRequired": "Write a comment: what should the student fix?",
         "fileTooLarge": "File size cannot exceed {{size}}MB.",
         "emptyHomework": "Please add text or a screenshot before submitting.",
         "fetchSchedule": "Failed to load schedule.",
@@ -454,7 +605,452 @@
           "approved": "approved",
           "rejected": "rejected"
         }
+      },
+      "requests": {
+        "noCourses": "To accept a student, create a course first: approving a request enrolls the student into one of your courses.",
+        "course": "Enroll into course"
+      },
+      "requestStatus": {
+        "pending": "Awaiting decision",
+        "approved": "Approved",
+        "rejected": "Declined"
+      }
+    },
+  "digitizer": {
+    "title": "Book Digitizer & Courses",
+    "subtitle": "Upload a PDF chess book: positions are recognized automatically and turned into an interactive course.",
+    "exercises": "Exercises",
+    "form": {
+      "heading": "Digitize a PDF book",
+      "chooseFile": "Choose PDF",
+      "noFile": "No file selected",
+      "courseTitle": "Course title",
+      "courseTitleHelp": "Defaults to the file name",
+      "pagesRange": "Exercise pages",
+      "pagesRangeHelp": "Pages with diagrams, e.g. 39-105",
+      "solutionsPages": "Solution pages",
+      "solutionsPagesHelp": "Optional, e.g. 548-814",
+      "rangeError": "Use the format 39-105",
+      "submit": "Start digitizing",
+      "uploading": "Uploading… {{percent}}%",
+      "dragPrompt": "Drag a PDF book here or click to browse",
+      "dropHere": "Drop the PDF here",
+      "onlyPdf": "Only PDF files are supported",
+      "removeFile": "Remove file",
+      "replaceFile": "Click or drop to replace"
+    },
+    "task": {
+      "empty": "No digitizing tasks yet. Upload a book to get started.",
+      "status": {
+        "loading": "loading…",
+        "pending": "queued",
+        "processing": "processing",
+        "completed": "completed",
+        "failed": "failed",
+        "lost": "not found"
+      },
+      "queued": "Queued: waiting for the previous book to finish…",
+      "progressInfo": "Processing the book: page {{current}} of {{total}} | Exercises found: {{count}}",
+      "readyChapters": "Ready parts (available before the whole book is finished)",
+      "chapters": "Parts",
+      "chapterTitle": "Part {{number}}",
+      "chapterInfo": "pages {{from}}–{{to}} · {{count}} positions",
+      "openChapter": "Open / edit part",
+      "failed": "Digitizing failed",
+      "lostHelp": "The digitizer no longer has this task (results are kept for a limited time).",
+      "convert": "Turn into interactive course",
+      "openCourse": "Open course",
+      "heading": "Digitizing tasks",
+      "stages": {
+        "queue": "Queue",
+        "recognition": "Recognition",
+        "ready": "Ready"
+      }
+    },
+    "books": {
+      "heading": "Puzzle books",
+      "empty": "No puzzle books yet.",
+      "title": "Title",
+      "exercises": "Exercises",
+      "status": "Status",
+      "edit": "Edit",
+      "solve": "Solve",
+      "puzzleStream": "Puzzle stream",
+      "exercisesCount_one": "{{count}} exercise",
+      "exercisesCount_other": "{{count}} exercises",
+      "summary": "{{books}} books · {{exercises}} exercises",
+      "updated": "Updated"
+    },
+    "status": {
+      "draft": "Draft",
+      "published": "Published"
+    },
+    "editor": {
+      "trySolve": "Try in solve mode",
+      "editPosition": "Drag pieces, drop off the board to remove, or pick a piece below and click a square",
+      "previewMove": "Position after {{move}}",
+      "backToStart": "Back to start position",
+      "flip": "Flip board",
+      "eraser": "Remove piece",
+      "clearBoard": "Clear board",
+      "startPosition": "Initial position",
+      "exerciseTitle": "Exercise title",
+      "sideToMove": "Side to move",
+      "white": "White",
+      "black": "Black",
+      "comment": "Comment / task description",
+      "hint": "Hint",
+      "hintHelp": "Shown together with the highlighted piece when the student asks for a hint",
+      "solution": "Solution (PGN moves with variations)",
+      "solutionHelp": "Main line first, variations in parentheses, comments in {braces}",
+      "moveTree": "Move tree — click a move to preview the position",
+      "save": "Save changes to course",
+      "saved": "Exercise saved",
+      "unsavedConfirm": "You have unsaved changes. Discard them?",
+      "subtitle_one": "{{count}} exercise · edit positions, hints and solutions",
+      "subtitle_other": "{{count}} exercises · edit positions, hints and solutions"
+    },
+    "solve": {
+      "notFound": "Puzzle book not found or not published yet.",
+      "progress": "Solved {{solved}} of {{total}}",
+      "openEditor": "Open in editor",
+      "whiteToMove": "White to move. Find the best move!",
+      "blackToMove": "Black to move. Find the best move!",
+      "correctContinue": "Correct! Keep going.",
+      "opponentThinking": "Correct! Opponent is replying…",
+      "solved": "Solved! Well done.",
+      "noSolution": "This position has no reference solution yet.",
+      "wrongMove": "Wrong move! Try again",
+      "hint": "Hint",
+      "restart": "Restart",
+      "next": "Next exercise",
+      "skip": "Skip exercise",
+      "mistakes": "Mistakes: {{count}}",
+      "showSolution": "Show solution",
+      "analysisHint": "Analysis: step through the solution, try your own moves, turn on the engine for the evaluation bar and best-move arrows.",
+      "solutionLocked": "The solution opens once you solve the exercise or press “Show solution”.",
+      "tabs": {
+        "exercise": "Exercise",
+        "solution": "Solution",
+        "list": "List"
       }
     }
+  },
+  "homework": {
+    "title": "Homework",
+    "listTitle": "Homework",
+    "empty": "No homework yet.",
+    "description": "Task for the student",
+    "descriptionHelp": "The student will be notified",
+    "dueDate": "Due date (optional)",
+    "assign": "Assign homework",
+    "save": "Save homework",
+    "delete": "Delete homework",
+    "created": "Homework assigned",
+    "updated": "Homework updated",
+    "deleted": "Homework deleted",
+    "state": {
+      "todo": "To do",
+      "overdue": "Overdue",
+      "submitted": "Under review",
+      "needs_revision": "Needs revision",
+      "approved": "Approved"
+    },
+    "due": "Due {{date}}",
+    "forLesson": "Lesson: {{title}}, {{date}}",
+    "coachComment": "Coach's comment",
+    "yourAnswer": "Your answer ({{date}})",
+    "answer": "Your answer (moves, ideas)",
+    "uploadScreenshot": "Attach a screenshot",
+    "replaceScreenshot": "Replace screenshot",
+    "submit": "Submit",
+    "resubmit": "Resubmit",
+    "submitted": "Homework submitted!",
+    "resubmitted": "Homework resubmitted!",
+    "emptyError": "Write an answer or attach a screenshot.",
+    "fileTypeError": "Only images can be attached (PNG, JPEG, WebP, GIF).",
+    "fileTooLarge": "The file is larger than {{size}} MB.",
+    "attachmentError": "Could not load the screenshot.",
+    "screenshotAlt": "Homework screenshot"
+  },
+  "engine": {
+    "analysis": "Engine analysis",
+    "depth": "depth {{depth}}",
+    "error": "The engine failed to load.",
+    "showBestMove": "Engine move",
+    "bestMoveHint": "Engine suggests {{move}} (evaluation {{score}})",
+    "checkingMove": "The engine is checking your move…",
+    "alsoStrong": "The engine rates your move as strong too ({{played}}), but the book solution is different — try to find it.",
+    "worse": "After your move the evaluation is {{played}}; the best move in this position gives {{best}}.",
+    "checkSolution": "Check solution with engine",
+    "checkingSolution": "Checking… {{done}} / {{total}}",
+    "checkInterrupted": "The check was interrupted.",
+    "goodMove": "OK ({{played}})",
+    "dubiousMove": "dubious: {{played}}, engine prefers {{move}} ({{best}})"
+  },
+  "analysisBoard": {
+    "start": "To start",
+    "back": "Back (←)",
+    "forward": "Forward (→)",
+    "end": "To end",
+    "noMoves": "No moves yet — make a move on the board.",
+    "moves": "Moves"
+  },
+  "puzzleRun": {
+    "reviewTitle": "Run review",
+    "solved": "Solved",
+    "failed": "Not solved"
+  },
+  "survival": {
+    "title": "Survival",
+    "description": "Solve puzzles in a row: one mistake or running out of time ends the run. Each solved puzzle adds time.",
+    "start": "Start",
+    "playAgain": "Play Again",
+    "solved": "Solved",
+    "timeLeft": "Time left",
+    "gameOver": "Run over!",
+    "finalScore": "Puzzles solved",
+    "rating": "Rating"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No notifications",
+    "viewAll": "View all in Inbox"
+  },
+  "database": {
+    "title": "Games database",
+    "subtitle": "Explore openings and study master games",
+    "totalInPosition": "Games in this position",
+    "move": "Move",
+    "games": "Games",
+    "results": "White / draw / black",
+    "noGamesInPosition": "No games in this position",
+    "playerGames": "Player games",
+    "playerName": "Player name",
+    "search": "Search",
+    "noGames": "No games found",
+    "bookError": "Could not fetch opening book",
+    "playerError": "Could not fetch player games"
+  },
+  "boardEditor": {
+    "title": "Position editor",
+    "hint": "Pick a piece as a brush, then click a square on the board.",
+    "cancel": "Cancel",
+    "apply": "Apply & close"
+  },
+  "board": {
+    "resize": "Drag to resize the board (double-click to reset)",
+    "resizeLabel": "Board size"
+  },
+  "analysisTree": {
+    "makeMainline": "Make main line",
+    "promote": "Promote variation",
+    "exitVariation": "Up one level (exit variation)",
+    "deleteBranch": "Delete branch from here",
+    "glyphs": "Move annotation",
+    "glyph": {
+      "good": "Good move",
+      "brilliant": "Brilliant move",
+      "interesting": "Interesting move",
+      "dubious": "Dubious move",
+      "mistake": "Mistake",
+      "blunder": "Blunder"
+    }
+  },
+  "chat": {
+    "title": "Messages",
+    "openWithUnread": "Messages ({{count}} unread)",
+    "askCoach": "Ask the coach",
+    "messageStudent": "Message the student",
+    "back": "Back to conversations",
+    "emptyTitle": "No conversations yet",
+    "emptyHint": "You can message your coach (or your students) once you are enrolled in a course.",
+    "firstMessageHint": "Say hello — your messages are visible only to the two of you.",
+    "loadOlder": "Load earlier messages",
+    "noMessagesYet": "No messages yet",
+    "offline": "Connecting…",
+    "online": "Connected",
+    "pickRecipient": "Who do you want to ask?",
+    "placeholder": "Write a message…",
+    "relation": {
+      "coach": "Your coach",
+      "student": "Your student"
+    },
+    "retry": "Not sent — tap to retry",
+    "send": "Send",
+    "startConversation": "Start a conversation",
+    "status": {
+      "pending": "Sending",
+      "read": "Read",
+      "sent": "Sent"
+    },
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "typing": "{{name}} is typing…",
+    "unknownUser": "User",
+    "you": "You",
+    "context": {
+      "puzzle": "Puzzle",
+      "homework": "Homework",
+      "book": "Book"
+    }
+  },
+  "coachesPage": {
+    "defaultHeadline": "Chess coach",
+    "platformRating": "Rating on the platform",
+    "ratingKind": {
+      "standard": "Classical",
+      "rapid": "Rapid",
+      "blitz": "Blitz"
+    },
+    "thisIsYou": "This is your profile",
+    "requestSent": "Request sent — awaiting reply",
+    "yourCoach": "Your coach",
+    "reviews": "{{count}} reviews",
+    "fideProfile": "FIDE profile",
+    "noBio": "The coach has not added a description yet.",
+    "specializations": "Specializations",
+    "loginToRequest": "Log in to send a request to this coach.",
+    "requestSentLong": "Request sent. {{name}} will reply soon — you will get a notification.",
+    "alreadyYourCoach": "You already train with this coach.",
+    "requestTitle": "Train with {{name}}",
+    "goalsPlaceholder": "e.g. reach 1800 by summer, improve endgames",
+    "errors": {
+      "requestPending": "You have already sent a request to this coach — wait for the reply.",
+      "alreadyStudent": "You already train with this coach.",
+      "selfRequest": "You cannot send a request to yourself.",
+      "coachNotFound": "This coach is no longer available."
+    },
+    "myProfile": "My coach profile",
+    "profileLoadError": "Failed to load your coach profile.",
+    "notVerified": "Your profile is awaiting verification by an administrator and is not shown in the catalog yet.",
+    "createProfileHint": "Fill in your profile — students will see it in the coaches catalog after verification.",
+    "headline": "Headline",
+    "headlinePlaceholder": "e.g. FIDE trainer, endgame specialist",
+    "specializationsHelp": "Comma-separated: openings, endgames, tactics",
+    "fideTitle": "FIDE title",
+    "noTitle": "No title",
+    "urlInvalid": "Enter a link starting with https://",
+    "retry": "Retry",
+    "found": "Found: {{count}}",
+    "nothingFound": "No coaches match your search",
+    "empty": "No coaches yet",
+    "loadMore": "Show more"
+  },
+  "play": {
+    "over": {
+      "aborted": "Game aborted",
+      "draw": "Draw",
+      "youWon": "You won!",
+      "youLost": "You lost",
+      "winner": "{{name}} won"
+    },
+    "reason": {
+      "checkmate": "by checkmate",
+      "timeout": "on time",
+      "resignation": "by resignation",
+      "draw_agreement": "by agreement",
+      "stalemate": "stalemate",
+      "insufficient_material": "insufficient material",
+      "threefold_repetition": "threefold repetition",
+      "fifty_moves": "fifty-move rule",
+      "aborted": "game aborted"
+    },
+    "speed": {
+      "bullet": "Bullet",
+      "blitz": "Blitz",
+      "rapid": "Rapid",
+      "classical": "Classical"
+    },
+    "casualNoRating": "Casual game — ratings unchanged",
+    "acceptRematch": "Accept rematch",
+    "rematchSent": "Rematch offered…",
+    "rematch": "Rematch",
+    "analyze": "Analyze with Stockfish",
+    "newGame": "New game",
+    "waitingOpponent": "Waiting for opponent…",
+    "you": "you",
+    "loginRequired": "Log in to play online.",
+    "toLobby": "To lobby",
+    "rated": "Rated",
+    "casual": "Casual",
+    "waitingTitle": "Waiting for an opponent",
+    "challengeTitle": "Challenge",
+    "shareLink": "Send this link to a friend — the game starts as soon as they accept.",
+    "linkCopied": "Link copied",
+    "copyLink": "Copy",
+    "cancelChallenge": "Cancel challenge",
+    "acceptChallenge": "Accept challenge",
+    "challengeFrom": "{{name}} challenges you to a game",
+    "noMovesYet": "No moves yet",
+    "accept": "Accept",
+    "decline": "Decline",
+    "drawOffered": "Your opponent offers a draw",
+    "backToGame": "Back to the game",
+    "abort": "Abort",
+    "drawSent": "Draw offered",
+    "offerDraw": "Offer draw",
+    "confirmResign": "Resign?",
+    "resign": "Resign",
+    "result": "Result",
+    "flip": "Flip board",
+    "soundOn": "Sound on",
+    "soundOff": "Sound off",
+    "sound": "Sound",
+    "reconnecting": "Connection lost — reconnecting…",
+    "title": "Online game",
+    "lobbyTitle": "Play online",
+    "lobbySubtitle": "Quick pairing, open challenges and games with friends — rated by Glicko-2, like on Lichess.",
+    "gamesCount": "{{count}} games",
+    "continue": "Continue",
+    "activeGame": "You have a game in progress ({{tc}})",
+    "quickPairing": "Quick pairing",
+    "ratingRange": "Opponent rating",
+    "anyRating": "Any",
+    "searching": "Searching…",
+    "searchingFor": "Looking for an opponent {{tc}}…",
+    "cancel": "Cancel",
+    "connecting": "Connecting to the game server…",
+    "customGame": "Custom game",
+    "openChallenges": "Open challenges",
+    "noChallenges": "No open challenges — create one or use quick pairing.",
+    "myChallenges": "My challenges",
+    "byLink": "By link",
+    "inLobby": "In lobby",
+    "open": "Open",
+    "minutesPerSide": "Minutes per side",
+    "incrementSeconds": "Increment in seconds",
+    "modeFriend": "Friend link",
+    "modeLobby": "Open challenge",
+    "modePairing": "Quick pairing",
+    "color": "Color",
+    "white": "White",
+    "random": "Random",
+    "black": "Black",
+    "createLink": "Create link",
+    "createChallenge": "Create challenge",
+    "findOpponent": "Find opponent",
+    "errors": {
+      "ILLEGAL_MOVE": "Illegal move",
+      "NOT_YOUR_TURN": "It is not your turn",
+      "TIME_UP": "Time is up",
+      "STALE_POSITION": "The position changed — the board was updated",
+      "GAME_NOT_FOUND": "Game not found",
+      "GAME_NOT_ACTIVE": "The game is over",
+      "NOT_A_PLAYER": "You are watching this game",
+      "DRAW_NOT_ALLOWED": "A draw can be offered after the first moves",
+      "NO_DRAW_OFFER": "There is no draw offer",
+      "ABORT_NOT_ALLOWED": "The game can no longer be aborted",
+      "CHALLENGE_TAKEN": "This challenge has already been accepted",
+      "OWN_CHALLENGE": "You cannot accept your own challenge",
+      "CHALLENGE_EXPIRED": "This challenge has expired",
+      "RATING_OUT_OF_RANGE": "Your rating is outside the challenge range",
+      "TOO_MANY_CHALLENGES": "You have too many open challenges",
+      "INVALID_TIME_CONTROL": "Choose 1–180 minutes and 0–60 seconds increment",
+      "GAME_NOT_FINISHED": "Rematch is available after the game",
+      "PAIRING_FAILED": "Pairing failed, try again",
+      "TIMEOUT": "The server is not responding",
+      "UNKNOWN": "Something went wrong"
+    }
+  }
 }
-  

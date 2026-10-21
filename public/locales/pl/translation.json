@@ -14,7 +14,9 @@
     "profile": "Profil",
     "students": "Moi uczniowie",
     "students-shedule": "Harmonogram ucznia",
-    "users": "Użytkownicy"
+    "users": "Użytkownicy",
+    "digitizer": "Digitalizator i kursy",
+    "puzzleBooks": "Zbiory zadań"
   },
    "puzzles": {
     "title": "Trener taktyki",
@@ -25,7 +27,26 @@
     "wrongMove": "Błędny ruch, spróbuj ponownie!",
     "solved": "Zadanie rozwiązane!",
     "newPuzzle": "Nowe zadanie",
-    "ratingLabel": "Ranking zadania:"
+    "ratingLabel": "Ranking zadania:",
+    "whiteToMove": "Ruch białych",
+    "blackToMove": "Ruch czarnych",
+    "noneForFilter": "Brak zadań dla tego filtra.",
+    "openBook": "otwórz książkę",
+    "showSolution": "Pokaż rozwiązanie",
+    "solutionShown": "Pokazano rozwiązanie — przeanalizuj je na szachownicy.",
+    "source": {
+      "lichess": "Lichess",
+      "book": "Z digitalizowanych książek",
+      "all": "Wszystkie"
+    },
+    "subtitle": "Znajdź najlepszy ruch. Po każdym zadaniu przeanalizuj je z silnikiem.",
+    "tabs": {
+      "puzzle": "Zadanie",
+      "source": "Źródło"
+    },
+    "hint": "Podpowiedź",
+    "sourceLabel": "Źródło zadań",
+    "chatTitle": "Zadanie · {{rating}}"
   },
     "climb": {
     "title": "Wspinaczka Rankingowa",
@@ -36,7 +57,8 @@
     "highestRating": "Najwyższy",
     "gameOver": "Czas minął!",
     "yourScore": "Twój wynik",
-    "finalScore": "Wynik końcowy"
+    "finalScore": "Wynik końcowy",
+    "timeLeft": "Czas"
   },
   "auth": {
     "sign_in": "Zaloguj się",
@@ -73,6 +95,36 @@
     "password_length": "Hasło musi mieć co najmniej 6 znaków",
     "name_invalid": "Wprowadź poprawne imię"
   },
+  "nav": {
+    "main": "Główna nawigacja",
+    "openMenu": "Otwórz menu",
+    "groups": {
+      "training": "Trening",
+      "my": "Moja nauka",
+      "coach": "Trener",
+      "school": "Szkoła"
+    },
+    "books": "Książki i kursy",
+    "puzzles": "Zadania",
+    "rating": "Wspinaczka rankingowa",
+    "survival": "Przetrwanie",
+    "analysis": "Analiza",
+    "database": "Baza partii",
+    "schedule": "Plan i prace domowe",
+    "inbox": "Skrzynka",
+    "profile": "Profil",
+    "students": "Moi uczniowie",
+    "review": "Sprawdzanie prac",
+    "digitizer": "Digitalizacja PDF",
+    "courseBuilder": "Kreator kursów",
+    "play": "Graj online"
+  },
+  "roles": {
+    "admin": "Administrator",
+    "coach": "Trener",
+    "user": "Uczeń",
+    "student": "Uczeń"
+  },
   "common": {
     "loading": "Ładowanie...",
     "close": "Zamknij",
@@ -92,7 +144,9 @@
     "hero": {
       "title": "Opanuj grę. Opanuj swój umysł.",
       "subtitle": "Dołącz do naszej międzynarodowej akademii szachowej i uwolnij swój potencjał z najlepszymi trenerami online na świecie.",
-      "start": "Znajdź trenera"
+      "start": "Znajdź trenera",
+      "badge": "Szkoła szachowa online",
+      "tryPuzzles": "Rozwiąż zadanie"
     },
     "why": {
       "title": "Dlaczego warto uczyć się z nami szachów?",
@@ -139,6 +193,16 @@
     "coaches": {
       "title": "Nasi trenerzy",
       "selectCoach": "Wybierz trenera"
+    },
+    "platform": {
+      "puzzles": "Zadania",
+      "puzzlesDesc": "Tysiące zadań taktycznych z rankingiem, trybem przetrwania i analizą silnika.",
+      "analysis": "Plansza analizy",
+      "analysisDesc": "Ocena Stockfisha, strzałki najlepszych ruchów, książka debiutowa i partie mistrzów.",
+      "books": "Książki i kursy",
+      "booksDesc": "Zdigitalizowane zbiory zadań od trenera — rozwiązuj rozdział po rozdziale.",
+      "schedule": "Lekcje i prace domowe",
+      "scheduleDesc": "Plan lekcji, zadania i uwagi trenera w jednym miejscu."
     }
   },
   "aboutPage": {
@@ -231,7 +295,10 @@
   },
   "achievementsPage": {
     "title": "Nasze osiągnięcia",
-    "congratulations": "Gratulacje dla wszystkich naszych mistrzów!"
+    "congratulations": "Gratulacje dla wszystkich naszych mistrzów!",
+    "subtitle": "Wyniki turniejowe i sukcesy naszych uczniów",
+    "comingSoon": "Wkrótce",
+    "comingSoonDesc": "Przygotowujemy prezentację osiągnięć naszych uczniów."
   },
   "studentsPage": {
     "studentsListTitle": "Lista uczniów",
@@ -242,7 +309,51 @@
     "editSchedule": "Edytuj harmonogram",
     "delete": "Usuń",
     "studentDeletedSuccess": "Uczeń pomyślnie usunięty",
-    "studentDeletedError": "Nie udało się usunąć ucznia"
+    "studentDeletedError": "Nie udało się usunąć ucznia",
+    "fetchError": "Nie udało się załadować uczniów.",
+    "noStudents": "Nie masz jeszcze uczniów. Zapisz zarejestrowanego użytkownika na jeden ze swoich kursów.",
+    "nothingFound": "Brak uczniów spełniających kryteria.",
+    "retry": "Spróbuj ponownie",
+    "student": "Uczeń",
+    "enrollments": "Kursy",
+    "course": "Kurs",
+    "group": "Grupa",
+    "noGroup": "Bez grupy",
+    "status": "Status",
+    "allStatuses": "Wszystkie statusy",
+    "allCourses": "Wszystkie kursy",
+    "search": "Szukaj po imieniu lub e-mailu",
+    "progress": "Postęp kursu",
+    "paid": "Opłacone",
+    "rowsPerPage": "Wierszy na stronę:",
+    "noCourses": "Nie masz jeszcze kursów — najpierw utwórz kurs.",
+    "enrollmentStatus": {
+      "pending_payment": "Oczekuje na płatność",
+      "pending_approval": "Oczekuje na zatwierdzenie",
+      "active": "Aktywny",
+      "completed": "Ukończony",
+      "cancelled": "Anulowany",
+      "refunded": "Zwrócony"
+    },
+    "enroll": {
+      "title": "Zapisz ucznia",
+      "email": "E-mail ucznia",
+      "emailHelp": "Uczeń musi być już zarejestrowany na stronie",
+      "emailError": "Podaj poprawny e-mail",
+      "required": "Pole wymagane",
+      "startDate": "Data rozpoczęcia (opcjonalnie)",
+      "submit": "Zapisz",
+      "success": "Uczeń zapisany"
+    },
+    "enrollment": {
+      "changeStatusTo": "Oznacz jako: {{status}}",
+      "changeGroup": "Zmień grupę",
+      "remove": "Usuń z kursu",
+      "removeTitle": "Usunąć zapis?",
+      "removeText": "Uczeń zostanie usunięty z kursu „{{course}}” i z jego grupy; nadchodzące zajęcia indywidualne zostaną odwołane. Opłaconego zapisu nie można usunąć — oznacz go jako anulowany.",
+      "updated": "Zapis zaktualizowany",
+      "removed": "Zapis usunięty"
+    }
   },
   "usersPage": {
     "title": "Zarządzanie użytkownikami",
@@ -282,7 +393,10 @@
     "games": "Partie",
     "win": "Wygrane",
     "draw": "Remisy",
-    "loss": "Porażki"
+    "loss": "Porażki",
+    "otherTitle": "Profil innego użytkownika",
+    "otherNotImplemented": "Ta funkcja nie jest jeszcze dostępna.",
+    "quickLinks": "Kontynuuj trening"
   },
   "coaches": {
     "title": "Nasi trenerzy",
@@ -351,6 +465,19 @@
     "form_description": "Opis",
     "form_link": "Link (np. do rozmowy wideo)",
     "form_date": "Data i godzina*",
+    "addEventForDate": "Nowe zajęcia {{date}}",
+    "updateSuccess": "Zajęcia zaktualizowane!",
+    "newLesson": "Nowe zajęcia",
+    "form_duration": "Czas trwania, minuty",
+    "form_status": "Status",
+    "durationError": "Podaj od 5 do 600 minut",
+    "linkError": "Link musi zaczynać się od http:// lub https://",
+    "lessonStatus": {
+      "scheduled": "Zaplanowane",
+      "completed": "Odbyte",
+      "cancelled": "Odwołane",
+      "missed": "Nieobecność"
+    },
       "eventTypes": {
         "individual_lesson": "Lekcja indywidualna",
         "group_lesson": "Lekcja grupowa",
@@ -371,7 +498,14 @@
       "send": "Wyślij",
       "form_link": "Link",
       "form_description": "Opis",
-      "homeworkSentSuccess": "Praca domowa została pomyślnie przesłana!"
+      "homeworkSentSuccess": "Praca domowa została pomyślnie przesłana!",
+      "upcoming": "Najbliższe zajęcia",
+      "noUpcoming": "Brak zaplanowanych zajęć.",
+      "duration": "{{minutes}} min",
+      "noHomework": "Do tych zajęć nie ma pracy domowej.",
+      "openHomework": "Otwórz pracę domową",
+      "hasHomework": "Praca domowa",
+      "pageSubtitle": "Lekcje z trenerem i prace domowe do oddania."
     },
     "status": {
       "scheduled": "Zaplanowane",
@@ -404,7 +538,23 @@
       "draw": "Remis!",
       "threefold_repetition": "Remis przez trzykrotne powtórzenie pozycji.",
       "insufficient_material": "Remis z powodu niewystarczającego materiału."
-    }
+    },
+    "tabs": {
+      "moves": "Ruchy",
+      "book": "Książka debiutowa",
+      "games": "Partie"
+    },
+    "noBookData": "Brak danych książki debiutowej dla tej pozycji",
+    "noGames": "Nie znaleziono partii dla tej pozycji",
+    "noMoves": "Wykonaj ruch na szachownicy lub wczytaj PGN",
+    "gamesLoadError": "Nie udało się wczytać partii dla tej pozycji",
+    "gameLoaded": "Wczytano partię {{white}} — {{black}}",
+    "commentStart": "Komentarz do pozycji wyjściowej…",
+    "commentMove": "Komentarz do {{move}}…",
+    "commentLabel": "Komentarz do ruchu",
+    "copyPgn": "Kopiuj PGN z komentarzami",
+    "pgnCopied": "PGN skopiowano do schowka",
+    "copyPgnTree": "Kopiuj PGN (warianty, znaki, komentarze)"
   },
   "inbox": {
       "title": "Skrzynka odbiorcza",
@@ -442,6 +592,7 @@
         "loadScreenshotFailed": "Nie udało się załadować zrzutu ekranu",
         "handleRequestFailed": "Błąd przetwarzania wniosku",
         "reviewHomeworkFailed": "Błąd podczas sprawdzania pracy domowej",
+        "commentRequired": "Napisz komentarz: co uczeń ma poprawić?",
         "fileTooLarge": "Rozmiar pliku nie może przekraczać {{size}}MB.",
         "emptyHomework": "Dodaj tekst lub zrzut ekranu przed wysłaniem.",
         "fetchSchedule": "Nie udało się załadować harmonogramu.",
@@ -454,6 +605,456 @@
           "approved": "zaakceptowano",
           "rejected": "odrzucono"
         }
+      },
+      "requests": {
+        "noCourses": "Aby przyjąć ucznia, najpierw utwórz kurs: akceptacja zapisuje ucznia na jeden z Twoich kursów.",
+        "course": "Zapisz na kurs"
+      },
+      "requestStatus": {
+        "pending": "Czeka na decyzję",
+        "approved": "Zaakceptowane",
+        "rejected": "Odrzucone"
+      }
+    },
+  "digitizer": {
+    "title": "Digitalizator książek i kursy",
+    "subtitle": "Wgraj szachową książkę w PDF: pozycje zostaną rozpoznane automatycznie i zamienione w interaktywny kurs.",
+    "exercises": "Zadania",
+    "form": {
+      "heading": "Digitalizacja książki PDF",
+      "chooseFile": "Wybierz PDF",
+      "noFile": "Nie wybrano pliku",
+      "courseTitle": "Nazwa kursu",
+      "courseTitleHelp": "Domyślnie nazwa pliku",
+      "pagesRange": "Strony z zadaniami",
+      "pagesRangeHelp": "Strony z diagramami, np. 39-105",
+      "solutionsPages": "Strony z rozwiązaniami",
+      "solutionsPagesHelp": "Opcjonalnie, np. 548-814",
+      "rangeError": "Użyj formatu 39-105",
+      "submit": "Rozpocznij digitalizację",
+      "uploading": "Wysyłanie… {{percent}}%",
+      "dragPrompt": "Przeciągnij tutaj książkę PDF lub kliknij, aby wybrać",
+      "dropHere": "Upuść plik PDF tutaj",
+      "onlyPdf": "Obsługiwane są tylko pliki PDF",
+      "removeFile": "Usuń plik",
+      "replaceFile": "Kliknij lub upuść, aby zamienić"
+    },
+    "task": {
+      "empty": "Brak zadań digitalizacji. Wgraj książkę, aby zacząć.",
+      "status": {
+        "loading": "ładowanie…",
+        "pending": "w kolejce",
+        "processing": "przetwarzanie",
+        "completed": "zakończono",
+        "failed": "błąd",
+        "lost": "nie znaleziono"
+      },
+      "queued": "W kolejce: czekamy na zakończenie poprzedniej książki…",
+      "progressInfo": "Przetwarzanie książki: strona {{current}} z {{total}} | Znalezione zadania: {{count}}",
+      "readyChapters": "Gotowe części (dostępne przed zakończeniem całej książki)",
+      "chapters": "Części",
+      "chapterTitle": "Część {{number}}",
+      "chapterInfo": "strony {{from}}–{{to}} · pozycji: {{count}}",
+      "openChapter": "Otwórz / edytuj część",
+      "failed": "Digitalizacja nie powiodła się",
+      "lostHelp": "Digitalizator nie przechowuje już tego zadania (wyniki są trzymane przez ograniczony czas).",
+      "convert": "Zamień w interaktywny kurs",
+      "openCourse": "Otwórz kurs",
+      "heading": "Zadania digitalizacji",
+      "stages": {
+        "queue": "Kolejka",
+        "recognition": "Rozpoznawanie",
+        "ready": "Gotowe"
+      }
+    },
+    "books": {
+      "heading": "Zbiory zadań",
+      "empty": "Brak zbiorów zadań.",
+      "title": "Nazwa",
+      "exercises": "Zadania",
+      "status": "Status",
+      "edit": "Edytuj",
+      "solve": "Rozwiązuj",
+      "puzzleStream": "Strumień zadań",
+      "exercisesCount_one": "{{count}} zadanie",
+      "exercisesCount_few": "{{count}} zadania",
+      "exercisesCount_many": "{{count}} zadań",
+      "exercisesCount_other": "{{count}} zadania",
+      "summary": "Książki: {{books}} · zadania: {{exercises}}",
+      "updated": "Zaktualizowano"
+    },
+    "status": {
+      "draft": "Szkic",
+      "published": "Opublikowany"
+    },
+    "editor": {
+      "trySolve": "Sprawdź w trybie rozwiązywania",
+      "editPosition": "Przeciągaj figury, upuść poza szachownicą, aby usunąć, lub wybierz figurę poniżej i kliknij pole",
+      "previewMove": "Pozycja po {{move}}",
+      "backToStart": "Wróć do pozycji początkowej",
+      "flip": "Obróć szachownicę",
+      "eraser": "Usuń figurę",
+      "clearBoard": "Wyczyść szachownicę",
+      "startPosition": "Pozycja wyjściowa",
+      "exerciseTitle": "Nazwa zadania",
+      "sideToMove": "Strona na posunięciu",
+      "white": "Białe",
+      "black": "Czarne",
+      "comment": "Komentarz / treść zadania",
+      "hint": "Podpowiedź",
+      "hintHelp": "Wyświetlana razem z podświetloną figurą, gdy uczeń poprosi o podpowiedź",
+      "solution": "Rozwiązanie (posunięcia PGN z wariantami)",
+      "solutionHelp": "Najpierw linia główna, warianty w nawiasach, komentarze w {klamrach}",
+      "moveTree": "Drzewo posunięć — kliknij posunięcie, aby zobaczyć pozycję",
+      "save": "Zapisz zmiany w kursie",
+      "saved": "Zadanie zapisane",
+      "unsavedConfirm": "Masz niezapisane zmiany. Odrzucić je?",
+      "subtitle_one": "{{count}} zadanie · edycja pozycji, podpowiedzi i rozwiązań",
+      "subtitle_few": "{{count}} zadania · edycja pozycji, podpowiedzi i rozwiązań",
+      "subtitle_many": "{{count}} zadań · edycja pozycji, podpowiedzi i rozwiązań",
+      "subtitle_other": "{{count}} zadania · edycja pozycji, podpowiedzi i rozwiązań"
+    },
+    "solve": {
+      "notFound": "Zbiór zadań nie istnieje lub nie został jeszcze opublikowany.",
+      "progress": "Rozwiązano {{solved}} z {{total}}",
+      "openEditor": "Otwórz w edytorze",
+      "whiteToMove": "Ruch białych. Znajdź najlepsze posunięcie!",
+      "blackToMove": "Ruch czarnych. Znajdź najlepsze posunięcie!",
+      "correctContinue": "Dobrze! Kontynuuj.",
+      "opponentThinking": "Dobrze! Przeciwnik odpowiada…",
+      "solved": "Rozwiązane! Brawo.",
+      "noSolution": "Ta pozycja nie ma jeszcze wzorcowego rozwiązania.",
+      "wrongMove": "Błędne posunięcie! Spróbuj ponownie",
+      "hint": "Podpowiedź",
+      "restart": "Od nowa",
+      "next": "Następne zadanie",
+      "skip": "Pomiń zadanie",
+      "mistakes": "Błędy: {{count}}",
+      "showSolution": "Pokaż rozwiązanie",
+      "analysisHint": "Analiza: przechodź przez rozwiązanie, próbuj własnych ruchów, włącz silnik, aby zobaczyć pasek oceny i strzałki najlepszych ruchów.",
+      "solutionLocked": "Rozwiązanie otworzy się po rozwiązaniu zadania lub po kliknięciu „Pokaż rozwiązanie”.",
+      "tabs": {
+        "exercise": "Zadanie",
+        "solution": "Rozwiązanie",
+        "list": "Lista"
       }
     }
+  },
+  "homework": {
+    "title": "Praca domowa",
+    "listTitle": "Prace domowe",
+    "empty": "Nie ma jeszcze prac domowych.",
+    "description": "Zadanie dla ucznia",
+    "descriptionHelp": "Uczeń otrzyma powiadomienie",
+    "dueDate": "Termin (opcjonalnie)",
+    "assign": "Zadaj pracę domową",
+    "save": "Zapisz pracę domową",
+    "delete": "Usuń pracę domową",
+    "created": "Praca domowa zadana",
+    "updated": "Praca domowa zaktualizowana",
+    "deleted": "Praca domowa usunięta",
+    "state": {
+      "todo": "Do zrobienia",
+      "overdue": "Po terminie",
+      "submitted": "Do sprawdzenia",
+      "needs_revision": "Do poprawy",
+      "approved": "Zaliczone"
+    },
+    "due": "Termin: {{date}}",
+    "forLesson": "Zajęcia: {{title}}, {{date}}",
+    "coachComment": "Komentarz trenera",
+    "yourAnswer": "Twoja odpowiedź ({{date}})",
+    "answer": "Twoja odpowiedź (posunięcia, pomysły)",
+    "uploadScreenshot": "Dołącz zrzut ekranu",
+    "replaceScreenshot": "Zamień zrzut ekranu",
+    "submit": "Wyślij",
+    "resubmit": "Wyślij ponownie",
+    "submitted": "Praca domowa wysłana!",
+    "resubmitted": "Praca domowa wysłana ponownie!",
+    "emptyError": "Napisz odpowiedź lub dołącz zrzut ekranu.",
+    "fileTypeError": "Można dołączać tylko obrazy (PNG, JPEG, WebP, GIF).",
+    "fileTooLarge": "Plik jest większy niż {{size}} MB.",
+    "attachmentError": "Nie udało się wczytać zrzutu ekranu.",
+    "screenshotAlt": "Zrzut ekranu pracy domowej"
+  },
+  "engine": {
+    "analysis": "Analiza silnika",
+    "depth": "głębokość {{depth}}",
+    "error": "Nie udało się załadować silnika.",
+    "showBestMove": "Ruch silnika",
+    "bestMoveHint": "Silnik proponuje {{move}} (ocena {{score}})",
+    "checkingMove": "Silnik sprawdza Twój ruch…",
+    "alsoStrong": "Silnik też ocenia Twój ruch jako mocny ({{played}}), ale rozwiązanie w książce jest inne — spróbuj je znaleźć.",
+    "worse": "Po Twoim ruchu ocena wynosi {{played}}; najlepszy ruch w tej pozycji daje {{best}}.",
+    "checkSolution": "Sprawdź rozwiązanie silnikiem",
+    "checkingSolution": "Sprawdzanie… {{done}} / {{total}}",
+    "checkInterrupted": "Sprawdzanie zostało przerwane.",
+    "goodMove": "OK ({{played}})",
+    "dubiousMove": "wątpliwe: {{played}}, silnik woli {{move}} ({{best}})"
+  },
+  "analysisBoard": {
+    "start": "Na początek",
+    "back": "Wstecz (←)",
+    "forward": "Dalej (→)",
+    "end": "Na koniec",
+    "noMoves": "Brak ruchów — wykonaj ruch na szachownicy.",
+    "moves": "Ruchy"
+  },
+  "puzzleRun": {
+    "reviewTitle": "Analiza serii",
+    "solved": "Rozwiązane",
+    "failed": "Nierozwiązane"
+  },
+  "survival": {
+    "title": "Przetrwanie",
+    "description": "Rozwiązuj zadania po kolei: jeden błąd lub koniec czasu kończy serię. Każde rozwiązane zadanie dodaje czas.",
+    "start": "Start",
+    "playAgain": "Zagraj ponownie",
+    "solved": "Rozwiązane",
+    "timeLeft": "Pozostały czas",
+    "gameOver": "Koniec serii!",
+    "finalScore": "Rozwiązane zadania",
+    "rating": "Ranking"
+  },
+ "notifications": {
+   "title": "Powiadomienia",
+   "empty": "Brak powiadomień",
+   "viewAll": "Zobacz wszystkie w skrzynce"
+ },
+ "database": {
+   "title": "Baza partii",
+   "subtitle": "Poznawaj debiuty i analizuj partie mistrzów",
+   "totalInPosition": "Partii w tej pozycji",
+   "move": "Ruch",
+   "games": "Partie",
+   "results": "Białe / remis / czarne",
+   "noGamesInPosition": "Brak partii w tej pozycji",
+   "playerGames": "Partie gracza",
+   "playerName": "Nazwa gracza",
+   "search": "Szukaj",
+   "noGames": "Nie znaleziono partii",
+   "bookError": "Nie udało się pobrać książki debiutowej",
+   "playerError": "Nie udało się pobrać partii gracza"
+ },
+ "boardEditor": {
+   "title": "Edytor pozycji",
+   "hint": "Wybierz figurę jako pędzel, a potem kliknij pole na szachownicy.",
+   "cancel": "Anuluj",
+   "apply": "Zastosuj i zamknij"
+ },
+ "board": {
+   "resize": "Przeciągnij, aby zmienić rozmiar szachownicy (dwuklik — domyślny)",
+   "resizeLabel": "Rozmiar szachownicy"
+ },
+ "analysisTree": {
+   "makeMainline": "Ustaw jako główny wariant",
+   "promote": "Podnieś wariant",
+   "exitVariation": "Poziom wyżej (wyjdź z wariantu)",
+   "deleteBranch": "Usuń gałąź od tego ruchu",
+   "glyphs": "Ocena ruchu",
+   "glyph": {
+     "good": "Dobry ruch",
+     "brilliant": "Znakomity ruch",
+     "interesting": "Ciekawy ruch",
+     "dubious": "Wątpliwy ruch",
+     "mistake": "Błąd",
+     "blunder": "Podstawka"
+   }
+ },
+ "chat": {
+   "title": "Wiadomości",
+   "openWithUnread": "Wiadomości (nieprzeczytane: {{count}})",
+   "askCoach": "Zapytaj trenera",
+   "messageStudent": "Napisz do ucznia",
+   "back": "Wróć do rozmów",
+   "emptyTitle": "Brak rozmów",
+   "emptyHint": "Możesz pisać do trenera (lub swoich uczniów) po zapisaniu się na kurs.",
+   "firstMessageHint": "Przywitaj się — wiadomości widzicie tylko wy dwoje.",
+   "loadOlder": "Wczytaj wcześniejsze wiadomości",
+   "noMessagesYet": "Brak wiadomości",
+   "offline": "Łączenie…",
+   "online": "Połączono",
+   "pickRecipient": "Kogo chcesz zapytać?",
+   "placeholder": "Napisz wiadomość…",
+   "relation": {
+     "coach": "Twój trener",
+     "student": "Twój uczeń"
+   },
+   "retry": "Nie wysłano — dotknij, aby ponowić",
+   "send": "Wyślij",
+   "startConversation": "Rozpocznij rozmowę",
+   "status": {
+     "pending": "Wysyłanie",
+     "read": "Przeczytano",
+     "sent": "Wysłano"
+   },
+   "today": "Dzisiaj",
+   "yesterday": "Wczoraj",
+   "typing": "{{name}} pisze…",
+   "unknownUser": "Użytkownik",
+   "you": "Ty",
+   "context": {
+     "puzzle": "Zadanie",
+     "homework": "Praca domowa",
+     "book": "Książka"
+   }
+ },
+ "coachesPage": {
+   "defaultHeadline": "Trener szachowy",
+   "platformRating": "Ocena na platformie",
+   "ratingKind": {
+     "standard": "Klasyczne",
+     "rapid": "Szybkie",
+     "blitz": "Błyskawiczne"
+   },
+   "thisIsYou": "To Twój profil",
+   "requestSent": "Zgłoszenie wysłane — czeka na odpowiedź",
+   "yourCoach": "Twój trener",
+   "reviews": "Opinie: {{count}}",
+   "fideProfile": "Profil FIDE",
+   "noBio": "Trener nie dodał jeszcze opisu.",
+   "specializations": "Specjalizacje",
+   "loginToRequest": "Zaloguj się, aby wysłać zgłoszenie do trenera.",
+   "requestSentLong": "Zgłoszenie wysłane. {{name}} wkrótce odpowie — otrzymasz powiadomienie.",
+   "alreadyYourCoach": "Już trenujesz z tym trenerem.",
+   "requestTitle": "Trenuj z: {{name}}",
+   "goalsPlaceholder": "np. 1800 do lata, lepsze końcówki",
+   "errors": {
+     "requestPending": "Zgłoszenie do tego trenera już zostało wysłane — poczekaj na odpowiedź.",
+     "alreadyStudent": "Już trenujesz z tym trenerem.",
+     "selfRequest": "Nie możesz wysłać zgłoszenia do siebie.",
+     "coachNotFound": "Ten trener nie jest już dostępny."
+   },
+   "myProfile": "Mój profil trenera",
+   "profileLoadError": "Nie udało się wczytać profilu trenera.",
+   "notVerified": "Twój profil czeka na weryfikację przez administratora i nie jest jeszcze widoczny w katalogu.",
+   "createProfileHint": "Uzupełnij profil — uczniowie zobaczą go w katalogu po weryfikacji.",
+   "headline": "Nagłówek",
+   "headlinePlaceholder": "np. trener FIDE, specjalista od końcówek",
+   "specializationsHelp": "Po przecinku: debiuty, końcówki, taktyka",
+   "fideTitle": "Tytuł FIDE",
+   "noTitle": "Bez tytułu",
+   "urlInvalid": "Podaj link zaczynający się od https://",
+   "retry": "Ponów",
+   "found": "Znaleziono: {{count}}",
+   "nothingFound": "Brak trenerów pasujących do wyszukiwania",
+   "empty": "Brak trenerów",
+   "loadMore": "Pokaż więcej"
+ },
+ "play": {
+   "over": {
+     "aborted": "Partia przerwana",
+     "draw": "Remis",
+     "youWon": "Wygrałeś!",
+     "youLost": "Przegrałeś",
+     "winner": "Wygrywa {{name}}"
+   },
+   "reason": {
+     "checkmate": "przez mata",
+     "timeout": "na czas",
+     "resignation": "przez poddanie",
+     "draw_agreement": "za zgodą",
+     "stalemate": "pat",
+     "insufficient_material": "niewystarczający materiał",
+     "threefold_repetition": "trzykrotne powtórzenie",
+     "fifty_moves": "reguła 50 ruchów",
+     "aborted": "partia przerwana"
+   },
+   "speed": {
+     "bullet": "Bullet",
+     "blitz": "Blitz",
+     "rapid": "Szybkie",
+     "classical": "Klasyczne"
+   },
+   "casualNoRating": "Partia towarzyska — ranking bez zmian",
+   "acceptRematch": "Przyjmij rewanż",
+   "rematchSent": "Zaproponowano rewanż…",
+   "rematch": "Rewanż",
+   "analyze": "Analizuj ze Stockfishem",
+   "newGame": "Nowa partia",
+   "waitingOpponent": "Czekamy na przeciwnika…",
+   "you": "ty",
+   "loginRequired": "Zaloguj się, aby grać online.",
+   "toLobby": "Do lobby",
+   "rated": "Rankingowa",
+   "casual": "Towarzyska",
+   "waitingTitle": "Czekamy na przeciwnika",
+   "challengeTitle": "Wyzwanie",
+   "shareLink": "Wyślij ten link znajomemu — partia zacznie się, gdy przyjmie wyzwanie.",
+   "linkCopied": "Link skopiowany",
+   "copyLink": "Kopiuj",
+   "cancelChallenge": "Anuluj wyzwanie",
+   "acceptChallenge": "Przyjmij wyzwanie",
+   "challengeFrom": "{{name}} wyzywa cię na partię",
+   "noMovesYet": "Brak ruchów",
+   "accept": "Przyjmij",
+   "decline": "Odrzuć",
+   "drawOffered": "Przeciwnik proponuje remis",
+   "backToGame": "Wróć do partii",
+   "abort": "Przerwij",
+   "drawSent": "Zaproponowano remis",
+   "offerDraw": "Zaproponuj remis",
+   "confirmResign": "Poddać się?",
+   "resign": "Poddaj się",
+   "result": "Wynik",
+   "flip": "Obróć szachownicę",
+   "soundOn": "Włącz dźwięk",
+   "soundOff": "Wyłącz dźwięk",
+   "sound": "Dźwięk",
+   "reconnecting": "Utracono połączenie — łączenie…",
+   "title": "Partia online",
+   "lobbyTitle": "Graj online",
+   "lobbySubtitle": "Szybkie parowanie, otwarte wyzwania i partie ze znajomymi — ranking Glicko-2, jak na Lichess.",
+   "gamesCount": "Partie: {{count}}",
+   "continue": "Kontynuuj",
+   "activeGame": "Masz trwającą partię ({{tc}})",
+   "quickPairing": "Szybkie parowanie",
+   "ratingRange": "Ranking przeciwnika",
+   "anyRating": "Dowolny",
+   "searching": "Szukam…",
+   "searchingFor": "Szukam przeciwnika {{tc}}…",
+   "cancel": "Anuluj",
+   "connecting": "Łączenie z serwerem gry…",
+   "customGame": "Własne ustawienia",
+   "openChallenges": "Otwarte wyzwania",
+   "noChallenges": "Brak otwartych wyzwań — utwórz własne lub użyj szybkiego parowania.",
+   "myChallenges": "Moje wyzwania",
+   "byLink": "Przez link",
+   "inLobby": "W lobby",
+   "open": "Otwórz",
+   "minutesPerSide": "Minuty na zawodnika",
+   "incrementSeconds": "Dodatek w sekundach",
+   "modeFriend": "Link dla znajomego",
+   "modeLobby": "Otwarte wyzwanie",
+   "modePairing": "Szybkie parowanie",
+   "color": "Kolor",
+   "white": "Białe",
+   "random": "Losowo",
+   "black": "Czarne",
+   "createLink": "Utwórz link",
+   "createChallenge": "Utwórz wyzwanie",
+   "findOpponent": "Znajdź przeciwnika",
+   "errors": {
+     "ILLEGAL_MOVE": "Niedozwolony ruch",
+     "NOT_YOUR_TURN": "To nie twój ruch",
+     "TIME_UP": "Czas minął",
+     "STALE_POSITION": "Pozycja się zmieniła — szachownica została odświeżona",
+     "GAME_NOT_FOUND": "Nie znaleziono partii",
+     "GAME_NOT_ACTIVE": "Partia się zakończyła",
+     "NOT_A_PLAYER": "Oglądasz tę partię",
+     "DRAW_NOT_ALLOWED": "Remis można zaproponować po pierwszych ruchach",
+     "NO_DRAW_OFFER": "Brak propozycji remisu",
+     "ABORT_NOT_ALLOWED": "Partii nie można już przerwać",
+     "CHALLENGE_TAKEN": "To wyzwanie zostało już przyjęte",
+     "OWN_CHALLENGE": "Nie możesz przyjąć własnego wyzwania",
+     "CHALLENGE_EXPIRED": "Wyzwanie wygasło",
+     "RATING_OUT_OF_RANGE": "Twój ranking jest poza zakresem wyzwania",
+     "TOO_MANY_CHALLENGES": "Masz zbyt wiele otwartych wyzwań",
+     "INVALID_TIME_CONTROL": "Wybierz 1–180 minut i 0–60 sekund dodatku",
+     "GAME_NOT_FINISHED": "Rewanż jest dostępny po partii",
+     "PAIRING_FAILED": "Parowanie nie powiodło się, spróbuj ponownie",
+     "TIMEOUT": "Serwer nie odpowiada",
+     "UNKNOWN": "Coś poszło nie tak"
+   }
+ }
 }

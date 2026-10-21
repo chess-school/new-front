@@ -1,27 +1,33 @@
-$primary-color: #4a6aff;
-$secondary-color: #6c757d;
-$background-color: #f5f5f5;
-$text-color: #333333;
-$color-gold: #ffd700;
-$color-gold-hover: #e5c100;
+// Палитра — та же, что в src/theme/tokens.ts (тёмная графитовая, янтарный акцент)
+$primary-color: #e3b341;
+$secondary-color: #8b949e;
+$background-color: #0d1117;
+$text-color: #f0f6fc;
+$color-gold: #e3b341;
+$color-gold-hover: #f0c453;
+$color-emerald: #3fb950;
+$color-red: #f85149;
 
-$color-dark-primary: #1a1a1a;
-$color-dark-secondary: #2a2a2a;
-$color-dark-form-bg: #242424;
-$color-dark-border: #444444;
+$color-dark-primary: #0d1117;
+$color-dark-secondary: #161b22;
+$color-dark-form-bg: #1c2128;
+$color-dark-border: rgba(255, 255, 255, 0.12);
 
-$color-text-primary-dark-theme: #ffffff;
-$color-text-secondary-dark-theme: #bbbbbb;
+$color-text-primary-dark-theme: #f0f6fc;
+$color-text-secondary-dark-theme: #8b949e;
+
+$radius-card: 12px;
+$border-subtle: 1px solid rgba(255, 255, 255, 0.08);
 
 $spacing-xl: 3.75rem;
 $spacing-l: 2.5rem;
 $spacing-m: 1.5rem;
 $spacing-s: 1.25rem;
-$gray-light: #e0e0e0;
-$gray-medium: #a0a0a0;
-$gray-dark: #505050;
+$gray-light: #c9d1d9;
+$gray-medium: #8b949e;
+$gray-dark: #30363d;
 
-$font-family-base: 'Roboto', sans-serif;
+$font-family-base: 'Inter', 'Roboto', system-ui, sans-serif;
 $font-size-small: 0.875rem;
 $font-size-medium: 1rem;
 $font-size-large: 1.5rem;

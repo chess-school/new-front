@@ -29,10 +29,8 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'light', 
   const statusKey = event.status as keyof typeof statusStyles;
   const style = statusStyles[statusKey] || statusStyles.scheduled;
 
-  // Определяем стили в зависимости от варианта
-  const paperStyles = variant === 'dark'
-    ? { bgcolor: '#2a2a2a', color: 'white' }
-    : { bgcolor: 'white', color: 'black' };
+  // Оба варианта тёмные: 'dark' — на карточке (чуть светлее фона), 'light' — на фоне страницы
+  const paperStyles = variant === 'dark' ? { bgcolor: 'surface.raised' } : { bgcolor: 'background.paper' };
 
   return (
     <Paper 
@@ -43,17 +41,17 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'light', 
         borderRadius: 2,
         cursor: onSelect ? 'pointer' : 'default',
         transition: 'box-shadow 0.3s, transform 0.2s',
-        '&:hover': onSelect ? { boxShadow: 6, transform: 'translateY(-2px)' } : {},
+        '&:hover': onSelect ? { borderColor: 'rgba(227,179,65,0.35)', transform: 'translateY(-2px)' } : {},
       }}
     >
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-        <Typography variant="h6" fontWeight={500} noWrap>{event.title}</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1, mb: 1, minWidth: 0 }}>
+        <Typography variant="h6" fontWeight={600} noWrap sx={{ minWidth: 0 }}>{event.title}</Typography>
         <Chip icon={style.icon} label={t(style.labelKey)} color={style.color} size="small"/>
       </Box>
-      <Typography variant="body2" color={variant === 'dark' ? 'grey.400' : 'text.secondary'}>
+      <Typography variant="body2" color="text.secondary">
         {moment(event.date).format('MMMM Do, YYYY [at] HH:mm')}
       </Typography>
-      {event.description && <Typography variant="body2" sx={{ mt: 1, color: variant === 'dark' ? 'grey.500' : 'text.secondary' }}>{event.description}</Typography>}
+      {event.description && <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>{event.description}</Typography>}
     </Paper>
   );
 };

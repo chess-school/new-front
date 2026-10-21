@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
-  Container,
   Grid,
   Paper,
   Typography,
@@ -14,56 +14,59 @@ import {
   Divider,
   Tabs,
   Tab,
-  Link,
+  Alert,
+  Chip,
+  MenuItem,
 } from '@mui/material';
 import { notification } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import { fetchRequests, handleRequest } from '@/api/requests';
-import { getHomeworksForReview, reviewHomework, getHomeworkScreenshot } from '@/api/homework';
+import { CoachRequestDto, decideCoachRequest, getCoachRequests } from '@/api/coaches';
+import { CoachCourse, getCatalogCourses, getMyCourses } from '@/api/students';
+import { getSubmissionsForReview, reviewSubmission } from '@/api/homework';
+import { AttachmentImage } from '@/components/Homework/AttachmentImage';
+import { SubmissionForReview } from '@/types/Homework';
+import { PageContainer, PageHeader } from '@/shared/components/ui/PageHeader';
+import { AskInChatButton } from '@/features/Chat';
 
-interface Request {
-  _id: string;
-  student: { _id: string; firstName: string; lastName: string; email: string; };
-  experience?: string;
-  goals?: string;
-  createdAt: string;
-  status: 'pending' | 'approved' | 'rejected';
-}
-
-interface Homework {
-  _id: string;
-  student: { _id: string; firstName: string; lastName: string; };
-  schedule: { title: string; };
-  text?: string;
-  hasScreenshot?: boolean;
-  submittedAt: string;
-  status: 'pending' | 'approved' | 'rejected';
-}
-
+// Заявки учеников со страницы «Тренеры» и сдачи ДЗ — API v2
+// (/api/v2/coaches/me/requests, /api/v2/submissions)
+type Request = CoachRequestDto;
+type Homework = SubmissionForReview;
 type InboxItem = Request | Homework;
 type ViewType = 'requests' | 'homework';
 
-const isRequest = (item: InboxItem): item is Request => 'createdAt' in item;
+// Различаем по форме объекта: у сдачи ДЗ есть assignment, у заявки — нет
+const isRequest = (item: InboxItem): item is Request => !('assignment' in item);
+const homeworkTitle = (item: Homework) => item.assignment?.schedule?.title || item.assignment?.title;
 
 export const InboxPage: React.FC = () => {
   const { t } = useTranslation();
-  const [view, setView] = useState<ViewType>('requests');
+  // На телефоне детали — под списком: после выбора прокручиваем к ним
+  const detailsRef = useRef<HTMLDivElement | null>(null);
+  // ?tab=homework — пункт меню «Проверка работ»
+  const [searchParams] = useSearchParams();
+  const [view, setView] = useState<ViewType>(searchParams.get('tab') === 'homework' ? 'homework' : 'requests');
+  useEffect(() => {
+    setView(searchParams.get('tab') === 'homework' ? 'homework' : 'requests');
+  }, [searchParams]);
   const [items, setItems] = useState<InboxItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<InboxItem | null>(null);
+  useEffect(() => {
+    if (!selectedItem || typeof window.matchMedia !== 'function') return;
+    if (window.matchMedia('(max-width: 899px)').matches) detailsRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
+  }, [selectedItem]);
   const [isLoading, setIsLoading] = useState(true);
   const [reviewComment, setReviewComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null);
-  const [isLoadingScreenshot, setIsLoadingScreenshot] = useState(false);
 
   const fetchData = useCallback(async (currentView: ViewType) => {
     setIsLoading(true);
     setSelectedItem(null);
     try {
       const data = currentView === 'requests'
-        ? await fetchRequests()
-        : await getHomeworksForReview();
+        ? await getCoachRequests()
+        : await getSubmissionsForReview('submitted');
       setItems(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error(`Error loading ${currentView}:`, error); // Console log for developers can remain in English
@@ -81,44 +84,34 @@ export const InboxPage: React.FC = () => {
   }, [view, fetchData]);
 
   useEffect(() => {
-    let objectUrl: string | null = null;
-  
-    const fetchScreenshot = async () => {
-      if (!selectedItem || isRequest(selectedItem) || !selectedItem.hasScreenshot) {
-        setScreenshotUrl(null);
-        return;
-      }
-      setIsLoadingScreenshot(true);
-      try {
-        const screenshotBlob = await getHomeworkScreenshot(selectedItem._id);
-        objectUrl = URL.createObjectURL(screenshotBlob);
-        setScreenshotUrl(objectUrl);
-      } catch (error) {
-        console.error("Screenshot load error:", error);
-        notification.error({
-          message: t('inbox.errors.loadScreenshotFailed'),
-          description: undefined
-        });
-      } finally {
-        setIsLoadingScreenshot(false);
-      }
-    };
-  
-    fetchScreenshot();
     setReviewComment('');
+  }, [selectedItem]);
   
-    return () => {
-      if (objectUrl) {
-        URL.revokeObjectURL(objectUrl);
-      }
-    };
-  }, [selectedItem, t]);
-  
+  // Одобрение = запись ученика на курс тренера: курсы подгружаются, когда выбрана заявка
+  const [courses, setCourses] = useState<CoachCourse[] | null>(null);
+  const [courseId, setCourseId] = useState('');
+  const [requestError, setRequestError] = useState<string | null>(null);
+  const pendingRequestSelected = !!selectedItem && isRequest(selectedItem) && selectedItem.status === 'pending';
+  useEffect(() => {
+    setRequestError(null);
+    if (!pendingRequestSelected || courses) return;
+    // Админ без профиля тренера записывает на курс из каталога
+    getMyCourses().catch(() => getCatalogCourses())
+      .then((list) => {
+        const usable = list.filter((c) => c.status !== 'archived');
+        setCourses(usable);
+        if (usable.length === 1) setCourseId(usable[0]._id);
+      })
+      .catch(() => setCourses([]));
+  }, [pendingRequestSelected, courses]);
+
   const handleRequestAction = async (action: 'approved' | 'rejected') => {
     if (!selectedItem || !isRequest(selectedItem)) return;
+    if (action === 'approved' && !courseId) return;
     setIsSubmitting(true);
+    setRequestError(null);
     try {
-      await handleRequest(selectedItem._id, action);
+      await decideCoachRequest(selectedItem._id, action === 'approved' ? { status: 'approved', courseId } : { status: 'rejected' });
       notification.success({
         message: t('inbox.success.requestHandled', {
           action: t(action === 'approved' ? 'inbox.success.actions.approved' : 'inbox.success.actions.rejected')
@@ -127,21 +120,24 @@ export const InboxPage: React.FC = () => {
       });
       await fetchData('requests');
     } catch (error) {
-      console.error('Error handling request:', error);
-      notification.error({
-        message: t('inbox.errors.handleRequestFailed'),
-        description: undefined
-      });
+      // Понятная причина от сервера: уже записан на курс, заявка уже решена и т. п.
+      const msg = (error as { response?: { data?: { msg?: string } } })?.response?.data?.msg;
+      setRequestError(msg || t('inbox.errors.handleRequestFailed'));
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleHomeworkAction = async (action: 'approved' | 'rejected') => {
+  const handleHomeworkAction = async (action: 'approved' | 'needs_revision') => {
     if (!selectedItem || isRequest(selectedItem)) return;
+    // На доработку без объяснения отправить нельзя (бэкенд тоже требует комментарий)
+    if (action === 'needs_revision' && !reviewComment.trim()) {
+      notification.error({ message: t('inbox.errors.commentRequired'), description: undefined });
+      return;
+    }
     setIsSubmitting(true);
     try {
-      await reviewHomework(selectedItem._id, { status: action, comment: reviewComment });
+      await reviewSubmission(selectedItem._id, action, reviewComment.trim());
       notification.success({
         message: t('inbox.success.homeworkReviewed'),
         description: undefined
@@ -167,53 +163,64 @@ export const InboxPage: React.FC = () => {
     if (isRequest(selectedItem)) {
       return (
         <>
-          <Typography variant="h6">{selectedItem.student.firstName} {selectedItem.student.lastName}</Typography>
-          <Typography>{t('inbox.details.email')}: {selectedItem.student.email}</Typography>
+          <Box display="flex" alignItems="center" gap={1} flexWrap="wrap">
+            <Typography variant="h6">{selectedItem.student.firstName} {selectedItem.student.lastName}</Typography>
+            <Chip size="small" label={t(`inbox.requestStatus.${selectedItem.status}`, selectedItem.status)}
+              color={selectedItem.status === 'approved' ? 'success' : selectedItem.status === 'rejected' ? 'default' : 'primary'} variant="outlined" />
+          </Box>
+          {selectedItem.student.email && <Typography>{t('inbox.details.email')}: {selectedItem.student.email}</Typography>}
           <Typography>{t('inbox.details.sent')}: {new Date(selectedItem.createdAt).toLocaleString()}</Typography>
           <Divider sx={{ my: 2 }} />
-          <Typography><strong>{t('inbox.details.experience')}:</strong> {selectedItem.experience || t('inbox.details.notSpecified')}</Typography>
-          <Typography><strong>{t('inbox.details.goals')}:</strong> {selectedItem.goals || t('inbox.details.notSpecified')}</Typography>
-          <Box mt={3} display="flex" gap={2}>
-            <Button variant="contained" color="primary" onClick={() => handleRequestAction('approved')} disabled={isSubmitting || selectedItem.status !== 'pending'}>
-              {t('inbox.actions.approve')}
-            </Button>
-            <Button variant="contained" color="secondary" onClick={() => handleRequestAction('rejected')} disabled={isSubmitting || selectedItem.status !== 'pending'}>
-              {t('inbox.actions.reject')}
-            </Button>
-          </Box>
+          <Typography><strong>{t('inbox.details.experience')}:</strong> {selectedItem.experience ? t(`coaches.level${selectedItem.experience}`, selectedItem.experience) : t('inbox.details.notSpecified')}</Typography>
+          <Typography sx={{ whiteSpace: 'pre-wrap' }}><strong>{t('inbox.details.goals')}:</strong> {selectedItem.goals || t('inbox.details.notSpecified')}</Typography>
+          {selectedItem.status === 'pending' && (
+            <Box mt={3}>
+              {courses === null ? <CircularProgress size={20} /> : courses.length === 0 ? (
+                <Alert severity="info">{t('inbox.requests.noCourses', 'To accept a student, create a course first: approving a request enrolls the student into one of your courses.')}</Alert>
+              ) : (
+                <TextField select fullWidth size="small" label={t('inbox.requests.course', 'Enroll into course')} value={courseId} onChange={(e) => setCourseId(e.target.value)}>
+                  {courses.map((c) => <MenuItem key={c._id} value={c._id}>{c.title}</MenuItem>)}
+                </TextField>
+              )}
+              {requestError && <Alert severity="error" sx={{ mt: 2 }}>{requestError}</Alert>}
+              <Box mt={2} display="flex" gap={2} flexWrap="wrap">
+                <Button variant="contained" color="primary" onClick={() => handleRequestAction('approved')} disabled={isSubmitting || !courseId}>
+                  {t('inbox.actions.approve')}
+                </Button>
+                <Button variant="outlined" color="inherit" onClick={() => handleRequestAction('rejected')} disabled={isSubmitting}>
+                  {t('inbox.actions.reject')}
+                </Button>
+              </Box>
+            </Box>
+          )}
         </>
       );
     } else {
       return (
         <>
-          <Typography variant="h5" gutterBottom>{selectedItem.schedule?.title || t('inbox.list.untitled')}</Typography>
+          <Typography variant="h5" gutterBottom>{homeworkTitle(selectedItem) || t('inbox.list.untitled')}</Typography>
           <Typography variant="subtitle1" color="text.secondary" gutterBottom>
             {t('inbox.details.student')}: {selectedItem.student.firstName} {selectedItem.student.lastName}
+            {' · '}{new Date(selectedItem.submittedAt).toLocaleString()}
           </Typography>
+          {selectedItem.assignment?.description && (
+            <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'pre-wrap' }}>{selectedItem.assignment.description}</Typography>
+          )}
           <Divider sx={{ my: 2 }} />
-          {selectedItem.text && (
+          {selectedItem.contentText && (
             <Box mb={2}>
               <Typography variant="h6">{t('inbox.details.responseText')}:</Typography>
-              <Typography sx={{ whiteSpace: 'pre-wrap', p: 1, bgcolor: 'action.hover', borderRadius: 1 }}>{selectedItem.text}</Typography>
+              <Typography sx={{ whiteSpace: 'pre-wrap', p: 1, bgcolor: 'action.hover', borderRadius: 1 }}>{selectedItem.contentText}</Typography>
             </Box>
           )}
           
-          {selectedItem.hasScreenshot && (
+          {selectedItem.attachment && (
             <Box mb={2}>
               <Typography variant="h6">{t('inbox.details.screenshot')}:</Typography>
-              {isLoadingScreenshot && <Box sx={{display: 'flex', alignItems: 'center', my: 2}}><CircularProgress size={24} sx={{mr: 2}} /> {t('inbox.loading')}</Box>}
-              {screenshotUrl && !isLoadingScreenshot && (
-                <Link href={screenshotUrl} target="_blank" rel="noopener noreferrer">
-                  <img 
-                    src={screenshotUrl} 
-                    alt={t('inbox.details.screenshotAlt')}
-                    style={{ maxWidth: '100%', height: 'auto', borderRadius: '8px', border: '1px solid #ddd', display: 'block', cursor: 'pointer' }} 
-                  />
-                </Link>
-              )}
+              <AttachmentImage key={selectedItem._id} submissionId={selectedItem._id} version={selectedItem.submittedAt} />
             </Box>
           )}
-          
+
           <Divider sx={{ my: 2 }} />
           <Typography variant="h6">{t('inbox.details.feedback')}:</Typography>
           <TextField 
@@ -226,13 +233,19 @@ export const InboxPage: React.FC = () => {
             margin="normal" 
             disabled={isSubmitting}
           />
-          <Box mt={2} display="flex" gap={2}>
+          <Box mt={2} display="flex" gap={2} flexWrap="wrap">
             <Button variant="contained" color="success" onClick={() => handleHomeworkAction('approved')} disabled={isSubmitting}>
               {t('inbox.actions.approve')}
             </Button>
-            <Button variant="contained" color="error" onClick={() => handleHomeworkAction('rejected')} disabled={isSubmitting}>
+            <Button variant="contained" color="error" onClick={() => handleHomeworkAction('needs_revision')} disabled={isSubmitting}>
               {t('inbox.actions.sendForRevision')}
             </Button>
+            {/* Обсудить работу с учеником в чате — диалог с темой задания */}
+            <AskInChatButton
+              withUserId={selectedItem.student._id}
+              context={{ kind: 'homework', refId: selectedItem.assignment?._id ?? selectedItem._id, title: homeworkTitle(selectedItem) || undefined }}
+              label={t('chat.messageStudent', 'Message the student')}
+            />
           </Box>
         </>
       );
@@ -240,25 +253,25 @@ export const InboxPage: React.FC = () => {
   };
 
   return (
-    <Container sx={{ py: 4 }}>
-      <Typography variant="h4" gutterBottom>{t('inbox.title')}</Typography>
+    <PageContainer>
+      <PageHeader title={t('inbox.title')} />
 
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
-        <Tabs value={view} onChange={(_e, newValue) => setView(newValue)} aria-label="inbox tabs">
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2.5 }}>
+        <Tabs value={view} onChange={(_e, newValue) => setView(newValue)} aria-label="inbox tabs" variant="scrollable" allowScrollButtonsMobile>
           <Tab label={t('inbox.tabs.requests')} value="requests" />
           <Tab label={t('inbox.tabs.homework')} value="homework" />
         </Tabs>
       </Box>
 
-      <Grid container spacing={3}>
+      <Grid container spacing={2.5}>
         <Grid item xs={12} md={4}>
-          <Paper style={{ maxHeight: '80vh', overflow: 'auto' }}>
+          <Paper sx={{ maxHeight: { xs: '45vh', md: 'calc(100dvh - 260px)' }, overflow: 'auto' }}>
             {isLoading ? (
                 <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}><CircularProgress /></Box>
             ) : (
-              <List component="nav">
+              <List component="nav" sx={{ p: 1 }}>
                 {items.length > 0 ? items.map((item) => (
-                  <ListItemButton key={item._id} selected={selectedItem?._id === item._id} onClick={() => setSelectedItem(item)}>
+                  <ListItemButton key={item._id} selected={selectedItem?._id === item._id} onClick={() => setSelectedItem(item)} sx={{ mb: 0.5 }}>
                     <ListItemText
                       primaryTypographyProps={{ style: { fontWeight: selectedItem?._id === item._id ? 'bold' : 'normal' } }}
 primary={
@@ -269,21 +282,21 @@ primary={
 secondary={
   isRequest(item) 
     ? t('inbox.list.requestSecondary', { date: new Date(item.createdAt).toLocaleDateString() }) 
-    : t('inbox.list.homeworkSecondary', { title: item.schedule?.title || t('inbox.list.untitled', 'Без темы') })
+    : t('inbox.list.homeworkSecondary', { title: homeworkTitle(item) || t('inbox.list.untitled', 'Без темы') })
 }
                     />
                   </ListItemButton>
-                )) : <Typography sx={{ p: 2, textAlign: 'center' }}>{t('inbox.empty')}</Typography>}
+                )) : <Typography color="text.secondary" sx={{ p: 3, textAlign: 'center' }}>{t('inbox.empty')}</Typography>}
               </List>
             )}
           </Paper>
         </Grid>
         <Grid item xs={12} md={8}>
-          <Paper style={{ padding: 24, minHeight: '50vh', display: 'flex', flexDirection: 'column' }}>
+          <Paper ref={detailsRef} sx={{ p: { xs: 2, sm: 3 }, minHeight: { xs: 200, md: '50vh' }, display: 'flex', flexDirection: 'column', scrollMarginTop: 72 }}>
             {renderItemDetails()}
           </Paper>
         </Grid>
       </Grid>
-    </Container>
+    </PageContainer>
   );
 };

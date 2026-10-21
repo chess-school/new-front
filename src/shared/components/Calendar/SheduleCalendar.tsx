@@ -3,48 +3,46 @@ import React from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { ScheduleEvent } from '@/types/SheduleEvent';
+import './calendar-dark.scss';
+import { Lesson, LessonStatus } from '@/api/lessons';
 
 const localizer = momentLocalizer(moment);
+const DEFAULT_DURATION = 60;
+
+const statusColors: Record<LessonStatus, string> = {
+  scheduled: '#2f6fbf',
+  completed: '#2ea043',
+  cancelled: '#484f58',
+  missed: '#da3633',
+};
 
 interface ScheduleCalendarProps {
-  events: ScheduleEvent[];
-  onSelectEvent: (event: ScheduleEvent) => void;
+  lessons: Lesson[];
+  onSelectLesson: (lesson: Lesson) => void;
 }
 
-const eventColors: Record<ScheduleEvent['type'], string> = {
-  individual_lesson: '#1976D2',
-  group_lesson: '#388E3C',
-  homework: '#F57C00',
-  opening_study: '#8E24AA',
-  tournament_participation: '#D32F2F',
-};
+type CalendarItem = { lesson: Lesson; title: string; start: Date; end: Date };
 
-const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({ events, onSelectEvent }) => {
-  return (
-    <Calendar
-      localizer={localizer}
-      events={events.map(event => ({
-        ...event,
-        start: new Date(event.date),
-        end: new Date(event.date),
-        title: event.title,
-        color: eventColors[event.type] || '#000'
-      }))}
-      startAccessor="start"
-      endAccessor="end"
-      views={['month', 'week', 'day']}
-      popup
-      onSelectEvent={onSelectEvent}
-      style={{ height: 500 }}
-      eventPropGetter={(event) => ({
-        style: {
-          backgroundColor: eventColors[event.type] || '#000',
-          color: 'white'
-        }
-      })}
-    />
-  );
-};
+/** Календарь занятий (API v2): цвет — по статусу занятия, длина — по длительности */
+const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({ lessons, onSelectLesson }) => (
+  <Calendar<CalendarItem>
+    localizer={localizer}
+    events={lessons.map((lesson) => ({
+      lesson,
+      title: lesson.title,
+      start: new Date(lesson.date),
+      end: moment(lesson.date).add(lesson.durationMinutes || DEFAULT_DURATION, 'minutes').toDate(),
+    }))}
+    startAccessor="start"
+    endAccessor="end"
+    views={['month', 'week', 'day']}
+    popup
+    onSelectEvent={(item) => onSelectLesson(item.lesson)}
+    style={{ height: 'clamp(420px, 70vh, 640px)' }}
+    eventPropGetter={(item) => ({
+      style: { backgroundColor: statusColors[item.lesson.status] || statusColors.scheduled, color: '#f0f6fc' },
+    })}
+  />
+);
 
 export default ScheduleCalendar;

@@ -18,7 +18,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, coach, schedule, loa
 
   if (!isStudentView) {
     return (
-      <Typography sx={{ color: 'grey.500', textAlign: 'center', p: 4 }}>
+      <Typography color="text.secondary" sx={{ textAlign: 'center', p: 4 }}>
         This is your public coach/admin dashboard. More widgets coming soon.
       </Typography>
     );

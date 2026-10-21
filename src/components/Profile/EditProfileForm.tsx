@@ -68,11 +68,12 @@ export const EditProfileForm: React.FC<EditProfileProps> = ({ user, onClose, ref
       });
       onClose(); // Закрываем модальное окно
 
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
+      const err = error as { response?: { data?: { msg?: string } }; message?: string };
       notification.error({
         message: t('profile_edit.updateFailed', 'Update failed'),
-        description: error.response?.data?.msg || error.message
+        description: err.response?.data?.msg || err.message
       });
     } finally {
         setIsSubmitting(false);

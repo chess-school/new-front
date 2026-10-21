@@ -11,7 +11,7 @@ interface PageTitleProps {
   resetMargin?: boolean;
   relative?: 'route' | 'path';
   inline?: boolean;
-  state?: any;
+  state?: unknown;
 }
 
 const PageTitle: React.FC<PageTitleProps> = ({
