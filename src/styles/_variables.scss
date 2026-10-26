@@ -1,20 +1,21 @@
 // Палитра — та же, что в src/theme/tokens.ts (тёмная графитовая, янтарный акцент)
-$primary-color: #e3b341;
-$secondary-color: #8b949e;
-$background-color: #0d1117;
-$text-color: #f0f6fc;
-$color-gold: #e3b341;
-$color-gold-hover: #f0c453;
-$color-emerald: #3fb950;
-$color-red: #f85149;
+$primary-color: #8A2B2B;
+$secondary-color: #6B6457;
+$background-color: #F6F3EC;
+$text-color: #15120D;
+$color-gold: #8A2B2B;
+$color-gold-hover: #A33636;
+$color-emerald: #1F6F5C;
+$color-red: #C0392B;
 
-$color-dark-primary: #0d1117;
-$color-dark-secondary: #161b22;
-$color-dark-form-bg: #1c2128;
-$color-dark-border: rgba(255, 255, 255, 0.12);
+// Имена «dark-*» исторические — теперь это светлые значения Ivory & Ink
+$color-dark-primary: #F6F3EC;
+$color-dark-secondary: #FFFFFF;
+$color-dark-form-bg: #FBFAF5;
+$color-dark-border: rgba(21, 18, 13, 0.14);
 
-$color-text-primary-dark-theme: #f0f6fc;
-$color-text-secondary-dark-theme: #8b949e;
+$color-text-primary-dark-theme: #15120D;
+$color-text-secondary-dark-theme: #6B6457;
 
 $radius-card: 12px;
 $border-subtle: 1px solid rgba(255, 255, 255, 0.08);
@@ -27,7 +28,8 @@ $gray-light: #c9d1d9;
 $gray-medium: #8b949e;
 $gray-dark: #30363d;
 
-$font-family-base: 'Inter', 'Roboto', system-ui, sans-serif;
+$font-family-base: 'Plus Jakarta Sans', 'Inter', 'Roboto', system-ui, sans-serif;
+$font-family-display: 'Syne', 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
 $font-size-small: 0.875rem;
 $font-size-medium: 1rem;
 $font-size-large: 1.5rem;

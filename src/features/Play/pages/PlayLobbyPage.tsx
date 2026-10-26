@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Alert, Box, Button, ButtonBase, Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel,
   MenuItem, Paper, Slider, Stack, Switch, TextField, ToggleButton, ToggleButtonGroup, Typography,
@@ -27,8 +27,16 @@ export const PlayLobbyPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { socket, connected } = usePlaySocket();
-  const [rated, setRated] = useState(true);
-  const [range, setRange] = useState<number | null>(null);
+  // Параметры подбора — в URL: ссылку на «казуальный блиц ±200» можно скинуть, и перезагрузка их не сбросит
+  const [searchParams, setSearchParams] = useSearchParams();
+  const rated = searchParams.get('rated') !== 'false'; // по умолчанию рейтинговая
+  const rangeRaw = Number(searchParams.get('range'));
+  const range: number | null = ([100, 200, 300, 500] as number[]).includes(rangeRaw) ? rangeRaw : null;
+  const patchParams = useCallback((mutate: (p: URLSearchParams) => void) => {
+    setSearchParams((prev) => { const p = new URLSearchParams(prev); mutate(p); return p; }, { replace: true });
+  }, [setSearchParams]);
+  const setRated = (value: boolean) => patchParams((p) => (value ? p.delete('rated') : p.set('rated', 'false')));
+  const setRange = (value: number | null) => patchParams((p) => (value == null ? p.delete('range') : p.set('range', String(value))));
   const [seeking, setSeeking] = useState<{ minutes: number; increment: number } | null>(null);
   const [overview, setOverview] = useState<PlayOverview | null>(null);
   const [challenges, setChallenges] = useState<Challenge[]>([]);

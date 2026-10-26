@@ -10,6 +10,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { CoachDto, CoachRequestStatus, ExperienceLevel, sendCoachRequest } from '@/api/coaches';
 import { tokens } from '@/theme/tokens';
+import { safeUrl } from '@/utils';
 import { apiErrorCode, fideTitle, fullName, initials, platformRating, requestErrorKey } from './coachUtils';
 
 const GOALS_MAX = 1000;
@@ -107,8 +108,8 @@ export const CoachProfileDialog: React.FC<CoachProfileDialogProps> = ({
                 {ratingCell(t('coachesPage.ratingKind.rapid', 'Rapid'), fide?.rapid)}
                 {ratingCell(t('coachesPage.ratingKind.blitz', 'Blitz'), fide?.blitz)}
               </Stack>
-              {coach.fideProfile?.profileUrl && (
-                <Link href={coach.fideProfile.profileUrl} target="_blank" rel="noopener noreferrer" variant="body2" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, mt: 1 }}>
+              {safeUrl(coach.fideProfile?.profileUrl) && (
+                <Link href={safeUrl(coach.fideProfile?.profileUrl)} target="_blank" rel="noopener noreferrer" variant="body2" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, mt: 1 }}>
                   {t('coachesPage.fideProfile', 'FIDE profile')} <OpenInNewRoundedIcon sx={{ fontSize: 14 }} />
                 </Link>
               )}

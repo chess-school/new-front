@@ -5,7 +5,7 @@
     "password_length": "Password must be at least 6 characters long",
     "name_invalid": "Please enter a valid name"
   },
- "puzzles": {
+  "puzzles": {
     "title": "Puzzle Trainer",
     "loading": "Loading puzzle...",
     "loadError": "Failed to load puzzle",
@@ -52,7 +52,7 @@
     "register": "Register",
     "logout": "Logout",
     "getStarted": "Get Started",
-    "chessSchool": "Chess School",
+    "chessSchool": "Mind Over Board",
     "home": "Home",
     "aboutUs": "About Us",
     "achievements": "Achievements",
@@ -73,7 +73,8 @@
       "training": "Training",
       "my": "My learning",
       "coach": "Coaching",
-      "school": "School"
+      "school": "School",
+      "admin": "Administration"
     },
     "books": "Books & courses",
     "puzzles": "Puzzles",
@@ -88,7 +89,10 @@
     "review": "Review work",
     "digitizer": "PDF digitizer",
     "courseBuilder": "Course builder",
-    "play": "Play online"
+    "play": "Play online",
+    "coachApplications": "Coach applications",
+    "myGames": "My games",
+    "blindfold": "Blindfold trainer"
   },
   "roles": {
     "admin": "Administrator",
@@ -109,7 +113,8 @@
     "placeholder": {
       "email": "Enter your email",
       "password": "Enter your password"
-    }
+    },
+    "cancel": "Cancel"
   },
   "homePage": {
     "hero": {
@@ -147,7 +152,7 @@
       "learnMore": "See Classes"
     },
     "footer": {
-      "name": "Chess School",
+      "name": "Mind Over Board",
       "desc": "An online platform for strategic growth.",
       "company": "Company",
       "about": "About Us",
@@ -159,7 +164,7 @@
       "legal": "Legal",
       "privacy": "Privacy",
       "terms": "Terms",
-      "copyright": "© {year} Chess School. All rights reserved."
+      "copyright": "© {year} Mind Over Board. All rights reserved."
     },
     "coaches": {
       "title": "Our Coaches",
@@ -177,7 +182,7 @@
     }
   },
   "aboutPage": {
-    "mainTitle": "MIND ON BOARD — YOUR MIND ON THE BOARD",
+    "mainTitle": "Mind Over Board",
     "phrases": [
       "Train your mind like a champion.",
       "Find strong moves — in life too.",
@@ -264,77 +269,77 @@
     },
     "finalSlogan": "MOB is the beginning. Chess is the tool. Victory is the side effect."
   },
-    "achievementsPage": {
-      "title": "Our Achievements",
-      "congratulations": "Congratulations to all our champions!",
-      "subtitle": "Tournament results and milestones of our students",
-      "comingSoon": "Coming soon",
-      "comingSoonDesc": "We are preparing a showcase of our students' achievements."
-    },
-    "studentsPage": {
-  "studentsListTitle": "Students List",
-  "firstName": "First Name",
-  "lastName": "Last Name",
-  "email": "Email",
-  "actions": "Actions",
-  "editSchedule": "Edit Schedule",
-  "delete": "Delete",
-  "studentDeletedSuccess": "Student successfully deleted",
-  "studentDeletedError": "Failed to delete student",
-  "fetchError": "Failed to load students.",
-  "noStudents": "You have no students yet. Enroll a registered user into one of your courses.",
-  "nothingFound": "No students match the filters.",
-  "retry": "Retry",
-  "student": "Student",
-  "enrollments": "Courses",
-  "course": "Course",
-  "group": "Group",
-  "noGroup": "No group",
-  "status": "Status",
-  "allStatuses": "All statuses",
-  "allCourses": "All courses",
-  "search": "Search by name or email",
-  "progress": "Course progress",
-  "paid": "Paid",
-  "rowsPerPage": "Rows per page:",
-  "noCourses": "You have no courses yet — create a course first.",
-  "enrollmentStatus": {
-    "pending_payment": "Awaiting payment",
-    "pending_approval": "Awaiting approval",
-    "active": "Active",
-    "completed": "Completed",
-    "cancelled": "Cancelled",
-    "refunded": "Refunded"
+  "achievementsPage": {
+    "title": "Our Achievements",
+    "congratulations": "Congratulations to all our champions!",
+    "subtitle": "Tournament results and milestones of our students",
+    "comingSoon": "Coming soon",
+    "comingSoonDesc": "We are preparing a showcase of our students' achievements."
   },
-  "enroll": {
-    "title": "Enroll student",
-    "email": "Student email",
-    "emailHelp": "The student must already be registered on the site",
-    "emailError": "Enter a valid email",
-    "required": "Required field",
-    "startDate": "Start date (optional)",
-    "submit": "Enroll",
-    "success": "Student enrolled"
+  "studentsPage": {
+    "studentsListTitle": "Students List",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "actions": "Actions",
+    "editSchedule": "Edit Schedule",
+    "delete": "Delete",
+    "studentDeletedSuccess": "Student successfully deleted",
+    "studentDeletedError": "Failed to delete student",
+    "fetchError": "Failed to load students.",
+    "noStudents": "You have no students yet. Enroll a registered user into one of your courses.",
+    "nothingFound": "No students match the filters.",
+    "retry": "Retry",
+    "student": "Student",
+    "enrollments": "Courses",
+    "course": "Course",
+    "group": "Group",
+    "noGroup": "No group",
+    "status": "Status",
+    "allStatuses": "All statuses",
+    "allCourses": "All courses",
+    "search": "Search by name or email",
+    "progress": "Course progress",
+    "paid": "Paid",
+    "rowsPerPage": "Rows per page:",
+    "noCourses": "You have no courses yet — create a course first.",
+    "enrollmentStatus": {
+      "pending_payment": "Awaiting payment",
+      "pending_approval": "Awaiting approval",
+      "active": "Active",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "refunded": "Refunded"
+    },
+    "enroll": {
+      "title": "Enroll student",
+      "email": "Student email",
+      "emailHelp": "The student must already be registered on the site",
+      "emailError": "Enter a valid email",
+      "required": "Required field",
+      "startDate": "Start date (optional)",
+      "submit": "Enroll",
+      "success": "Student enrolled"
+    },
+    "enrollment": {
+      "changeStatusTo": "Mark as: {{status}}",
+      "changeGroup": "Change group",
+      "remove": "Remove from course",
+      "removeTitle": "Remove enrollment?",
+      "removeText": "The student will be removed from the course \"{{course}}\" and from its group; upcoming private lessons for it are cancelled. A paid enrollment cannot be removed — mark it as cancelled instead.",
+      "updated": "Enrollment updated",
+      "removed": "Enrollment removed"
+    }
   },
-  "enrollment": {
-    "changeStatusTo": "Mark as: {{status}}",
-    "changeGroup": "Change group",
-    "remove": "Remove from course",
-    "removeTitle": "Remove enrollment?",
-    "removeText": "The student will be removed from the course \"{{course}}\" and from its group; upcoming private lessons for it are cancelled. A paid enrollment cannot be removed — mark it as cancelled instead.",
-    "updated": "Enrollment updated",
-    "removed": "Enrollment removed"
-  }
-},
-    "usersPage": {
-      "title": "User Management",
-      "userList": "List of all users",
-      "editUser": "Edit user information"
-    },
-    "errors": {
-      "login": "Invalid email or password"
-    },
-"auth": {
+  "usersPage": {
+    "title": "User Management",
+    "userList": "List of all users",
+    "editUser": "Edit user information"
+  },
+  "errors": {
+    "login": "Invalid email or password"
+  },
+  "auth": {
     "sign_in": "Sign In",
     "no_account": "Don't have an account?",
     "sign_up": "Sign up",
@@ -347,7 +352,7 @@
       "invalid_credentials": "The email or password you entered is incorrect."
     }
   },
-    "verifyEmail": {
+  "verifyEmail": {
     "pageTitle": "Verify Your Email",
     "greeting": "Dear {{firstName}} {{lastName}},",
     "sentTo": "We've sent a verification email to {{email}}. Please check your inbox and follow the link to activate your account.",
@@ -358,7 +363,17 @@
     "alreadyVerifiedSuccess": "Your email is already verified.",
     "resendError": "Failed to resend verification email. Please try again later.",
     "resendButton": "Resend Verification Email",
-    "backToRegister": "Back to Registration"
+    "backToRegister": "Back to Registration",
+    "verifying": "Verifying your email...",
+    "verifiedSuccess": "Your email has been verified! Redirecting to login...",
+    "verifyFailed": "This verification link is invalid or has expired.",
+    "goToLogin": "Go to Login",
+    "verifiedAndReadyToLogin": "Email verified. You can now log in.",
+    "instruction": "Click the link in the email to activate your account. This page updates automatically once it's done.",
+    "yourEmail": "your email",
+    "sending": "Sending...",
+    "didNotReceive": "Didn't receive the email? Check your spam folder or resend it.",
+    "resendErrorTooMany": "Too many requests. Please try again later."
   },
   "profile": {
     "title": "My Profile",
@@ -373,14 +388,33 @@
     "blitz": "Blitz",
     "rapid": "Rapid",
     "classic": "Classic",
-    "rating": "Rating",
+    "rating": {
+      "0": "R",
+      "1": "a",
+      "2": "t",
+      "3": "i",
+      "4": "n",
+      "5": "g",
+      "bullet": "Bullet",
+      "blitz": "Blitz",
+      "rapid": "Rapid",
+      "classical": "Classical"
+    },
     "games": "Games",
     "win": "Win",
     "draw": "Draw",
     "loss": "Loss",
     "otherTitle": "Viewing another user's profile",
     "otherNotImplemented": "This functionality is not yet implemented.",
-    "quickLinks": "Continue training"
+    "quickLinks": "Continue training",
+    "ratingsTitle": "Online ratings",
+    "accountInfo": "Account details",
+    "email": "Email",
+    "phone": "Phone",
+    "roles": "Roles",
+    "provisional": "Provisional · no rated games yet",
+    "gamesCount": "{{count}} rated games",
+    "rdHint": "Rating deviation — lower means a more reliable rating"
   },
   "coaches": {
     "title": "Our Coaches",
@@ -443,6 +477,10 @@
     "error": {
       "title": "Registration Failed",
       "description": "An error occurred. Please try again later."
+    },
+    "success": {
+      "title": "Registration Successful",
+      "description": "Please check your email to verify your account."
     }
   },
   "schedule": {
@@ -478,42 +516,42 @@
       "cancelled": "Cancelled",
       "missed": "Missed"
     },
-      "eventTypes": {
-        "individual_lesson": "Individual Lesson",
-        "group_lesson": "Group Lesson",
-        "homework": "Homework",
-        "opening_study": "Opening Study",
-        "tournament_participation": "Tournament"
-      }
+    "eventTypes": {
+      "individual_lesson": "Individual Lesson",
+      "group_lesson": "Group Lesson",
+      "homework": "Homework",
+      "opening_study": "Opening Study",
+      "tournament_participation": "Tournament"
+    }
   },
   "studentSchedule": {
-      "myScheduleTitle": "My Schedule",
-      "eventListTitle": "Event List",
-      "noEventsForDay": "No events to display.",
-      "showAllEvents": "Show all events",
-      "eventsForDate": "Events for {{date}}",
-      "eventDetails": "Event Details",
-      "sendHomeworkTitle": "Submit Homework",
-      "uploadScreenshot": "Upload Screenshot",
-      "send": "Send",
-      "form_link": "Link",
-      "form_description": "Description",
-      "homeworkSentSuccess": "Homework submitted successfully!",
-      "upcoming": "Upcoming lessons",
-      "noUpcoming": "No upcoming lessons.",
-      "duration": "{{minutes}} min",
-      "noHomework": "No homework for this lesson.",
-      "openHomework": "Open homework",
-      "hasHomework": "Homework",
-      "pageSubtitle": "Lessons with your coach and homework to hand in."
-    },
-    "status": {
-      "scheduled": "Scheduled",
-      "pending": "Pending Review",
-      "completed": "Completed",
-      "approved": "Approved",
-      "rejected": "For Revision"
-    },
+    "myScheduleTitle": "My Schedule",
+    "eventListTitle": "Event List",
+    "noEventsForDay": "No events to display.",
+    "showAllEvents": "Show all events",
+    "eventsForDate": "Events for {{date}}",
+    "eventDetails": "Event Details",
+    "sendHomeworkTitle": "Submit Homework",
+    "uploadScreenshot": "Upload Screenshot",
+    "send": "Send",
+    "form_link": "Link",
+    "form_description": "Description",
+    "homeworkSentSuccess": "Homework submitted successfully!",
+    "upcoming": "Upcoming lessons",
+    "noUpcoming": "No upcoming lessons.",
+    "duration": "{{minutes}} min",
+    "noHomework": "No homework for this lesson.",
+    "openHomework": "Open homework",
+    "hasHomework": "Homework",
+    "pageSubtitle": "Lessons with your coach and homework to hand in."
+  },
+  "status": {
+    "scheduled": "Scheduled",
+    "pending": "Pending Review",
+    "completed": "Completed",
+    "approved": "Approved",
+    "rejected": "For Revision"
+  },
   "chessGame": {
     "title": "Chess Analysis Board",
     "subtitle": "Analyze your games, explore variations, and find the best moves.",
@@ -557,65 +595,65 @@
     "copyPgnTree": "Copy PGN (variations, glyphs, comments)"
   },
   "inbox": {
-      "title": "Inbox",
-      "empty": "The list is empty",
-      "selectItemPrompt": "Select an item to view details",
-      "loading": "Loading...",
-      "tabs": {
-        "requests": "Requests",
-        "homework": "Homework"
-      },
-      "details": {
-        "email": "Email",
-        "sent": "Sent",
-        "experience": "Experience",
-        "goals": "Goals",
-        "notSpecified": "Not specified",
-        "student": "Student",
-        "responseText": "Response text",
-        "screenshot": "Screenshot",
-        "screenshotAlt": "Homework screenshot",
-        "feedback": "Your feedback",
-        "commentLabel": "Comment"
-      },
-      "list": {
-        "requestSecondary": "Request from {{date}}",
-        "homeworkSecondary": "HW: {{title}}"
-      },
+    "title": "Inbox",
+    "empty": "The list is empty",
+    "selectItemPrompt": "Select an item to view details",
+    "loading": "Loading...",
+    "tabs": {
+      "requests": "Requests",
+      "homework": "Homework"
+    },
+    "details": {
+      "email": "Email",
+      "sent": "Sent",
+      "experience": "Experience",
+      "goals": "Goals",
+      "notSpecified": "Not specified",
+      "student": "Student",
+      "responseText": "Response text",
+      "screenshot": "Screenshot",
+      "screenshotAlt": "Homework screenshot",
+      "feedback": "Your feedback",
+      "commentLabel": "Comment"
+    },
+    "list": {
+      "requestSecondary": "Request from {{date}}",
+      "homeworkSecondary": "HW: {{title}}"
+    },
+    "actions": {
+      "approve": "Approve",
+      "reject": "Reject",
+      "sendForRevision": "Send for revision"
+    },
+    "errors": {
+      "loadFailed": "Failed to load items",
+      "loadScreenshotFailed": "Failed to load screenshot",
+      "handleRequestFailed": "Error processing request",
+      "reviewHomeworkFailed": "Error reviewing homework",
+      "commentRequired": "Write a comment: what should the student fix?",
+      "fileTooLarge": "File size cannot exceed {{size}}MB.",
+      "emptyHomework": "Please add text or a screenshot before submitting.",
+      "fetchSchedule": "Failed to load schedule.",
+      "sendHomework": "Failed to submit homework."
+    },
+    "success": {
+      "requestHandled": "Request {{action}}",
+      "homeworkReviewed": "Homework reviewed",
       "actions": {
-        "approve": "Approve",
-        "reject": "Reject",
-        "sendForRevision": "Send for revision"
-      },
-      "errors": {
-        "loadFailed": "Failed to load items",
-        "loadScreenshotFailed": "Failed to load screenshot",
-        "handleRequestFailed": "Error processing request",
-        "reviewHomeworkFailed": "Error reviewing homework",
-        "commentRequired": "Write a comment: what should the student fix?",
-        "fileTooLarge": "File size cannot exceed {{size}}MB.",
-        "emptyHomework": "Please add text or a screenshot before submitting.",
-        "fetchSchedule": "Failed to load schedule.",
-        "sendHomework": "Failed to submit homework."
-      },
-      "success": {
-        "requestHandled": "Request {{action}}",
-        "homeworkReviewed": "Homework reviewed",
-        "actions": {
-          "approved": "approved",
-          "rejected": "rejected"
-        }
-      },
-      "requests": {
-        "noCourses": "To accept a student, create a course first: approving a request enrolls the student into one of your courses.",
-        "course": "Enroll into course"
-      },
-      "requestStatus": {
-        "pending": "Awaiting decision",
-        "approved": "Approved",
-        "rejected": "Declined"
+        "approved": "approved",
+        "rejected": "rejected"
       }
     },
+    "requests": {
+      "noCourses": "You have no courses yet — approving will enroll the student into your personal lessons. You can create a course later and move them if you like.",
+      "course": "Enroll into course"
+    },
+    "requestStatus": {
+      "pending": "Awaiting decision",
+      "approved": "Approved",
+      "rejected": "Declined"
+    }
+  },
   "digitizer": {
     "title": "Book Digitizer & Courses",
     "subtitle": "Upload a PDF chess book: positions are recognized automatically and turned into an interactive course.",
@@ -708,7 +746,9 @@
       "saved": "Exercise saved",
       "unsavedConfirm": "You have unsaved changes. Discard them?",
       "subtitle_one": "{{count}} exercise · edit positions, hints and solutions",
-      "subtitle_other": "{{count}} exercises · edit positions, hints and solutions"
+      "subtitle_other": "{{count}} exercises · edit positions, hints and solutions",
+      "tabEditor": "Editor",
+      "tabStats": "Statistics"
     },
     "solve": {
       "notFound": "Puzzle book not found or not published yet.",
@@ -724,7 +764,7 @@
       "hint": "Hint",
       "restart": "Restart",
       "next": "Next exercise",
-      "skip": "Skip exercise",
+      "skip": "Give up & show solution",
       "mistakes": "Mistakes: {{count}}",
       "showSolution": "Show solution",
       "analysisHint": "Analysis: step through the solution, try your own moves, turn on the engine for the evaluation bar and best-move arrows.",
@@ -732,8 +772,58 @@
       "tabs": {
         "exercise": "Exercise",
         "solution": "Solution",
-        "list": "List"
-      }
+        "list": "List",
+        "moves": "Moves"
+      },
+      "revealed": "Solution revealed — explore it below.",
+      "hintLocked": "Hint unlocks in {{minutes}} min or after {{mistakes}} mistakes (so far: {{current}}).",
+      "exerciseCounter": "Exercise {{current}} of {{total}}",
+      "makeFirstMove": "Make your move on the board.",
+      "back": "Back to books",
+      "flip": "Flip board",
+      "solvedTitle": "Solved!",
+      "cheerSolved": "Excellent! Puzzle solved 🎉",
+      "cheerWrong": "Not that move — try again.",
+      "yourMove": "Your move",
+      "keepGoing": "Correct — keep going!",
+      "findBestWhite": "Find the best move for White",
+      "findBestBlack": "Find the best move for Black",
+      "review": "Review",
+      "white": "White",
+      "black": "Black",
+      "yourRating": "Your rating",
+      "puzzleRatingNow": "Puzzle rating: {{rating}} ({{sign}}{{delta}})",
+      "puzzleRating": "Puzzle #{{number}} · Rating: {{rating}}"
+    },
+    "solveSettings": {
+      "title": "Solving rules",
+      "intro": "These rules apply to every student solving this set. Leave them as is to use the strict defaults.",
+      "hintsEnabled": "Allow hints",
+      "hintsEnabledHelp": "If off, students never get a hint button — they must find the move themselves.",
+      "unlockMinutes": "Unlock hint after, min",
+      "unlockMinutesHelp": "A hint becomes available once the student has spent this many minutes on the puzzle. 0 = available immediately.",
+      "unlockMistakes": "or after N mistakes",
+      "unlockMistakesHelp": "A hint also unlocks once the student makes this many wrong moves (whichever comes first).",
+      "allowShowSolution": "Allow \"give up & show solution\"",
+      "allowShowSolutionHelp": "If off, there is no way to reveal the answer — the student must solve it. If on, a discreet give-up button appears.",
+      "showPlayerNames": "Show player names",
+      "showPlayerNamesHelp": "Name plates above/below the board. Turn off if the names could hint at the answer (famous games)."
+    },
+    "visibility": {
+      "label": "Visibility",
+      "draft": "Draft",
+      "private": "Private",
+      "group": "Group",
+      "public": "Public",
+      "archived": "Archived"
+    },
+    "access": {
+      "manage": "Manage access",
+      "pickStudents": "Select students with access",
+      "pickGroups": "Select groups with access",
+      "search": "Search…",
+      "noStudents": "No students",
+      "noGroups": "No groups"
     }
   },
   "homework": {
@@ -771,7 +861,8 @@
     "fileTypeError": "Only images can be attached (PNG, JPEG, WebP, GIF).",
     "fileTooLarge": "The file is larger than {{size}} MB.",
     "attachmentError": "Could not load the screenshot.",
-    "screenshotAlt": "Homework screenshot"
+    "screenshotAlt": "Homework screenshot",
+    "puzzles": "Puzzles"
   },
   "engine": {
     "analysis": "Engine analysis",
@@ -794,7 +885,11 @@
     "forward": "Forward (→)",
     "end": "To end",
     "noMoves": "No moves yet — make a move on the board.",
-    "moves": "Moves"
+    "moves": "Moves",
+    "annotation": {
+      "hasComment": "Has a comment",
+      "startPosition": "Starting position"
+    }
   },
   "puzzleRun": {
     "reviewTitle": "Run review",
@@ -1051,6 +1146,339 @@
       "PAIRING_FAILED": "Pairing failed, try again",
       "TIMEOUT": "The server is not responding",
       "UNKNOWN": "Something went wrong"
+    },
+    "conn": {
+      "label": "Connection",
+      "offline": "No connection",
+      "measuring": "Measuring…",
+      "ms": "ms"
+    }
+  },
+  "coachApplication": {
+    "becomeCoach": "Become a coach",
+    "applyAgain": "Apply again",
+    "pending": "Application under review",
+    "pendingHint": "Your application to become a coach is under review. An administrator may contact you to clarify the details.",
+    "rejectedHint": "Your coach application was not approved.",
+    "adminNote": "Administrator note",
+    "title": "Apply to become a coach",
+    "hint": "An administrator will review your application and may message you to clarify the details. Once approved, you will be able to set up your coach page.",
+    "motivation": "Why do you want to become a coach?",
+    "motivationPlaceholder": "Tell us about yourself, your coaching style and what students can expect.",
+    "motivationRequired": "Please tell us why you want to become a coach.",
+    "experience": "Coaching & playing experience",
+    "experiencePlaceholder": "Years of experience, achievements, students you have trained…",
+    "contact": "Contact (phone / Telegram)",
+    "contactHelp": "Optional — how the administrator can reach you besides chat.",
+    "send": "Send application",
+    "submitted": "Your application has been sent for review.",
+    "submitFailed": "Failed to send your application. Please try again."
+  },
+  "coachApplicationsAdmin": {
+    "eyebrow": "Administration",
+    "title": "Coach applications",
+    "subtitle": "Review candidates, message them to clarify details, and approve or reject.",
+    "loadFailed": "Failed to load applications",
+    "empty": "No applications",
+    "selectPrompt": "Select an application to review",
+    "email": "Email",
+    "phone": "Phone",
+    "contact": "Contact",
+    "sent": "Sent",
+    "message": "Message candidate",
+    "note": "Note for the candidate (optional)",
+    "approve": "Approve",
+    "reject": "Reject",
+    "approved": "Application approved — the user is now a coach",
+    "rejected": "Application rejected",
+    "decideFailed": "Failed to process the application",
+    "filter": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "all": "All"
+    },
+    "status": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    }
+  },
+  "myGames": {
+    "title": "My games",
+    "subtitle": "Online games you have played on the site",
+    "playNew": "Play a game",
+    "retry": "Retry",
+    "loadFailed": "Failed to load your games",
+    "empty": "You have not played any games yet",
+    "vs": "vs",
+    "unknownOpponent": "Unknown",
+    "rated": "Rated",
+    "casual": "Casual",
+    "outcome": {
+      "win": "Win",
+      "loss": "Loss",
+      "draw": "Draw",
+      "aborted": "Aborted"
+    },
+    "color": {
+      "white": "White",
+      "black": "Black"
+    },
+    "endReason": {
+      "checkmate": "Checkmate",
+      "timeout": "Timeout",
+      "resignation": "Resignation",
+      "draw_agreement": "Draw agreed",
+      "stalemate": "Stalemate",
+      "insufficient_material": "Insufficient material",
+      "threefold_repetition": "Threefold repetition",
+      "fifty_moves": "Fifty-move rule",
+      "aborted": "Aborted"
+    }
+  },
+  "groupsPage": {
+    "eyebrow": "Coaching",
+    "title": "Groups",
+    "subtitle": "Create groups and enroll students in them — for group lessons and the interactive classroom.",
+    "createGroup": "Create group",
+    "createFirstGroup": "Create your first group",
+    "emptyGroups": "You have no groups yet.",
+    "memberCount_one": "{{count}} student",
+    "memberCount_other": "{{count}} students",
+    "noMembers": "No students yet.",
+    "student": "Student",
+    "addMember": "Add student",
+    "addMemberPlaceholder": "Start typing a name",
+    "noAvailableStudents": "No available students — enroll them in \"My students\"",
+    "enterClassroom": "Enter classroom",
+    "groupName": "Group name",
+    "groupDescription": "Description (optional)",
+    "cancel": "Cancel",
+    "create": "Create",
+    "creating": "Creating…",
+    "created": "Group created",
+    "loadError": "Failed to load groups",
+    "createError": "Failed to create group",
+    "addFailed": "Failed to add",
+    "removeFailed": "Failed to remove the student",
+    "tryLater": "Please try again later.",
+    "memberAdded": "{{name}} added",
+    "coachProfileRequired": {
+      "title": "Coach profile required",
+      "description": "Create a coach profile (\"Coaches\" page → \"My coach profile\"), then you'll be able to run groups and lessons."
+    },
+    "addErrors": {
+      "notYourStudent": "First enroll the student with you (on the \"My students\" page).",
+      "alreadyMember": "This student is already in the group.",
+      "groupArchived": "The group is archived — adding is unavailable.",
+      "studentNotFound": "Student not found."
+    }
+  },
+  "nextLesson": {
+    "title": "Next Up",
+    "empty": "You have no upcoming lessons.",
+    "viewFullSchedule": "View Full Schedule"
+  },
+  "upcomingLessons": {
+    "title": "Upcoming Lessons",
+    "empty": "No upcoming lessons.",
+    "viewFullSchedule": "View Full Schedule ({{count}})"
+  },
+  "myCoach": {
+    "title": "Your Coach"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "coachAdminPlaceholder": "This is your public coach/admin dashboard. More widgets coming soon."
+  },
+  "footer": {
+    "brand": "Chess School",
+    "tagline": "An online chess school for all levels — from beginners to professionals.",
+    "popularCourses": "Popular courses",
+    "reviews": "Reviews",
+    "ourCoaches": "Our coaches",
+    "legal": "Legal information",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfUse": "Terms of Use",
+    "copyright": "© {{year}} Chess School. All rights reserved.",
+    "social": "Follow us on social media",
+    "contactUs": "Contact Us"
+  },
+  "createLesson": {
+    "title": "Create lesson",
+    "targetGroup": "Group",
+    "targetStudent": "Student",
+    "labelGroup": "Group",
+    "labelStudent": "Student",
+    "noActiveGroups": "No active groups",
+    "noStudents": "No students",
+    "createGroupLink": "Create a group and enroll students →",
+    "lessonTitle": "Title",
+    "dateTime": "Date and time",
+    "duration": "Duration (min)",
+    "link": "Lesson link (optional)",
+    "linkHelp": "E.g. a video call link; not required for the interactive classroom",
+    "description": "Description (optional)",
+    "notify": "Notify recipients (an email on your behalf + an on-site notification)",
+    "commonMessage": "Common message (to everyone, optional)",
+    "commonMessagePlaceholder": "For example: don't forget to review the opening we studied last lesson",
+    "personalize": "Personal message for each student",
+    "groupEmpty": "The selected group has no members.",
+    "personalMessagePlaceholder": "Personal message (optional)",
+    "notifyInfo": "The email will come from the school's address but on your behalf and addressed by name; students' replies will come back to your inbox.",
+    "notifyInfoPersonal": "Each student will receive their personal text (plus the common one, if filled in).",
+    "cancel": "Cancel",
+    "submit": "Create",
+    "creating": "Creating…",
+    "created": "Lesson created",
+    "student": "Student",
+    "notified_one": "Notified {{count}} recipient",
+    "notified_other": "Notified {{count}} recipients",
+    "notifiedFailed_one": "({{count}} error)",
+    "notifiedFailed_other": "({{count}} errors)",
+    "errors": {
+      "title": "Enter a title",
+      "date": "Enter date and time",
+      "selectGroup": "Select a group",
+      "selectStudent": "Select a student",
+      "duration": "From 5 to 600 minutes",
+      "link": "The link must start with http(s)://"
+    }
+  },
+  "classroom": {
+    "title": "Interactive classroom",
+    "status": {
+      "idle": "Waiting",
+      "live": "Lesson in progress",
+      "ended": "Lesson ended"
+    },
+    "enterError": {
+      "NOT_A_GROUP_EVENT": "The live classroom is currently available for group lessons only.",
+      "EVENT_NOT_FOUND": "Lesson not found.",
+      "CLASSROOM_NOT_FOUND": "The group for this lesson was not found.",
+      "NOT_A_CLASSROOM_PARTICIPANT": "You are not a participant of this classroom.",
+      "default": "Failed to enter the classroom."
+    },
+    "toSchedule": "To schedule",
+    "videoUnavailable": "Video unavailable",
+    "videoUnavailableDesc": "The lesson will continue without video.",
+    "lessonEnded": "Lesson ended",
+    "connectionLost": "Connection lost — reconnecting…",
+    "reconnect": "Reconnect",
+    "youControl": "You control the board",
+    "coachControls": "The coach controls the board",
+    "reset": "Reset",
+    "revokeControl": "Take back control",
+    "raiseHand": "Raise hand",
+    "lowerHand": "Lower hand",
+    "flipBoard": "Flip board",
+    "startLesson": "Start lesson",
+    "endLesson": "End lesson"
+  },
+  "myClasses": {
+    "eyebrow": "My learning",
+    "title": "My classes",
+    "subtitle": "Group lessons with video and a shared board. Click “Enter classroom” to join.",
+    "createLesson": "Create a lesson",
+    "loadFailed": "Failed to load classes",
+    "empty": "You have no group lessons yet. Individual live-classroom lessons are not supported yet.",
+    "createGroup": "Create a group and enroll students",
+    "upcoming": "Upcoming classes",
+    "live": "Live",
+    "enterClass": "Enter classroom",
+    "myGroups": "My groups",
+    "myGroupsHint": "— enter the classroom without a scheduled lesson",
+    "manage": "Manage"
+  },
+  "participants": {
+    "title_one": "Participants ({{count}})",
+    "title_other": "Participants ({{count}})",
+    "empty": "No one here yet.",
+    "you": "{{name}} (you)",
+    "coach": "Coach",
+    "controlling": "Currently controlling the board",
+    "grantControl": "Grant control",
+    "lowerHand": "Lower hand"
+  },
+  "bookStats": {
+    "title": "Student progress",
+    "student": "Student",
+    "solved": "Solved",
+    "mistakes": "Mistakes",
+    "hints": "Hints",
+    "time": "Time",
+    "last": "Last activity",
+    "empty": "No one has solved exercises from this set yet.",
+    "error": "Could not load statistics."
+  },
+  "assignPuzzles": {
+    "title": "Assign puzzles",
+    "targetStudent": "Student",
+    "targetGroup": "Group",
+    "recipient": "Recipient",
+    "book": "Puzzle set",
+    "dueDate": "Due date",
+    "count": "Puzzles to solve",
+    "plan": "Day-by-day plan (optional)",
+    "planHint": "E.g. today 10 puzzles, tomorrow 15 — the student sees “today: N”.",
+    "addDay": "Add day",
+    "note": "note (read / do)",
+    "notifyInfo": "The recipient gets a notification with a link to start solving.",
+    "submit": "Assign",
+    "saving": "Assigning…",
+    "created": "Homework assigned",
+    "errSelect": "Choose a recipient",
+    "errBook": "Choose a puzzle set"
+  },
+  "homeworkToday": {
+    "title": "Homework for today",
+    "solve": "Solve puzzles",
+    "solveCount": "Solve {{count}} puzzles",
+    "start": "Start"
+  },
+  "blindfold": {
+    "title": "Blindfold memory",
+    "subtitle": "Memorise the position, follow the moves in your head, then answer where the pieces ended up.",
+    "start": "Start",
+    "again": "Play again",
+    "color": {
+      "white": "White",
+      "black": "Black"
+    },
+    "stats": {
+      "inline": "{{correct}}/{{attempts}} correct · {{pct}}%",
+      "title": "Your stats",
+      "line": "Correct {{correct}} of {{attempts}} — {{pct}}%"
+    },
+    "settings": {
+      "pieceCount": "Number of pieces",
+      "moveCount": "Series length (moves)",
+      "speed": "Show / move speed (seconds)",
+      "change": "Settings"
+    },
+    "phase": {
+      "memorize": "Memorise",
+      "blindfold": "Blindfold moves",
+      "question": "Question",
+      "result": "Result"
+    },
+    "memorize": {
+      "hint": "Remember every piece and its square."
+    },
+    "blindfold": {
+      "progress": "Move {{i}} / {{n}}",
+      "hint": "Track the moves in your head — the board is blank."
+    },
+    "question": {
+      "timer": "Time: {{s}}s",
+      "wherePiece": "Which square holds the {{piece}}?",
+      "whatOnSquare": "Which piece stands on {{square}}?",
+      "right": "Correct!",
+      "wrong": "Not quite.",
+      "answerWasSquare": "It was on {{square}}.",
+      "answerWasPiece": "It was the {{piece}}.",
+      "clickHint": "Click the square on the blank board."
     }
   }
 }

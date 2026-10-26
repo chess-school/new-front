@@ -1,41 +1,44 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link as RouterLink, useParams, useSearchParams } from 'react-router-dom';
-import { alpha, Alert, Box, Button, Chip, CircularProgress, LinearProgress, Stack, Typography, Zoom } from '@mui/material';
+import { alpha, Alert, Box, Button, Chip, CircularProgress, IconButton, LinearProgress, Stack, Tooltip, Typography, Zoom } from '@mui/material';
 import { keyframes } from '@mui/system';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
 import ReplayIcon from '@mui/icons-material/Replay';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
+import CachedRoundedIcon from '@mui/icons-material/CachedRounded';
 import EditIcon from '@mui/icons-material/Edit';
-import MemoryIcon from '@mui/icons-material/Memory';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import AccessTimeRoundedIcon from '@mui/icons-material/AccessTimeRounded';
+import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-import ExtensionOutlinedIcon from '@mui/icons-material/ExtensionOutlined';
-import TimelineIcon from '@mui/icons-material/Timeline';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import { Chess, Square } from 'chess.js';
-import { Arrow } from 'react-chessboard/dist/chessboard/types';
-import { notification } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { getPuzzleBook } from '@/api/digitizer';
 import { useAuth } from '@/context/AuthContext';
-import { PuzzleBook } from '@/types/PuzzleBook';
+import { AttemptRatingResult, DEFAULT_SOLVE_SETTINGS, PuzzleBook } from '@/types/PuzzleBook';
 import { ChessBoard } from '@/features/Chess/components/ChessBoard';
-import { ChessArena, ArenaPanel } from '@/features/Chess/components/ChessArena';
-import { AskInChatButton } from '@/features/Chat';
-import { EnginePanel } from '@/features/Chess/components/EnginePanel';
+import { ResizableBoard } from '@/features/Chess/components/ResizableBoard';
+import { ArenaPanel } from '@/features/Chess/components/ChessArena';
+import { MobMascot, MascotMood } from '@/features/Chess/components/MobMascot';
 import { AnalysisBoard } from '@/features/Chess/components/AnalysisBoard';
-import { useEngineAnalysis, useStockfishEngine } from '@/features/Chess/engine/useStockfish';
-import { formatScore, pvToSan } from '@/features/Chess/engine/stockfish';
-import { compareMove } from '@/features/Chess/engine/moveCheck';
-import { PageContainer, PageHeader } from '@/shared/components/ui/PageHeader';
+import { useStockfishEngine } from '@/features/Chess/engine/useStockfish';
+import { PageContainer } from '@/shared/components/ui/PageHeader';
 import { tokens } from '@/theme/tokens';
 import { ExerciseList } from '../components/ExerciseList';
-import { ENGINE_ARROW } from '../components/boardStyle';
 import { useSolveSession } from '../hooks/useSolveSession';
-import { formatMoveNumber } from '../utils/pgnTree';
+import { saveExerciseStats } from '../utils/exerciseStats';
+
+// Условия разблокировки подсказки и прочие правила решения задаёт тренер (book.solveSettings).
+// Секундомер в формате MM:SS
+const formatClock = (totalSeconds: number) => {
+  const m = Math.floor(totalSeconds / 60);
+  const s = totalSeconds % 60;
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+};
 
 const successGlow = keyframes`
   0%   { box-shadow: 0 0 0 0 ${alpha(tokens.accent.emerald, 0.85)}; }
@@ -48,8 +51,79 @@ const wrongShake = keyframes`
   75% { transform: translateX(6px); }
 `;
 
+// Облачко-реплика маскота: подсказка/комментарий «из клюва». Появляется только когда есть что сказать.
+const SpeechBubble: React.FC<{ children: React.ReactNode; tone?: 'default' | 'error' | 'success' }> = ({ children, tone = 'default' }) => {
+  const borderColor = tone === 'error' ? 'error.main' : tone === 'success' ? 'success.main' : 'divider';
+  return (
+    <Box
+      sx={(theme) => ({
+        position: 'relative', maxWidth: 300, alignSelf: 'stretch',
+        bgcolor: 'background.paper', color: 'text.primary',
+        border: 1, borderColor, borderRadius: 2, px: 1.75, py: 1.25, boxShadow: 4,
+        '&::before': { content: '""', position: 'absolute', left: 26, bottom: -11, width: 0, height: 0, borderLeft: '10px solid transparent', borderRight: '10px solid transparent', borderTop: `10px solid ${theme.palette.divider}` },
+        '&::after': { content: '""', position: 'absolute', left: 27, bottom: -9, width: 0, height: 0, borderLeft: '9px solid transparent', borderRight: '9px solid transparent', borderTop: `9px solid ${theme.palette.background.paper}` },
+      })}
+    >
+      <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.45 }}>{children}</Typography>
+    </Box>
+  );
+};
+
+// Плавный «набег» числа от from к to за duration мс (requestAnimationFrame, с ease-out).
+const useCountUp = (from: number, to: number, duration = 900): number => {
+  const [value, setValue] = useState(to);
+  useEffect(() => {
+    if (from === to) { setValue(to); return; }
+    let raf = 0;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const p = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - p, 3); // ease-out cubic
+      setValue(Math.round(from + (to - from) * eased));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [from, to, duration]);
+  return value;
+};
+
+// Карточка изменения рейтинга после попытки: крупная анимированная дельта игрока + новый рейтинг задачи.
+const RatingChange: React.FC<{ rating: AttemptRatingResult }> = ({ rating }) => {
+  const { t } = useTranslation();
+  const animated = useCountUp(rating.userRatingBefore, rating.userRating);
+  const up = rating.userDelta >= 0;
+  const deltaColor = up ? 'success.main' : 'error.main';
+  const puzzleUp = rating.puzzleDelta >= 0;
+  return (
+    <Box data-testid="rating-change" sx={{ mt: 1, width: '100%', maxWidth: 300 }}>
+      <Stack direction="row" alignItems="baseline" justifyContent="center" spacing={1}>
+        <Typography variant="body2" color="text.secondary">
+          {t('digitizer.solve.yourRating', 'Your rating')}
+        </Typography>
+        <Typography variant="h5" sx={{ fontWeight: 800, fontVariantNumeric: 'tabular-nums' }}>
+          {animated}
+        </Typography>
+        <Typography variant="h6" sx={{ fontWeight: 800, color: deltaColor, fontVariantNumeric: 'tabular-nums' }}>
+          {up ? '+' : '−'}{Math.abs(rating.userDelta)}
+        </Typography>
+      </Stack>
+      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', textAlign: 'center', mt: 0.25 }}>
+        {t('digitizer.solve.puzzleRatingNow', {
+          defaultValue: 'Puzzle rating: {{rating}} ({{sign}}{{delta}})',
+          rating: rating.puzzleRating,
+          sign: puzzleUp ? '+' : '−',
+          delta: Math.abs(rating.puzzleDelta),
+        })}
+      </Typography>
+    </Box>
+  );
+};
+
 // Решённые задания запоминаются в браузере ученика
 const solvedKey = (bookId: string) => `puzzleBook.solved.${bookId}`;
+// Последнее открытое задание в книге — чтобы в следующий раз продолжить с места, где остановились
+const lastPosKey = (bookId: string) => `puzzleBook.lastExercise.${bookId}`;
 const loadSolved = (bookId: string): Set<string> => {
   try {
     return new Set(JSON.parse(localStorage.getItem(solvedKey(bookId)) || '[]'));
@@ -69,8 +143,14 @@ export const BookSolvePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [solved, setSolved] = useState<Set<string>>(() => loadSolved(bookId));
   const [shake, setShake] = useState(0);
+  // Переворот доски — настройка вида (в TopBar), сохраняется между заданиями
+  const [flip, setFlip] = useState(false);
+  // Инлайновая обратная связь по последнему ходу (мягко-красная) — вместо всплывающего тоста
+  const [feedback, setFeedback] = useState<'wrong' | null>(null);
+  // Последний пересчёт рейтингов (user/puzzle) с бэкенда — показываем в баннере результата
+  const [ratingResult, setRatingResult] = useState<AttemptRatingResult | null>(null);
 
-  const index = Math.max(0, Math.min(Number(searchParams.get('ex')) || 0, (book?.exercises.length ?? 1) - 1));
+  const index = Math.max(0, Math.min(Number(searchParams.get('exercise')) || 0, (book?.exercises.length ?? 1) - 1));
   const exercise = book?.exercises[index];
   const session = useSolveSession(exercise);
 
@@ -82,9 +162,27 @@ export const BookSolvePage: React.FC = () => {
       .finally(() => setLoading(false));
   }, [bookId]);
 
-  const selectExercise = useCallback((i: number) => {
-    setSearchParams({ ex: String(i) }, { replace: true });
+  // Меняем один параметр, не затирая остальные (номер задания ↔ вкладка)
+  const patchParams = useCallback((mutate: (p: URLSearchParams) => void) => {
+    setSearchParams((prev) => { const p = new URLSearchParams(prev); mutate(p); return p; }, { replace: true });
   }, [setSearchParams]);
+  const selectExercise = useCallback((i: number) => {
+    patchParams((p) => p.set('exercise', String(i)));
+    // Запоминаем позицию, чтобы при следующем открытии книги продолжить с этого задания
+    try { localStorage.setItem(lastPosKey(bookId), String(i)); } catch { /* хранилище недоступно */ }
+  }, [patchParams, bookId]);
+
+  // Открыли книгу без явного ?exercise= — продолжаем с последнего задания ученика (прямую ссылку уважаем)
+  const restoredFor = useRef<string | null>(null);
+  useEffect(() => {
+    if (loading || !book || restoredFor.current === bookId) return;
+    restoredFor.current = bookId;
+    if (searchParams.get('exercise') !== null) return;
+    let saved = 0;
+    try { saved = Number(localStorage.getItem(lastPosKey(bookId))); } catch { saved = 0; }
+    const target = Number.isFinite(saved) && saved > 0 ? Math.min(saved, book.exercises.length - 1) : 0;
+    if (target > 0) patchParams((p) => p.set('exercise', String(target)));
+  }, [loading, book, bookId, searchParams, patchParams]);
 
   useEffect(() => {
     if (session.status !== 'solved' || !exercise || solved.has(exercise._id)) return;
@@ -95,26 +193,29 @@ export const BookSolvePage: React.FC = () => {
     } catch {
       // хранилище недоступно — прогресс останется только до перезагрузки
     }
-  }, [session.status, exercise, solved, bookId]);
+    // Фиксируем метрику решения для модуля статистики и забираем пересчёт рейтингов
+    void saveExerciseStats(bookId, {
+      exerciseId: exercise._id,
+      timeTakenSeconds: session.elapsedSeconds,
+      attemptsCount: session.mistakes,
+      usedHint: session.usedHint,
+      solvedAt: new Date().toISOString(),
+      solved: true,
+    }).then((rating) => { if (rating) setRatingResult(rating); });
+  }, [session.status, session.elapsedSeconds, session.mistakes, session.usedHint, exercise, solved, bookId]);
 
-  // --- Stockfish: создаётся по первому запросу (оценка / подсказка / разбор хода), уничтожается при уходе ---
+  // --- Stockfish: нужен только в режиме разбора (после решения) — для оценки и линий движка на доске разбора.
+  // Во время решения движок и любые подсказки-читы полностью скрыты.
   const [showEval, setShowEval] = useState(false);
-  const [evalRefresh, setEvalRefresh] = useState(0);
-  const [engineHint, setEngineHint] = useState<{ from: Square; to: Square; san: string; score: string } | null>(null);
-  const [engineBusy, setEngineBusy] = useState(false);
-  const [moveCheck, setMoveCheck] = useState<{ text: string; severity: 'info' | 'warning' } | null>(null);
-  const checkSeq = useRef(0);
-  // Разбор: после решения, после «Показать решение» или если эталонного решения нет
+  // Ученик «сдался» (если тренер разрешил показ решения) — открываем разбор досрочно
   const [revealed, setRevealed] = useState(false);
-  const analysisMode = session.status === 'solved' || session.status === 'noSolution' || revealed;
-  const fenRef = useRef(session.fen);
-  fenRef.current = session.fen;
-  const { engine, ensure } = useStockfishEngine(showEval);
-  // Только оценка, без линий: линия движка раскрыла бы решение
-  const { result: evalResult, analyzing } = useEngineAnalysis(engine, session.fen, { enabled: showEval && !analysisMode, depth: 14, refreshKey: evalRefresh });
-
-  useEffect(() => { setEngineHint(null); }, [session.fen]);
-  useEffect(() => { setMoveCheck(null); checkSeq.current++; setRevealed(false); }, [exercise?._id]);
+  // Явно открыл разбор ПОСЛЕ самостоятельного решения (кнопка «Разбор»)
+  const [studying, setStudying] = useState(false);
+  // Разбор (движок + решение) — после самостоятельного решения, после сдачи (если разрешена) или если нет эталона
+  const analysisMode = revealed || studying || session.status === 'noSolution';
+  const { engine } = useStockfishEngine(showEval);
+  // Новое задание — обратная связь и разбор сброшены
+  useEffect(() => { setRevealed(false); setStudying(false); setFeedback(null); setRatingResult(null); }, [exercise?._id]);
 
   // Линия решения в UCI — для доски разбора
   const solutionUci = useMemo(() => {
@@ -145,64 +246,35 @@ ${text.trim()}` : text.trim();
     return result;
   }, [session.mainline, solutionUci.length]);
 
-  /** Ход не совпал с книгой: движок говорит, насколько он хуже лучшего (или не хуже — тогда это сильная альтернатива) */
-  const explainWrongMove = async (fenBefore: string, fenAfter: string, mover: 'w' | 'b') => {
-    const seq = ++checkSeq.current;
-    setMoveCheck({ text: t('engine.checkingMove'), severity: 'info' });
-    const cmp = await compareMove(ensure(), fenBefore, fenAfter, mover, 12);
-    if (seq !== checkSeq.current) return; // ученик уже сделал следующий ход или сменил задачу
-    setEvalRefresh((k) => k + 1); // разбор прервал живую оценку — перезапускаем её
-    if (!cmp) { setMoveCheck(null); return; }
-    setMoveCheck(cmp.alsoStrong
-      ? { text: t('engine.alsoStrong', { played: cmp.playedScore }), severity: 'info' }
-      : { text: t('engine.worse', { played: cmp.playedScore, best: cmp.bestScore }), severity: 'warning' });
-  };
-
   const handleMove = (from: Square, to: Square, promotion?: string): boolean => {
-    const fenBefore = session.fen;
-    // Позиция после хода — для разбора движком, если ход не совпадёт с книгой
-    let fenAfter: string | null = null;
-    try {
-      const probe = new Chess(fenBefore);
-      if (probe.move(promotion ? { from, to, promotion } : { from, to })) fenAfter = probe.fen();
-    } catch {
-      fenAfter = null;
-    }
     const verdict = session.tryMove(from, to, promotion);
     if (verdict === 'wrong') {
       setShake((n) => n + 1);
-      notification.error({ message: t('digitizer.solve.wrongMove'), description: undefined, duration: 2 });
-      if (fenAfter) explainWrongMove(fenBefore, fenAfter, session.playerColor);
+      setFeedback('wrong');
     } else if (verdict === 'correct') {
-      checkSeq.current++;
-      setMoveCheck(null);
+      setFeedback(null);
     }
     return verdict === 'correct';
   };
 
-  /** Лучший ход движка стрелкой и оценка — по запросу ученика */
-  const showEngineHint = async () => {
-    const fen = session.fen;
-    setEngineBusy(true);
-    const result = await ensure().analyze(fen, { depth: 14 });
-    setEngineBusy(false);
-    setEvalRefresh((k) => k + 1);
-    if (fenRef.current !== fen || !result.bestMove || !result.lines[0]) return;
-    setEngineHint({
-      from: result.bestMove.slice(0, 2) as Square,
-      to: result.bestMove.slice(2, 4) as Square,
-      san: pvToSan(fen, [result.bestMove], 1),
-      score: formatScore(result.lines[0]),
-    });
-  };
+  // «Сдаться» (доступно, только если тренер разрешил показ решения): открываем разбор + фиксируем попытку
+  const giveUp = useCallback(() => {
+    setRevealed(true);
+    if (exercise) {
+      void saveExerciseStats(bookId, {
+        exerciseId: exercise._id,
+        timeTakenSeconds: session.elapsedSeconds,
+        attemptsCount: session.mistakes,
+        usedHint: session.usedHint,
+        solvedAt: new Date().toISOString(),
+        solved: false,
+      }).then((rating) => { if (rating) setRatingResult(rating); });
+    }
+  }, [bookId, exercise, session.elapsedSeconds, session.mistakes, session.usedHint]);
 
   const hintStyles = useMemo(
     () => (session.hintSquare ? { [session.hintSquare]: { boxShadow: `inset 0 0 0 4px ${tokens.accent.gold}` } } : {}),
     [session.hintSquare],
-  );
-  const engineArrows = useMemo<Arrow[]>(
-    () => (engineHint ? [[engineHint.from, engineHint.to, ENGINE_ARROW]] : []),
-    [engineHint],
   );
 
   // Последний сыгранный ход решения — подсветка полей
@@ -230,19 +302,34 @@ ${text.trim()}` : text.trim();
 
   const hasNext = index < book.exercises.length - 1;
   const meta = exercise.meta || {};
-  const players = meta.white && meta.black ? `${meta.white} – ${meta.black}` : '';
-  const gameInfo = [players, meta.site, meta.year].filter(Boolean).join(', ');
+  const whiteName = meta.white?.trim();
+  const blackName = meta.black?.trim();
+  const hasPlayers = !!(whiteName || blackName);
+  // Турнирная инфа (место/год) — ОТДЕЛЬНО от имён игроков: имена идут табличками у доски
+  const eventInfo = [meta.site, meta.year].filter(Boolean).join(', ');
   const solvedTotal = book.exercises.filter((e) => solved.has(e._id)).length;
-  const orientation = session.playerColor === 'w' ? 'white' : 'black';
-  const statusText = {
-    playing: session.movesPlayed === 0
-      ? t(session.playerColor === 'w' ? 'digitizer.solve.whiteToMove' : 'digitizer.solve.blackToMove')
-      : t('digitizer.solve.correctContinue'),
-    opponent: t('digitizer.solve.opponentThinking'),
-    solved: t('digitizer.solve.solved'),
-    noSolution: t('digitizer.solve.noSolution'),
-  }[session.status];
-  const statusTone = session.status === 'solved' ? 'success' : session.status === 'noSolution' ? 'info' : 'primary';
+  const baseOrientation = session.playerColor === 'w' ? 'white' : 'black';
+  const orientation: 'white' | 'black' = flip ? (baseOrientation === 'white' ? 'black' : 'white') : baseOrientation;
+  // Сдался (revealed), задача не решена и не «без решения» — отдельный статус разбора
+  const revealedOnly = revealed && session.status !== 'solved' && session.status !== 'noSolution';
+  const statusText = revealedOnly
+    ? t('digitizer.solve.revealed', { defaultValue: 'Solution revealed — explore it below.' })
+    : {
+        playing: session.movesPlayed === 0
+          ? t(session.playerColor === 'w' ? 'digitizer.solve.whiteToMove' : 'digitizer.solve.blackToMove')
+          : t('digitizer.solve.correctContinue'),
+        opponent: t('digitizer.solve.opponentThinking'),
+        solved: t('digitizer.solve.solved'),
+        noSolution: t('digitizer.solve.noSolution'),
+      }[session.status];
+  const statusTone = session.status === 'solved' ? 'success' : (session.status === 'noSolution' || revealedOnly) ? 'info' : 'primary';
+
+  // Правила решения, заданные тренером (с дефолтами, если книга старая/без настроек)
+  const S = { ...DEFAULT_SOLVE_SETTINGS, ...(book.solveSettings || {}) };
+  // Подсказка: разрешена тренером И (прошло N минут ИЛИ сделано N ошибок)
+  const hintSeconds = S.hintUnlockMinutes * 60;
+  const hintUnlocked = S.hintsEnabled && (session.elapsedSeconds >= hintSeconds || session.mistakes >= S.hintUnlockMistakes);
+  const hintMinutesLeft = Math.max(1, Math.ceil((hintSeconds - session.elapsedSeconds) / 60));
 
   // Доска: решение или разбор; анимации «верно»/«ошибка» и галочка поверх
   const board = (
@@ -261,10 +348,10 @@ ${text.trim()}` : text.trim();
           onMove={handleMove}
           boardOrientation={orientation}
           customSquareStyles={hintStyles}
-          customArrows={engineArrows}
           lastMove={lastMove}
           premoves
           premoveKey={exercise._id}
+          coordinates="outside"
         />
       <Zoom in={session.status === 'solved'}>
         <Box sx={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
@@ -274,162 +361,220 @@ ${text.trim()}` : text.trim();
     </Box>
   );
 
-  // Всегда на виду: название, партия, статус решения
-  const header = (
-    <Box>
-      <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={1}>
-        <Box sx={{ minWidth: 0 }}>
-          <Typography variant="h6" component="h2">{exercise.title}</Typography>
-          {gameInfo && <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>{gameInfo}</Typography>}
-        </Box>
-        <Chip size="small" variant="outlined" label={`${index + 1} / ${book.exercises.length}`} sx={{ fontVariantNumeric: 'tabular-nums', flexShrink: 0 }} />
-      </Stack>
-      <Box
-        role="status"
-        data-testid="solve-status"
-        sx={(theme) => ({
-          mt: 1.5, px: 1.5, py: 1, borderRadius: 2, fontWeight: 600,
-          color: `${statusTone}.main`,
-          bgcolor: alpha(theme.palette[statusTone].main, 0.12),
-          border: `1px solid ${alpha(theme.palette[statusTone].main, 0.3)}`,
-        })}
-      >
-        {statusText}
-      </Box>
-      {/* Подсказка разбора — в шапке: в разборе первая вкладка — ходы, а не упражнение */}
-      {analysisMode && <Alert severity="info" sx={{ mt: 1.5 }}>{t('digitizer.solve.analysisHint')}</Alert>}
-    </Box>
+  // --- Маскот-ассистент: настроение, облачко-реплика и плашка хода ---
+  let mascotMood: MascotMood = 'waiting';
+  let bubble: { text: React.ReactNode; tone: 'default' | 'error' | 'success' } | null = null;
+  let bannerTitle = '';
+  let bannerSubtitle = '';
+  let bannerColor = 'primary.main';
+  if (session.status === 'solved') {
+    mascotMood = 'happy';
+    bannerTitle = t('digitizer.solve.solvedTitle', { defaultValue: 'Solved!' });
+    bannerColor = 'success.main';
+    bubble = { text: t('digitizer.solve.cheerSolved', { defaultValue: 'Excellent! Puzzle solved 🎉' }), tone: 'success' };
+  } else if (session.status === 'opponent') {
+    bannerTitle = t('digitizer.solve.opponentThinking');
+  } else {
+    // playing
+    if (feedback === 'wrong') {
+      mascotMood = 'thinking';
+      bubble = { text: t('digitizer.solve.cheerWrong', { defaultValue: 'Not that move — try again.' }), tone: 'error' };
+    } else if (session.hintSquare && exercise.hint) {
+      mascotMood = 'teaching';
+      bubble = { text: exercise.hint, tone: 'default' };
+    } else if (session.lastNode?.comment) {
+      mascotMood = 'teaching';
+      bubble = { text: session.lastNode.comment, tone: 'default' };
+    }
+    bannerTitle = session.movesPlayed === 0
+      ? t('digitizer.solve.yourMove', { defaultValue: 'Your move' })
+      : t('digitizer.solve.keepGoing', { defaultValue: 'Correct — keep going!' });
+    bannerSubtitle = session.movesPlayed === 0
+      ? t(session.playerColor === 'w' ? 'digitizer.solve.findBestWhite' : 'digitizer.solve.findBestBlack',
+          { defaultValue: session.playerColor === 'w' ? 'Find the best move for White' : 'Find the best move for Black' })
+      : '';
+    if (feedback === 'wrong') bannerColor = 'error.main';
+  }
+
+  const timerChip = (
+    <Chip size="small" variant="outlined" icon={<AccessTimeRoundedIcon />}
+      label={formatClock(session.elapsedSeconds)} data-testid="solve-timer"
+      color={session.status === 'solved' ? 'success' : 'default'}
+      sx={{ fontVariantNumeric: 'tabular-nums' }} />
   );
 
-  const exercisePanel = (
-    <Stack spacing={2}>
-      {exercise.comment && <Typography sx={{ whiteSpace: 'pre-wrap' }}>{exercise.comment}</Typography>}
-      {session.lastNode?.comment && (
-        <Typography color="text.secondary" sx={{ fontStyle: 'italic' }}>
-          {formatMoveNumber(session.lastNode)} {session.lastNode.san}: {session.lastNode.comment}
+  // Плавающий ассистент справа от доски: облачко → маскот → плашка хода → таймер
+  const assistant = (
+    <Stack alignItems="center" spacing={1.5} sx={{ width: '100%', maxWidth: 300, mx: 'auto', position: { md: 'sticky' }, top: { md: 16 } }}>
+      {bubble && <SpeechBubble tone={bubble.tone}>{bubble.text}</SpeechBubble>}
+      <MobMascot mood={mascotMood} size={140} />
+      <Box sx={{ textAlign: 'center', px: 1 }} role="status" data-testid="solve-status">
+        <Typography variant="h6" sx={{ fontWeight: 800, color: bannerColor, lineHeight: 1.2 }}>{bannerTitle}</Typography>
+        {bannerSubtitle && <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>{bannerSubtitle}</Typography>}
+      </Box>
+      {ratingResult && <RatingChange rating={ratingResult} />}
+      {timerChip}
+    </Stack>
+  );
+
+  // Таблички имён игроков — над и под доской (как в вьюере партий); белые/чёрные по ориентации
+  const renderPlate = (color: 'white' | 'black') => {
+    const name = color === 'white'
+      ? (whiteName || t('digitizer.solve.white', { defaultValue: 'White' }))
+      : (blackName || t('digitizer.solve.black', { defaultValue: 'Black' }));
+    return (
+      <Stack direction="row" alignItems="center" spacing={1} sx={{ px: 0.5, py: 0.25, minWidth: 0 }}>
+        <Box sx={{ width: 13, height: 13, borderRadius: '50%', flexShrink: 0, bgcolor: color === 'white' ? '#EADECA' : '#1A1A1A', border: '1px solid', borderColor: 'rgba(255,255,255,0.3)' }} />
+        <Typography variant="body2" noWrap sx={{ fontWeight: 700, minWidth: 0 }}>{name}</Typography>
+      </Stack>
+    );
+  };
+
+  // Нижний микро-бар: лёгкие ghost-кнопки под доской (без гигантских заливок)
+  const ghostSx = { color: 'text.secondary', textTransform: 'none', '&:hover': { color: 'primary.main', bgcolor: 'transparent' } } as const;
+  const bottomActions = (
+    <Stack direction="row" spacing={0.5} flexWrap="wrap" justifyContent="center" alignItems="center" sx={{ rowGap: 0.5 }}>
+      {session.status !== 'solved' ? (
+        <>
+          {S.hintsEnabled && (
+            <Tooltip
+              title={hintUnlocked ? '' : t('digitizer.solve.hintLocked', { minutes: hintMinutesLeft, mistakes: S.hintUnlockMistakes, current: session.mistakes, defaultValue: 'Hint unlocks in {{minutes}} min or after {{mistakes}} mistakes (so far: {{current}}).' })}
+              disableHoverListener={hintUnlocked}
+            >
+              <span>
+                <Button size="small" startIcon={<LightbulbOutlinedIcon />} sx={ghostSx} data-testid="hint-button"
+                  onClick={session.showHint} disabled={!hintUnlocked || session.status !== 'playing'}>
+                  {t('digitizer.solve.hint')}
+                </Button>
+              </span>
+            </Tooltip>
+          )}
+          {S.allowShowSolution && (
+            <Button size="small" startIcon={<FlagOutlinedIcon />} sx={ghostSx} data-testid="give-up-button"
+              onClick={giveUp} disabled={session.status === 'opponent'}>
+              {t('digitizer.solve.skip')}
+            </Button>
+          )}
+        </>
+      ) : (
+        <>
+          <Button size="small" variant="contained" color="primary" endIcon={<ArrowForwardIcon />} data-testid="next-button"
+            disabled={!hasNext} onClick={() => selectExercise(index + 1)}>
+            {t('digitizer.solve.next')}
+          </Button>
+          {solutionUci.length > 0 && (
+            <Button size="small" startIcon={<VisibilityOutlinedIcon />} sx={ghostSx} data-testid="study-button" onClick={() => setStudying(true)}>
+              {t('digitizer.solve.review', { defaultValue: 'Review' })}
+            </Button>
+          )}
+        </>
+      )}
+      <Button size="small" startIcon={<ReplayIcon />} sx={ghostSx}
+        onClick={() => { session.reset(); setFeedback(null); }}>
+        {t('digitizer.solve.restart')}
+      </Button>
+      <Tooltip title={t('digitizer.solve.flip', { defaultValue: 'Flip board' })}>
+        <IconButton size="small" sx={{ color: 'text.secondary' }} onClick={() => setFlip((f) => !f)}
+          aria-label={t('digitizer.solve.flip', { defaultValue: 'Flip board' })}>
+          <CachedRoundedIcon fontSize="small" />
+        </IconButton>
+      </Tooltip>
+    </Stack>
+  );
+
+  // Вторичная «стеклянная» кнопка (Редактор): прозрачная с тонкой обводкой
+  const glassBtnSx = { borderColor: '#2C3545', color: 'text.primary', '&:hover': { borderColor: 'primary.main', bgcolor: alpha(tokens.accent.gold, 0.06) } } as const;
+
+  // Список всех задач — инструмент тренера для быстрого переключения на уроке; ученику не показываем
+  const listPanel: ArenaPanel = {
+    key: 'list',
+    label: t('digitizer.solve.tabs.list', 'List'),
+    icon: <FormatListBulletedIcon />,
+    content: (
+      <ExerciseList
+        bare
+        exercises={book.exercises}
+        selectedIndex={index}
+        onSelect={selectExercise}
+        summary={t('digitizer.solve.progress', { solved: solvedTotal, total: book.exercises.length })}
+        maxHeight="none"
+        renderBadge={(e) => (solved.has(e._id)
+          ? <CheckCircleIcon fontSize="small" sx={{ color: 'success.main' }} />
+          : <RadioButtonUncheckedIcon fontSize="small" sx={{ color: 'text.disabled' }} />)}
+      />
+    ),
+  };
+
+  // Разбор (после сдачи / по кнопке «Разбор»): лёгкая шапка + навигация к следующей задаче
+  const analysisHeader = (
+    <Stack spacing={1}>
+      <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
+        <Typography variant="subtitle1" sx={{ fontWeight: 700, color: `${statusTone}.main`, minWidth: 0 }}>{statusText}</Typography>
+        {timerChip}
+      </Stack>
+      {S.showPlayerNames && hasPlayers && (
+        <Typography variant="body2" sx={{ fontWeight: 600 }}>
+          {(whiteName || t('digitizer.solve.white', { defaultValue: 'White' }))} – {(blackName || t('digitizer.solve.black', { defaultValue: 'Black' }))}
         </Typography>
       )}
-      {moveCheck && <Alert severity={moveCheck.severity} data-testid="move-check">{moveCheck.text}</Alert>}
-      {engineHint && (
-        <Alert severity="info" icon={<MemoryIcon />}>
-          {t('engine.bestMoveHint', { move: engineHint.san, score: engineHint.score })}
-        </Alert>
-      )}
-      {session.hintSquare && exercise.hint && <Alert severity="info" icon={<LightbulbOutlinedIcon />}>{exercise.hint}</Alert>}
-      {session.mistakes > 0 && (
-        <Typography variant="body2" color="error.main">{t('digitizer.solve.mistakes', { count: session.mistakes })}</Typography>
-      )}
-      <Box sx={{ display: analysisMode ? 'none' : 'block' }}>
-        {/* maxLines 0: только число — линии движка раскрыли бы решение */}
-        <EnginePanel
-          enabled={showEval}
-          onToggle={setShowEval}
-          result={evalResult}
-          analyzing={analyzing}
-          engineName={engine?.name}
-          error={engine?.error}
-          maxLines={0}
-        />
-      </Box>
+      {eventInfo && <Typography variant="caption" color="text.secondary">{eventInfo}</Typography>}
+      {ratingResult && <RatingChange rating={ratingResult} />}
+      <Alert severity="info">{t('digitizer.solve.analysisHint')}</Alert>
     </Stack>
   );
-
-  // Решение — только после решения / «Показать решение», иначе оно раскрыло бы задачу
-  const solutionPanel = analysisMode ? (
-    session.mainline.length > 0 ? (
-      <Box data-testid="solution-line" sx={{ lineHeight: 2 }}>
-        {session.mainline.map((node) => (
-          <Box component="span" key={node.id} sx={{ mr: 0.75 }}>
-            {(node.color === 'w' || node.ply === 0) && (
-              <Box component="span" sx={{ color: 'text.disabled', mr: 0.5 }}>{formatMoveNumber(node)}</Box>
-            )}
-            <Box component="span" sx={{ fontWeight: 700 }}>{node.san}</Box>
-            {node.comment && <Box component="span" sx={{ color: 'text.secondary', fontStyle: 'italic', ml: 0.5 }}>{node.comment}</Box>}
-          </Box>
-        ))}
-      </Box>
-    ) : <Typography color="text.secondary">{t('digitizer.solve.noSolution')}</Typography>
-  ) : (
-    <Stack alignItems="center" spacing={1} sx={{ py: 3, textAlign: 'center' }}>
-      <LockOutlinedIcon sx={{ color: 'text.disabled' }} />
-      <Typography variant="body2" color="text.secondary">
-        {t('digitizer.solve.solutionLocked', 'The solution opens once you solve the exercise or press “Show solution”.')}
-      </Typography>
-    </Stack>
-  );
-
-  const panels: ArenaPanel[] = [
-    { key: 'exercise', label: t('digitizer.solve.tabs.exercise', 'Exercise'), icon: <ExtensionOutlinedIcon />, content: exercisePanel },
-    { key: 'solution', label: t('digitizer.solve.tabs.solution', 'Solution'), icon: <TimelineIcon />, content: solutionPanel },
-    {
-      key: 'list',
-      label: t('digitizer.solve.tabs.list', 'List'),
-      icon: <FormatListBulletedIcon />,
-      content: (
-        <ExerciseList
-          bare
-          exercises={book.exercises}
-          selectedIndex={index}
-          onSelect={selectExercise}
-          summary={t('digitizer.solve.progress', { solved: solvedTotal, total: book.exercises.length })}
-          maxHeight="none"
-          renderBadge={(e) => (solved.has(e._id)
-            ? <CheckCircleIcon fontSize="small" sx={{ color: 'success.main' }} />
-            : <RadioButtonUncheckedIcon fontSize="small" sx={{ color: 'text.disabled' }} />)}
-        />
-      ),
-    },
-  ];
-
-  const controls = (
+  const analysisControls = (
     <Stack spacing={1}>
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(4, auto)', md: 'repeat(2, 1fr)' }, gap: 1 }}>
-        <Button
-          variant="outlined"
-          color="inherit"
-          startIcon={<LightbulbOutlinedIcon />}
-          onClick={session.showHint}
-          disabled={session.status !== 'playing' || analysisMode}
-        >
-          {t('digitizer.solve.hint')}
-        </Button>
-        <Button
-          variant="outlined"
-          color="inherit"
-          startIcon={engineBusy ? <CircularProgress size={16} /> : <MemoryIcon />}
-          onClick={showEngineHint}
-          disabled={engineBusy || session.status === 'opponent' || analysisMode}
-        >
-          {t('engine.showBestMove')}
-        </Button>
-        {!analysisMode && solutionUci.length > 0 && (
-          <Button variant="outlined" color="warning" startIcon={<VisibilityOutlinedIcon />} onClick={() => setRevealed(true)} disabled={session.status === 'opponent'}>
-            {t('digitizer.solve.showSolution')}
-          </Button>
-        )}
-        <Button variant="outlined" color="inherit" startIcon={<ReplayIcon />} onClick={() => { setRevealed(false); session.reset(); }}>
-          {t('digitizer.solve.restart')}
-        </Button>
-      </Box>
-      {/* Вопрос тренеру по этому упражнению — диалог с темой «книга / упражнение» */}
-      {!isStaff && (
-        <AskInChatButton size="small" sx={{ alignSelf: 'flex-start' }}
-          context={{ kind: 'book', refId: `${book._id}:${exercise._id}`, title: `${book.title} — ${exercise.title}`.slice(0, 200) }} />
-      )}
-      <Button
-        variant="contained"
-        color="success"
-        size="large"
-        endIcon={<ArrowForwardIcon />}
-        disabled={!hasNext || !analysisMode}
-        onClick={() => selectExercise(index + 1)}
-        fullWidth
-      >
+      <Button fullWidth variant="contained" color="primary" endIcon={<ArrowForwardIcon />} disabled={!hasNext}
+        onClick={() => selectExercise(index + 1)} data-testid="next-button">
         {t('digitizer.solve.next')}
       </Button>
-      {hasNext && !analysisMode && (
-        <Button size="small" color="inherit" sx={{ color: 'text.secondary', alignSelf: 'center' }} onClick={() => selectExercise(index + 1)}>
-          {t('digitizer.solve.skip')}
+      <Button size="small" startIcon={<ReplayIcon />} sx={{ color: 'text.secondary', alignSelf: 'center' }}
+        onClick={() => { setRevealed(false); setStudying(false); session.reset(); setFeedback(null); }}>
+        {t('digitizer.solve.restart')}
+      </Button>
+    </Stack>
+  );
+
+  // Верхний бар: слева — назад + глава + счётчик 2/24 + тонкая полоса; справа — редактор (ТОЛЬКО тренер)
+  const topBar = (
+    <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: { xs: 1.5, md: 2 }, minHeight: 44 }}>
+      <Stack direction="row" alignItems="center" spacing={1.5} sx={{ minWidth: 0, flex: 1 }}>
+        <Tooltip title={t('digitizer.solve.back', { defaultValue: 'Back to books' })}>
+          <IconButton component={RouterLink} to="/books" size="small" sx={{ color: 'text.secondary', flexShrink: 0 }}
+            aria-label={t('digitizer.solve.back', { defaultValue: 'Back to books' })}>
+            <ArrowBackRoundedIcon />
+          </IconButton>
+        </Tooltip>
+        <Typography variant="subtitle1" noWrap sx={{ fontWeight: 700, minWidth: 0, flexShrink: 1 }}>{book.title}</Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ fontVariantNumeric: 'tabular-nums', flexShrink: 0 }}>
+          {index + 1} / {book.exercises.length}
+        </Typography>
+        {typeof exercise.rating === 'number' && (
+          <Chip
+            size="small"
+            variant="outlined"
+            data-testid="puzzle-rating"
+            label={t('digitizer.solve.puzzleRating', {
+              defaultValue: 'Puzzle #{{number}} · Rating: {{rating}}',
+              number: exercise.number ?? index + 1,
+              rating: exercise.rating,
+            })}
+            sx={{ flexShrink: 0, fontVariantNumeric: 'tabular-nums', borderColor: alpha(tokens.accent.gold, 0.5), color: 'text.secondary' }}
+          />
+        )}
+        <LinearProgress
+          variant="determinate"
+          value={book.exercises.length ? (solvedTotal / book.exercises.length) * 100 : 0}
+          sx={{ width: { xs: 48, sm: 110 }, height: 5, borderRadius: 3, flexShrink: 0, bgcolor: 'surface.overlay',
+            '& .MuiLinearProgress-bar': { bgcolor: 'primary.main' } }}
+          aria-label={t('digitizer.solve.progress', { solved: solvedTotal, total: book.exercises.length })}
+        />
+      </Stack>
+      {/* Служебный функционал — только тренеру; ученик не отвлекается */}
+      {isStaff && (
+        <Button component={RouterLink} to={`/digitizer/books/${book._id}/edit?exercise=${index}`}
+          startIcon={<EditIcon />} variant="outlined" size="small" sx={{ ...glassBtnSx, flexShrink: 0 }}>
+          {t('digitizer.solve.openEditor')}
         </Button>
       )}
     </Stack>
@@ -437,29 +582,11 @@ ${text.trim()}` : text.trim();
 
   return (
     <PageContainer dense>
-      <PageHeader dense
-        eyebrow={t('digitizer.books.heading')}
-        title={book.title}
-        subtitle={(
-          <Stack component="span" direction="row" spacing={1.5} alignItems="center" sx={{ display: 'inline-flex' }}>
-            <span>{t('digitizer.solve.progress', { solved: solvedTotal, total: book.exercises.length })}</span>
-            <LinearProgress
-              variant="determinate"
-              value={book.exercises.length ? (solvedTotal / book.exercises.length) * 100 : 0}
-              color="success"
-              sx={{ width: 120, height: 6 }}
-              aria-hidden
-            />
-          </Stack>
-        )}
-        actions={isStaff && (
-          <Button component={RouterLink} to={`/digitizer/books/${book._id}/edit?ex=${index}`} startIcon={<EditIcon />} variant="outlined" color="inherit">
-            {t('digitizer.solve.openEditor')}
-          </Button>
-        )}
-      />
+      {topBar}
+      {/* Светлая подложка-«сцена» — доска парит на ней, а не на почти чёрном фоне */}
+      <Box sx={{ borderRadius: 4, p: { xs: 1.5, md: 3 }, background: 'linear-gradient(180deg, #1C2430 0%, #141A24 100%)', border: '1px solid', borderColor: 'rgba(255,255,255,0.05)' }}>
       {analysisMode ? (
-        // Разбор: доска разбора сама раскладывает арену, панели задачника — дополнительными вкладками
+        // Разбор: доска разбора сама раскладывает арену; тренеру — список задач доп. вкладкой
         <AnalysisBoard
           variant="arena"
           startFen={exercise.fen}
@@ -469,22 +596,28 @@ ${text.trim()}` : text.trim();
           engine={engine}
           engineOn={showEval}
           onToggleEngine={setShowEval}
-          header={header}
-          extraPanels={panels}
-          extraControls={controls}
+          header={analysisHeader}
+          extraPanels={isStaff ? [listPanel] : []}
+          extraControls={analysisControls}
           comments={solutionComments}
         />
       ) : (
-      <ChessArena
-        board={board}
-        showEval={showEval}
-        evalResult={evalResult}
-        orientation={orientation}
-        header={header}
-        panels={panels}
-        controls={controls}
-      />
+        // Фокус-доска + плавающий ассистент: без тяжёлой правой карточки, чистый тёмный фон
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) 300px' }, gap: { xs: 2, md: 4 }, alignItems: 'start', justifyItems: 'center' }}>
+          <Stack alignItems="center" spacing={1.5} sx={{ width: '100%' }}>
+            {/* Имена игроков — табличками над/под доской (если тренер не скрыл), шириной с доску */}
+            <Box sx={{ display: 'inline-flex', flexDirection: 'column', gap: 0.5, maxWidth: '100%' }}>
+              {S.showPlayerNames && hasPlayers && renderPlate(orientation === 'white' ? 'black' : 'white')}
+              <ResizableBoard reserveBottom={150}>{board}</ResizableBoard>
+              {S.showPlayerNames && hasPlayers && renderPlate(orientation === 'white' ? 'white' : 'black')}
+            </Box>
+            {eventInfo && <Typography variant="caption" color="text.secondary" sx={{ textAlign: 'center' }}>{eventInfo}</Typography>}
+            {bottomActions}
+          </Stack>
+          {assistant}
+        </Box>
       )}
+      </Box>
     </PageContainer>
   );
 };

@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Chess, Square } from 'chess.js';
 import { Exercise } from '@/types/PuzzleBook';
 import { MoveNode, getMainline, parseSolution, sideToMove } from '../utils/pgnTree';
@@ -29,6 +29,10 @@ export const useSolveSession = (exercise: Exercise | undefined) => {
   const [lastNode, setLastNode] = useState<MoveNode | null>(null);
   const [hintSquare, setHintSquare] = useState<Square | null>(null);
   const [mistakes, setMistakes] = useState(0);
+  // Секундомер решения: тикает с момента открытия задачи и замирает при успехе
+  const startedAt = useRef<number>(0);
+  const [elapsedMs, setElapsedMs] = useState(0);
+  const [usedHint, setUsedHint] = useState(false);
 
   const playerColor = exercise ? sideToMove(exercise.fen) : 'w';
 
@@ -45,8 +49,18 @@ export const useSolveSession = (exercise: Exercise | undefined) => {
     setLastNode(null);
     setHintSquare(null);
     setMistakes(0);
+    startedAt.current = Date.now();
+    setElapsedMs(0);
+    setUsedHint(false);
     setStatus(mainline.length === 0 ? 'noSolution' : 'playing');
   }, [exercise, mainline]);
+
+  // Пока задача решается — обновляем секундомер раз в секунду; после решения время заморожено
+  useEffect(() => {
+    if (status === 'solved' || status === 'noSolution') return;
+    const id = setInterval(() => setElapsedMs(Date.now() - startedAt.current), 500);
+    return () => clearInterval(id);
+  }, [status]);
 
   // До отрисовки, чтобы при смене упражнения не мелькала предыдущая позиция
   useLayoutEffect(() => {
@@ -54,9 +68,15 @@ export const useSolveSession = (exercise: Exercise | undefined) => {
     return () => clearTimeout(timer.current);
   }, [reset]);
 
+  // Задача решена: фиксируем итоговое время один раз и останавливаем секундомер
+  const markSolved = useCallback(() => {
+    setElapsedMs(Date.now() - startedAt.current);
+    setStatus('solved');
+  }, []);
+
   const finishOrContinue = useCallback((nextIndex: number) => {
     if (nextIndex >= mainline.length) {
-      setStatus('solved');
+      markSolved();
       return;
     }
     // Ответ соперника из главной линии решения
@@ -67,9 +87,10 @@ export const useSolveSession = (exercise: Exercise | undefined) => {
       setFen(game.current.fen());
       setLastNode(reply);
       setIndex(nextIndex + 1);
-      setStatus(nextIndex + 1 >= mainline.length ? 'solved' : 'playing');
+      if (nextIndex + 1 >= mainline.length) markSolved();
+      else setStatus('playing');
     }, OPPONENT_DELAY_MS);
-  }, [mainline]);
+  }, [mainline, markSolved]);
 
   /** Ход ученика. Возвращает вердикт; при 'wrong' ход уже отменён на доске. */
   const tryMove = useCallback((from: Square, to: Square, promotion?: string): MoveVerdict => {
@@ -97,13 +118,13 @@ export const useSolveSession = (exercise: Exercise | undefined) => {
     setLastNode(expected);
     setHintSquare(null);
     if (move.san !== expected.san) {
-      setStatus('solved'); // альтернативный мат завершает задачу
+      markSolved(); // альтернативный мат завершает задачу
     } else {
       setIndex(index + 1);
       finishOrContinue(index + 1);
     }
     return 'correct';
-  }, [status, mainline, index, finishOrContinue]);
+  }, [status, mainline, index, finishOrContinue, markSolved]);
 
   /** Подсвечивает поле фигуры, которой нужно ходить */
   const showHint = useCallback(() => {
@@ -111,6 +132,7 @@ export const useSolveSession = (exercise: Exercise | undefined) => {
     if (!expected || status !== 'playing') return;
     const probe = new Chess(game.current.fen());
     setHintSquare(probe.move(expected.san).from);
+    setUsedHint(true);
   }, [mainline, index, status]);
 
   return {
@@ -123,6 +145,9 @@ export const useSolveSession = (exercise: Exercise | undefined) => {
     hintSquare,
     mistakes,
     movesPlayed: index,
+    // Метрики для статистики: прошедшее время (сек) и была ли использована подсказка
+    elapsedSeconds: Math.floor(elapsedMs / 1000),
+    usedHint,
     tryMove,
     showHint,
     reset,

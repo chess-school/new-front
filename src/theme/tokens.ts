@@ -1,68 +1,72 @@
-// Дизайн-токены платформы: тёмная графитовая палитра, янтарный акцент, изумрудные ходы.
-// Компоненты берут цвета из темы MUI (theme.palette.*); прямой импорт токенов — для мест вне
-// темы (react-chessboard, SVG, antd), где sx/palette недоступны.
+// Дизайн-токены платформы «debiut» в ДВУХ режимах: светлый (канвас #F3F4F7, синий акцент)
+// и тёмный (канвас #0A0E16, синий акцент). Компоненты берут цвета из темы MUI
+// (theme.palette.*); прямой импорт токенов — для мест вне темы (react-chessboard, SVG, antd).
+// Примечание: ключ accent.gold — ИСТОРИЧЕСКИЙ, в нём хранится ГЛАВНЫЙ акцент режима
+// (теперь — королевский синий debiut). Переименование ключа отложено, чтобы не трогать
+// десятки точек использования разом.
 
-export const tokens = {
-  bg: {
-    /** Фон приложения */
-    canvas: '#0d1117',
-    /** Карточки, панели */
-    surface: '#161b22',
-    /** Поднятые элементы: поля ввода, строки при наведении */
-    raised: '#1c2128',
-    /** Самый светлый слой: выделенная строка, активный ход */
-    overlay: '#262c36',
-  },
-  border: {
-    subtle: 'rgba(255, 255, 255, 0.08)',
-    default: 'rgba(255, 255, 255, 0.12)',
-    strong: 'rgba(255, 255, 255, 0.2)',
-  },
-  text: {
-    primary: '#f0f6fc',
-    secondary: '#8b949e',
-    muted: '#6e7681',
-  },
+export type ThemeMode = 'light' | 'dark';
+
+// Общие для обоих режимов
+const radius = { sm: 8, md: 12, lg: 16, xl: 22 } as const;
+const font = {
+  sans: '"Plus Jakarta Sans", "Inter", "Roboto", system-ui, -apple-system, "Segoe UI", sans-serif',
+  display: '"Space Grotesk", "Plus Jakarta Sans", "Inter", system-ui, sans-serif',
+  mono: '"JetBrains Mono", "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
+} as const;
+
+// ── Светлый ────────────────────────────────────────────────────────────
+export const lightTokens = {
+  mode: 'light' as ThemeMode,
+  bg: { canvas: '#F3F4F7', surface: '#FFFFFF', raised: '#F8F9FC', overlay: '#ECEFF4' },
+  border: { subtle: 'rgba(20, 27, 46, 0.08)', default: 'rgba(20, 27, 46, 0.14)', strong: 'rgba(20, 27, 46, 0.24)' },
+  text: { primary: '#141B2E', secondary: '#5B6478', muted: '#8A93A6' },
   accent: {
-    /** Золотисто-янтарный — главные действия, оценка движка */
-    gold: '#e3b341',
-    goldHover: '#f0c453',
-    goldSoft: 'rgba(227, 179, 65, 0.14)',
-    /** Изумрудный — верные ходы, успех */
-    emerald: '#3fb950',
-    emeraldSoft: 'rgba(63, 185, 80, 0.14)',
-    /** Мягкий красный — ошибки, отрицательная оценка */
-    red: '#f85149',
-    redSoft: 'rgba(248, 81, 73, 0.14)',
-    blue: '#58a6ff',
-    blueSoft: 'rgba(88, 166, 255, 0.14)',
+    gold: '#2B50E0', goldHover: '#3A5FF0', goldDark: '#1E3CB0', goldSoft: 'rgba(43, 80, 224, 0.08)',
+    emerald: '#16A34A', emeraldSoft: 'rgba(22, 163, 74, 0.10)',
+    red: '#DC2626', redSoft: 'rgba(220, 38, 38, 0.10)',
+    blue: '#3B82F6', blueSoft: 'rgba(59, 130, 246, 0.10)',
+    amber: '#B8862F', amberSoft: 'rgba(184, 134, 47, 0.12)',
   },
-  board: {
-    light: '#ebecd0',
-    dark: '#779556',
-    /** Последний ход / выбранная клетка */
-    highlight: 'rgba(227, 179, 65, 0.45)',
-  },
-  /** Шкала оценки: бежевые белые, угольные чёрные */
-  evalBar: {
-    white: '#f2ede4',
-    black: '#2b2b2b',
-  },
-  radius: {
-    sm: 8,
-    md: 12,
-    lg: 16,
-  },
-  font: {
-    sans: '"Inter", "Roboto", system-ui, -apple-system, "Segoe UI", sans-serif',
-    mono: '"JetBrains Mono", "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
-  },
+  board: { light: '#EEF1F8', dark: '#7D8CB0', highlight: 'rgba(43, 80, 224, 0.38)' },
+  evalBar: { white: '#EEF1F8', black: '#2A3347' },
+  contrastOnAccent: '#FFFFFF',
+  radius, font,
 } as const;
 
-/** Стекло для выплывающих панелей (меню, диалоги, поповеры) */
-export const glass = {
-  backgroundColor: 'rgba(22, 27, 34, 0.72)',
-  backdropFilter: 'blur(16px) saturate(140%)',
-  WebkitBackdropFilter: 'blur(16px) saturate(140%)',
-  border: `1px solid ${tokens.border.subtle}`,
+// ── Тёмный ─────────────────────────────────────────────────────────────
+export const darkTokens = {
+  mode: 'dark' as ThemeMode,
+  bg: { canvas: '#0A0E16', surface: '#121826', raised: '#1A2234', overlay: '#222C42' },
+  border: { subtle: 'rgba(255, 255, 255, 0.07)', default: '#232C3E', strong: 'rgba(255, 255, 255, 0.18)' },
+  text: { primary: '#EEF1F7', secondary: '#9AA5BC', muted: '#64708A' },
+  accent: {
+    gold: '#4C6FFF', goldHover: '#6B88FF', goldDark: '#3350D0', goldSoft: 'rgba(76, 111, 255, 0.16)',
+    emerald: '#22C55E', emeraldSoft: 'rgba(34, 197, 94, 0.15)',
+    red: '#F0564A', redSoft: 'rgba(240, 86, 74, 0.15)',
+    blue: '#58A6FF', blueSoft: 'rgba(88, 166, 255, 0.14)',
+    amber: '#D6A33A', amberSoft: 'rgba(214, 163, 58, 0.16)',
+  },
+  board: { light: '#E7EBF3', dark: '#5A688C', highlight: 'rgba(76, 111, 255, 0.45)' },
+  evalBar: { white: '#E7EBF3', black: '#2A3347' },
+  contrastOnAccent: '#FFFFFF',
+  radius, font,
 } as const;
+
+export type Tokens = typeof lightTokens;
+
+export const tokensFor = (mode: ThemeMode): Tokens => (mode === 'dark' ? (darkTokens as unknown as Tokens) : lightTokens);
+
+/** Дефолтный набор для статических импортов вне темы (светлый) */
+export const tokens = lightTokens;
+
+/** Стекло для выплывающих панелей — зависит от режима */
+export const glassFor = (t: Tokens) => ({
+  backgroundColor: t.mode === 'dark' ? 'rgba(18, 24, 38, 0.74)' : 'rgba(255, 255, 255, 0.82)',
+  backdropFilter: 'blur(16px) saturate(130%)',
+  WebkitBackdropFilter: 'blur(16px) saturate(130%)',
+  border: `1px solid ${t.border.subtle}`,
+});
+
+/** Дефолтное стекло (светлое) — для статических импортов */
+export const glass = glassFor(lightTokens);

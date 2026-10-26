@@ -2,8 +2,10 @@ import { Box, Typography, Link, Button, Stack } from '@mui/material';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import TwitterIcon from '@mui/icons-material/Twitter';
+import { useTranslation } from 'react-i18next';
 
 export const Footer = () => {
+  const { t } = useTranslation();
   return (
     <Box
       component="footer"
@@ -21,20 +23,20 @@ export const Footer = () => {
       {/* О нашей школе */}
       <Box>
         <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#FFFFFF', marginBottom: '1rem' }}>
-          Chess School
+          {t('footer.brand')}
         </Typography>
         <Typography variant="body2" sx={{ marginBottom: '1rem' }}>
-          Онлайн-школа шахмат для всех уровней — от начинающих до профессионалов.
+          {t('footer.tagline')}
         </Typography>
         <Stack spacing={1}>
           <Link href="/courses" underline="hover" sx={{ color: '#007BFF' }}>
-            Популярные курсы
+            {t('footer.popularCourses')}
           </Link>
           <Link href="/reviews" underline="hover" sx={{ color: '#007BFF' }}>
-            Отзывы
+            {t('footer.reviews')}
           </Link>
           <Link href="/coaches" underline="hover" sx={{ color: '#007BFF' }}>
-            Наши тренеры
+            {t('footer.ourCoaches')}
           </Link>
         </Stack>
       </Box>
@@ -42,34 +44,34 @@ export const Footer = () => {
       {/* Юридическая информация */}
       <Box>
         <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#FFFFFF', marginBottom: '1rem' }}>
-          Юридическая информация
+          {t('footer.legal')}
         </Typography>
         <Stack spacing={1}>
           <Link href="/privacy-policy" underline="hover" sx={{ color: '#007BFF' }}>
-            Privacy Policy
+            {t('footer.privacyPolicy')}
           </Link>
           <Link href="/terms-of-use" underline="hover" sx={{ color: '#007BFF' }}>
-            Terms of Use
+            {t('footer.termsOfUse')}
           </Link>
         </Stack>
         <Typography variant="body2" sx={{ marginTop: '1rem' }}>
-          © 2025 Chess School. Все права защищены.
+          {t('footer.copyright', { year: 2025 })}
         </Typography>
       </Box>
 
       {/* Социальные сети */}
       <Box>
         <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#FFFFFF', marginBottom: '1rem' }}>
-          Мы в социальных сетях
+          {t('footer.social')}
         </Typography>
         <Stack direction="row" spacing={2} sx={{ marginBottom: '1rem' }}>
-          <Link href="https://facebook.com" target="_blank">
+          <Link href="https://facebook.com" target="_blank" rel="noopener noreferrer">
             <FacebookIcon sx={{ fontSize: 24, color: '#FFFFFF', '&:hover': { color: '#1877F2' } }} />
           </Link>
-          <Link href="https://instagram.com" target="_blank">
+          <Link href="https://instagram.com" target="_blank" rel="noopener noreferrer">
             <InstagramIcon sx={{ fontSize: 24, color: '#FFFFFF', '&:hover': { color: '#E4405F' } }} />
           </Link>
-          <Link href="https://twitter.com" target="_blank">
+          <Link href="https://twitter.com" target="_blank" rel="noopener noreferrer">
             <TwitterIcon sx={{ fontSize: 24, color: '#FFFFFF', '&:hover': { color: '#1DA1F2' } }} />
           </Link>
         </Stack>
@@ -88,7 +90,7 @@ export const Footer = () => {
             },
           }}
         >
-          Contact Us
+          {t('footer.contactUs')}
         </Button>
       </Box>
     </Box>

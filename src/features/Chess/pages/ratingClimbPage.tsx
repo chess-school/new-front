@@ -6,7 +6,8 @@ import { Alert, LinearProgress, Box } from '@mui/material';
 import { notification } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import { IPuzzle, PuzzleSourceFilter } from '@/types/Puzzles';
+import { IPuzzle, PUZZLE_SOURCES, PuzzleSourceFilter } from '@/types/Puzzles';
+import { useQueryParam } from '@/hooks/useQueryParam';
 import { ChessBoard } from '../components/ChessBoard';
 import { PuzzleRunReview, RunAttempt } from '../components/PuzzleRunReview';
 import { usePuzzleSession } from '../hooks/usePuzzleSession';
@@ -28,7 +29,8 @@ const NEXT_PUZZLE_DELAY_MS = 500;
 export const RatingClimbPage: React.FC = () => {
     const { t } = useTranslation();
 
-    const [source, setSource] = useState<PuzzleSourceFilter>('lichess');
+    // Источник задач — в URL: ссылку на забег по книжным задачам можно скинуть ученику
+    const [source, setSource] = useQueryParam<PuzzleSourceFilter>('source', 'lichess', PUZZLE_SOURCES);
     const [isGameActive, setIsGameActive] = useState<boolean>(false);
     const [timer, setTimer] = useState<number>(GAME_DURATION_SECONDS);
     const [solvedCount, setSolvedCount] = useState<number>(0);

@@ -1,6 +1,6 @@
 import axiosInstance from '@/api';
 import { io } from 'socket.io-client';
-import { Ack, Challenge, PlayGame, PlayOverview, Preset } from './playTypes';
+import { Ack, Challenge, MyGame, PlayGame, PlayOverview, Preset } from './playTypes';
 import { chatSocketOrigin } from '@/features/Chat/chatSocket';
 
 // ---- REST /api/v2/play
@@ -33,6 +33,10 @@ export const cancelChallenge = async (id: string): Promise<void> => {
 };
 
 export const getGame = async (id: string): Promise<PlayGame> => (await axiosInstance.get(`/play/games/${id}`, { silent: true })).data.data;
+
+/** Мои завершённые партии (новые сверху) */
+export const getMyGames = async (limit = 30): Promise<MyGame[]> =>
+  (await axiosInstance.get('/play/games', { params: { limit } })).data.data;
 
 /** Код ошибки API (REST или ack) */
 export const errorCode = (e: unknown): string | undefined =>

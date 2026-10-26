@@ -4,6 +4,7 @@ import { getAvatarUrl } from '@/api/profile';
 import { useParams, Navigate } from 'react-router-dom';
 
 import { ProfileHeader } from '@/components/Profile/ProfileHeader'; // Укажите правильный путь
+import { ProfileStats } from '@/components/Profile/ProfileStats';
 import { EditProfileForm } from '@/components/Profile/EditProfileForm'; // Укажите правильный путь
 
 import { Link as RouterLink } from 'react-router-dom';
@@ -65,6 +66,8 @@ export const TestProfileV2Page: React.FC = () => {
             onLogout={handleLogout}
           />
 
+          <ProfileStats user={userToDisplay} />
+
           <Typography variant="h6" sx={{ mb: 2 }}>{t('profile.quickLinks', 'Continue training')}</Typography>
           <Grid container spacing={2}>
             {quickLinks.map((link) => (
@@ -72,9 +75,9 @@ export const TestProfileV2Page: React.FC = () => {
                 <Paper component={RouterLink} to={link.to} sx={{
                   p: 2.5, display: 'flex', alignItems: 'center', gap: 2, height: '100%', textDecoration: 'none', color: 'text.primary',
                   transition: 'border-color .2s ease, transform .2s ease',
-                  '&:hover': { borderColor: 'rgba(227,179,65,0.35)', transform: 'translateY(-2px)' },
+                  '&:hover': { borderColor: 'rgba(138,43,43,0.35)', transform: 'translateY(-2px)' },
                 }}>
-                  <Box sx={{ width: 42, height: 42, flexShrink: 0, borderRadius: 2, display: 'grid', placeItems: 'center', bgcolor: 'rgba(227,179,65,0.12)', color: 'primary.main' }}>
+                  <Box sx={{ width: 42, height: 42, flexShrink: 0, borderRadius: 2, display: 'grid', placeItems: 'center', bgcolor: 'rgba(138,43,43,0.12)', color: 'primary.main' }}>
                     {link.icon}
                   </Box>
                   <Typography fontWeight={600}>{link.label}</Typography>

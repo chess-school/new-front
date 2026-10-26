@@ -85,6 +85,29 @@ export interface GameOverEvent {
   pgn: string;
 }
 
+export interface MyGamePlayer {
+  _id: string;
+  uuid: string;
+  firstName: string;
+  lastName: string;
+}
+
+/** Строка списка «Мои партии» (GET /api/v2/play/games) */
+export interface MyGame {
+  _id: string;
+  status: 'finished' | 'aborted';
+  winner: Color | 'draw' | null;
+  endReason: EndReason | null;
+  isRated: boolean;
+  timeControl: TimeControl;
+  white: MyGamePlayer | null;
+  black: MyGamePlayer | null;
+  ratingChanges: { white: number | null; black: number | null } | null;
+  finishedAt: string | null;
+  /** Число сделанных ходов (полуходов) */
+  moves: number;
+}
+
 export interface Challenge {
   _id: string;
   status: GameStatus;

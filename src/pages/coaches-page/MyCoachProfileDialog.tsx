@@ -5,7 +5,8 @@ import {
 } from '@mui/material';
 import { notification } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { FideTitle, getMyCoachProfile, MyCoachProfile, updateMyCoachProfile } from '@/api/coaches';
+import { FideTitle, getMyCoachProfile, MyCoachProfile, updateMyCoachProfile, verifyMyCoachProfile } from '@/api/coaches';
+import { useAuth } from '@/context/AuthContext';
 
 const TITLES: FideTitle[] = ['None', 'GM', 'IM', 'FM', 'CM', 'WGM', 'WIM', 'WFM', 'WCM', 'NM'];
 
@@ -52,10 +53,13 @@ export const MyCoachProfileDialog: React.FC<MyCoachProfileDialogProps> = ({ open
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const lang = (i18n.language || 'en').slice(0, 2);
+  const { user } = useAuth();
+  const isAdmin = !!user?.roles?.includes('ADMIN');
   const [profile, setProfile] = useState<MyCoachProfile | null>(null);
   const [form, setForm] = useState<Form>(EMPTY);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [verifying, setVerifying] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -69,6 +73,22 @@ export const MyCoachProfileDialog: React.FC<MyCoachProfileDialogProps> = ({ open
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
   }, [open, lang, t]);
+
+  // Админ может верифицировать профиль (в т.ч. свой) — профиль появится в каталоге тренеров
+  const handleVerify = async () => {
+    setVerifying(true);
+    try {
+      const p = await verifyMyCoachProfile();
+      setProfile(p);
+      setForm(toForm(p, lang));
+      notification.success({ message: t('coachesPage.verified', 'Профиль верифицирован'), description: undefined });
+      onSaved();
+    } catch {
+      notification.error({ message: t('coachesPage.verifyFailed', 'Не удалось верифицировать профиль'), description: undefined });
+    } finally {
+      setVerifying(false);
+    }
+  };
 
   const set = (field: keyof Form) => (e: React.ChangeEvent<HTMLInputElement>) => setForm((f) => ({ ...f, [field]: e.target.value }));
   const urlInvalid = !!form.profileUrl.trim() && !/^https?:\/\/\S+$/i.test(form.profileUrl.trim());
@@ -108,7 +128,21 @@ export const MyCoachProfileDialog: React.FC<MyCoachProfileDialogProps> = ({ open
         ) : (
           <Stack spacing={2} sx={{ pt: 1 }}>
             {profile && !profile.isVerified && (
-              <Alert severity="info">{t('coachesPage.notVerified', 'Your profile is awaiting verification by an administrator and is not shown in the catalog yet.')}</Alert>
+              <Alert
+                severity={isAdmin ? 'warning' : 'info'}
+                action={isAdmin ? (
+                  <Button color="inherit" size="small" disabled={verifying} onClick={handleVerify}>
+                    {verifying ? t('coachesPage.verifying', 'Верификация…') : t('coachesPage.verifyNow', 'Верифицировать')}
+                  </Button>
+                ) : undefined}
+              >
+                {isAdmin
+                  ? t('coachesPage.notVerifiedAdmin', 'Профиль ещё не верифицирован. Как администратор, вы можете подтвердить его прямо сейчас — после этого он появится в каталоге тренеров.')
+                  : t('coachesPage.notVerified', 'Your profile is awaiting verification by an administrator and is not shown in the catalog yet.')}
+              </Alert>
+            )}
+            {profile && profile.isVerified && (
+              <Alert severity="success">{t('coachesPage.verifiedInfo', 'Профиль верифицирован и виден в каталоге тренеров.')}</Alert>
             )}
             {!profile && <Alert severity="info">{t('coachesPage.createProfileHint', 'Fill in your profile — students will see it in the coaches catalog after verification.')}</Alert>}
             <TextField label={t('coachesPage.headline', 'Headline')} value={form.headline} onChange={set('headline')} fullWidth inputProps={{ maxLength: 120 }}

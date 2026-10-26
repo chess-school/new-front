@@ -4,7 +4,7 @@ import Input from 'antd/es/input';
 import Button from 'antd/es/button';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { notification } from 'antd';
+import { notification, ConfigProvider, theme as antdTheme } from 'antd';
 import Typography from 'antd/es/typography';
 import { FaChessKing } from 'react-icons/fa';
 
@@ -68,13 +68,12 @@ const handleLogin: FormProps<LoginCredentials>['onFinish'] = async (values) => {
 
   const handleRegister: FormProps<RegistrationData>['onFinish'] = async (values) => {
     try {
-      const response = await registerUser(values);
-      const registeredEmail = response.email;
+      await registerUser(values);
 
       navigate('/verify-email', {
-        replace: true, 
+        replace: true,
         state: {
-          email: registeredEmail,
+          email: values.email,
           firstName: values.firstName,
           lastName: values.lastName,
         },
@@ -94,6 +93,9 @@ const handleLogin: FormProps<LoginCredentials>['onFinish'] = async (values) => {
   };
 
   return (
+    // Auth-экран всегда тёмный: форсим antd в dark независимо от темы приложения, чтобы поля
+    // не оставались светлыми с нечитаемым текстом при переходе с тёмной темы.
+    <ConfigProvider theme={{ algorithm: antdTheme.darkAlgorithm, token: { colorPrimary: '#8A2B2B', borderRadius: 10 } }}>
     <div className="auth-form-container">
       <div className="auth-header" onClick={() => navigate('/')}>
         <FaChessKing className="auth-header__icon" />
@@ -157,5 +159,6 @@ const handleLogin: FormProps<LoginCredentials>['onFinish'] = async (values) => {
         )}
       </div>
     </div>
+    </ConfigProvider>
   );
 };

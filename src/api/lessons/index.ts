@@ -36,6 +36,27 @@ export const createIndividualLesson = async (studentId: string, payload: LessonP
   return response.data;
 };
 
+/** Сколько адресатов уведомлено о занятии (почта + колокольчик); бэкенд возвращает в поле notified */
+export interface NotifyResult { total: number; failed: number }
+
+export interface CreateLessonInput extends LessonPayload {
+  /** 'group' → contextId = id группы; 'individual' → contextId = _id пользователя-студента */
+  eventType: 'individual' | 'group';
+  contextId: string;
+  /** Уведомить адресатов (почта от лица тренера + уведомление на сайте). По умолчанию true на бэке */
+  notify?: boolean;
+  /** Общее сообщение тренера в письме/уведомлении (для всех адресатов) */
+  message?: string;
+  /** Личное сообщение по каждому адресату: { [userId]: текст } — приоритетнее общего в приписке */
+  personalMessages?: Record<string, string>;
+}
+
+/** Создать занятие (групповое или индивидуальное) с опциональным оповещением адресатов */
+export const createLesson = async (input: CreateLessonInput): Promise<Lesson & { notified?: NotifyResult | null }> => {
+  const response = await axiosInstance.post('/schedule', input);
+  return response.data;
+};
+
 export const updateLesson = async (lessonId: string, payload: Partial<LessonPayload> & { status?: LessonStatus }): Promise<Lesson> => {
   const response = await axiosInstance.put(`/schedule/${lessonId}`, payload);
   return response.data;

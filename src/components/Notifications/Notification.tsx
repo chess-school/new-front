@@ -14,12 +14,14 @@ import {
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { getNotifications, markAsRead, deleteNotification } from '@/api/notifications';
 
 interface Notification {
   _id: string;
   type: string;
-  content: string;
+  message: string;
+  metadata?: { link?: string };
   read: boolean;
   createdAt: string;
 }
@@ -32,6 +34,7 @@ export const Notifications: React.FC<NotificationsProps> = ({ navigateToRequests
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const open = Boolean(anchorEl);
   const unreadCount = notifications.filter(n => !n.read).length;
@@ -81,11 +84,13 @@ export const Notifications: React.FC<NotificationsProps> = ({ navigateToRequests
       setNotifications(prev => prev.map(n => n._id === notification._id ? { ...n, read: true } : n));
     }
 
-    // Если это заявка, переходим во "Входящие"
-    if (notification.type === 'request' || notification.type === 'homework_submission') {
+    // Переходим по ссылке из уведомления (v2: metadata.link), иначе — во "Входящие"
+    if (notification.metadata?.link) {
+      navigate(notification.metadata.link);
+    } else {
       navigateToRequests();
     }
-    
+
     handleMenuClose();
   };
   
@@ -127,7 +132,7 @@ export const Notifications: React.FC<NotificationsProps> = ({ navigateToRequests
               }}
             >
               <ListItemText
-                primary={notification.content}
+                primary={notification.message}
                 secondary={new Date(notification.createdAt).toLocaleString()}
               />
               <ListItemSecondaryAction>

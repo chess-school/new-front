@@ -1,7 +1,8 @@
 @use '@/styles/variables' as var;
 @use '@/styles/mixins' as mixins;
 
-// Полноэкранный вход: графит, мягкое янтарное свечение и едва заметная шахматная сетка
+// Полноэкранный вход: чистый глубокий угольный фон с мягким радиальным золотым свечением.
+// Клетчатая шахматная текстура убрана — она создавала визуальный шум за формой.
 .auth-page-wrapper {
   min-height: 100vh;
   min-height: 100dvh;
@@ -10,21 +11,31 @@
   padding: var.$spacing-medium;
   box-sizing: border-box;
   background:
-    radial-gradient(ellipse 60% 50% at 15% 10%, rgba(227, 179, 65, 0.16), transparent 70%),
-    radial-gradient(ellipse 50% 45% at 90% 95%, rgba(63, 185, 80, 0.08), transparent 70%),
-    var.$color-dark-primary;
+    radial-gradient(ellipse 55% 45% at 18% 8%, rgba(138, 43, 43, 0.14), transparent 68%),
+    radial-gradient(ellipse 48% 42% at 88% 96%, rgba(34, 197, 94, 0.06), transparent 70%),
+    #0C0F14;
   @include mixins.center;
 
+  // Мягкий размытый золотой акцент за карточкой — глубина без паттерна
   &::before {
     content: '';
     position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(45deg, rgba(255, 255, 255, 0.025) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.025) 75%),
-      linear-gradient(45deg, rgba(255, 255, 255, 0.025) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.025) 75%);
-    background-size: 64px 64px;
-    background-position: 0 0, 32px 32px;
-    mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+    width: 620px;
+    height: 620px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(138, 43, 43, 0.10) 0%, transparent 62%);
+    filter: blur(20px);
     z-index: 0;
+    pointer-events: none;
+  }
+}
+
+// Правая панель split-screen: чистый фон, высоту задаёт грид-строка
+.auth-page-wrapper--split {
+  min-height: 100dvh;
+  background: #0C0F14;
+
+  &::before {
+    background: radial-gradient(circle, rgba(138, 43, 43, 0.07) 0%, transparent 64%);
   }
 }

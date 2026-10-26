@@ -85,6 +85,32 @@ const StatusChip: React.FC<{ status: PuzzleBookSummary['status'] }> = ({ status 
   );
 };
 
+// Бейдж области видимости для тренера (Module 1): 🔒 Приватный / 📝 Черновик / 🌐 Публичный / 👥 Групповой / 🗄 Архив.
+// Для легаси-задачников (visibility не задана) падаем на старый StatusChip.
+const VISIBILITY_BADGE: Record<string, { emoji: string; key: string; dflt: string; color: 'success' | 'warning' | 'info' | 'default' }> = {
+  public: { emoji: '🌐', key: 'digitizer.visibility.public', dflt: 'Public', color: 'success' },
+  private: { emoji: '🔒', key: 'digitizer.visibility.private', dflt: 'Private', color: 'warning' },
+  group: { emoji: '👥', key: 'digitizer.visibility.group', dflt: 'Group', color: 'info' },
+  draft: { emoji: '📝', key: 'digitizer.visibility.draft', dflt: 'Draft', color: 'default' },
+};
+
+const AccessBadges: React.FC<{ book: PuzzleBookSummary }> = ({ book }) => {
+  const { t } = useTranslation();
+  if (!book.visibility) return <StatusChip status={book.status} />;
+  const b = VISIBILITY_BADGE[book.visibility] ?? VISIBILITY_BADGE.draft;
+  let label = `${b.emoji} ${t(b.key, b.dflt)}`;
+  if (book.visibility === 'private' && book.allowedUsersCount) label += ` · ${book.allowedUsersCount}`;
+  if (book.visibility === 'group' && book.allowedGroupsCount) label += ` · ${book.allowedGroupsCount}`;
+  return (
+    <>
+      <Chip size="small" label={label} color={b.color} variant={b.color === 'default' ? 'outlined' : 'filled'} sx={{ fontWeight: 600 }} />
+      {book.isArchived && (
+        <Chip size="small" label={`🗄 ${t('digitizer.visibility.archived', 'Archived')}`} color="default" variant="outlined" sx={{ fontWeight: 600 }} />
+      )}
+    </>
+  );
+};
+
 export const BookList: React.FC<BookListProps> = ({ books, canEdit, variant = 'cards' }) => {
   const { t } = useTranslation();
   const progress = useMemo(() => new Map(books.map((b) => [b._id, solvedCount(b._id)])), [books]);
@@ -119,7 +145,7 @@ export const BookList: React.FC<BookListProps> = ({ books, canEdit, variant = 'c
                   {book.description && <Typography variant="body2" color="text.secondary">{book.description}</Typography>}
                 </TableCell>
                 <TableCell align="right" sx={{ fontVariantNumeric: 'tabular-nums' }}>{book.exercisesCount}</TableCell>
-                {canEdit && <TableCell><StatusChip status={book.status} /></TableCell>}
+                {canEdit && <TableCell><Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap><AccessBadges book={book} /></Stack></TableCell>}
                 <TableCell sx={{ color: 'text.secondary', whiteSpace: 'nowrap' }}>{new Date(book.updatedAt).toLocaleDateString()}</TableCell>
                 <TableCell align="right">
                   <Stack direction="row" spacing={1} justifyContent="flex-end">
@@ -167,7 +193,7 @@ export const BookList: React.FC<BookListProps> = ({ books, canEdit, variant = 'c
             <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 1.25, pb: '16px !important' }}>
               <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap>
                 <Chip size="small" variant="outlined" label={t('digitizer.books.exercisesCount', { count: book.exercisesCount, defaultValue: '{{count}} exercises' })} />
-                {canEdit && <StatusChip status={book.status} />}
+                {canEdit && <AccessBadges book={book} />}
               </Stack>
               {book.description && (
                 <Typography variant="body2" color="text.secondary" sx={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>

@@ -1,13 +1,15 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link as RouterLink, useParams, useSearchParams } from 'react-router-dom';
 import {
-  Alert, Box, Button, CircularProgress, FormControlLabel, IconButton, Paper, Stack,
-  Switch, TextField, ToggleButton, ToggleButtonGroup, Tooltip, Typography,
+  Alert, Box, Button, CircularProgress, FormControl, FormControlLabel, IconButton, MenuItem, Paper,
+  Select, Stack, Switch, TextField, ToggleButton, ToggleButtonGroup, Tooltip, Typography,
 } from '@mui/material';
+import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import FactCheckOutlinedIcon from '@mui/icons-material/FactCheckOutlined';
 import SaveIcon from '@mui/icons-material/Save';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
@@ -21,8 +23,11 @@ import { notification } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { getPuzzleBook, updateExercise, updatePuzzleBook } from '@/api/digitizer';
-import { Exercise, ExerciseUpdate, PuzzleBook } from '@/types/PuzzleBook';
+import { Exercise, ExerciseUpdate, PuzzleBook, PuzzleBookVisibility, SolveSettings } from '@/types/PuzzleBook';
 import { ExerciseList } from '../components/ExerciseList';
+import { SolveSettingsDialog } from '../components/SolveSettingsDialog';
+import { AccessDialog } from '../components/AccessDialog';
+import { BookStatsPanel } from '../components/BookStatsPanel';
 import { MoveTreeView } from '../components/MoveTreeView';
 import { PositionEditorBoard } from '../components/PositionEditorBoard';
 import { boardStyleProps, ENGINE_ARROW } from '../components/boardStyle';
@@ -53,8 +58,12 @@ export const BookEditorPage: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [previewNode, setPreviewNode] = useState<MoveNode | null>(null);
   const [orientation, setOrientation] = useState<'white' | 'black'>('white');
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [accessOpen, setAccessOpen] = useState(false);
+  const [savingSettings, setSavingSettings] = useState(false);
+  const [view, setView] = useState<'editor' | 'stats'>('editor');
 
-  const index = Math.max(0, Math.min(Number(searchParams.get('ex')) || 0, (book?.exercises.length ?? 1) - 1));
+  const index = Math.max(0, Math.min(Number(searchParams.get('exercise')) || 0, (book?.exercises.length ?? 1) - 1));
   const exercise = book?.exercises[index];
 
   useEffect(() => {
@@ -154,7 +163,7 @@ export const BookEditorPage: React.FC = () => {
   const selectExercise = useCallback((i: number) => {
     if (i === index) return;
     if (isDirty && !window.confirm(t('digitizer.editor.unsavedConfirm'))) return;
-    setSearchParams({ ex: String(i) }, { replace: true });
+    setSearchParams({ exercise: String(i) }, { replace: true });
   }, [index, isDirty, setSearchParams, t]);
 
   const handleSave = async () => {
@@ -181,6 +190,30 @@ export const BookEditorPage: React.FC = () => {
     }
   };
 
+  // --- Область видимости и доступ (Module 1) ---
+  const changeVisibility = async (visibility: PuzzleBookVisibility) => {
+    if (!book) return;
+    try {
+      const updated = await updatePuzzleBook(book._id, { visibility });
+      setBook((b) => b && { ...b, visibility: updated.visibility });
+      // Для приватного/группового сразу предлагаем выбрать, кому открыть доступ
+      if (visibility === 'private' || visibility === 'group') setAccessOpen(true);
+    } catch {
+      // перехватчик axios уже показал ошибку
+    }
+  };
+
+  const saveAccess = async (next: { allowedUsers: string[]; allowedGroups: string[] }) => {
+    if (!book) return;
+    try {
+      const updated = await updatePuzzleBook(book._id, next);
+      setBook((b) => b && { ...b, allowedUsers: updated.allowedUsers, allowedGroups: updated.allowedGroups });
+      setAccessOpen(false);
+    } catch {
+      // перехватчик axios уже показал ошибку
+    }
+  };
+
   if (loading) {
     return <Box sx={{ display: 'flex', justifyContent: 'center', p: 6 }}><CircularProgress /></Box>;
   }
@@ -194,6 +227,18 @@ export const BookEditorPage: React.FC = () => {
 
   const solutionError = parsed?.error;
   const canSave = isDirty && !fenError && !solutionError && !!draft.title.trim() && !saving;
+
+  const handleSaveSettings = async (next: SolveSettings) => {
+    if (!book) return;
+    setSavingSettings(true);
+    try {
+      const res = await updatePuzzleBook(book._id, { solveSettings: next });
+      setBook((b) => (b ? { ...b, solveSettings: res.solveSettings ?? next } : b));
+      setSettingsOpen(false);
+    } finally {
+      setSavingSettings(false);
+    }
+  };
 
   return (
     <PageContainer maxWidth={1440}>
@@ -210,14 +255,65 @@ export const BookEditorPage: React.FC = () => {
               label={book.status === 'published' ? t('digitizer.status.published') : t('digitizer.status.draft')}
               sx={{ mr: 1 }}
             />
-            <Button component={RouterLink} to={`/books/${book._id}/solve?ex=${index}`} variant="outlined" color="inherit" startIcon={<PlayArrowIcon />}>
+            {/* Область видимости (Module 1): черновик / приватный / групповой / публичный */}
+            <FormControl size="small" sx={{ minWidth: 150, mr: 0.5 }}>
+              <Select
+                value={book.visibility ?? 'draft'}
+                onChange={(e) => changeVisibility(e.target.value as PuzzleBookVisibility)}
+                aria-label={t('digitizer.visibility.label', 'Visibility')}
+              >
+                <MenuItem value="draft">📝 {t('digitizer.visibility.draft', 'Draft')}</MenuItem>
+                <MenuItem value="private">🔒 {t('digitizer.visibility.private', 'Private')}</MenuItem>
+                <MenuItem value="group">👥 {t('digitizer.visibility.group', 'Group')}</MenuItem>
+                <MenuItem value="public">🌐 {t('digitizer.visibility.public', 'Public')}</MenuItem>
+              </Select>
+            </FormControl>
+            {(book.visibility === 'private' || book.visibility === 'group') && (
+              <Tooltip title={t('digitizer.access.manage', 'Manage access')}>
+                <IconButton onClick={() => setAccessOpen(true)} aria-label={t('digitizer.access.manage', 'Manage access')}>
+                  <PeopleAltOutlinedIcon />
+                </IconButton>
+              </Tooltip>
+            )}
+            <Tooltip title={t('digitizer.solveSettings.title', { defaultValue: 'Solving rules' })}>
+              <IconButton onClick={() => setSettingsOpen(true)} aria-label={t('digitizer.solveSettings.title', { defaultValue: 'Solving rules' })}>
+                <SettingsOutlinedIcon />
+              </IconButton>
+            </Tooltip>
+            <Button component={RouterLink} to={`/books/${book._id}/solve?exercise=${index}`} variant="outlined" color="inherit" startIcon={<PlayArrowIcon />}>
               {t('digitizer.editor.trySolve')}
             </Button>
           </>
         )}
       />
 
-      <Box sx={{ display: 'grid', gap: 3, alignItems: 'start', gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1.1fr) minmax(0, 1fr)' } }}>
+      <SolveSettingsDialog
+        open={settingsOpen}
+        value={book.solveSettings}
+        saving={savingSettings}
+        onClose={() => setSettingsOpen(false)}
+        onSave={handleSaveSettings}
+      />
+
+      {(book.visibility === 'private' || book.visibility === 'group') && (
+        <AccessDialog
+          open={accessOpen}
+          mode={book.visibility}
+          selectedUsers={book.allowedUsers ?? []}
+          selectedGroups={book.allowedGroups ?? []}
+          onClose={() => setAccessOpen(false)}
+          onSave={saveAccess}
+        />
+      )}
+
+      <ToggleButtonGroup exclusive size="small" value={view} onChange={(_, v) => v && setView(v)} sx={{ mb: 2 }}>
+        <ToggleButton value="editor">{t('digitizer.editor.tabEditor', { defaultValue: 'Editor' })}</ToggleButton>
+        <ToggleButton value="stats">{t('digitizer.editor.tabStats', { defaultValue: 'Statistics' })}</ToggleButton>
+      </ToggleButtonGroup>
+
+      {view === 'stats' && <BookStatsPanel bookId={book._id} />}
+
+      <Box sx={{ display: view === 'editor' ? 'grid' : 'none', gap: 3, alignItems: 'start', gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1.1fr) minmax(0, 1fr)' } }}>
         {/* Левая колонка: доска, движок, проверка решения */}
         <Paper sx={{ p: { xs: 1.5, sm: 2.5 }, position: { md: 'sticky' }, top: { md: 84 } }}>
           <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} sx={{ mb: 1.5 }}>

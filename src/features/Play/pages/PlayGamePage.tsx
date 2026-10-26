@@ -19,6 +19,7 @@ import { ResizableBoard } from '@/features/Chess/components/ResizableBoard';
 import { PageContainer } from '@/shared/components/ui/PageHeader';
 import { tokens } from '@/theme/tokens';
 import { usePlaySocket } from '../usePlaySocket';
+import { useConnection, ConnectionInfo } from '../useConnection';
 import { usePlayGame } from '../usePlayGame';
 import { acceptChallenge, cancelChallenge, errorCode } from '../playApi';
 import { PlayerBar } from '../components/PlayerBar';
@@ -57,6 +58,14 @@ export const PlayGamePage: React.FC = () => {
   };
   const play = usePlayGame({ gameId, socket, connected, userId: user?._id, onError: showError });
   const { game, myColor } = play;
+
+  // Качество связи: свой пинг меряем всегда, в активной партии обмениваемся с соперником
+  const conn = useConnection(socket, connected, {
+    gameId: game?.status === 'active' ? gameId : undefined,
+    selfId: user?._id,
+    whiteId: game?.white?._id,
+    blackId: game?.black?._id,
+  });
 
   // Новая партия (реванш) — сбросить локальное состояние страницы
   useEffect(() => { setViewPly(null); setOverOpen(false); setRematchOffered(null); setConfirmResign(false); }, [gameId]);
@@ -153,9 +162,16 @@ export const PlayGamePage: React.FC = () => {
   // ---- партия
   const top = opposite(orientation);
   const bottom = orientation;
+  // Связь показываем только игрокам: своя строка — свой пинг, строка соперника — его
+  const connFor = (color: Color): ConnectionInfo | undefined => {
+    if (!myColor) return undefined;
+    return color === myColor
+      ? { connected: conn.connected, latency: conn.selfLatency }
+      : { connected: conn.connected, latency: conn.peerLatency };
+  };
   const bar = (color: Color) => (
     <PlayerBar player={game[color]} color={color} clock={game.clock} receivedAt={play.receivedAt} live={live}
-      ratingDiff={finished ? game.ratingChanges?.[color] ?? null : null} isMe={color === myColor} />
+      ratingDiff={finished ? game.ratingChanges?.[color] ?? null : null} isMe={color === myColor} connection={connFor(color)} />
   );
   const opponentOffersDraw = live && !!myColor && game.drawOfferBy === opposite(myColor);
   const myDrawOffer = live && !!myColor && game.drawOfferBy === myColor;

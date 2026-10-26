@@ -27,7 +27,8 @@ export const deleteEnrollment = async (studentUuid: string, enrollmentId: string
 // ---------- Справочники тренера для форм ----------
 
 export interface CoachCourse { _id: string; title: string; status: string }
-export interface CoachGroup { _id: string; name: string; status: 'active' | 'archived' }
+export interface GroupMember { _id: string; uuid?: string; firstName: string; lastName: string; avatarUrl?: string | null }
+export interface CoachGroup { _id: string; name: string; status: 'active' | 'archived'; members?: GroupMember[] }
 
 export const getMyCourses = async (): Promise<CoachCourse[]> => {
   const response = await axiosInstance.get('/coaches/me/courses');
@@ -43,4 +44,20 @@ export const getCatalogCourses = async (): Promise<CoachCourse[]> => {
 export const getMyGroups = async (): Promise<CoachGroup[]> => {
   const response = await axiosInstance.get('/coaches/me/groups');
   return response.data.data;
+};
+
+/** Создать учебную группу (владелец — текущий тренер) */
+export const createGroup = async (payload: { name: string; description?: string }): Promise<CoachGroup> => {
+  const response = await axiosInstance.post('/groups', payload, { silent: true });
+  return response.data; // контроллер возвращает группу напрямую
+};
+
+/** Добавить ученика в группу по его uuid (у ученика должен быть действующий контракт с тренером) */
+export const addGroupMember = async (groupId: string, userUuid: string): Promise<void> => {
+  await axiosInstance.post(`/groups/${groupId}/members`, { userUuid }, { silent: true });
+};
+
+/** Убрать ученика из группы */
+export const removeGroupMember = async (groupId: string, userUuid: string): Promise<void> => {
+  await axiosInstance.delete(`/groups/${groupId}/members/${encodeURIComponent(userUuid)}`, { silent: true });
 };

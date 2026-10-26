@@ -22,6 +22,7 @@ import { useGameTree } from '../tree/useGameTree';
 import { useTreeKeyboard } from '../tree/useTreeKeyboard';
 import { VariationTree } from './VariationTree';
 import { AnnotationPanel } from './AnnotationPanel';
+import { CommentPlaque } from './CommentPlaque';
 
 interface AnalysisBoardProps {
   startFen: string;
@@ -89,7 +90,7 @@ export const AnalysisBoard: React.FC<AnalysisBoardProps> = ({
   const onMove = (from: Square, to: Square, promotion?: string): boolean => actions.play({ from, to, promotion });
 
   const board = (
-    <ChessBoard fen={fen} onMove={onMove} boardOrientation={orientation} movable="both" customArrows={arrows} lastMove={lastMove} />
+    <ChessBoard fen={fen} onMove={onMove} boardOrientation={orientation} movable="both" customArrows={arrows} lastMove={lastMove} coordinates="outside" />
   );
 
   const atStart = current.id === tree.rootId;
@@ -115,6 +116,8 @@ export const AnalysisBoard: React.FC<AnalysisBoardProps> = ({
     </Stack>
   );
 
+  const commentPlaque = <CommentPlaque node={current} />;
+
   const enginePanel = (
     <EnginePanel
       enabled={engineOn}
@@ -135,7 +138,7 @@ export const AnalysisBoard: React.FC<AnalysisBoardProps> = ({
           showEval={engineOn}
           evalResult={fresh}
           orientation={orientation}
-          header={<Stack spacing={1.5}>{header}{enginePanel}</Stack>}
+          header={<Stack spacing={1.5}>{header}{commentPlaque}{enginePanel}</Stack>}
           panels={[{ key: 'moves', label: t('analysisBoard.moves', 'Moves'), icon: <FormatListNumberedRoundedIcon />, content: moveList }, ...extraPanels]}
           controls={<Stack spacing={1}>{navigation}{extraControls}</Stack>}
         />
@@ -150,6 +153,7 @@ export const AnalysisBoard: React.FC<AnalysisBoardProps> = ({
         <Box sx={{ flex: 1, minWidth: 0 }}><ResizableBoard reserveBottom={120} onSize={setBoardPx}>{board}</ResizableBoard></Box>
       </Stack>
       <Box sx={{ mt: 1 }}>{navigation}</Box>
+      {current.comment && <Box sx={{ mt: 1 }}>{commentPlaque}</Box>}
       <Box sx={{ mt: 1 }}>{moveList}</Box>
       <Box sx={{ mt: 2 }}>{enginePanel}</Box>
     </Box>

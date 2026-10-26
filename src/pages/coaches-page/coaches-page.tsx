@@ -2,13 +2,16 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Alert, Box, Button, Card, InputAdornment, Skeleton, Stack, TextField, Typography } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import ManageAccountsRoundedIcon from '@mui/icons-material/ManageAccountsRounded';
+import SchoolRoundedIcon from '@mui/icons-material/SchoolRounded';
 import { useTranslation } from 'react-i18next';
 import { PageContainer, PageHeader } from '@/shared/components/ui/PageHeader';
 import { CoachDto, CoachRequestStatus, getCoaches, getSentCoachRequests } from '@/api/coaches';
+import { CoachApplicationDto, getMyCoachApplication } from '@/api/coaches/coachApplications';
 import { useAuth } from '@/context/AuthContext';
 import { CoachCard } from './CoachCard';
 import { CoachProfileDialog } from './CoachProfileDialog';
 import { MyCoachProfileDialog } from './MyCoachProfileDialog';
+import { CoachApplicationDialog } from './CoachApplicationDialog';
 
 const PAGE_SIZE = 12;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -21,6 +24,12 @@ export const CoachesPage: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { user, isAuthenticated } = useAuth();
   const isCoach = !!user?.roles?.includes('COACH');
+  const isAdmin = !!user?.roles?.includes('ADMIN');
+  // Профилем тренера может владеть и админ (тогда ему доступен весь тренерский функционал: группы,
+  // занятия, класс). Создаётся тем же PUT /coaches/me (upsert).
+  const canManageCoachProfile = isCoach || isAdmin;
+  // Кандидат в тренеры: обычный вошедший пользователь (не тренер и не админ)
+  const canApply = isAuthenticated && !isCoach && !isAdmin;
 
   const [search, setSearch] = useState('');
   const [query, setQuery] = useState('');
@@ -32,6 +41,8 @@ export const CoachesPage: React.FC = () => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [selected, setSelected] = useState<CoachDto | null>(null);
   const [editOpen, setEditOpen] = useState(false);
+  const [applyOpen, setApplyOpen] = useState(false);
+  const [application, setApplication] = useState<CoachApplicationDto | null>(null);
   const [requests, setRequests] = useState<Record<string, CoachRequestStatus>>({});
   const requestSeq = useRef(0);
 
@@ -87,6 +98,16 @@ export const CoachesPage: React.FC = () => {
   }, [isAuthenticated]);
   useEffect(() => { void loadRequests(); }, [loadRequests]);
 
+  // Моя заявка на роль тренера — статус под шапкой и вид кнопки «Стать тренером»
+  useEffect(() => {
+    if (!canApply) { setApplication(null); return; }
+    let cancelled = false;
+    getMyCoachApplication()
+      .then((app) => { if (!cancelled) setApplication(app); })
+      .catch(() => { if (!cancelled) setApplication(null); });
+    return () => { cancelled = true; };
+  }, [canApply]);
+
   const myId = user?._id;
   const isMe = useCallback((coach: CoachDto) => !!myId && coach.user._id === myId, [myId]);
   const skeletons = useMemo(() => Array.from({ length: 6 }, (_, i) => i), []);
@@ -108,14 +129,38 @@ export const CoachesPage: React.FC = () => {
               inputProps={{ 'aria-label': t('coaches.searchByName'), maxLength: 100 }}
               InputProps={{ startAdornment: <InputAdornment position="start"><SearchIcon sx={{ color: 'text.secondary' }} /></InputAdornment> }}
             />
-            {isCoach && (
+            {canManageCoachProfile && (
               <Button variant="outlined" color="inherit" startIcon={<ManageAccountsRoundedIcon />} onClick={() => setEditOpen(true)}>
                 {t('coachesPage.myProfile', 'My coach profile')}
+              </Button>
+            )}
+            {canApply && application?.status !== 'pending' && (
+              <Button variant="contained" startIcon={<SchoolRoundedIcon />} onClick={() => setApplyOpen(true)}>
+                {application?.status === 'rejected'
+                  ? t('coachApplication.applyAgain', 'Apply again')
+                  : t('coachApplication.becomeCoach', 'Become a coach')}
+              </Button>
+            )}
+            {canApply && application?.status === 'pending' && (
+              <Button variant="outlined" color="inherit" startIcon={<SchoolRoundedIcon />} disabled>
+                {t('coachApplication.pending', 'Application under review')}
               </Button>
             )}
           </Stack>
         )}
       />
+
+      {canApply && application?.status === 'pending' && (
+        <Alert severity="info" sx={{ mb: 2 }}>
+          {t('coachApplication.pendingHint', 'Your application to become a coach is under review. An administrator may contact you to clarify the details.')}
+        </Alert>
+      )}
+      {canApply && application?.status === 'rejected' && (
+        <Alert severity="warning" sx={{ mb: 2 }}>
+          {t('coachApplication.rejectedHint', 'Your coach application was not approved.')}
+          {application.adminNote ? ` ${t('coachApplication.adminNote', 'Administrator note')}: ${application.adminNote}` : ''}
+        </Alert>
+      )}
 
       {status === 'error' ? (
         <Alert severity="error" action={<Button color="inherit" size="small" onClick={() => void load(1, false)}>{t('coachesPage.retry', 'Retry')}</Button>}>
@@ -169,7 +214,14 @@ export const CoachesPage: React.FC = () => {
         onRequested={(coachId) => setRequests((r) => ({ ...r, [coachId]: 'pending' }))}
         onEditMyProfile={() => { setSelected(null); setEditOpen(true); }}
       />
-      {isCoach && <MyCoachProfileDialog open={editOpen} onClose={() => setEditOpen(false)} onSaved={() => void load(1, false)} />}
+      {canManageCoachProfile && <MyCoachProfileDialog open={editOpen} onClose={() => setEditOpen(false)} onSaved={() => void load(1, false)} />}
+      {canApply && (
+        <CoachApplicationDialog
+          open={applyOpen}
+          onClose={() => setApplyOpen(false)}
+          onSubmitted={(app) => setApplication(app)}
+        />
+      )}
     </PageContainer>
   );
 };

@@ -34,9 +34,14 @@ axiosInstance.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    const language = i18n.language; 
+    const language = i18n.language;
     if (language) {
       config.headers['Accept-Language'] = language;
+    }
+    // Активный клуб (мульти-арендность): бэк скоупит данные по X-Club-Id
+    const clubId = localStorage.getItem('debiut.activeClub');
+    if (clubId) {
+      config.headers['X-Club-Id'] = clubId;
     }
     return config;
   },
