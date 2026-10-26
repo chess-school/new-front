@@ -1,0 +1,30 @@
+User-agent: *
+Allow: /$
+Allow: /about
+Allow: /achievements
+Allow: /book
+Allow: /analysis
+Allow: /rating
+Allow: /survival
+Allow: /puzzles
+Allow: /coaches
+
+# Приватные кабинеты и служебные разделы — не индексировать
+Disallow: /classroom/
+Disallow: /admin
+Disallow: /digitizer
+Disallow: /api/
+Disallow: /play
+Disallow: /my-classes
+Disallow: /my-games
+Disallow: /inbox
+Disallow: /students
+Disallow: /groups
+Disallow: /profile/
+Disallow: /books
+Disallow: /login
+Disallow: /register
+Disallow: /verify-email
+Disallow: /coach-applications
+
+Sitemap: https://chess.motorcycles/sitemap.xml
