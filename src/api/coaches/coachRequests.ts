@@ -75,3 +75,14 @@ export const updateMyCoachProfile = async (payload: MyCoachProfileInput): Promis
   const response = await axiosInstance.put('/coaches/me', payload);
   return response.data;
 };
+
+/** Верифицировать тренера по uuid (только ADMIN). Пускает и профиль админа. */
+export const verifyCoach = async (uuid: string): Promise<void> => {
+  await axiosInstance.patch('/admin/users/verify-coach', undefined, { params: { uuid }, silent: true });
+};
+
+/** Админ верифицирует СВОЙ профиль тренера (по текущему пользователю, без uuid) */
+export const verifyMyCoachProfile = async (): Promise<MyCoachProfile> => {
+  const response = await axiosInstance.patch('/coaches/me/verify', undefined, { silent: true });
+  return response.data;
+};

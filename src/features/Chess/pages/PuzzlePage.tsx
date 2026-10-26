@@ -46,6 +46,9 @@ export const PuzzlePage: React.FC = () => {
     const source: PuzzleSourceFilter = bookId
         ? 'book'
         : (PUZZLE_SOURCES as string[]).includes(searchParams.get('source') ?? '') ? searchParams.get('source') as PuzzleSourceFilter : 'lichess';
+    // Рейтинговое окно задач Lichess тоже в URL: ссылкой можно задать нужную сложность
+    const minRating = Number(searchParams.get('minRating')) || undefined;
+    const maxRating = Number(searchParams.get('maxRating')) || undefined;
 
     const [puzzle, setPuzzle] = useState<IPuzzle | null>(null);
     const [loading, setLoading] = useState(true);
@@ -61,7 +64,11 @@ export const PuzzlePage: React.FC = () => {
         setLoading(true);
         setEmpty(false);
         try {
-            const next = await getRandomPuzzle({ source, bookId, exclude: lastId.current, ...(source === 'lichess' ? LICHESS_RATING : {}) });
+            // Для Lichess — окно сложности из URL, иначе прежние значения по умолчанию
+            const rating = source === 'lichess'
+                ? { minRating: minRating ?? LICHESS_RATING.minRating, maxRating: maxRating ?? LICHESS_RATING.maxRating }
+                : {};
+            const next = await getRandomPuzzle({ source, bookId, exclude: lastId.current, ...rating });
             lastId.current = next._id;
             setHintShown(false);
             setWrongFlash(false);
@@ -73,7 +80,7 @@ export const PuzzlePage: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    }, [source, bookId, t]);
+    }, [source, bookId, minRating, maxRating, t]);
 
     useEffect(() => {
         lastId.current = undefined;

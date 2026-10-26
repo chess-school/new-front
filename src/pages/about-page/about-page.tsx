@@ -77,7 +77,7 @@ export const About: React.FC = () => {
         position: 'relative',
         py: { xs: 10, md: 15 },
         textAlign: 'center',
-        backgroundImage: 'radial-gradient(ellipse at 20% 0%, rgba(227,179,65,0.16) 0%, transparent 55%), linear-gradient(rgba(13,17,23,0.82), #0d1117), url("/images/chess-cinematic-lg.jpg")',
+        backgroundImage: 'radial-gradient(ellipse at 20% 0%, rgba(138,43,43,0.16) 0%, transparent 55%), linear-gradient(rgba(9,11,14,0.84), #090B0E), url("/images/chess-cinematic-lg.jpg")',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundAttachment: { xs: 'scroll', md: 'fixed' },
@@ -138,8 +138,12 @@ export const About: React.FC = () => {
           <Grid container spacing={4}>
             {whyUsCards.map((card, i) => (
               <Grid item xs={12} md={4} key={i}>
-                <Paper sx={{ p: 4, borderRadius: 3, textAlign: 'center', height: '100%', transition: 'transform .25s ease, border-color .25s ease', '&:hover': { transform: 'translateY(-4px)', borderColor: 'rgba(227,179,65,0.35)' }}}>
-                  <Typography fontSize="3rem">{card.icon}</Typography>
+                <Paper sx={{ p: 4, borderRadius: 3, textAlign: 'center', height: '100%', transition: 'transform .25s ease, border-color .25s ease', '&:hover': { transform: 'translateY(-4px)', borderColor: 'rgba(138,43,43,0.35)' }}}>
+                  <Box aria-hidden sx={{
+                    width: 56, height: 56, mx: 'auto', mb: 1.5, borderRadius: '50%', display: 'grid', placeItems: 'center',
+                    fontSize: '1.9rem', lineHeight: 1,
+                    bgcolor: 'rgba(138,43,43,0.12)', border: '1px solid rgba(138,43,43,0.25)',
+                  }}>{card.icon}</Box>
                   <Typography variant="h6" fontWeight="bold" my={1}>{card.title}</Typography>
                   <Typography color="text.secondary">{card.description}</Typography>
                 </Paper>

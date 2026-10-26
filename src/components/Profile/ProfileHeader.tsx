@@ -25,10 +25,10 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user, avatarUrl, i
   return (
     <Paper sx={{
       p: { xs: 3, md: 4 }, mb: 4, borderRadius: 4, position: 'relative', overflow: 'hidden',
-      background: 'radial-gradient(ellipse 60% 120% at 0% 0%, rgba(227,179,65,0.12), transparent 60%), #161b22',
+      background: 'radial-gradient(ellipse 60% 120% at 0% 0%, rgba(138,43,43,0.12), transparent 60%), #FFFFFF',
     }}>
       <Stack direction={{ xs: 'column', md: 'row' }} spacing={4} alignItems="center">
-        <Avatar src={avatarUrl} alt={`${user.firstName} ${user.lastName}`} sx={{ width: { xs: 96, md: 120 }, height: { xs: 96, md: 120 }, border: '3px solid', borderColor: 'primary.main', boxShadow: '0 0 0 6px rgba(227,179,65,0.12)' }} />
+        <Avatar src={avatarUrl} alt={`${user.firstName} ${user.lastName}`} sx={{ width: { xs: 96, md: 120 }, height: { xs: 96, md: 120 }, border: '3px solid', borderColor: 'primary.main', boxShadow: '0 0 0 6px rgba(138,43,43,0.12)' }} />
         <Box sx={{ flexGrow: 1, textAlign: { xs: 'center', md: 'left' } }}>
           <Stack direction="row" spacing={1.5} alignItems="center" justifyContent={{xs: 'center', md: 'flex-start'}} flexWrap="wrap" useFlexGap>
             <Typography variant="h4">{user.firstName} {user.lastName}</Typography>

@@ -41,7 +41,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'light', 
         borderRadius: 2,
         cursor: onSelect ? 'pointer' : 'default',
         transition: 'box-shadow 0.3s, transform 0.2s',
-        '&:hover': onSelect ? { borderColor: 'rgba(227,179,65,0.35)', transform: 'translateY(-2px)' } : {},
+        '&:hover': onSelect ? { borderColor: 'rgba(138,43,43,0.35)', transform: 'translateY(-2px)' } : {},
       }}
     >
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1, mb: 1, minWidth: 0 }}>

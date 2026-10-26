@@ -7,9 +7,10 @@ import {
   Card,
   CardContent,
   CardMedia,
+  Chip,
 } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
-import StarIcon from "@mui/icons-material/Star";
+import WorkspacePremiumRoundedIcon from "@mui/icons-material/WorkspacePremiumRounded";
 import { useTranslation } from "react-i18next";
 import { getCoachesByEmail } from "@/api/coaches";
 import { Coach } from "@/types/Coach";
@@ -23,7 +24,7 @@ export const CoachesBlock = () => {
 
       useEffect(() => {
         const fetchCoaches = async () => {
-            const data = await getCoachesByEmail(["ad3@example.com", "ad7@example.com"]);
+            const data = await getCoachesByEmail(["admin21@example.com", "admin22@example.com", "admin11@example.com"]);
             setCoaches(data);
         };
     
@@ -44,8 +45,10 @@ export const CoachesBlock = () => {
                 sx={{
                   overflow: 'hidden',
                   position: "relative",
-                  '&:hover': { borderColor: 'rgba(227,179,65,0.35)', transform: 'translateY(-4px)' },
-                  '&:hover .hoverAction, &:focus-within .hoverAction': { opacity: 1 },
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  '&:hover': { borderColor: 'rgba(138,43,43,0.35)', transform: 'translateY(-4px)', boxShadow: '0 16px 32px rgba(0,0,0,0.35)' },
                 }}
               >
                 <CardMedia
@@ -55,26 +58,27 @@ export const CoachesBlock = () => {
                   alt={`${coach.firstName} ${coach.lastName}`}
                   sx={{ objectFit: 'cover', bgcolor: 'surface.raised' }}
                 />
-                <CardContent>
-                  <Typography variant="h6">
+                <CardContent sx={{ flexGrow: 1 }}>
+                  <Typography variant="h6" noWrap>
                     {coach.firstName} {coach.lastName}
                   </Typography>
-                  <Box mt={0.5} aria-hidden>
-                    {[...Array(5)].map((_, i) => (
-                      <StarIcon key={i} sx={{ color: "primary.main", fontSize: 18 }} />
-                    ))}
-                  </Box>
+                  {coach.specialization && (
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }} noWrap>
+                      {coach.specialization}
+                    </Typography>
+                  )}
+                  {coach.experience > 0 && (
+                    <Chip
+                      size="small"
+                      variant="outlined"
+                      icon={<WorkspacePremiumRoundedIcon sx={{ fontSize: 16 }} />}
+                      label={t("homePage.coaches.experienceYears", { count: coach.experience, defaultValue: "{{count}} yrs experience" })}
+                      sx={{ mt: 1.25, color: 'primary.main', borderColor: 'rgba(138,43,43,0.35)' }}
+                    />
+                  )}
                 </CardContent>
-                <Box
-                  className="hoverAction"
-                  sx={{
-                    px: 2,
-                    pb: 2,
-                    // На сенсорных экранах наведения нет — кнопка видна всегда
-                    opacity: { xs: 1, md: 0 },
-                    transition: "opacity .25s ease",
-                  }}
-                >
+                {/* CTA всегда в потоке — без скачка верстки при наведении */}
+                <Box sx={{ px: 2, pb: 2 }}>
                   <Button variant="contained" fullWidth
                     onClick={() => navigate("/coaches", { state: { coach } })}>
                     {t("homePage.coaches.selectCoach")}

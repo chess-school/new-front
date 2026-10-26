@@ -1,6 +1,7 @@
 import React from 'react';
 import { Paper, Skeleton, Stack, Box, Typography, Button, Divider } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import EventIcon from '@mui/icons-material/Event';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { ScheduleEvent } from '@/types/SheduleEvent';
@@ -13,6 +14,7 @@ interface UpcomingLessonsWidgetProps {
 const DISPLAY_LIMIT = 3;
 
 export const UpcomingLessonsWidget: React.FC<UpcomingLessonsWidgetProps> = ({ schedule, isLoading }) => {
+  const { t } = useTranslation();
   if (isLoading) return <Paper sx={{ p: 2, borderRadius: 3, height: '100%' }}><Skeleton variant="rectangular" height={240} sx={{ borderRadius: 2 }} /></Paper>;
 
   const upcomingEvents = schedule
@@ -25,7 +27,7 @@ export const UpcomingLessonsWidget: React.FC<UpcomingLessonsWidgetProps> = ({ sc
     <Paper sx={{ p: 2, borderRadius: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Stack direction="row" spacing={2} alignItems="center" mb={2}>
         <EventIcon sx={{ color: 'primary.main' }}/>
-        <Typography variant="h6">Upcoming Lessons</Typography>
+        <Typography variant="h6">{t('upcomingLessons.title')}</Typography>
       </Stack>
       <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
         {displayedEvents.length > 0 ? (
@@ -34,7 +36,7 @@ export const UpcomingLessonsWidget: React.FC<UpcomingLessonsWidgetProps> = ({ sc
           </Stack>
         ) : (
           <Box sx={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-            <Typography color="text.secondary">No upcoming lessons.</Typography>
+            <Typography color="text.secondary">{t('upcomingLessons.empty')}</Typography>
           </Box>
         )}
       </Box>
@@ -42,7 +44,7 @@ export const UpcomingLessonsWidget: React.FC<UpcomingLessonsWidgetProps> = ({ sc
         <>
             <Divider sx={{ my: 2 }}/>
             <Button component={RouterLink} to="/students-shedule" fullWidth endIcon={<ArrowForwardIcon />} sx={{ color: 'primary.main', justifyContent: 'space-between' }}>
-                View Full Schedule ({upcomingEvents.length})
+                {t('upcomingLessons.viewFullSchedule', { count: upcomingEvents.length })}
             </Button>
         </>
       )}

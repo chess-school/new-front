@@ -1,19 +1,27 @@
 @use '@/styles/variables' as var;
 @use '@/styles/breakpoints' as bp;
 
-// Стеклянная карточка входа; поля и кнопки antd окрашены темой (src/theme/AppThemeProvider)
+// Auth-страница — всегда тёмная («угольный» бренд-экран) независимо от темы приложения.
+// Локальные тёмные токены (глобальные $color-dark-* переписаны на светлые значения и тут не годятся).
+$auth-card-bg: rgba(18, 22, 31, 0.80);
+$auth-input-bg: #161b22;
+$auth-border: rgba(240, 246, 252, 0.14);
+$auth-text: #f0f6fc;
+$auth-text-secondary: rgba(240, 246, 252, 0.62);
+
+// Стеклянная карточка входа (тёмная); antd-поля форсятся в dark через ConfigProvider в AuthForm.tsx
 .auth-form-container {
   position: relative;
   max-width: 440px;
   width: 100%;
-  padding: 2.75rem 2.5rem 2.25rem;
+  padding: 3rem 2.75rem 2.5rem;
   box-sizing: border-box;
-  background: rgba(22, 27, 34, 0.72);
+  background: $auth-card-bg;
   backdrop-filter: blur(18px) saturate(140%);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
-  border: var.$border-subtle;
-  border-radius: 16px;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(227, 179, 65, 0.04) inset;
+  border: 1px solid $auth-border;
+  border-radius: 20px;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(138, 43, 43, 0.05) inset;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -21,7 +29,7 @@
   z-index: 1;
 
   @include bp.nsm {
-    padding: 2rem 1.25rem 1.5rem;
+    padding: 2.25rem 1.5rem 1.75rem;
   }
 }
 
@@ -34,26 +42,26 @@
 }
 
 .auth-header__icon {
-  color: #1a1405;
-  font-size: 1.25rem;
-  width: 40px;
-  height: 40px;
-  padding: 9px;
+  color: #0a0d12;
+  font-size: 1.3rem;
+  width: 44px;
+  height: 44px;
+  padding: 10px;
   box-sizing: border-box;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #f0c453 0%, #c4972a 100%);
-  box-shadow: 0 6px 18px rgba(227, 179, 65, 0.3);
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f0c65a 0%, #b88a2e 100%);
+  box-shadow: 0 6px 18px rgba(138, 43, 43, 0.32);
 }
 
 .auth-header__brand {
-  color: var.$color-text-primary-dark-theme !important;
+  color: #f0f6fc !important;
   font-size: 1.1rem !important;
   font-weight: 700 !important;
   margin: 0 !important;
 }
 
 .auth-header__title {
-  color: var.$color-text-primary-dark-theme !important;
+  color: #f0f6fc !important;
   font-weight: 700 !important;
   letter-spacing: -0.02em;
   margin: 0 0 1.75rem !important;
@@ -64,35 +72,72 @@
   text-align: left;
 
   .ant-form-item {
-    margin-bottom: 1.1rem;
+    margin-bottom: 1.25rem;
   }
 
+  // Поля: тёмный фон, светлый текст, контрастная рамка и чёткий фокус (золотая обводка + мягкое свечение)
   .ant-input-affix-wrapper,
   .ant-input {
-    background: var.$color-dark-form-bg;
+    background: $auth-input-bg !important;
+    color: $auth-text !important;
+    border-color: $auth-border;
+    border-radius: 10px;
+    padding-block: 0.55rem;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+
+    &::placeholder {
+      color: $auth-text-secondary;
+      opacity: 1;
+    }
+  }
+
+  // Внутренний <input> у Password (affix-wrapper) и фикс автозаполнения Chrome/Safari
+  .ant-input-affix-wrapper .ant-input {
+    background: transparent !important;
+  }
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 100px #{$auth-input-bg} inset !important;
+    -webkit-text-fill-color: #{$auth-text} !important;
+    caret-color: $auth-text;
+    transition: background-color 9999s ease-in-out 0s;
+  }
+
+  .ant-input-affix-wrapper:hover,
+  .ant-input:hover {
+    border-color: var.$color-gold-hover;
+  }
+
+  .ant-input-affix-wrapper-focused,
+  .ant-input-affix-wrapper:focus-within,
+  .ant-input:focus {
+    border-color: var.$color-gold;
+    box-shadow: 0 0 0 3px rgba(138, 43, 43, 0.18);
   }
 }
 
 .auth-form-label {
-  color: var.$color-text-secondary-dark-theme;
-  font-size: 0.85rem;
+  color: #f0f6fc;
+  font-size: 0.88rem;
   font-weight: 600;
   display: block;
   text-align: left;
+  margin-bottom: 0.3rem;
 }
 
 .auth-form-button {
   font-size: 1rem;
   font-weight: 700;
-  color: #1a1405 !important;
-  height: 48px !important;
-  border-radius: 10px;
-  box-shadow: 0 10px 26px rgba(227, 179, 65, 0.22);
+  color: #0a0d12 !important;
+  height: 50px !important;
+  border-radius: 12px;
+  box-shadow: 0 10px 26px rgba(138, 43, 43, 0.24);
 }
 
 .auth-form-footer {
   margin-top: 0.5rem;
-  color: var.$color-text-secondary-dark-theme;
+  color: rgba(240, 246, 252, 0.62);
   font-size: 0.92rem;
 }
 

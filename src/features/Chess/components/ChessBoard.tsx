@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
+import { Box, useTheme } from '@mui/material';
 import { Chess, Square } from 'chess.js';
 import { Chessboard } from 'react-chessboard';
 import { Arrow, Piece } from 'react-chessboard/dist/chessboard/types';
-import { tokens } from '@/theme/tokens';
+import { tokens, tokensFor } from '@/theme/tokens';
 import { applyPremoves, boardFromFen, isPromotionPremove, Premove, premoveDests } from '../engine/premove';
 
 interface ChessBoardProps {
@@ -27,13 +28,25 @@ interface ChessBoardProps {
   premoves?: boolean;
   /** Сменить, чтобы сбросить очередь предходов (новая задача) */
   premoveKey?: unknown;
+  /**
+   * Координаты доски: 'inside' — встроенные (в углах клеток, по умолчанию),
+   * 'outside' — вынесенные на внешнюю рамку (как на Lichess, лучше читаются, не мешают фигурам).
+   */
+  coordinates?: 'inside' | 'outside';
+  /** Можно ли рисовать стрелки правой кнопкой (по умолчанию да). В классе — только у кого контроль */
+  areArrowsAllowed?: boolean;
+  /** Пользователь нарисовал/изменил стрелки правой кнопкой — для синхронного рисования в классе */
+  onArrowsChange?: (arrows: Arrow[]) => void;
 }
+
+// Шрифт координат доски масштабируем от её ширины (react-chessboard по умолчанию берёт width/48 — мелко и плохо читается)
+const notationFontSize = (boardWidth: number) => Math.round(Math.min(26, Math.max(12, boardWidth / 28)));
 
 const PREMOVE_SQUARE = { backgroundColor: 'rgba(88, 166, 255, 0.42)' };
 const PREMOVE_DOT = 'radial-gradient(circle, rgba(88,166,255,0.55) 22%, transparent 23%)';
 
-const MOVE_DOT = 'radial-gradient(circle, rgba(13,17,23,0.28) 22%, transparent 23%)';
-const CAPTURE_RING = 'radial-gradient(circle, transparent 58%, rgba(13,17,23,0.32) 59%)';
+const MOVE_DOT = 'radial-gradient(circle, rgba(9,11,14,0.28) 22%, transparent 23%)';
+const CAPTURE_RING = 'radial-gradient(circle, transparent 58%, rgba(9,11,14,0.32) 59%)';
 
 export const ChessBoard: React.FC<ChessBoardProps> = ({ 
   fen, 
@@ -45,7 +58,11 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
   lastMove,
   premoves = false,
   premoveKey,
+  coordinates = 'inside',
+  areArrowsAllowed = true,
+  onArrowsChange,
 }) => {
+  const theme = useTheme();
   // 'w' | 'b' — можно ходить только этим цветом; null — любым
   const movableColor = movable === 'both' ? null : (movable ?? boardOrientation)?.charAt(0) ?? null;
   const game = useMemo(() => new Chess(), []);
@@ -54,6 +71,27 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
   const [moveToSquare, setMoveToSquare] = useState<Square | null>(null);
 
   useMemo(() => { game.load(fen); }, [fen, game]);
+
+  // Ширина доски — чтобы координаты масштабировались вместе с ней
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+  const [boardWidth, setBoardWidth] = useState(0);
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver((entries) => {
+      const w = entries[0]?.contentRect.width;
+      if (w) setBoardWidth(w);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  // Контрастная, крупная нотация: цвет поля ставит react-chessboard (светлый на тёмных полях, тёмный на светлых),
+  // мы добавляем размер, жирность и тень-обводку — чтобы буквы/цифры были видны по краям доски
+  const notationStyle = useMemo<Record<string, string | number>>(() => ({
+    fontSize: notationFontSize(boardWidth),
+    fontWeight: 800,
+    textShadow: '0 1px 2px rgba(9,11,14,0.65), 0 0 2px rgba(9,11,14,0.5)',
+  }), [boardWidth]);
 
   // ---- Предходы
   const [queue, setQueue] = useState<Premove[]>([]);
@@ -187,7 +225,18 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
     return accepted;
   };
   
-  return (
+  // --- Внешние координаты (Lichess-style): выносим a–h / 1–8 на рамку вокруг доски
+  const outside = coordinates === 'outside';
+  const coordColor = tokensFor(theme.palette.mode).text.muted;
+  const coordSize = Math.max(11, Math.round(notationFontSize(boardWidth) * 0.8));
+  const files = boardOrientation === 'black'
+    ? ['h', 'g', 'f', 'e', 'd', 'c', 'b', 'a']
+    : ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+  const ranks = boardOrientation === 'black'
+    ? ['1', '2', '3', '4', '5', '6', '7', '8']
+    : ['8', '7', '6', '5', '4', '3', '2', '1'];
+
+  const boardEl = (
     <Chessboard
       position={fen}
       onPieceDrop={handlePieceDrop}
@@ -196,9 +245,13 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
       isDraggablePiece={({ piece }) => !movableColor || piece.startsWith(movableColor)}
       promotionToSquare={moveToSquare}
       customArrows={customArrows}
+      areArrowsAllowed={areArrowsAllowed}
+      onArrowsChange={onArrowsChange}
       onPromotionPieceSelect={handlePromotionPieceSelect}
 
       promotionDialogVariant="vertical"
+      showBoardNotation={!outside}
+      customNotationStyle={notationStyle}
 
       onSquareRightClick={() => { if (queue.length) { setQueue([]); clearSelection(); } }}
       customSquareStyles={{
@@ -213,5 +266,27 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
       customLightSquareStyle={{ backgroundColor: tokens.board.light }}
       customDropSquareStyle={{ boxShadow: `inset 0 0 0 4px ${tokens.accent.gold}` }}
     />
+  );
+
+  return (
+    <div ref={wrapRef} style={{ width: '100%', height: '100%' }}>
+      {outside ? (
+        <Box sx={{ display: 'grid', gridTemplateColumns: `${coordSize + 8}px minmax(0, 1fr)`, gridTemplateRows: `minmax(0, 1fr) ${coordSize + 8}px`, columnGap: '4px' }}>
+          {/* Вертикаль 1–8 слева, выровнена по центрам рядов */}
+          <Box sx={{ gridColumn: 1, gridRow: 1, display: 'flex', flexDirection: 'column' }} aria-hidden>
+            {ranks.map((r) => (
+              <Box key={r} sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: coordColor, fontSize: coordSize, fontWeight: 700, fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>{r}</Box>
+            ))}
+          </Box>
+          <Box sx={{ gridColumn: 2, gridRow: 1, minWidth: 0 }}>{boardEl}</Box>
+          {/* Горизонталь a–h снизу */}
+          <Box sx={{ gridColumn: 2, gridRow: 2, display: 'flex', alignItems: 'center' }} aria-hidden>
+            {files.map((f) => (
+              <Box key={f} sx={{ flex: 1, textAlign: 'center', color: coordColor, fontSize: coordSize, fontWeight: 700 }}>{f}</Box>
+            ))}
+          </Box>
+        </Box>
+      ) : boardEl}
+    </div>
   );
 };

@@ -4,7 +4,10 @@ import {
   TableHead, TablePagination, TableRow, TextField, Typography,
 } from '@mui/material';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import VideoCameraFrontIcon from '@mui/icons-material/VideoCameraFront';
+import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { notification } from 'antd';
 
 import { getCatalogCourses, getMyCourses, getMyGroups, getStudents, CoachCourse, CoachGroup } from '@/api/students';
@@ -23,6 +26,7 @@ const SEARCH_DEBOUNCE_MS = 400;
  */
 export const StudentsPage: React.FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const isAdmin = !!user?.roles?.includes('ADMIN');
   const isCoach = !!user?.roles?.includes('COACH');
@@ -95,9 +99,17 @@ export const StudentsPage: React.FC = () => {
         eyebrow={t('nav.groups.coach', 'Coaching')}
         title={t('studentsPage.studentsListTitle')}
         actions={(
-          <Button variant="contained" startIcon={<PersonAddIcon />} onClick={() => setEnrollOpen(true)}>
-            {t('studentsPage.enroll.title')}
-          </Button>
+          <Stack direction="row" spacing={1}>
+            <Button variant="outlined" startIcon={<GroupsRoundedIcon />} onClick={() => navigate('/groups')}>
+              Группы
+            </Button>
+            <Button variant="outlined" color="success" startIcon={<VideoCameraFrontIcon />} onClick={() => navigate('/my-classes')}>
+              Мои занятия
+            </Button>
+            <Button variant="contained" startIcon={<PersonAddIcon />} onClick={() => setEnrollOpen(true)}>
+              {t('studentsPage.enroll.title')}
+            </Button>
+          </Stack>
         )}
       />
 

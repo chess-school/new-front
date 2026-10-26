@@ -27,7 +27,7 @@ export const CoachCard: React.FC<CoachCardProps> = ({ coach, requestStatus, isMe
   return (
     <Card data-testid="coach-card" sx={{
       height: '100%', display: 'flex', flexDirection: 'column',
-      '&:hover': { borderColor: 'rgba(227,179,65,0.35)', transform: 'translateY(-2px)', boxShadow: '0 16px 32px rgba(0,0,0,0.35)' },
+      '&:hover': { borderColor: 'rgba(138,43,43,0.35)', transform: 'translateY(-2px)', boxShadow: '0 16px 32px rgba(0,0,0,0.35)' },
     }}>
       <CardActionArea onClick={() => onOpen(coach)} sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'stretch', p: 2.5 }}>
         <Stack direction="row" spacing={2} alignItems="center">

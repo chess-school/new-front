@@ -1,21 +1,54 @@
-/* Палитра продублирована из src/theme/tokens.ts для SCSS-страниц и стороннего CSS */
+/* Токены продублированы из src/theme/tokens.ts для SCSS-страниц и стороннего CSS.
+   Светлая тема — :root по умолчанию; тёмная — оверрайды под [data-theme="dark"]. */
 :root {
-  --bg-canvas: #0d1117;
-  --bg-surface: #161b22;
-  --bg-raised: #1c2128;
-  --bg-overlay: #262c36;
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-default: rgba(255, 255, 255, 0.12);
-  --text-primary: #f0f6fc;
-  --text-secondary: #8b949e;
-  --accent-gold: #e3b341;
-  --accent-emerald: #3fb950;
-  --accent-red: #f85149;
+  --bg-canvas: #F3F4F7;
+  --bg-surface: #FFFFFF;
+  --bg-raised: #F8F9FC;
+  --bg-overlay: #ECEFF4;
+  --border-subtle: rgba(20, 27, 46, 0.08);
+  --border-default: rgba(20, 27, 46, 0.14);
+  --text-primary: #141B2E;
+  --text-secondary: #5B6478;
+  --accent-gold: #2B50E0;
+  --accent-emerald: #16A34A;
+  --accent-red: #DC2626;
+
+  /* Акцент как переменные — используются в sx через rgba(var(--accent-rgb), a) */
+  --accent: #2B50E0;
+  --accent-hi: #3A5FF0;
+  --accent-lo: #1E3CB0;
+  --accent-rgb: 43, 80, 224;
+  --ink-rgb: 20, 27, 46;
+  --grain-blend: multiply;
+  --grain-opacity: 0.16;
 
   /* Старые имена — на них ссылаются стили страниц */
   --background: var(--bg-canvas);
   --navbar: var(--bg-surface);
   --button-primary: var(--accent-gold);
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --bg-canvas: #0A0E16;
+  --bg-surface: #121826;
+  --bg-raised: #1A2234;
+  --bg-overlay: #222C42;
+  --border-subtle: rgba(255, 255, 255, 0.07);
+  --border-default: #232C3E;
+  --text-primary: #EEF1F7;
+  --text-secondary: #9AA5BC;
+  --accent-gold: #4C6FFF;
+  --accent-emerald: #22C55E;
+  --accent-red: #F0564A;
+
+  --accent: #4C6FFF;
+  --accent-hi: #6B88FF;
+  --accent-lo: #3350D0;
+  --accent-rgb: 76, 111, 255;
+  --ink-rgb: 255, 255, 255;
+  --grain-blend: overlay;
+  --grain-opacity: 0.3;
   color-scheme: dark;
 }
 
@@ -23,4 +56,86 @@ body {
   margin: 0;
   background-color: var(--bg-canvas);
   color: var(--text-primary);
+}
+
+/* ============================================================
+   Фирменный визуальный язык debiut
+   ============================================================ */
+
+/* Сине-индиго градиент для акцентных слов в заголовках */
+.text-foil {
+  background: linear-gradient(104deg, #3A5FF0 0%, #2B50E0 42%, #1E3CB0 72%, #3A5FF0 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: foilShine 7s linear infinite;
+}
+@keyframes foilShine {
+  to { background-position: 200% center; }
+}
+
+/* Aurora / gradient-mesh фон — мягкий тёплый свет за контентом (светлая тема) */
+.aurora {
+  position: absolute;
+  inset: -20% -10%;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(42% 46% at 18% 16%, rgba(43, 80, 224, 0.14), transparent 70%),
+    radial-gradient(38% 44% at 82% 10%, rgba(59, 130, 246, 0.10), transparent 68%),
+    radial-gradient(50% 52% at 72% 88%, rgba(43, 80, 224, 0.08), transparent 70%),
+    radial-gradient(45% 50% at 30% 80%, rgba(120, 140, 220, 0.16), transparent 72%);
+  filter: blur(40px) saturate(115%);
+  animation: auroraDrift 22s ease-in-out infinite alternate;
+}
+@keyframes auroraDrift {
+  0%   { transform: translate3d(-3%, -2%, 0) scale(1.05) rotate(0deg); opacity: 0.9; }
+  50%  { transform: translate3d(3%, 2%, 0) scale(1.15) rotate(4deg); opacity: 1; }
+  100% { transform: translate3d(-2%, 3%, 0) scale(1.08) rotate(-3deg); opacity: 0.85; }
+}
+
+/* Плёночное зерно — лёгкая фактура бумаги на светлых плоскостях */
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.22;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Тонкая шахматная сетка-мотив (декоративная, не доска) */
+.chess-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(20, 27, 46, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(20, 27, 46, 0.05) 1px, transparent 1px);
+  background-size: 54px 54px;
+  mask-image: radial-gradient(ellipse 70% 70% at 50% 40%, #000 0%, transparent 78%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 40%, #000 0%, transparent 78%);
+}
+
+/* Плавное появление секций при входе */
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(26px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.rise-in { animation: riseIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* Медленное парение декоративных элементов */
+@keyframes floaty {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-14px) rotate(1.5deg); }
+}
+.floaty { animation: floaty 7s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora, .text-foil, .rise-in, .floaty { animation: none; }
 }

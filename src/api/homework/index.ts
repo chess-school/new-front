@@ -1,5 +1,5 @@
 import axiosInstance from '@/api';
-import { Assignment, MyAssignment, Submission, SubmissionForReview, SubmissionStatus } from '@/types/Homework';
+import { Assignment, MyAssignment, PuzzleAssignmentInput, Submission, SubmissionForReview, SubmissionStatus } from '@/types/Homework';
 
 // ---------- Студент ----------
 
@@ -28,6 +28,12 @@ export const getLessonAssignment = async (scheduleId: string): Promise<Assignmen
 
 export const createAssignment = async (payload: { scheduleId: string; description: string; title?: string; dueDate?: string }): Promise<Assignment> => {
   const response = await axiosInstance.post('/assignments', payload);
+  return response.data.data;
+};
+
+/** Задать ДЗ «решать задачи из задачника» (не привязано к занятию) */
+export const createPuzzleAssignment = async (payload: PuzzleAssignmentInput): Promise<Assignment> => {
+  const response = await axiosInstance.post('/assignments/puzzles', payload);
   return response.data.data;
 };
 

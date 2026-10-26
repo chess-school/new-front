@@ -107,7 +107,8 @@ export const InboxPage: React.FC = () => {
 
   const handleRequestAction = async (action: 'approved' | 'rejected') => {
     if (!selectedItem || !isRequest(selectedItem)) return;
-    if (action === 'approved' && !courseId) return;
+    // Курс обязателен, только если у тренера уже есть курсы; иначе ученик идёт на персональный курс
+    if (action === 'approved' && courses !== null && courses.length > 0 && !courseId) return;
     setIsSubmitting(true);
     setRequestError(null);
     try {
@@ -176,7 +177,7 @@ export const InboxPage: React.FC = () => {
           {selectedItem.status === 'pending' && (
             <Box mt={3}>
               {courses === null ? <CircularProgress size={20} /> : courses.length === 0 ? (
-                <Alert severity="info">{t('inbox.requests.noCourses', 'To accept a student, create a course first: approving a request enrolls the student into one of your courses.')}</Alert>
+                <Alert severity="info">{t('inbox.requests.noCourses', 'You have no courses yet — approving will enroll the student into your personal lessons. You can create a course later and move them if you like.')}</Alert>
               ) : (
                 <TextField select fullWidth size="small" label={t('inbox.requests.course', 'Enroll into course')} value={courseId} onChange={(e) => setCourseId(e.target.value)}>
                   {courses.map((c) => <MenuItem key={c._id} value={c._id}>{c.title}</MenuItem>)}
@@ -184,7 +185,7 @@ export const InboxPage: React.FC = () => {
               )}
               {requestError && <Alert severity="error" sx={{ mt: 2 }}>{requestError}</Alert>}
               <Box mt={2} display="flex" gap={2} flexWrap="wrap">
-                <Button variant="contained" color="primary" onClick={() => handleRequestAction('approved')} disabled={isSubmitting || !courseId}>
+                <Button variant="contained" color="primary" onClick={() => handleRequestAction('approved')} disabled={isSubmitting || (courses !== null && courses.length > 0 && !courseId)}>
                   {t('inbox.actions.approve')}
                 </Button>
                 <Button variant="outlined" color="inherit" onClick={() => handleRequestAction('rejected')} disabled={isSubmitting}>

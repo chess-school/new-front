@@ -69,7 +69,7 @@ export const EvalBar: React.FC<EvalBarProps> = ({ result, orientation = 'white',
         <Box sx={{
           position: 'absolute',
           ...(vertical ? { left: 0, right: 0, top: '50%', height: '1px' } : { top: 0, bottom: 0, left: '50%', width: '1px' }),
-          bgcolor: 'rgba(227, 179, 65, 0.55)',
+          bgcolor: 'rgba(138, 43, 43, 0.55)',
         }} />
         {label && (
           <Box

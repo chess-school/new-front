@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { ClockState, Color, PlayPlayer } from '../playTypes';
 import { formatClock, LOW_TIME_MS, remainingMs } from '../clock';
 import { tokens } from '@/theme/tokens';
+import { ConnectionBars } from './ConnectionBars';
+import { ConnectionInfo } from '../useConnection';
 
 interface PlayerBarProps {
   player: PlayPlayer | null;
@@ -15,6 +17,8 @@ interface PlayerBarProps {
   /** Изменение рейтинга после партии */
   ratingDiff?: number | null;
   isMe?: boolean;
+  /** Качество связи игрока — рисуем «лесенку» рядом с именем */
+  connection?: ConnectionInfo;
 }
 
 /** Часы с живым отсчётом: перерисовка 10 раз в секунду, только пока идут */
@@ -39,7 +43,7 @@ export const GameClock: React.FC<{ clock: ClockState; color: Color; receivedAt: 
         transition: 'background-color .2s ease, color .2s ease',
         bgcolor: low ? tokens.accent.redSoft : ticking ? tokens.accent.goldSoft : 'surface.raised',
         color: low ? tokens.accent.red : ticking ? 'text.primary' : 'text.secondary',
-        border: 1, borderColor: low ? 'rgba(248,81,73,0.5)' : ticking ? 'rgba(227,179,65,0.45)' : 'divider',
+        border: 1, borderColor: low ? 'rgba(248,81,73,0.5)' : ticking ? 'rgba(138,43,43,0.45)' : 'divider',
         animation: low && ticking ? 'clockPulse 1s ease-in-out infinite' : 'none',
         '@keyframes clockPulse': { '50%': { boxShadow: `0 0 0 3px ${tokens.accent.redSoft}` } },
       }}
@@ -50,7 +54,7 @@ export const GameClock: React.FC<{ clock: ClockState; color: Color; receivedAt: 
 };
 
 /** Карточка игрока над/под доской: аватар, имя, рейтинг (± после партии), часы */
-export const PlayerBar: React.FC<PlayerBarProps> = ({ player, color, clock, receivedAt, live, ratingDiff, isMe }) => {
+export const PlayerBar: React.FC<PlayerBarProps> = ({ player, color, clock, receivedAt, live, ratingDiff, isMe, connection }) => {
   const { t } = useTranslation();
   const name = player ? `${player.firstName} ${player.lastName}`.trim() : t('play.waitingOpponent', 'Waiting for opponent…');
   return (
@@ -66,9 +70,12 @@ export const PlayerBar: React.FC<PlayerBarProps> = ({ player, color, clock, rece
         }} />
       </Box>
       <Box sx={{ minWidth: 0, flex: 1 }}>
-        <Typography fontWeight={600} noWrap>
-          {name}{isMe && <Box component="span" sx={{ color: 'text.secondary', fontWeight: 400 }}> · {t('play.you', 'you')}</Box>}
-        </Typography>
+        <Stack direction="row" alignItems="center" spacing={0.75} sx={{ minWidth: 0 }}>
+          <Typography fontWeight={600} noWrap sx={{ minWidth: 0 }}>
+            {name}{isMe && <Box component="span" sx={{ color: 'text.secondary', fontWeight: 400 }}> · {t('play.you', 'you')}</Box>}
+          </Typography>
+          {connection && player && <ConnectionBars connected={connection.connected} latency={connection.latency} size={14} />}
+        </Stack>
         {player && (
           <Typography variant="body2" color="text.secondary" sx={{ fontFamily: tokens.font.mono }}>
             {player.rating}{player.provisional ? '?' : ''}

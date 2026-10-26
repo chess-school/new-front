@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom'; 
+import { BrowserRouter } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import { AppThemeProvider } from '@/theme';
 import { AuthProvider } from '@/context/AuthContext.tsx';
 import '@/styles'; 
@@ -14,12 +15,14 @@ const root = createRoot(rootElement);
 
 root.render(
   <StrictMode>
-    <BrowserRouter> 
-      <AppThemeProvider>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
-      </AppThemeProvider>
-    </BrowserRouter>
+    <HelmetProvider>
+      <BrowserRouter>
+        <AppThemeProvider>
+          <AuthProvider>
+            <App />
+          </AuthProvider>
+        </AppThemeProvider>
+      </BrowserRouter>
+    </HelmetProvider>
   </StrictMode>
 );

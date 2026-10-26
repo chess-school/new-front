@@ -2,15 +2,21 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Button, Chip, Grid, Paper, Skeleton, Stack, Typography,
 } from '@mui/material';
+import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import ExtensionRoundedIcon from '@mui/icons-material/ExtensionRounded';
 import moment from 'moment';
 import { notification } from 'antd';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 import { getMyLessons, Lesson } from '@/api/lessons';
 import { getMyAssignments } from '@/api/homework';
 import { MyAssignment } from '@/types/Homework';
+import { useAuth } from '@/context/AuthContext';
 import ScheduleCalendar from '@/shared/components/Calendar/SheduleCalendar';
 import { PageContainer, PageHeader } from '@/shared/components/ui/PageHeader';
+import { CreateLessonDialog } from '@/components/Schedule/CreateLessonDialog';
+import { AssignPuzzlesDialog } from '@/components/Homework/AssignPuzzlesDialog';
 import { AssignmentDialog } from './AssignmentDialog';
 import { LessonDialog } from './LessonDialog';
 import { assignmentState, STATE_COLORS, STATE_ORDER } from './assignmentState';
@@ -21,12 +27,17 @@ import { assignmentState, STATE_COLORS, STATE_ORDER } from './assignmentState';
  */
 const StudentSchedulePage: React.FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const isCoach = !!user?.roles?.some((r) => r === 'COACH' || r === 'ADMIN');
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [assignments, setAssignments] = useState<MyAssignment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
   const [selectedAssignment, setSelectedAssignment] = useState<MyAssignment | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [assignOpen, setAssignOpen] = useState(false);
 
   const load = useCallback(async () => {
     setLoadError(false);
@@ -71,6 +82,16 @@ const StudentSchedulePage: React.FC = () => {
           eyebrow={t('nav.groups.my', 'My learning')}
           title={t('studentSchedule.myScheduleTitle')}
           subtitle={t('studentSchedule.pageSubtitle', 'Lessons with your coach and homework to hand in.')}
+          actions={isCoach ? (
+            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+              <Button variant="outlined" color="inherit" startIcon={<ExtensionRoundedIcon />} onClick={() => setAssignOpen(true)}>
+                {t('assignPuzzles.title', { defaultValue: 'Assign puzzles' })}
+              </Button>
+              <Button variant="contained" startIcon={<AddRoundedIcon />} onClick={() => setCreateOpen(true)}>
+                {t('createLesson.title', { defaultValue: 'Create lesson' })}
+              </Button>
+            </Stack>
+          ) : undefined}
         />
 
         {loadError && (
@@ -102,12 +123,20 @@ const StudentSchedulePage: React.FC = () => {
                       <Paper
                         key={a._id}
                         variant="outlined"
-                        onClick={() => setSelectedAssignment(a)}
-                        sx={{ p: 1.5, cursor: 'pointer', bgcolor: 'surface.raised', transition: 'border-color .15s ease', '&:hover': { borderColor: 'rgba(227,179,65,0.4)' } }}
+                        onClick={() => (a.kind === 'puzzles' && a.puzzleBook)
+                          ? navigate(`/books/${a.puzzleBook._id}/solve`)
+                          : setSelectedAssignment(a)}
+                        sx={{ p: 1.5, cursor: 'pointer', bgcolor: 'surface.raised', transition: 'border-color .15s ease', '&:hover': { borderColor: 'rgba(138,43,43,0.4)' } }}
                       >
                         <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1}>
                           <Typography fontWeight="bold" noWrap>{a.title}</Typography>
-                          <Chip size="small" color={STATE_COLORS[state]} label={t(`homework.state.${state}`)} />
+                          <Stack direction="row" spacing={0.5} sx={{ flexShrink: 0 }}>
+                            {a.kind === 'puzzles' && (
+                              <Chip size="small" variant="outlined" icon={<ExtensionRoundedIcon />}
+                                label={a.puzzleTarget ? a.puzzleTarget : t('homework.puzzles', { defaultValue: 'Puzzles' })} />
+                            )}
+                            <Chip size="small" color={STATE_COLORS[state]} label={t(`homework.state.${state}`)} />
+                          </Stack>
                         </Stack>
                         {a.dueDate && (
                           <Typography variant="body2" color={state === 'overdue' ? 'error' : 'text.secondary'}>
@@ -132,7 +161,7 @@ const StudentSchedulePage: React.FC = () => {
                       key={lesson._id}
                       variant="outlined"
                       onClick={() => setSelectedLesson(lesson)}
-                      sx={{ p: 1.5, cursor: 'pointer', bgcolor: 'surface.raised', transition: 'border-color .15s ease', '&:hover': { borderColor: 'rgba(227,179,65,0.4)' } }}
+                      sx={{ p: 1.5, cursor: 'pointer', bgcolor: 'surface.raised', transition: 'border-color .15s ease', '&:hover': { borderColor: 'rgba(138,43,43,0.4)' } }}
                     >
                       <Typography fontWeight="bold">{lesson.title}</Typography>
                       <Typography variant="body2" color="text.secondary">{moment(lesson.date).format('LLL')}</Typography>
@@ -156,6 +185,8 @@ const StudentSchedulePage: React.FC = () => {
         onClose={() => setSelectedAssignment(null)}
         onSubmitted={load}
       />
+      <CreateLessonDialog open={createOpen} onClose={() => setCreateOpen(false)} onCreated={load} />
+      <AssignPuzzlesDialog open={assignOpen} onClose={() => setAssignOpen(false)} onCreated={load} />
     </PageContainer>
   );
 };

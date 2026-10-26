@@ -17,6 +17,13 @@ export interface Submission {
   submittedAt: string;
 }
 
+/** Пункт плана по дням: «в эту дату — N задач» (+ свободная заметка «читать/делать») */
+export interface HomeworkPlanItem {
+  date: string;
+  puzzleCount: number;
+  note: string;
+}
+
 /** ДЗ глазами студента: задание + его сдача (если была) */
 export interface MyAssignment {
   _id: string;
@@ -26,6 +33,23 @@ export interface MyAssignment {
   lesson: { _id: string; title: string; date: string } | null;
   createdAt: string;
   submission: Submission | null;
+  /** Тип ДЗ: обычное или «решать задачи из задачника» */
+  kind?: 'generic' | 'puzzles';
+  puzzleBook?: { _id: string; title: string } | null;
+  puzzleTarget?: number;
+  plan?: HomeworkPlanItem[];
+}
+
+/** Payload создания ДЗ «решать задачи» (тренер) */
+export interface PuzzleAssignmentInput {
+  contextType: 'student' | 'group';
+  contextRefId: string;
+  puzzleBookId: string;
+  title?: string;
+  description?: string;
+  puzzleTarget?: number;
+  dueDate?: string;
+  plan?: HomeworkPlanItem[];
 }
 
 /** ДЗ глазами тренера */

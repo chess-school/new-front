@@ -270,7 +270,7 @@ const Conversation: React.FC<{ room: ChatRoom }> = ({ room }) => {
           maxWidth: '82%', px: 1.5, py: 0.75, borderRadius: 2.5,
           borderBottomRightRadius: mine ? 6 : undefined, borderBottomLeftRadius: mine ? undefined : 6,
           bgcolor: mine ? tokens.accent.goldSoft : 'surface.raised',
-          border: 1, borderColor: mine ? 'rgba(227,179,65,0.28)' : 'divider',
+          border: 1, borderColor: mine ? 'rgba(138,43,43,0.28)' : 'divider',
           opacity: m.status === 'pending' ? 0.75 : 1,
         }}>
           <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', lineHeight: 1.45 }}>{m.text}</Typography>
@@ -346,7 +346,7 @@ export const ChatDrawer: React.FC = () => {
     <Drawer anchor="right" open={chat.isOpen} onClose={chat.closeDrawer}
       PaperProps={{
         'aria-label': t('chat.title', 'Messages'),
-        sx: { ...glass, backgroundColor: 'rgba(22, 27, 34, 0.88)', width: phone ? '100vw' : DRAWER_WIDTH, maxWidth: '100vw', borderRadius: 0, display: 'flex', flexDirection: 'column' },
+        sx: { ...glass, backgroundColor: 'rgba(255, 255, 255, 0.88)', width: phone ? '100vw' : DRAWER_WIDTH, maxWidth: '100vw', borderRadius: 0, display: 'flex', flexDirection: 'column' },
       }}
       data-testid="chat-drawer">
       <Stack direction="row" alignItems="center" spacing={1} sx={{ px: 1.5, py: 1.25, minHeight: 64, borderBottom: 1, borderColor: 'divider' }}>

@@ -61,7 +61,7 @@ export const AnnotationPanel: React.FC<AnnotationPanelProps> = ({ game, withComm
                     sx={{
                       minWidth: 34, px: 0.75, py: 0.25, fontWeight: 800, fontSize: '0.9rem', lineHeight: 1.4,
                       color: GLYPH_COLORS[g.symbol],
-                      '&.Mui-selected': { color: '#0d1117', bgcolor: GLYPH_COLORS[g.symbol], '&:hover': { bgcolor: GLYPH_COLORS[g.symbol] } },
+                      '&.Mui-selected': { color: '#090B0E', bgcolor: GLYPH_COLORS[g.symbol], '&:hover': { bgcolor: GLYPH_COLORS[g.symbol] } },
                     }}
                   >
                     {g.symbol}

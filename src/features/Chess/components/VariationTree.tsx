@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Box, Typography } from '@mui/material';
+import ChatBubbleOutlineRoundedIcon from '@mui/icons-material/ChatBubbleOutlineRounded';
 import { useTranslation } from 'react-i18next';
 import { GameTree, moveGlyph, TreeNode } from '../tree/gameTree';
 import { nagToSymbol } from '@/features/Digitizer/utils/pgnTree';
@@ -47,7 +48,7 @@ export const VariationTree: React.FC<VariationTreeProps> = ({ tree, currentId, o
           fontWeight: active ? 700 : opts.cell ? 500 : 400,
           color: active ? 'primary.main' : 'text.primary',
           bgcolor: active ? tokens.accent.goldSoft : 'transparent',
-          boxShadow: active ? 'inset 0 0 0 1px rgba(227,179,65,0.35)' : 'none',
+          boxShadow: active ? 'inset 0 0 0 1px rgba(138,43,43,0.35)' : 'none',
           '&:hover': { bgcolor: active ? tokens.accent.goldSoft : 'action.hover' },
         }}
       >
@@ -55,6 +56,13 @@ export const VariationTree: React.FC<VariationTreeProps> = ({ tree, currentId, o
         <span>{n.san}</span>
         {glyph && <Box component="span" sx={{ color: GLYPH_COLORS[glyph], fontWeight: 700 }}>{glyph}</Box>}
         {extra && <Box component="span" sx={{ color: 'text.secondary', fontSize: '0.85em' }}>{extra}</Box>}
+        {n.comment && (
+          <ChatBubbleOutlineRoundedIcon
+            aria-label={t('analysisBoard.annotation.hasComment', 'Has a comment')}
+            data-testid="move-comment-icon"
+            sx={{ fontSize: '0.85em', color: tokens.accent.gold, alignSelf: 'center' }}
+          />
+        )}
       </Box>
     );
   };

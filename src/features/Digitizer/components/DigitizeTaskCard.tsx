@@ -82,7 +82,7 @@ export const DigitizeTaskCard: React.FC<DigitizeTaskCardProps> = ({ stored, onCh
         onCourseCreated();
       }
       const firstIndex = result.chapters.find((c) => c.filename === chapter?.filename)?.firstIndex ?? 0;
-      navigate(`/digitizer/books/${result._id}/edit?ex=${firstIndex}`);
+      navigate(`/digitizer/books/${result._id}/edit?exercise=${firstIndex}`);
     } catch {
       // ошибку уже показал перехватчик axios
     } finally {
