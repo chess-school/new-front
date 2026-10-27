@@ -4,7 +4,7 @@
     "register": "Zarejestruj się",
     "logout": "Wyloguj się",
     "getStarted": "Zacznij teraz",
-    "chessSchool": "Mind Over Board",
+    "chessSchool": "debiut",
     "home": "Strona główna",
     "aboutUs": "O nas",
     "achievements": "Osiągnięcia",
@@ -140,7 +140,7 @@
     "save": "Zapisz",
     "add": "Dodaj",
     "filterByStatus": "Filtruj wg statusu",
-    "brand": "MOB - Mind Over Board",
+    "brand": "debiut",
     "email": "E-mail",
     "password": "Hasło",
     "placeholder": {
@@ -185,7 +185,7 @@
       "learnMore": "Zobacz zajęcia"
     },
     "footer": {
-      "name": "Mind Over Board",
+      "name": "debiut",
       "desc": "Platforma online dla strategicznego rozwoju.",
       "company": "Firma",
       "about": "O nas",
@@ -197,7 +197,7 @@
       "legal": "Informacje prawne",
       "privacy": "Prywatność",
       "terms": "Warunki",
-      "copyright": "© {year} Mind Over Board. Wszelkie prawa zastrzeżone."
+      "copyright": "© {year} debiut. Wszelkie prawa zastrzeżone."
     },
     "coaches": {
       "title": "Nasi trenerzy",
@@ -215,7 +215,7 @@
     }
   },
   "aboutPage": {
-    "mainTitle": "Mind Over Board",
+    "mainTitle": "debiut",
     "phrases": [
       "Trenuj umysł jak mistrz.",
       "Znajduj silne ruchy — także w życiu.",
@@ -300,7 +300,7 @@
       ],
       "viewAll": "Zobacz wszystkich trenerów"
     },
-    "finalSlogan": "MOB to początek. Szachy to narzędzie. Zwycięstwo to efekt uboczny."
+    "finalSlogan": "debiut to początek. Szachy to narzędzie. Zwycięstwo to efekt uboczny."
   },
   "achievementsPage": {
     "title": "Nasze osiągnięcia",

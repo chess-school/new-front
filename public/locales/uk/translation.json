@@ -4,7 +4,7 @@
     "register": "Реєстрація",
     "logout": "Вийти",
     "getStarted": "Почати",
-    "chessSchool": "Mind Over Board",
+    "chessSchool": "debiut",
     "home": "Головна",
     "aboutUs": "Про нас",
     "achievements": "Досягнення",
@@ -140,7 +140,7 @@
     "save": "Зберегти",
     "add": "Додати",
     "filterByStatus": "Фільтрувати за статусом",
-    "brand": "MOB - Mind Over Board",
+    "brand": "debiut",
     "email": "Електронна пошта",
     "password": "Пароль",
     "placeholder": {
@@ -185,7 +185,7 @@
       "learnMore": "Переглянути класи"
     },
     "footer": {
-      "name": "Mind Over Board",
+      "name": "debiut",
       "desc": "Онлайн-платформа для стратегічного зростання.",
       "company": "Компанія",
       "about": "Про нас",
@@ -197,7 +197,7 @@
       "legal": "Правова інформація",
       "privacy": "Конфіденційність",
       "terms": "Умови",
-      "copyright": "© {year} Mind Over Board. Всі права захищено."
+      "copyright": "© {year} debiut. Всі права захищено."
     },
     "coaches": {
       "title": "Наші тренери",
@@ -215,7 +215,7 @@
     }
   },
   "aboutPage": {
-    "mainTitle": "Mind Over Board",
+    "mainTitle": "debiut",
     "phrases": [
       "Тренуй мислення, як чемпіон.",
       "Знаходь сильні ходи — і в житті.",
@@ -300,7 +300,7 @@
       ],
       "viewAll": "Переглянути всіх тренерів"
     },
-    "finalSlogan": "MOB — це початок. Шахи — інструмент. Перемога — побічний ефект."
+    "finalSlogan": "debiut — це початок. Шахи — інструмент. Перемога — побічний ефект."
   },
   "achievementsPage": {
     "title": "Наші досягнення",

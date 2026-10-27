@@ -40,6 +40,7 @@ const ClubSitePage = lazy(() => import('./pages/club-site/club-site-page'));
 import { GroupsPage } from './pages/groups-page/groups-page';
 import { SEOHead } from '@/shared/components/seo/SEOHead';
 import { SEO_ROUTES } from '@/shared/components/seo/routes';
+import { SiteSettingsProvider } from '@/features/site/SiteSettingsContext';
 
 function MainLayout() {
   const location = useLocation();
@@ -116,7 +117,9 @@ function MainLayout() {
 function App() {
   return (
     <Suspense fallback={<Box sx={{ minHeight: '100dvh', display: 'grid', placeItems: 'center' }}><CircularProgress /></Box>}>
-      <MainLayout />
+      <SiteSettingsProvider>
+        <MainLayout />
+      </SiteSettingsProvider>
     </Suspense>
   );
 }

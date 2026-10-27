@@ -52,7 +52,7 @@
     "register": "Register",
     "logout": "Logout",
     "getStarted": "Get Started",
-    "chessSchool": "Mind Over Board",
+    "chessSchool": "debiut",
     "home": "Home",
     "aboutUs": "About Us",
     "achievements": "Achievements",
@@ -107,7 +107,7 @@
     "save": "Save",
     "add": "Add",
     "filterByStatus": "Filter by status",
-    "brand": "MOB - Mind Over Board",
+    "brand": "debiut",
     "email": "Email",
     "password": "Password",
     "placeholder": {
@@ -152,7 +152,7 @@
       "learnMore": "See Classes"
     },
     "footer": {
-      "name": "Mind Over Board",
+      "name": "debiut",
       "desc": "An online platform for strategic growth.",
       "company": "Company",
       "about": "About Us",
@@ -164,7 +164,7 @@
       "legal": "Legal",
       "privacy": "Privacy",
       "terms": "Terms",
-      "copyright": "© {year} Mind Over Board. All rights reserved."
+      "copyright": "© {year} debiut. All rights reserved."
     },
     "coaches": {
       "title": "Our Coaches",
@@ -182,7 +182,7 @@
     }
   },
   "aboutPage": {
-    "mainTitle": "Mind Over Board",
+    "mainTitle": "debiut",
     "phrases": [
       "Train your mind like a champion.",
       "Find strong moves — in life too.",
@@ -267,7 +267,7 @@
       ],
       "viewAll": "View All Coaches"
     },
-    "finalSlogan": "MOB is the beginning. Chess is the tool. Victory is the side effect."
+    "finalSlogan": "debiut is the beginning. Chess is the tool. Victory is the side effect."
   },
   "achievementsPage": {
     "title": "Our Achievements",

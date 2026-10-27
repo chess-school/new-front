@@ -43,6 +43,7 @@ import { ThemeToggle } from '@/components/ThemeToggle/ThemeToggle';
 import { getPrimaryRole } from '@/utils/getPrimaryRole';
 import SpaceDashboardRoundedIcon from '@mui/icons-material/SpaceDashboardRounded';
 import { useClubStore } from '@/features/clubs/clubStore';
+import { useSiteSettings } from '@/features/site/SiteSettingsContext';
 import { canCoach, isItemActive, NavIcon, NavItem, NavMode, visibleNav } from './navigation';
 
 export const SIDEBAR_WIDTH = 264;
@@ -132,17 +133,25 @@ const ClubSwitcher: React.FC = () => {
 };
 
 const Logo: React.FC<{ onClick?: () => void }> = ({ onClick }) => {
+  // Бренд активного клуба (имя/логотип/цвет) из настроек сайта; пусто → платформенный debiut.
+  const site = useSiteSettings();
+  const brand = site.siteName || 'debiut';
+  const accent = site.primaryColor || '#2B50E0';
   return (
     <Stack component={RouterLink} to="/" onClick={onClick} direction="row" alignItems="center" spacing={1.25}
       sx={{ textDecoration: 'none', color: 'text.primary', minWidth: 0 }}>
-      <Box sx={{
-        width: 34, height: 34, borderRadius: 2, display: 'grid', placeItems: 'center', flexShrink: 0,
-        background: 'linear-gradient(135deg, #3A5FF0 0%, #1E3CB0 100%)', color: '#FFFFFF', fontSize: 20, fontWeight: 800,
-        boxShadow: '0 4px 14px rgba(43,80,224,0.35)',
-      }} aria-hidden>
-        ♞
-      </Box>
-      <Typography variant="h6" noWrap sx={{ fontFamily: '"Space Grotesk"', fontWeight: 700, letterSpacing: '-0.01em' }}>debiut</Typography>
+      {site.logoUrl ? (
+        <Box component="img" src={site.logoUrl} alt={brand} sx={{ width: 34, height: 34, borderRadius: 2, flexShrink: 0, objectFit: 'cover' }} />
+      ) : (
+        <Box sx={{
+          width: 34, height: 34, borderRadius: 2, display: 'grid', placeItems: 'center', flexShrink: 0,
+          background: `linear-gradient(135deg, ${accent} 0%, ${accent} 100%)`, color: '#FFFFFF', fontSize: 20, fontWeight: 800,
+          boxShadow: `0 4px 14px ${accent}59`,
+        }} aria-hidden>
+          ♞
+        </Box>
+      )}
+      <Typography variant="h6" noWrap sx={{ fontFamily: '"Space Grotesk"', fontWeight: 700, letterSpacing: '-0.01em' }}>{brand}</Typography>
     </Stack>
   );
 };
