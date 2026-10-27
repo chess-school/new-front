@@ -9,6 +9,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import PersonAddAlt1RoundedIcon from '@mui/icons-material/PersonAddAlt1Rounded';
 import PublicRoundedIcon from '@mui/icons-material/PublicRounded';
+import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import UnfoldMoreRoundedIcon from '@mui/icons-material/UnfoldMoreRounded';
 import OpenInNewRoundedIcon from '@mui/icons-material/OpenInNewRounded';
@@ -74,6 +75,7 @@ const ICONS: Record<NavIcon, React.ReactElement> = {
   console: <SpaceDashboardRoundedIcon />,
   coachApps: <PersonAddAlt1RoundedIcon />,
   public: <PublicRoundedIcon />,
+  settings: <SettingsRoundedIcon />,
 };
 
 const clubInitials = (name: string) =>

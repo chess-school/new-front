@@ -9,7 +9,7 @@ import PaymentsRoundedIcon from '@mui/icons-material/PaymentsRounded';
 import InsightsRoundedIcon from '@mui/icons-material/InsightsRounded';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import ChatRoundedIcon from '@mui/icons-material/ChatRounded';
-import { ConsoleShell } from './ConsoleShell';
+import { PageContainer } from '@/shared/components/ui/PageHeader';
 import { SEOHead } from '@/shared/components/seo/SEOHead';
 import { fetchOverview, ClubOverview } from '@/features/clubs/clubsApi';
 
@@ -54,7 +54,7 @@ export const OwnerDashboardPage = () => {
   ] : [];
 
   return (
-    <ConsoleShell active="pulpit">
+    <PageContainer>
       <SEOHead title={t('console.seoTitle', 'Club dashboard — debiut')} description="" noindex />
 
       <Stack direction="row" justifyContent="space-between" alignItems="flex-end" sx={{ mb: 3 }} flexWrap="wrap" useFlexGap>
@@ -204,7 +204,7 @@ export const OwnerDashboardPage = () => {
           </Grid>
         </>
       )}
-    </ConsoleShell>
+    </PageContainer>
   );
 };
 

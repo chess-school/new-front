@@ -5,7 +5,7 @@ import {
 import SaveRoundedIcon from '@mui/icons-material/SaveRounded';
 import { message } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { ConsoleShell } from './ConsoleShell';
+import { PageContainer } from '@/shared/components/ui/PageHeader';
 import { SEOHead } from '@/shared/components/seo/SEOHead';
 import { useClubStore } from '@/features/clubs/clubStore';
 import {
@@ -122,7 +122,7 @@ export const ClubSettingsPage = () => {
   const cardSx = { p: { xs: 2.5, md: 3 }, borderRadius: 4, border: '1px solid', borderColor: 'divider', mb: 2.5 };
 
   return (
-    <ConsoleShell active="settings">
+    <PageContainer>
       <SEOHead title={t('clubSettings.seoTitle', 'Настройки клуба — debiut')} description="" noindex />
 
       <Stack direction="row" justifyContent="space-between" alignItems="flex-end" sx={{ mb: 3 }} flexWrap="wrap" useFlexGap>
@@ -265,7 +265,7 @@ export const ClubSettingsPage = () => {
           </Grid>
         </Grid>
       )}
-    </ConsoleShell>
+    </PageContainer>
   );
 };
 

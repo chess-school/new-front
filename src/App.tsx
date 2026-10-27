@@ -50,8 +50,6 @@ function MainLayout() {
   // Публичные маркетинговые страницы — со своим навбаром/футером (MarketingShell), без app-сайдбара
   const marketingPaths = ['/', '/pricing', '/create-club'];
   const isMarketing = marketingPaths.includes(location.pathname);
-  // Консоль управления клубом — свой каркас (ConsoleShell внутри страницы), без app-сайдбара
-  const isConsole = location.pathname.startsWith('/club');
   // Публичный сайт клуба /c/<slug> — свой брендированный каркас, без app-сайдбара
   const isClubSite = location.pathname.startsWith('/c/');
 
@@ -109,8 +107,6 @@ function MainLayout() {
   if (hideNavbar) return routes;
   // Маркетинговые страницы — свой каркас (навбар + футер debiut)
   if (isMarketing) return <MarketingShell>{routes}</MarketingShell>;
-  // Консоль клуба приносит собственный каркас (ConsoleShell)
-  if (isConsole) return routes;
   // Публичный сайт клуба приносит собственный брендированный каркас
   if (isClubSite) return routes;
   return <AppShell>{routes}</AppShell>;
