@@ -41,7 +41,7 @@ const NAV: NavItem[] = [
   { key: 'base', icon: <ExtensionRoundedIcon />, labelKey: 'console.nav.base', label: 'Puzzle base', to: '/books' },
   { key: 'payments', icon: <PaymentsRoundedIcon />, labelKey: 'console.nav.payments', label: 'Payments', to: '/club', badge: 3 },
   { key: 'messengers', icon: <ForumRoundedIcon />, labelKey: 'console.nav.messengers', label: 'Messengers', to: '/club' },
-  { key: 'settings', icon: <SettingsRoundedIcon />, labelKey: 'console.nav.settings', label: 'Club settings', to: '/club' },
+  { key: 'settings', icon: <SettingsRoundedIcon />, labelKey: 'console.nav.settings', label: 'Club settings', to: '/club/settings' },
 ];
 
 const SidebarInner: React.FC<{ active?: string; onNavigate?: () => void }> = ({ active, onNavigate }) => {
