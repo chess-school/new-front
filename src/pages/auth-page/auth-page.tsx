@@ -57,7 +57,7 @@ export const AuthPage: React.FC = () => {
           <Stack direction="row" spacing={4} sx={{ position: 'relative', zIndex: 2 }}>
             {facts.map((s, i) => (
               <Box key={i}>
-                <Typography sx={{ fontFamily: '"Syne"', fontWeight: 800, fontSize: '1.6rem', color: 'primary.main', lineHeight: 1 }}>{s.value}</Typography>
+                <Typography sx={{ fontFamily: '"Unbounded"', fontWeight: 800, fontSize: '1.6rem', color: 'primary.main', lineHeight: 1 }}>{s.value}</Typography>
                 <Typography variant="caption" color="text.secondary">{s.label}</Typography>
               </Box>
             ))}

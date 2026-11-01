@@ -63,7 +63,7 @@
     &.rbc-active,
     &:active {
       color: #1a1405;
-      background: var(--accent-gold) !important;
+      background: var(--brand-primary) !important;
       box-shadow: none !important;
     }
   }
@@ -124,7 +124,7 @@
 
   &.rbc-now {
     font-weight: 800;
-    color: var(--accent-gold);
+    color: var(--brand-primary);
   }
 
   > a,
@@ -134,7 +134,7 @@
 }
 
 .rbc-current-time-indicator {
-  background-color: var(--accent-gold);
+  background-color: var(--brand-primary);
 }
 
 .rbc-time-gutter,
@@ -158,17 +158,17 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 
   &.rbc-selected {
-    outline: 2px solid var(--accent-gold);
+    outline: 2px solid var(--brand-primary);
     outline-offset: 1px;
   }
 
   &:focus {
-    outline: 2px solid var(--accent-gold);
+    outline: 2px solid var(--brand-primary);
   }
 }
 
 .rbc-show-more {
-  color: var(--accent-gold);
+  color: var(--brand-primary);
   background: transparent;
   font-weight: 600;
   font-size: 0.75rem;

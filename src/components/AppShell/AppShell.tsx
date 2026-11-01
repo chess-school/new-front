@@ -155,7 +155,7 @@ const Logo: React.FC<{ onClick?: () => void }> = ({ onClick }) => {
           ♞
         </Box>
       )}
-      <Typography variant="h6" noWrap sx={{ fontFamily: '"Space Grotesk"', fontWeight: 700, letterSpacing: '-0.01em' }}>{brand}</Typography>
+      <Typography variant="h6" noWrap sx={{ fontFamily: '"Unbounded"', fontWeight: 700, letterSpacing: '-0.01em' }}>{brand}</Typography>
     </Stack>
   );
 };

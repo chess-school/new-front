@@ -10,7 +10,7 @@ export const NotFoundPage = () => {
     <Box sx={{ minHeight: '70vh', display: 'grid', placeItems: 'center', textAlign: 'center', px: 3 }}>
       <SEOHead title={t('notFound.seoTitle', 'Page not found — debiut')} description="" noindex />
       <Box>
-        <Typography sx={{ fontFamily: '"Space Grotesk", sans-serif', fontWeight: 800, fontSize: { xs: '4rem', md: '6rem' }, lineHeight: 1, color: 'primary.main' }}>
+        <Typography sx={{ fontFamily: '"Unbounded", sans-serif', fontWeight: 800, fontSize: { xs: '4rem', md: '6rem' }, lineHeight: 1, color: 'primary.main' }}>
           404
         </Typography>
         <Typography variant="h5" sx={{ mt: 1, fontWeight: 700 }}>
