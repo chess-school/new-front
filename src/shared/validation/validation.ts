@@ -1,22 +1,22 @@
-import { Rule } from 'antd/es/form';
-import { TFunction } from 'i18next'; 
+import type { RegisterOptions } from 'react-hook-form';
+import { TFunction } from 'i18next';
 
-export const nameValidation = (t: TFunction): Rule[] => [
-  { required: true, message: t('validation.required') },
-  {
-    validator: (_, value) =>
-      value && value.length >= 2
-        ? Promise.resolve()
-        : Promise.reject(new Error(t('validation.name_length'))), 
-  },
-];
+// Правила валидации в формате react-hook-form (RegisterOptions).
+// Раньше были antd Rule[] — переписаны при переходе формы авторизации с AntD на MUI.
 
-export const loginValidation = (t: TFunction): Rule[] => [
-  { required: true, message: t('validation.required') },
-  { type: 'email', message: t('validation.invalid_email') },
-];
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export const passwordValidation = (t: TFunction): Rule[] => [
-  { required: true, message: t('validation.required') },
-  { min: 6, message: t('validation.password_length') }, 
-];
+export const nameValidation = (t: TFunction): RegisterOptions => ({
+  required: t('validation.required'),
+  minLength: { value: 2, message: t('validation.name_length') },
+});
+
+export const loginValidation = (t: TFunction): RegisterOptions => ({
+  required: t('validation.required'),
+  pattern: { value: EMAIL_RE, message: t('validation.invalid_email') },
+});
+
+export const passwordValidation = (t: TFunction): RegisterOptions => ({
+  required: t('validation.required'),
+  minLength: { value: 6, message: t('validation.password_length') },
+});
