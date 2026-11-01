@@ -137,7 +137,7 @@ export const ClassroomPage: React.FC = () => {
     const id = window.setInterval(() => setNowTs(Date.now()), 1000);
     return () => window.clearInterval(id);
   }, [board?.status]);
-  // Вход в режим решения — показываем вкладку «Задача»
+  // Вход в режим решения — показываем вкладку «Puzzle»
   useEffect(() => { if (solve) setCenterTab('task'); }, [!!solve]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Общее дерево ходов (анализ/нотация) — синхронно с сервером: контроллер правит, остальные смотрят.
@@ -171,7 +171,7 @@ export const ClassroomPage: React.FC = () => {
   const orientation: 'white' | 'black' = solve ? (solve.sideToMove === 'w' ? 'white' : 'black') : (flipped ? 'black' : 'white');
   const lastMove = treeLast ? { from: treeLast.from, to: treeLast.to } : null;
 
-  // Движок — только тренеру и НЕ во время решения (в Solve Mode ответ/анализ прячем). Анализирует позицию дерева.
+  // Движок — только тренеру и НЕ во время решения (в Solve Mode ответ/анализ прячем). Analysisирует позицию дерева.
   const engineActive = room.isCoach && engineOn && !solve;
   const { engine } = useStockfishEngine(engineActive);
   const { result: engineResult, analyzing: engineAnalyzing } = useEngineAnalysis(
@@ -271,20 +271,20 @@ export const ClassroomPage: React.FC = () => {
         if (solve && solve.status === 'solving') {
           if (room.canControl) {
             void room.solveMove(from, to, promotion).then((r) => {
-              if (r && r.correct === false) notification.warning({ message: t('classroom.solve.tryAgain', { defaultValue: 'Неверный ход — попробуйте ещё раз' }), description: undefined });
+              if (r && r.correct === false) notification.warning({ message: t('classroom.solve.tryAgain', { defaultValue: 'Wrong move — try again' }), description: undefined });
             });
           } else {
             // Ученик отправляет свой ответ — общая доска не меняется, тренер видит его в панели
             void room.submitAnswer(from, to, promotion).then((r) => {
               if (r) notification[r.correct ? 'success' : 'warning']({
-                message: r.correct ? t('classroom.answers.okSent', { defaultValue: 'Верно! Ответ отправлен' }) : t('classroom.answers.sent', { defaultValue: 'Ответ отправлен' }),
+                message: r.correct ? t('classroom.answers.okSent', { defaultValue: 'Correct! Answer sent' }) : t('classroom.answers.sent', { defaultValue: 'Answer sent' }),
                 description: undefined,
               });
             });
           }
           return false; // ход применит авторитетный board:update, если он верный
         }
-        // Анализ: ход идёт в общее дерево (из середины партии создаётся подвариант), синхронно всем
+        // Analysis: ход идёт в общее дерево (из середины партии создаётся подвариант), синхронно всем
         if (!room.canControl) return false;
         return game.actions.play({ from, to, promotion });
       }}
@@ -377,7 +377,7 @@ export const ClassroomPage: React.FC = () => {
     <PageContainer dense maxWidth={1480}>
       {/* Шапка урока */}
       <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 2 }}>
-        <IconButton onClick={() => navigate('/my-classes')} aria-label={t('classroom.back', { defaultValue: 'Назад' })}><ArrowBackRoundedIcon /></IconButton>
+        <IconButton onClick={() => navigate('/my-classes')} aria-label={t('classroom.back', { defaultValue: 'Back' })}><ArrowBackRoundedIcon /></IconButton>
         <Box sx={{ minWidth: 0, flex: 1 }}>
           <Typography variant="caption" color="text.secondary" noWrap>{t('classroom.title')}</Typography>
           <Typography variant="h6" component="h1" noWrap sx={{ lineHeight: 1.2 }}>{lessonTitle}</Typography>
@@ -428,12 +428,12 @@ export const ClassroomPage: React.FC = () => {
         <Box sx={{ flex: '1 1 auto', minWidth: 0, display: 'flex', flexDirection: 'column', ...(wide ? { height: '100%', overflow: 'hidden' } : {}) }}>
           <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} sx={{ mb: 1 }} flexWrap="wrap" useFlexGap>
             <Tabs value={centerTab} onChange={(_, v) => setCenterTab(v)} sx={{ minHeight: 36 }}>
-              <Tab value="presentation" label={t('classroom.tab.presentation', { defaultValue: 'Презентация' })} sx={{ minHeight: 36, py: 0 }} />
-              <Tab value="task" label={t('classroom.tab.task', { defaultValue: 'Задача группе' })} sx={{ minHeight: 36, py: 0 }} />
-              <Tab value="analysis" label={t('classroom.tab.analysis', { defaultValue: 'Анализ' })} sx={{ minHeight: 36, py: 0 }} />
+              <Tab value="presentation" label={t('classroom.tab.presentation', { defaultValue: 'Presentation' })} sx={{ minHeight: 36, py: 0 }} />
+              <Tab value="task" label={t('classroom.tab.task', { defaultValue: 'Group task' })} sx={{ minHeight: 36, py: 0 }} />
+              <Tab value="analysis" label={t('classroom.tab.analysis', { defaultValue: 'Analysis' })} sx={{ minHeight: 36, py: 0 }} />
             </Tabs>
             {solve && (
-              <Chip size="small" variant="outlined" label={`${solve.sideToMove === 'w' ? t('classroom.whiteToMove', { defaultValue: 'Ход белых' }) : t('classroom.blackToMove', { defaultValue: 'Ход чёрных' })}${solve.title ? ' · ' + solve.title : ''}`} />
+              <Chip size="small" variant="outlined" label={`${solve.sideToMove === 'w' ? t('classroom.whiteToMove', { defaultValue: 'White to move' }) : t('classroom.blackToMove', { defaultValue: 'Black to move' })}${solve.title ? ' · ' + solve.title : ''}`} />
             )}
           </Stack>
           <Box sx={{ flex: wide ? 1 : '0 0 auto', minHeight: 0, display: 'flex', gap: 1, alignItems: 'stretch', mx: { xs: -2, sm: 0 } }}>
@@ -478,18 +478,18 @@ export const ClassroomPage: React.FC = () => {
         </Stack>
       </Box>
 
-      {/* Инструменты тренера — плавающее окно, открывается шестерёнкой, таскается по экрану */}
+      {/* Coach tools — плавающее окно, открывается шестерёнкой, таскается по экрану */}
       {room.isCoach && (
         <>
-          <Tooltip title={t('classroom.coachTools', { defaultValue: 'Инструменты тренера' })}>
+          <Tooltip title={t('classroom.coachTools', { defaultValue: 'Coach tools' })}>
             <Fab color="primary" onClick={() => setToolsOpen((o) => !o)}
               sx={{ position: 'fixed', right: 24, bottom: 24, zIndex: (th) => th.zIndex.modal }}
-              aria-label={t('classroom.coachTools', { defaultValue: 'Инструменты тренера' })}>
+              aria-label={t('classroom.coachTools', { defaultValue: 'Coach tools' })}>
               <SettingsRoundedIcon />
             </Fab>
           </Tooltip>
           {toolsOpen && (
-            <DraggablePanel title={t('classroom.coachTools', { defaultValue: 'Инструменты тренера' })} onClose={() => setToolsOpen(false)}>
+            <DraggablePanel title={t('classroom.coachTools', { defaultValue: 'Coach tools' })} onClose={() => setToolsOpen(false)}>
               <CoachToolsPanel
                 fen={board.fen}
                 canControl={room.canControl}

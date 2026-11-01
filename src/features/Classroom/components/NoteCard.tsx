@@ -13,7 +13,7 @@ export const NoteCard: React.FC<{ note: string; onClear?: () => void }> = ({ not
         <TipsAndUpdatesRoundedIcon fontSize="small" sx={{ color: '#E5B849', mt: 0.25 }} />
         <Typography variant="body2" sx={{ flex: 1, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{note}</Typography>
         {onClear && (
-          <Tooltip title={t('classroom.note.clear', { defaultValue: 'Убрать' })}>
+          <Tooltip title={t('classroom.note.clear', { defaultValue: 'Clear' })}>
             <IconButton size="small" onClick={onClear}><CloseRoundedIcon fontSize="small" /></IconButton>
           </Tooltip>
         )}

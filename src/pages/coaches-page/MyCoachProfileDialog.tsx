@@ -81,10 +81,10 @@ export const MyCoachProfileDialog: React.FC<MyCoachProfileDialogProps> = ({ open
       const p = await verifyMyCoachProfile();
       setProfile(p);
       setForm(toForm(p, lang));
-      notification.success({ message: t('coachesPage.verified', 'Профиль верифицирован'), description: undefined });
+      notification.success({ message: t('coachesPage.verified', 'Profile verified'), description: undefined });
       onSaved();
     } catch {
-      notification.error({ message: t('coachesPage.verifyFailed', 'Не удалось верифицировать профиль'), description: undefined });
+      notification.error({ message: t('coachesPage.verifyFailed', 'Could not verify the profile'), description: undefined });
     } finally {
       setVerifying(false);
     }
@@ -132,17 +132,17 @@ export const MyCoachProfileDialog: React.FC<MyCoachProfileDialogProps> = ({ open
                 severity={isAdmin ? 'warning' : 'info'}
                 action={isAdmin ? (
                   <Button color="inherit" size="small" disabled={verifying} onClick={handleVerify}>
-                    {verifying ? t('coachesPage.verifying', 'Верификация…') : t('coachesPage.verifyNow', 'Верифицировать')}
+                    {verifying ? t('coachesPage.verifying', 'Verifying…') : t('coachesPage.verifyNow', 'Verify')}
                   </Button>
                 ) : undefined}
               >
                 {isAdmin
-                  ? t('coachesPage.notVerifiedAdmin', 'Профиль ещё не верифицирован. Как администратор, вы можете подтвердить его прямо сейчас — после этого он появится в каталоге тренеров.')
+                  ? t('coachesPage.notVerifiedAdmin', 'The profile is not verified yet. As an administrator you can confirm it right now — after that it will appear in the coach catalog.')
                   : t('coachesPage.notVerified', 'Your profile is awaiting verification by an administrator and is not shown in the catalog yet.')}
               </Alert>
             )}
             {profile && profile.isVerified && (
-              <Alert severity="success">{t('coachesPage.verifiedInfo', 'Профиль верифицирован и виден в каталоге тренеров.')}</Alert>
+              <Alert severity="success">{t('coachesPage.verifiedInfo', 'Profile verified and visible in the coach catalog.')}</Alert>
             )}
             {!profile && <Alert severity="info">{t('coachesPage.createProfileHint', 'Fill in your profile — students will see it in the coaches catalog after verification.')}</Alert>}
             <TextField label={t('coachesPage.headline', 'Headline')} value={form.headline} onChange={set('headline')} fullWidth inputProps={{ maxLength: 120 }}

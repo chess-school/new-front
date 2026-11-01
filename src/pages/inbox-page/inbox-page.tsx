@@ -283,7 +283,7 @@ primary={
 secondary={
   isRequest(item) 
     ? t('inbox.list.requestSecondary', { date: new Date(item.createdAt).toLocaleDateString() }) 
-    : t('inbox.list.homeworkSecondary', { title: homeworkTitle(item) || t('inbox.list.untitled', 'Без темы') })
+    : t('inbox.list.homeworkSecondary', { title: homeworkTitle(item) || t('inbox.list.untitled', 'No theme') })
 }
                     />
                   </ListItemButton>

@@ -96,10 +96,9 @@ export const PricingPage = () => {
                 <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>{p.tagline}</Typography>
                 <Box sx={{ my: 2.5 }}>
                   <Typography component="span" sx={{ fontFamily: '"Space Grotesk"', fontWeight: 700, fontSize: p.custom ? '1.9rem' : '2.4rem', color: 'text.primary', lineHeight: 1 }}>
-                    {p.custom ? t('land.pricing.custom', 'Custom') : t('land.pricing.priceStub', '[PRICE]')}
+                    {p.custom ? t('land.pricing.custom', 'Custom') : t('land.pricing.priceStub', 'Contact us')}
                   </Typography>
-                  {!p.custom && <Typography component="span" color="text.secondary" sx={{ ml: 0.75 }}>{t('land.pricing.perMonth', '/ mo.')}</Typography>}
-                </Box>
+                                  </Box>
                 <Stack spacing={1.25} sx={{ flexGrow: 1, mb: 3 }}>
                   {p.points.map((pt, idx) => (
                     <Stack key={idx} direction="row" spacing={1.25} alignItems="flex-start">

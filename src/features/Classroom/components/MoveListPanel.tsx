@@ -18,7 +18,7 @@ export const MoveListPanel: React.FC<{ moves: MoveEntry[] }> = ({ moves }) => {
   }, [moves.length]);
 
   if (!moves.length) {
-    return <Typography variant="body2" color="text.secondary">{t('classroom.moves.empty', { defaultValue: 'Ходов пока нет' })}</Typography>;
+    return <Typography variant="body2" color="text.secondary">{t('classroom.moves.empty', { defaultValue: 'No moves yet' })}</Typography>;
   }
 
   // Группируем по номерам ходов: [{ no, white, black }]

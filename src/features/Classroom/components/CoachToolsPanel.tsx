@@ -32,38 +32,38 @@ import { LessonMaterial } from '../classroomApi';
 
 // Темы задач (ключи Lichess) + ярлыки и пояснения для выпадашки. Пусто = любая тема.
 const PUZZLE_THEMES: { key: string; label: string; desc?: string }[] = [
-  { key: '', label: 'Любая тема' },
-  { key: 'mate', label: 'Мат', desc: 'Поставить мат (число ходов не задано)' },
-  { key: 'mateIn1', label: 'Мат в 1', desc: 'Объявить мат одним ходом' },
-  { key: 'mateIn2', label: 'Мат в 2', desc: 'Форсированный мат в два хода' },
-  { key: 'mateIn3', label: 'Мат в 3', desc: 'Форсированный мат в три хода' },
-  { key: 'fork', label: 'Вилка', desc: 'Одна фигура одновременно нападает на две и более' },
-  { key: 'pin', label: 'Связка', desc: 'Фигура не может уйти — за ней под ударом более ценная' },
-  { key: 'skewer', label: 'Сквозной удар', desc: 'Связка наоборот: ценная фигура впереди, после её хода берём то, что за ней' },
-  { key: 'discoveredAttack', label: 'Вскрытое нападение', desc: 'Отходя, фигура открывает удар другой своей фигуры' },
-  { key: 'doubleCheck', label: 'Двойной шах', desc: 'Шах сразу двумя фигурами — король обязан ходить' },
-  { key: 'sacrifice', label: 'Жертва', desc: 'Отдать материал ради атаки или решающей выгоды' },
-  { key: 'deflection', label: 'Отвлечение', desc: 'Увести защищающую фигуру соперника с важного поля/линии' },
-  { key: 'attraction', label: 'Завлечение', desc: 'Заманить фигуру соперника на невыгодное поле' },
-  { key: 'hangingPiece', label: 'Висящая фигура', desc: 'Забрать незащищённую фигуру соперника' },
-  { key: 'backRankMate', label: 'Мат по последней горизонтали', desc: 'Мат ладьёй/ферзём по 1-й или 8-й линии за «стенкой» пешек' },
-  { key: 'promotion', label: 'Превращение пешки', desc: 'Провести пешку в ферзя (или другую фигуру)' },
-  { key: 'endgame', label: 'Эндшпиль', desc: 'Окончание партии — на доске мало фигур' },
-  { key: 'opening', label: 'Дебют', desc: 'Позиции из начала партии' },
-  { key: 'middlegame', label: 'Миттельшпиль', desc: 'Позиции из середины игры' },
-  { key: 'advantage', label: 'Достижение преимущества', desc: 'Найти ход, дающий ощутимый перевес' },
-  { key: 'crushing', label: 'Разгром', desc: 'Найти ход с решающим, подавляющим перевесом' },
-  { key: 'zugzwang', label: 'Цугцванг', desc: 'Любой ход соперника только ухудшает его позицию' },
+  { key: '', label: 'Any theme' },
+  { key: 'mate', label: 'Mate', desc: 'Deliver mate (number of moves not set)' },
+  { key: 'mateIn1', label: 'Mate in 1', desc: 'Deliver mate in one move' },
+  { key: 'mateIn2', label: 'Mate in 2', desc: 'Forced mate in two' },
+  { key: 'mateIn3', label: 'Mate in 3', desc: 'Forced mate in three' },
+  { key: 'fork', label: 'Fork', desc: 'One piece attacks two or more at once' },
+  { key: 'pin', label: 'Pin', desc: 'A piece cannot move — a more valuable one is attacked behind it' },
+  { key: 'skewer', label: 'Skewer', desc: 'Reverse pin: the valuable piece is in front; after it moves you take the one behind' },
+  { key: 'discoveredAttack', label: 'Discovered attack', desc: 'Moving away, a piece reveals an attack from another piece' },
+  { key: 'doubleCheck', label: 'Double check', desc: 'Check from two pieces at once; the king must move' },
+  { key: 'sacrifice', label: 'Sacrifice', desc: 'Give up material for an attack or a decisive gain' },
+  { key: 'deflection', label: 'Deflection', desc: 'Lure the defending piece off a key square or line' },
+  { key: 'attraction', label: 'Attraction', desc: 'Lure an enemy piece to an unfavorable square' },
+  { key: 'hangingPiece', label: 'Hanging piece', desc: 'Win an undefended enemy piece' },
+  { key: 'backRankMate', label: 'Back-rank mate', desc: 'Mate with rook/queen on the 1st or 8th rank behind a wall of pawns' },
+  { key: 'promotion', label: 'Pawn promotion', desc: 'Promote a pawn to a queen (or another piece)' },
+  { key: 'endgame', label: 'Endgame', desc: 'The endgame — few pieces on the board' },
+  { key: 'opening', label: 'Opening', desc: 'Positions from the start of the game' },
+  { key: 'middlegame', label: 'Middlegame', desc: 'Positions from the middlegame' },
+  { key: 'advantage', label: 'Gaining an advantage', desc: 'Find a move that gives a clear edge' },
+  { key: 'crushing', label: 'Crushing', desc: 'Find a move with a decisive, crushing advantage' },
+  { key: 'zugzwang', label: 'Zugzwang', desc: 'Any opponent move only worsens their position' },
 ];
 
 // Диапазоны сложности по рейтингу
 const RATING_BANDS: { key: string; label: string; min?: number; max?: number }[] = [
-  { key: '', label: 'Любая сложность' },
-  { key: 'easy', label: 'Лёгкие (до 1200)', max: 1200 },
+  { key: '', label: 'Any difficulty' },
+  { key: 'easy', label: 'Easy (up to 1200)', max: 1200 },
   { key: 'mid1', label: '1200–1600', min: 1200, max: 1600 },
   { key: 'mid2', label: '1600–2000', min: 1600, max: 2000 },
   { key: 'hard', label: '2000–2400', min: 2000, max: 2400 },
-  { key: 'expert', label: 'Сложные (2400+)', min: 2400 },
+  { key: 'expert', label: 'Hard (2400+)', min: 2400 },
 ];
 
 // Меню выпадашек внутри плавающей панели. disablePortal — меню становится дочерним к панели и не
@@ -121,7 +121,7 @@ interface CoachToolsPanelProps {
   onMaterial?: (material: LessonMaterial | null) => void;
   /** Запустить режим решения на общей доске: решение в UCI от startFen (ход решающей стороны первый) */
   onSolve?: (payload: { line: string[]; startFen: string; title: string }) => void;
-  /** Комментарий классу (виден всем); null — убрать */
+  /** Note to class (виден всем); null — убрать */
   onNote?: (note: string | null) => void;
   /** Доска сейчас в режиме решения — прячем движок (ответ не показываем) */
   solving?: boolean;
@@ -140,7 +140,7 @@ const isValidFen = (fen: string): boolean => {
 const solutionPgn = (fen: string, solution: string) => `[SetUp "1"]\n[FEN "${fen}"]\n\n${solution}`;
 
 /**
- * Инструменты тренера в интерактивном классе: движок (анализ текущей позиции, только у тренера),
+ * Coach tools в интерактивном классе: движок (анализ текущей позиции, только у тренера),
  * загрузка любой позиции на общую доску (из книг-задачников, по FEN) и пошаговый разбор решения.
  * Любая загруженная позиция уходит всем ученикам через синхронную доску (board:set).
  */
@@ -157,12 +157,12 @@ export const CoachToolsPanel: React.FC<CoachToolsPanelProps> = ({ fen, canContro
   const [book, setBook] = useState<PuzzleBook | null>(null);
   const [loadingBook, setLoadingBook] = useState(false);
 
-  // Разбор решения — дерево вариантов (как в курсах/задачах): тренер кликает по ходам/вариантам,
+  // Analysis решения — дерево вариантов (как в курсах/задачах): тренер кликает по ходам/вариантам,
   // каждая позиция уходит на общую доску всем. Решение видит только тренер.
   const [studyTitle, setStudyTitle] = useState<string | null>(null);
   const game = useGameTree();
 
-  // Задачи по темам (из общей базы: Lichess / оцифрованные книги / все)
+  // Puzzles by theme (из общей базы: Lichess / оцифрованные книги / все)
   const [pSource, setPSource] = useState<PuzzleSourceFilter>('lichess');
   const [pTheme, setPTheme] = useState('');
   const [pRating, setPRating] = useState('');
@@ -175,7 +175,7 @@ export const CoachToolsPanel: React.FC<CoachToolsPanelProps> = ({ fen, canContro
       setBooks(await getPuzzleBooks());
       setBooksLoaded(true);
     } catch {
-      notification.error({ message: t('coachTools.booksError', { defaultValue: 'Не удалось загрузить список книг' }) });
+      notification.error({ message: t('coachTools.booksError', { defaultValue: 'Could not load the book list' }) });
     } finally {
       setLoadingBooks(false);
     }
@@ -189,7 +189,7 @@ export const CoachToolsPanel: React.FC<CoachToolsPanelProps> = ({ fen, canContro
     try {
       setBook(await getPuzzleBook(id));
     } catch {
-      notification.error({ message: t('coachTools.bookError', { defaultValue: 'Не удалось открыть книгу' }) });
+      notification.error({ message: t('coachTools.bookError', { defaultValue: 'Could not open the book' }) });
     } finally {
       setLoadingBook(false);
     }
@@ -197,19 +197,19 @@ export const CoachToolsPanel: React.FC<CoachToolsPanelProps> = ({ fen, canContro
 
   const pushFen = useCallback((next: string) => {
     if (!canControl) {
-      notification.warning({ message: t('coachTools.needControl', { defaultValue: 'Сначала верните себе ход, чтобы менять доску' }) });
+      notification.warning({ message: t('coachTools.needControl', { defaultValue: 'Take the move back first to change the board' }) });
       return;
     }
     if (!isValidFen(next)) {
-      notification.error({ message: t('coachTools.badFen', { defaultValue: 'Некорректный FEN' }) });
+      notification.error({ message: t('coachTools.badFen', { defaultValue: 'Invalid FEN' }) });
       return;
     }
     onLoad(next);
   }, [canControl, onLoad, t]);
 
   const exerciseLabel = useCallback((ex: Exercise): LessonMaterial => ({
-    title: book?.title || t('coachTools.exercise', { defaultValue: 'Упражнение' }),
-    subtitle: ex.title || `${t('coachTools.exercise', { defaultValue: 'Упражнение' })} #${ex.number ?? ''}`.trim(),
+    title: book?.title || t('coachTools.exercise', { defaultValue: 'Exercise' }),
+    subtitle: ex.title || `${t('coachTools.exercise', { defaultValue: 'Exercise' })} #${ex.number ?? ''}`.trim(),
   }), [book, t]);
 
   // Просто поставить позицию задачи на доску (без решения)
@@ -219,11 +219,11 @@ export const CoachToolsPanel: React.FC<CoachToolsPanelProps> = ({ fen, canContro
     onMaterial?.(exerciseLabel(ex));
   }, [pushFen, onMaterial, exerciseLabel]);
 
-  // Разбор: разобрать PGN-решение в дерево вариантов, курсор — в начальную позицию задачи.
+  // Analysis: разобрать PGN-решение в дерево вариантов, курсор — в начальную позицию задачи.
   const studyExercise = useCallback((ex: Exercise) => {
     const parsed = ex.solution?.trim() ? parsePgn(solutionPgn(ex.fen, ex.solution)) : null;
     if (!parsed || parsed.tree.nodes[parsed.tree.rootId].children.length === 0) {
-      notification.info({ message: t('coachTools.noSolution', { defaultValue: 'У этого упражнения нет разбора' }) });
+      notification.info({ message: t('coachTools.noSolution', { defaultValue: 'This exercise has no analysis' }) });
       loadExercise(ex);
       return;
     }
@@ -234,11 +234,11 @@ export const CoachToolsPanel: React.FC<CoachToolsPanelProps> = ({ fen, canContro
 
   const closeStudy = useCallback(() => { setStudyTitle(null); game.actions.reset(); }, [game.actions]);
 
-  // Решать упражнение: переключаем общую доску в режим решения (стартовая позиция + валидация по решению).
+  // Solve упражнение: переключаем общую доску в режим решения (стартовая позиция + валидация по решению).
   const solveBookExercise = useCallback((ex: Exercise) => {
     const line = mainLineUci(ex.solution?.trim() ? parsePgn(solutionPgn(ex.fen, ex.solution)) : null);
     if (!line.length) {
-      notification.info({ message: t('coachTools.noSolution', { defaultValue: 'У этого упражнения нет разбора' }) });
+      notification.info({ message: t('coachTools.noSolution', { defaultValue: 'This exercise has no analysis' }) });
       loadExercise(ex);
       return;
     }
@@ -250,7 +250,7 @@ export const CoachToolsPanel: React.FC<CoachToolsPanelProps> = ({ fen, canContro
   // Случайная задача по теме/сложности/источнику — на доску всем, с решением в дереве разбора (у тренера).
   const loadRandomPuzzle = useCallback(async () => {
     if (!canControl) {
-      notification.warning({ message: t('coachTools.needControl', { defaultValue: 'Сначала верните себе ход, чтобы менять доску' }) });
+      notification.warning({ message: t('coachTools.needControl', { defaultValue: 'Take the move back first to change the board' }) });
       return;
     }
     setLoadingPuzzle(true);
@@ -274,16 +274,16 @@ export const CoachToolsPanel: React.FC<CoachToolsPanelProps> = ({ fen, canContro
       }
       const themeLabel = PUZZLE_THEMES.find((th) => th.key === pTheme)?.label;
       onMaterial?.({
-        title: t('coachTools.puzzleMaterial', { defaultValue: 'Задача' }) + (pTheme && themeLabel ? ` · ${themeLabel}` : ''),
-        subtitle: t('coachTools.puzzleRating', { defaultValue: 'Рейтинг' }) + ` ${puzzle.rating}`,
+        title: t('coachTools.puzzleMaterial', { defaultValue: 'Puzzle' }) + (pTheme && themeLabel ? ` · ${themeLabel}` : ''),
+        subtitle: t('coachTools.puzzleRating', { defaultValue: 'Rating' }) + ` ${puzzle.rating}`,
       });
-      if (line.length) onSolve?.({ line, startFen, title: (pTheme && themeLabel) || t('coachTools.puzzle', { defaultValue: 'Задача' }) });
+      if (line.length) onSolve?.({ line, startFen, title: (pTheme && themeLabel) || t('coachTools.puzzle', { defaultValue: 'Puzzle' }) });
     } catch (e) {
       const status = (e as { response?: { status?: number } })?.response?.status;
       notification.info({
         message: status === 404
-          ? t('coachTools.noPuzzle', { defaultValue: 'По этим фильтрам задач не нашлось — ослабьте условия' })
-          : t('coachTools.puzzleError', { defaultValue: 'Не удалось загрузить задачу' }),
+          ? t('coachTools.noPuzzle', { defaultValue: 'No puzzles match these filters — loosen the criteria' })
+          : t('coachTools.puzzleError', { defaultValue: 'Could not load the puzzle' }),
       });
     } finally {
       setLoadingPuzzle(false);
@@ -317,7 +317,7 @@ export const CoachToolsPanel: React.FC<CoachToolsPanelProps> = ({ fen, canContro
         <Accordion disableGutters defaultExpanded>
           <AccordionSummary expandIcon={<ExpandMoreRoundedIcon />}>
             <Stack direction="row" spacing={1} alignItems="center"><MemoryRoundedIcon fontSize="small" />
-              <Typography fontWeight={600}>{t('coachTools.engine', { defaultValue: 'Движок и анализ' })}</Typography>
+              <Typography fontWeight={600}>{t('coachTools.engine', { defaultValue: 'Engine & analysis' })}</Typography>
             </Stack>
           </AccordionSummary>
           <AccordionDetails>
@@ -325,19 +325,19 @@ export const CoachToolsPanel: React.FC<CoachToolsPanelProps> = ({ fen, canContro
               {enginePanel}
               <FormControlLabel
                 control={<Switch size="small" checked={engine.shareOn} onChange={(_, v) => engine.setShareOn(v)} disabled={!engine.on} />}
-                label={<Typography variant="body2">{t('coachTools.shareEngine', { defaultValue: 'Показать движок классу (стрелки и оценка видны всем)' })}</Typography>}
+                label={<Typography variant="body2">{t('coachTools.shareEngine', { defaultValue: 'Show engine to class (arrows and evaluation visible to everyone)' })}</Typography>}
               />
               {onNote && (
                 <Stack direction="row" spacing={1} alignItems="flex-end">
                   <TextField
                     size="small" fullWidth multiline maxRows={3}
-                    label={t('coachTools.noteLabel', { defaultValue: 'Комментарий классу' })}
-                    placeholder={t('coachTools.notePlaceholder', { defaultValue: 'Пояснение к позиции…' })}
+                    label={t('coachTools.noteLabel', { defaultValue: 'Note to class' })}
+                    placeholder={t('coachTools.notePlaceholder', { defaultValue: 'Note about the position…' })}
                     value={noteInput}
                     onChange={(e) => setNoteInput(e.target.value)}
                   />
                   <Button size="small" variant="outlined" disabled={!noteInput.trim()} onClick={() => { onNote(noteInput.trim()); setNoteInput(''); }}>
-                    {t('coachTools.noteSend', { defaultValue: 'Классу' })}
+                    {t('coachTools.noteSend', { defaultValue: 'To class' })}
                   </Button>
                 </Stack>
               )}
@@ -346,11 +346,11 @@ export const CoachToolsPanel: React.FC<CoachToolsPanelProps> = ({ fen, canContro
         </Accordion>
       )}
 
-      {/* Книги и задачи */}
+      {/* Books & puzzles */}
       <Accordion disableGutters onChange={(_, expanded) => { if (expanded) void loadBooks(); }}>
         <AccordionSummary expandIcon={<ExpandMoreRoundedIcon />}>
           <Stack direction="row" spacing={1} alignItems="center"><MenuBookRoundedIcon fontSize="small" />
-            <Typography fontWeight={600}>{t('coachTools.books', { defaultValue: 'Книги и задачи' })}</Typography>
+            <Typography fontWeight={600}>{t('coachTools.books', { defaultValue: 'Books & puzzles' })}</Typography>
           </Stack>
         </AccordionSummary>
         <AccordionDetails>
@@ -358,7 +358,7 @@ export const CoachToolsPanel: React.FC<CoachToolsPanelProps> = ({ fen, canContro
             <Stack spacing={1.5}>
               <TextField
                 select size="small" fullWidth sx={DARK_FIELD_SX}
-                label={t('coachTools.selectBook', { defaultValue: 'Задачник / книга' })}
+                label={t('coachTools.selectBook', { defaultValue: 'Puzzle book' })}
                 value={selectedBookId}
                 onChange={(e) => void selectBook(e.target.value)}
                 SelectProps={{ MenuProps: DARK_MENU_PROPS }}
@@ -369,7 +369,7 @@ export const CoachToolsPanel: React.FC<CoachToolsPanelProps> = ({ fen, canContro
                 ))}
               </TextField>
               {booksLoaded && books.length === 0 && (
-                <Typography variant="body2" color="text.secondary">{t('coachTools.noBooks', { defaultValue: 'Книг пока нет — создайте в разделе «Оцифровщик».' })}</Typography>
+                <Typography variant="body2" color="text.secondary">{t('coachTools.noBooks', { defaultValue: 'No books yet — create one in the Digitizer section.' })}</Typography>
               )}
 
               {loadingBook && <CircularProgress size={20} />}
@@ -380,26 +380,26 @@ export const CoachToolsPanel: React.FC<CoachToolsPanelProps> = ({ fen, canContro
                       <Stack key={ex._id} direction="row" alignItems="center" spacing={1}
                         sx={{ p: 0.75, borderRadius: 1, bgcolor: 'background.paper', border: 1, borderColor: 'divider' }}>
                         <Typography variant="body2" sx={{ flex: 1, minWidth: 0 }} noWrap>
-                          {ex.number ?? i + 1}. {ex.title || t('coachTools.exercise', { defaultValue: 'Упражнение' })}
+                          {ex.number ?? i + 1}. {ex.title || t('coachTools.exercise', { defaultValue: 'Exercise' })}
                         </Typography>
                         {ex.solution?.trim() ? (
                           <Button size="small" variant="contained" onClick={() => solveBookExercise(ex)}>
-                            {t('coachTools.solve', { defaultValue: 'Решать' })}
+                            {t('coachTools.solve', { defaultValue: 'Solve' })}
                           </Button>
                         ) : (
                           <Button size="small" variant="outlined" onClick={() => loadExercise(ex)}>
-                            {t('coachTools.toBoard', { defaultValue: 'На доску' })}
+                            {t('coachTools.toBoard', { defaultValue: 'To board' })}
                           </Button>
                         )}
                         {ex.solution?.trim() && (
                           <Button size="small" onClick={() => studyExercise(ex)}>
-                            {t('coachTools.study', { defaultValue: 'Разбор' })}
+                            {t('coachTools.study', { defaultValue: 'Analysis' })}
                           </Button>
                         )}
                       </Stack>
                     ))}
                     {exercises.length === 0 && (
-                      <Typography variant="body2" color="text.secondary">{t('coachTools.emptyBook', { defaultValue: 'В книге нет упражнений' })}</Typography>
+                      <Typography variant="body2" color="text.secondary">{t('coachTools.emptyBook', { defaultValue: 'This book has no exercises' })}</Typography>
                     )}
                   </Stack>
                 </Box>
@@ -409,11 +409,11 @@ export const CoachToolsPanel: React.FC<CoachToolsPanelProps> = ({ fen, canContro
         </AccordionDetails>
       </Accordion>
 
-      {/* Задачи по темам (общая база) */}
+      {/* Puzzles by theme (общая база) */}
       <Accordion disableGutters>
         <AccordionSummary expandIcon={<ExpandMoreRoundedIcon />}>
           <Stack direction="row" spacing={1} alignItems="center"><ExtensionRoundedIcon fontSize="small" />
-            <Typography fontWeight={600}>{t('coachTools.puzzles', { defaultValue: 'Задачи по темам' })}</Typography>
+            <Typography fontWeight={600}>{t('coachTools.puzzles', { defaultValue: 'Puzzles by theme' })}</Typography>
           </Stack>
         </AccordionSummary>
         <AccordionDetails>
@@ -421,7 +421,7 @@ export const CoachToolsPanel: React.FC<CoachToolsPanelProps> = ({ fen, canContro
             <PuzzleSourcePicker value={pSource} onChange={setPSource} fullWidth />
             <TextField
               select size="small" fullWidth sx={DARK_FIELD_SX}
-              label={t('coachTools.theme', { defaultValue: 'Тема' })}
+              label={t('coachTools.theme', { defaultValue: 'Theme' })}
               value={pTheme}
               onChange={(e) => setPTheme(e.target.value)}
               helperText={PUZZLE_THEMES.find((th) => th.key === pTheme)?.desc}
@@ -438,7 +438,7 @@ export const CoachToolsPanel: React.FC<CoachToolsPanelProps> = ({ fen, canContro
             </TextField>
             <TextField
               select size="small" fullWidth sx={DARK_FIELD_SX}
-              label={t('coachTools.difficulty', { defaultValue: 'Сложность' })}
+              label={t('coachTools.difficulty', { defaultValue: 'Difficulty' })}
               value={pRating}
               onChange={(e) => setPRating(e.target.value)}
               SelectProps={{ MenuProps: DARK_MENU_PROPS }}
@@ -449,10 +449,10 @@ export const CoachToolsPanel: React.FC<CoachToolsPanelProps> = ({ fen, canContro
               variant="contained" size="small" startIcon={loadingPuzzle ? <CircularProgress size={16} color="inherit" /> : <ExtensionRoundedIcon />}
               disabled={loadingPuzzle} onClick={() => void loadRandomPuzzle()}
             >
-              {t('coachTools.loadPuzzle', { defaultValue: 'Случайная задача — решать' })}
+              {t('coachTools.loadPuzzle', { defaultValue: 'Random puzzle — solve' })}
             </Button>
             <Typography variant="caption" color="text.secondary">
-              {t('coachTools.puzzlesHint', { defaultValue: 'Доска перейдёт в режим решения: позиция, нужная сторона снизу, проверка ходов. Передайте ход ученику, чтобы он решал.' })}
+              {t('coachTools.puzzlesHint', { defaultValue: 'The board switches to solving mode: position set, the side to move at the bottom, moves validated. Pass the move to the student so they can solve.' })}
             </Typography>
           </Stack>
         </AccordionDetails>
@@ -462,7 +462,7 @@ export const CoachToolsPanel: React.FC<CoachToolsPanelProps> = ({ fen, canContro
       <Accordion disableGutters>
         <AccordionSummary expandIcon={<ExpandMoreRoundedIcon />}>
           <Stack direction="row" spacing={1} alignItems="center"><GridOnRoundedIcon fontSize="small" />
-            <Typography fontWeight={600}>{t('coachTools.position', { defaultValue: 'Позиция (FEN)' })}</Typography>
+            <Typography fontWeight={600}>{t('coachTools.position', { defaultValue: 'Position (FEN)' })}</Typography>
           </Stack>
         </AccordionSummary>
         <AccordionDetails>
@@ -476,12 +476,12 @@ export const CoachToolsPanel: React.FC<CoachToolsPanelProps> = ({ fen, canContro
             />
             <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
               <Button size="small" variant="contained" disabled={!fenInput.trim()} onClick={() => pushFen(fenInput.trim())}>
-                {t('coachTools.toBoard', { defaultValue: 'На доску' })}
+                {t('coachTools.toBoard', { defaultValue: 'To board' })}
               </Button>
               <Button size="small" variant="outlined" color="inherit" startIcon={<RestartAltRoundedIcon />} onClick={onReset}>
-                {t('coachTools.startPos', { defaultValue: 'Начальная' })}
+                {t('coachTools.startPos', { defaultValue: 'Starting position' })}
               </Button>
-              <Tooltip title={t('coachTools.copyCurrent', { defaultValue: 'Скопировать текущий FEN' })}>
+              <Tooltip title={t('coachTools.copyCurrent', { defaultValue: 'Copy current FEN' })}>
                 <span>
                   <IconButton size="small" onClick={() => { setFenInput(fen); navigator.clipboard?.writeText(fen).catch(() => {}); }}>
                     <ContentCopyRoundedIcon fontSize="small" />
@@ -493,16 +493,16 @@ export const CoachToolsPanel: React.FC<CoachToolsPanelProps> = ({ fen, canContro
         </AccordionDetails>
       </Accordion>
 
-      {/* Разбор решения деревом вариантов (как в курсах/задачах) — виден только тренеру.
+      {/* Analysis решения деревом вариантов (как в курсах/задачах) — виден только тренеру.
           Клик по ходу/варианту выставляет его позицию на общую доску всем в классе. */}
       {studyTitle && (
         <Box sx={{ mt: 1.5, p: 1, borderRadius: '10px', bgcolor: 'surface.raised', border: 1, borderColor: 'divider' }}>
           <Stack direction="row" alignItems="center" spacing={0.5} sx={{ mb: 0.5 }}>
             <MenuBookRoundedIcon fontSize="small" color="primary" />
             <Typography variant="body2" fontWeight={700} noWrap sx={{ flex: 1 }}>
-              {t('coachTools.studying', { defaultValue: 'Разбор' })}: {studyTitle}
+              {t('coachTools.studying', { defaultValue: 'Analysis' })}: {studyTitle}
             </Typography>
-            <Button size="small" color="inherit" onClick={closeStudy}>{t('coachTools.closeStudy', { defaultValue: 'Закрыть' })}</Button>
+            <Button size="small" color="inherit" onClick={closeStudy}>{t('coachTools.closeStudy', { defaultValue: 'Close' })}</Button>
           </Stack>
           <Stack direction="row" alignItems="center" spacing={0.25} sx={{ mb: 0.5 }}>
             <IconButton size="small" onClick={game.actions.toStart}><FirstPageRoundedIcon fontSize="small" /></IconButton>
@@ -511,7 +511,7 @@ export const CoachToolsPanel: React.FC<CoachToolsPanelProps> = ({ fen, canContro
             <IconButton size="small" onClick={game.actions.toEnd}><LastPageRoundedIcon fontSize="small" /></IconButton>
             {!canControl && (
               <Typography variant="caption" color="warning.main" sx={{ ml: 1 }}>
-                {t('coachTools.studyNeedControl', { defaultValue: 'Верните ход, чтобы вести разбор на доске' })}
+                {t('coachTools.studyNeedControl', { defaultValue: 'Take the move back to analyse on the board' })}
               </Typography>
             )}
           </Stack>

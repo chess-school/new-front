@@ -27,7 +27,7 @@ interface Props {
   selectedUrl?: string;
 }
 
-/** Медиатека клуба: сетка загруженных картинок с загрузкой, удалением, копированием и выбором. */
+/** Media library клуба: сетка загруженных картинок с загрузкой, удалением, копированием и выбором. */
 export const MediaLibrary = ({ selectable, onPick, selectedUrl }: Props) => {
   const { t } = useTranslation();
   const [items, setItems] = useState<MediaItem[]>([]);
@@ -57,7 +57,7 @@ export const MediaLibrary = ({ selectable, onPick, selectedUrl }: Props) => {
         const created = await uploadMedia(file, '', setProgress);
         setItems((prev) => [created, ...prev]);
       }
-      message.success(t('media.uploaded', 'Загружено'));
+      message.success(t('media.uploaded', 'Uploaded'));
     } catch { /* интерцептор показал ошибку */ } finally {
       setUploading(false);
       setProgress(0);
@@ -71,19 +71,19 @@ export const MediaLibrary = ({ selectable, onPick, selectedUrl }: Props) => {
   };
 
   const onDelete = async (item: MediaItem) => {
-    if (!window.confirm(t('media.confirmDelete', 'Удалить это изображение? Оно исчезнет со страниц, где используется.'))) return;
+    if (!window.confirm(t('media.confirmDelete', 'Delete this image? It will disappear from pages where it is used.'))) return;
     try {
       await deleteMedia(item.id);
       setItems((prev) => prev.filter((x) => x.id !== item.id));
-      message.success(t('media.deleted', 'Удалено'));
+      message.success(t('media.deleted', 'Deleted'));
     } catch { /* интерцептор показал ошибку */ }
   };
 
   const onCopy = async (item: MediaItem) => {
     try {
       await navigator.clipboard.writeText(mediaUrl(item.url));
-      message.success(t('media.copied', 'Ссылка скопирована'));
-    } catch { message.error(t('media.copyFailed', 'Не удалось скопировать')); }
+      message.success(t('media.copied', 'Link copied'));
+    } catch { message.error(t('media.copyFailed', 'Could not copy')); }
   };
 
   return (
@@ -103,13 +103,13 @@ export const MediaLibrary = ({ selectable, onPick, selectedUrl }: Props) => {
           onChange={(e) => { if (e.target.files) handleFiles(e.target.files); e.target.value = ''; }} />
         <Stack spacing={1.5} alignItems="center">
           <Typography variant="body2" color="text.secondary">
-            {t('media.dropHint', 'Перетащите изображения сюда или')}
+            {t('media.dropHint', 'Drag images here or')}
           </Typography>
           <Button variant="contained" startIcon={<UploadRoundedIcon />} onClick={() => inputRef.current?.click()} disabled={uploading}>
-            {t('media.upload', 'Загрузить изображение')}
+            {t('media.upload', 'Upload image')}
           </Button>
           <Typography variant="caption" color="text.secondary">
-            {t('media.formats', 'PNG, JPEG, WebP, GIF — до 5 МБ. Сжимаем в WebP автоматически.')}
+            {t('media.formats', 'PNG, JPEG, WebP, GIF — up to 5 MB. Converted to WebP automatically.')}
           </Typography>
           {uploading && <Box sx={{ width: '60%', maxWidth: 320 }}><LinearProgress variant={progress ? 'determinate' : 'indeterminate'} value={progress} /></Box>}
         </Stack>
@@ -119,7 +119,7 @@ export const MediaLibrary = ({ selectable, onPick, selectedUrl }: Props) => {
         <Box sx={{ display: 'grid', placeItems: 'center', py: 8 }}><CircularProgress /></Box>
       ) : items.length === 0 ? (
         <Box sx={{ textAlign: 'center', py: 6, color: 'text.secondary' }}>
-          <Typography>{t('media.empty', 'Пока нет загруженных изображений')}</Typography>
+          <Typography>{t('media.empty', 'No images uploaded yet')}</Typography>
         </Box>
       ) : (
         <Box sx={{ display: 'grid', gap: 1.5, gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)', md: 'repeat(4, 1fr)' } }}>
@@ -147,13 +147,13 @@ export const MediaLibrary = ({ selectable, onPick, selectedUrl }: Props) => {
                   {/* Действия поверх картинки */}
                   <Stack direction="row" spacing={0.5} className="media-actions"
                     sx={{ position: 'absolute', top: 6, left: 6, opacity: { xs: 1, md: 0 }, transition: 'opacity .15s' }}>
-                    <Tooltip title={t('media.copy', 'Скопировать ссылку')}>
+                    <Tooltip title={t('media.copy', 'Copy link')}>
                       <IconButton size="small" onClick={(e) => { e.stopPropagation(); onCopy(item); }}
                         sx={{ bgcolor: 'rgba(0,0,0,0.55)', color: '#fff', '&:hover': { bgcolor: 'rgba(0,0,0,0.75)' } }}>
                         <ContentCopyRoundedIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title={t('media.delete', 'Удалить')}>
+                    <Tooltip title={t('media.delete', 'Delete')}>
                       <IconButton size="small" onClick={(e) => { e.stopPropagation(); onDelete(item); }}
                         sx={{ bgcolor: 'rgba(0,0,0,0.55)', color: '#fff', '&:hover': { bgcolor: 'rgba(220,38,38,0.9)' } }}>
                         <DeleteOutlineRoundedIcon fontSize="small" />

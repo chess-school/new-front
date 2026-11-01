@@ -1,5 +1,5 @@
-// Единый источник SEO-данных публичных маршрутов: используется и компонентом SEOHead (клиент),
-// и build-плагином пререндера (инъекция <head> в статический HTML по маршрутам). БЕЗ импортов React!
+// Single source of SEO data for public routes: used both by the SEOHead component (client)
+// and by the build prerender plugin (injecting <head> into static HTML per route). NO React imports!
 import { organizationJsonLd, webSiteJsonLd, breadcrumbJsonLd, SITE_NAME, SITE_URL, canonicalUrl } from './jsonLd';
 
 export interface SeoConfig {
@@ -12,73 +12,73 @@ export interface SeoConfig {
   noindex?: boolean;
 }
 
-const crumbs = (name: string, path: string) => [breadcrumbJsonLd([{ name: 'Главная', path: '/' }, { name, path }])];
+const crumbs = (name: string, path: string) => [breadcrumbJsonLd([{ name: 'Home', path: '/' }, { name, path }])];
 
 export const SEO_ROUTES: Record<string, SeoConfig> = {
   '/': {
-    title: 'Платформа для шахматных клубов и школ',
-    description: 'debiut — всё для управления шахматным клубом: группы и тренеры, интерактивные курсы, онлайн-уроки на общей доске, электронный дневник успеваемости и уведомления в Telegram/WhatsApp. Создайте клуб бесплатно.',
-    keywords: ['шахматный клуб', 'платформа для шахматной школы', 'управление клубом', 'онлайн-уроки шахмат', 'электронный дневник', 'шахматные задачи'],
+    title: 'Platform for chess clubs and schools',
+    description: 'debiut — everything to run a chess club: groups and coaches, interactive courses, online lessons on a shared board, a digital progress journal and Telegram/WhatsApp notifications. Create your club for free.',
+    keywords: ['chess club', 'chess school platform', 'club management', 'online chess lessons', 'digital journal', 'chess puzzles'],
     canonicalPath: '/',
     jsonLd: [organizationJsonLd(), webSiteJsonLd()],
   },
   '/about': {
-    title: 'О школе debiut — онлайн-обучение шахматам',
-    description: 'debiut — онлайн-школа шахмат: опытные тренеры, персональные занятия, интерактивный класс и тренажёры. Узнайте о нашем подходе к обучению.',
+    title: 'About debiut — online chess learning',
+    description: 'debiut — an online chess school: experienced coaches, personal lessons, an interactive classroom and trainers. Learn about our approach to teaching.',
     canonicalPath: '/about',
-    jsonLd: crumbs('О школе', '/about'),
+    jsonLd: crumbs('About', '/about'),
   },
   '/achievements': {
-    title: 'Достижения учеников шахматной школы',
-    description: 'Результаты и достижения учеников онлайн-школы шахмат debiut: турниры, рейтинги, разряды.',
+    title: 'Chess school student achievements',
+    description: 'Results and achievements of debiut online chess school students: tournaments, ratings, titles.',
     canonicalPath: '/achievements',
-    jsonLd: crumbs('Достижения', '/achievements'),
+    jsonLd: crumbs('Achievements', '/achievements'),
   },
   '/book': {
-    title: 'База шахматных партий и дебютов онлайн',
-    description: 'Интерактивная база шахматных партий и дебютов: просмотр, навигация по ходам и вариантам прямо в браузере.',
+    title: 'Chess games and openings database online',
+    description: 'Interactive database of chess games and openings: browse and navigate moves and variations right in your browser.',
     canonicalPath: '/book',
-    jsonLd: crumbs('База партий', '/book'),
+    jsonLd: crumbs('Games database', '/book'),
   },
   '/analysis': {
-    title: 'Шахматная доска и анализ с движком Stockfish онлайн',
-    description: 'Бесплатный анализ шахматных позиций с движком Stockfish: оценка, лучшие ходы, варианты и стрелки прямо в браузере. Загрузите FEN или PGN.',
-    keywords: ['анализ шахмат', 'stockfish онлайн', 'шахматный движок', 'оценка позиции', 'шахматная доска онлайн'],
+    title: 'Chess board and analysis with the Stockfish engine online',
+    description: 'Free analysis of chess positions with the Stockfish engine: evaluation, best moves, variations and arrows right in your browser. Load a FEN or PGN.',
+    keywords: ['chess analysis', 'stockfish online', 'chess engine', 'position evaluation', 'online chess board'],
     canonicalPath: '/analysis',
-    jsonLd: crumbs('Анализ', '/analysis'),
+    jsonLd: crumbs('Analysis', '/analysis'),
   },
   '/rating': {
-    title: 'Шахматный тренажёр — рейтинговый режим задач',
-    description: 'Решайте шахматные задачи в рейтинговом режиме: сложность подстраивается под ваш уровень. Прокачайте тактику онлайн бесплатно.',
+    title: 'Chess trainer — rated puzzle mode',
+    description: 'Solve chess puzzles in rated mode: difficulty adapts to your level. Sharpen your tactics online for free.',
     canonicalPath: '/rating',
-    jsonLd: crumbs('Рейтинг', '/rating'),
+    jsonLd: crumbs('Rating', '/rating'),
   },
   '/survival': {
-    title: 'Шахматы на выживание — тактика на время',
-    description: 'Режим «на выживание»: решайте тактические задачи на время, пока не закончатся жизни. Тренируйте скорость и точность расчёта.',
+    title: 'Chess survival — tactics against the clock',
+    description: 'Survival mode: solve tactical puzzles against the clock until you run out of lives. Train your speed and calculation accuracy.',
     canonicalPath: '/survival',
-    jsonLd: crumbs('Выживание', '/survival'),
+    jsonLd: crumbs('Survival', '/survival'),
   },
   '/puzzles': {
-    title: 'Шахматные задачи и тактика онлайн — решать бесплатно',
-    description: 'Тысячи шахматных задач по темам (мат в 1-2-3, вилка, связка, эндшпиль) с подбором по рейтингу. Решайте тактику онлайн бесплатно.',
-    keywords: ['шахматные задачи', 'тактика', 'мат в 2 хода', 'вилка', 'связка', 'решать шахматы онлайн'],
+    title: 'Chess puzzles and tactics online — solve for free',
+    description: 'Thousands of chess puzzles by theme (mate in 1-2-3, fork, pin, endgame) matched to your rating. Solve tactics online for free.',
+    keywords: ['chess puzzles', 'tactics', 'mate in 2', 'fork', 'pin', 'solve chess online'],
     canonicalPath: '/puzzles',
-    jsonLd: crumbs('Задачи', '/puzzles'),
+    jsonLd: crumbs('Puzzles', '/puzzles'),
   },
   '/coaches': {
-    title: 'Тренеры по шахматам онлайн — выбрать тренера',
-    description: 'Выберите тренера по шахматам для персональных онлайн-занятий: профили, опыт и специализация. Запишитесь на урок в школе debiut.',
-    keywords: ['тренер по шахматам', 'шахматный тренер онлайн', 'занятия с тренером'],
+    title: 'Chess coaches online — pick a coach',
+    description: 'Choose a chess coach for personal online lessons: profiles, experience and specialization. Book a lesson at the debiut school.',
+    keywords: ['chess coach', 'online chess coach', 'lessons with a coach'],
     canonicalPath: '/coaches',
-    jsonLd: crumbs('Тренеры', '/coaches'),
+    jsonLd: crumbs('Coaches', '/coaches'),
   },
 };
 
 const OG_IMAGE = `${SITE_URL}/images/chess-cinematic-lg.jpg`;
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-/** Собрать теги <head> строкой — для build-пререндера статического HTML (без React/Helmet). */
+/** Build <head> tags as a string — for the build prerender of static HTML (no React/Helmet). */
 export const renderSeoHead = (cfg: SeoConfig): string => {
   const fullTitle = cfg.title.includes(SITE_NAME) ? cfg.title : `${cfg.title} | debiut`;
   const canonical = canonicalUrl(cfg.canonicalPath);
@@ -95,7 +95,7 @@ export const renderSeoHead = (cfg: SeoConfig): string => {
     `<meta property="og:description" content="${esc(cfg.description)}" />`,
     `<meta property="og:image" content="${OG_IMAGE}" />`,
     `<meta property="og:url" content="${canonical}" />`,
-    '<meta property="og:locale" content="ru_RU" />',
+    '<meta property="og:locale" content="en" />',
     '<meta name="twitter:card" content="summary_large_image" />',
     `<meta name="twitter:image" content="${OG_IMAGE}" />`,
     ...(cfg.jsonLd || []).map((b) => `<script type="application/ld+json">${JSON.stringify(b)}</script>`),
