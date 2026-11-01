@@ -118,7 +118,7 @@ export const ClubSettingsPage = () => {
     };
     try {
       await saveSiteSettings(payload);
-      message.success(t('clubSettings.saved', 'Настройки сохранены'));
+      message.success(t('clubSettings.saved', 'Settings saved'));
     } catch { /* интерцептор показал ошибку */ } finally { setSaving(false); }
   };
 
@@ -126,25 +126,25 @@ export const ClubSettingsPage = () => {
 
   return (
     <PageContainer>
-      <SEOHead title={t('clubSettings.seoTitle', 'Настройки клуба — debiut')} description="" noindex />
+      <SEOHead title={t('clubSettings.seoTitle', 'Club settings — debiut')} description="" noindex />
 
       <Stack direction="row" justifyContent="space-between" alignItems="flex-end" sx={{ mb: 3 }} flexWrap="wrap" useFlexGap>
         <Box>
-          <Typography variant="body2" color="text.secondary">{t('clubSettings.eyebrow', 'Сайт клуба')}</Typography>
-          <Typography variant="h4" sx={{ mt: 0.5 }}>{t('clubSettings.title', 'Настройки клуба')}</Typography>
+          <Typography variant="body2" color="text.secondary">{t('clubSettings.eyebrow', 'Club website')}</Typography>
+          <Typography variant="h4" sx={{ mt: 0.5 }}>{t('clubSettings.title', 'Club settings')}</Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-            {t('clubSettings.subtitle', 'Бренд, окно входа и соцсети вашего клуба. Публикуется на странице входа и сайте клуба.')}
+            {t('clubSettings.subtitle', 'Your club brand, sign-in screen and socials. Published on the login page and club site.')}
           </Typography>
         </Box>
         <Button variant="contained" size="large" startIcon={<SaveRoundedIcon />} onClick={onSave}
           disabled={!isOwner || saving || loading} sx={{ borderRadius: 2.5 }}>
-          {saving ? t('clubSettings.saving', 'Сохраняю…') : t('clubSettings.save', 'Сохранить')}
+          {saving ? t('clubSettings.saving', 'Saving…') : t('clubSettings.save', 'Save')}
         </Button>
       </Stack>
 
       {!isOwner && (
         <Paper sx={{ ...cardSx, bgcolor: 'warning.light', borderColor: 'warning.main' }}>
-          <Typography variant="body2">{t('clubSettings.ownerOnly', 'Редактировать настройки сайта может только владелец клуба.')}</Typography>
+          <Typography variant="body2">{t('clubSettings.ownerOnly', 'Only the club owner can edit site settings.')}</Typography>
         </Paper>
       )}
 
@@ -155,25 +155,25 @@ export const ClubSettingsPage = () => {
           {/* Левая колонка — форма */}
           <Grid item xs={12} md={7}>
             <Paper sx={cardSx}>
-              <Typography variant="h6" sx={{ mb: 2 }}>{t('clubSettings.brand', 'Бренд')}</Typography>
+              <Typography variant="h6" sx={{ mb: 2 }}>{t('clubSettings.brand', 'Brand')}</Typography>
               <Stack spacing={2}>
-                <TextField label={t('clubSettings.siteName', 'Название сайта')} value={form.siteName}
+                <TextField label={t('clubSettings.siteName', 'Site name')} value={form.siteName}
                   onChange={(e) => set('siteName', e.target.value)} placeholder={clubName} fullWidth
-                  helperText={t('clubSettings.siteNameHelp', 'Пусто → используется название клуба')} />
-                <TextField label={t('clubSettings.logoUrl', 'Логотип (ссылка на изображение)')} value={form.logoUrl}
+                  helperText={t('clubSettings.siteNameHelp', 'Empty → the club name is used')} />
+                <TextField label={t('clubSettings.logoUrl', 'Logo (image URL)')} value={form.logoUrl}
                   onChange={(e) => set('logoUrl', e.target.value)} placeholder="https://…" fullWidth
-                  helperText={t('clubSettings.logoHelp', 'Вставьте ссылку или выберите файл из медиатеки.')}
+                  helperText={t('clubSettings.logoHelp', 'Paste a URL or pick a file from the media library.')}
                   InputProps={{ endAdornment: (
                     <InputAdornment position="end">
                       <Button size="small" startIcon={<PhotoLibraryRoundedIcon />} onClick={() => setPicker('logo')}>
-                        {t('clubSettings.fromMedia', 'Медиатека')}
+                        {t('clubSettings.fromMedia', 'Media library')}
                       </Button>
                     </InputAdornment>
                   ) }} />
-                <TextField label={t('clubSettings.tagline', 'Слоган')} value={form.tagline}
+                <TextField label={t('clubSettings.tagline', 'Tagline')} value={form.tagline}
                   onChange={(e) => set('tagline', e.target.value)} fullWidth />
                 <Box>
-                  <Typography variant="body2" sx={{ mb: 1, color: 'text.secondary' }}>{t('clubSettings.color', 'Цвет бренда')}</Typography>
+                  <Typography variant="body2" sx={{ mb: 1, color: 'text.secondary' }}>{t('clubSettings.color', 'Brand color')}</Typography>
                   <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap>
                     {SWATCHES.map((c) => (
                       <Box key={c} onClick={() => set('primaryColor', c)} role="button" aria-label={c}
@@ -190,27 +190,27 @@ export const ClubSettingsPage = () => {
             </Paper>
 
             <Paper sx={cardSx}>
-              <Typography variant="h6" sx={{ mb: 2 }}>{t('clubSettings.authPanel', 'Окно входа')}</Typography>
+              <Typography variant="h6" sx={{ mb: 2 }}>{t('clubSettings.authPanel', 'Sign-in screen')}</Typography>
               <Stack spacing={2}>
-                <TextField label={t('clubSettings.promoTitle', 'Заголовок')} value={form.promoTitle}
+                <TextField label={t('clubSettings.promoTitle', 'Title')} value={form.promoTitle}
                   onChange={(e) => set('promoTitle', e.target.value)} fullWidth placeholder="Think deeper. Play sharper." />
-                <TextField label={t('clubSettings.promoSubtitle', 'Подзаголовок')} value={form.promoSubtitle}
+                <TextField label={t('clubSettings.promoSubtitle', 'Subtitle')} value={form.promoSubtitle}
                   onChange={(e) => set('promoSubtitle', e.target.value)} fullWidth multiline minRows={2} />
-                <TextField label={t('clubSettings.bgUrl', 'Фоновое фото (ссылка)')} value={form.backgroundUrl}
+                <TextField label={t('clubSettings.bgUrl', 'Background photo (URL)')} value={form.backgroundUrl}
                   onChange={(e) => set('backgroundUrl', e.target.value)} fullWidth placeholder="https://…"
                   InputProps={{ endAdornment: (
                     <InputAdornment position="end">
                       <Button size="small" startIcon={<PhotoLibraryRoundedIcon />} onClick={() => setPicker('bg')}>
-                        {t('clubSettings.fromMedia', 'Медиатека')}
+                        {t('clubSettings.fromMedia', 'Media library')}
                       </Button>
                     </InputAdornment>
                   ) }} />
-                <Divider textAlign="left"><Chip label={t('clubSettings.facts', 'Цифры-факты (до 3, пустые скрываются)')} size="small" /></Divider>
+                <Divider textAlign="left"><Chip label={t('clubSettings.facts', 'Stat facts (up to 3, empty hidden)')} size="small" /></Divider>
                 {form.facts.map((f, i) => (
                   <Stack key={i} direction="row" spacing={1.5}>
-                    <TextField label={t('clubSettings.factValue', 'Значение')} value={f.value}
+                    <TextField label={t('clubSettings.factValue', 'Value')} value={f.value}
                       onChange={(e) => setFact(i, 'value', e.target.value)} sx={{ width: 160 }} placeholder="50k+" />
-                    <TextField label={t('clubSettings.factLabel', 'Подпись')} value={f.label}
+                    <TextField label={t('clubSettings.factLabel', 'Label')} value={f.label}
                       onChange={(e) => setFact(i, 'label', e.target.value)} fullWidth placeholder="tactics" />
                   </Stack>
                 ))}
@@ -218,7 +218,7 @@ export const ClubSettingsPage = () => {
             </Paper>
 
             <Paper sx={cardSx}>
-              <Typography variant="h6" sx={{ mb: 2 }}>{t('clubSettings.socials', 'Соцсети')}</Typography>
+              <Typography variant="h6" sx={{ mb: 2 }}>{t('clubSettings.socials', 'Socials')}</Typography>
               <Stack spacing={2}>
                 {(['facebook', 'instagram', 'twitter', 'youtube', 'telegram'] as const).map((k) => (
                   <TextField key={k} label={k[0].toUpperCase() + k.slice(1)} value={form[k]}
@@ -228,11 +228,11 @@ export const ClubSettingsPage = () => {
             </Paper>
 
             <Paper sx={cardSx}>
-              <Typography variant="h6" sx={{ mb: 2 }}>{t('clubSettings.footer', 'Футер')}</Typography>
+              <Typography variant="h6" sx={{ mb: 2 }}>{t('clubSettings.footer', 'Footer')}</Typography>
               <Stack spacing={2}>
-                <TextField label={t('clubSettings.footerText', 'Текст под брендом')} value={form.footerText}
+                <TextField label={t('clubSettings.footerText', 'Text under the brand')} value={form.footerText}
                   onChange={(e) => set('footerText', e.target.value)} fullWidth />
-                <TextField label={t('clubSettings.legalName', 'Имя для копирайта')} value={form.legalName}
+                <TextField label={t('clubSettings.legalName', 'Copyright name')} value={form.legalName}
                   onChange={(e) => set('legalName', e.target.value)} fullWidth placeholder={clubName} />
               </Stack>
             </Paper>
@@ -241,7 +241,7 @@ export const ClubSettingsPage = () => {
           {/* Правая колонка — живой превью окна входа */}
           <Grid item xs={12} md={5}>
             <Box sx={{ position: 'sticky', top: 16 }}>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>{t('clubSettings.preview', 'Предпросмотр окна входа')}</Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>{t('clubSettings.preview', 'Sign-in screen preview')}</Typography>
               <Paper sx={{ borderRadius: 4, overflow: 'hidden', border: '1px solid', borderColor: 'divider' }}>
                 <Box sx={{
                   p: 4, minHeight: 360, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: '#fff',
@@ -276,7 +276,7 @@ export const ClubSettingsPage = () => {
                 </Box>
               </Paper>
               <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1.5 }}>
-                {t('clubSettings.previewNote', 'Так окно входа увидят на /login?club=')}{entry?.club.slug ? ` ${entry.club.slug}` : ""}
+                {t('clubSettings.previewNote', 'This is how the sign-in screen looks at /login?club=')}{entry?.club.slug ? ` ${entry.club.slug}` : ""}
               </Typography>
             </Box>
           </Grid>

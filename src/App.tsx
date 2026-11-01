@@ -40,6 +40,7 @@ const ClubSettingsPage = lazy(() => import('./features/console/ClubSettingsPage'
 const MediaLibraryPage = lazy(() => import('./features/console/MediaLibraryPage'));
 const ClubSitePage = lazy(() => import('./pages/club-site/club-site-page'));
 import { GroupsPage } from './pages/groups-page/groups-page';
+import { NotFoundPage } from '@/pages/not-found/NotFoundPage';
 import { SEOHead } from '@/shared/components/seo/SEOHead';
 import { SEO_ROUTES } from '@/shared/components/seo/routes';
 import { SiteSettingsProvider } from '@/features/site/SiteSettingsContext';
@@ -102,6 +103,9 @@ function MainLayout() {
       <Route element={<RoleRoute roles={['ADMIN']} />}>
         <Route path="/coach-applications" element={<CoachApplicationsPage />} />
       </Route>
+
+      {/* 404 — любой неизвестный маршрут (раньше отдавался пустой layout). SEOHead — внутри страницы. */}
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 

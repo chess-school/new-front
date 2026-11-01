@@ -101,10 +101,10 @@ export const StudentsPage: React.FC = () => {
         actions={(
           <Stack direction="row" spacing={1}>
             <Button variant="outlined" startIcon={<GroupsRoundedIcon />} onClick={() => navigate('/groups')}>
-              Группы
+              {t('nav.groups.list', 'Groups')}
             </Button>
             <Button variant="outlined" color="success" startIcon={<VideoCameraFrontIcon />} onClick={() => navigate('/my-classes')}>
-              Мои занятия
+              {t('nav.myClasses', 'My classes')}
             </Button>
             <Button variant="contained" startIcon={<PersonAddIcon />} onClick={() => setEnrollOpen(true)}>
               {t('studentsPage.enroll.title')}

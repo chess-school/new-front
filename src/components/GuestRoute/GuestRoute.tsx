@@ -18,7 +18,9 @@ const GuestRoute: React.FC = () => {
   }
 
   if (isAuthenticated && user) {
-    return <Navigate to={`/profile/${user._id}`} replace />;
+    // Профиль адресуется по uuid (маршрут /profile/:uuid). Раньше тут был _id → попадали на
+    // «чужой профиль / not implemented». Фолбэк на лендинг, если uuid почему-то нет.
+    return <Navigate to={user.uuid ? `/profile/${user.uuid}` : '/'} replace />;
   }
 
   return <Outlet />;

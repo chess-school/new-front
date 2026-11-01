@@ -188,7 +188,16 @@ const SidebarContent: React.FC<{ onNavigate?: () => void }> = ({ onNavigate }) =
   // Счётчики-бейджи (coach applications, review) появятся с данными backend; пока пусто
   const badgeCounts: Record<string, number> = {};
 
-  const hrefOf = (item: NavItem) => (item.key === 'profile' && user?.uuid ? `/profile/${user.uuid}` : item.to);
+  const hrefOf = (item: NavItem) => {
+    if (item.key === 'profile' && user?.uuid) return `/profile/${user.uuid}`;
+    // «Public club page» ведёт на витрину активного клуба /c/<slug>, а не на лендинг платформы.
+    if (item.key === 'publicClub') {
+      const st = useClubStore.getState();
+      const slug = st.clubs.find((c) => c.club._id === st.activeClubId)?.club?.slug;
+      return slug ? `/c/${slug}` : '/';
+    }
+    return item.to;
+  };
   const handleLogout = () => {
     useClubStore.getState().reset();
     auth?.logout();
@@ -254,7 +263,7 @@ const SidebarContent: React.FC<{ onNavigate?: () => void }> = ({ onNavigate }) =
               );
               if (item.external) {
                 return (
-                  <ListItemButton key={item.key} component="a" href={item.to} target="_blank" rel="noopener"
+                  <ListItemButton key={item.key} component="a" href={hrefOf(item)} target="_blank" rel="noopener"
                     onClick={onNavigate} data-nav={item.key} sx={{ mb: 0.25, py: 0.85 }}>
                     {inner}
                   </ListItemButton>
