@@ -137,7 +137,7 @@ export const ClubSitePage = () => {
                     <Avatar sx={{ width: 48, height: 48, bgcolor: `${accent}1A`, color: accent, fontWeight: 700 }}>{initials(c.name)}</Avatar>
                     <Box sx={{ minWidth: 0 }}>
                       <Stack direction="row" spacing={0.75} alignItems="center">
-                        {c.title && <Chip label={c.title} size="small" sx={{ height: 18, fontSize: 10, fontWeight: 700, bgcolor: `${accent}14`, color: accent }} />}
+                        {c.title && c.title !== 'None' && <Chip label={c.title} size="small" sx={{ height: 18, fontSize: 10, fontWeight: 700, bgcolor: `${accent}14`, color: accent }} />}
                         <Typography sx={{ fontWeight: 700 }} noWrap>{c.name}</Typography>
                       </Stack>
                       {c.headline && <Typography variant="body2" color="text.secondary" noWrap>{c.headline}</Typography>}
