@@ -73,7 +73,7 @@ function MainLayout() {
       <Route path="/survival" element={<><SEOHead {...SEO_ROUTES['/survival']} /><SurvivalModePage /></>} />
       <Route path="/blindfold" element={<BlindfoldTrainerPage />} />
       <Route path="/puzzles" element={<><SEOHead {...SEO_ROUTES['/puzzles']} /><PuzzlePage /></>} />
-      <Route path="/verify-email" element={<><SEOHead title="Подтверждение e-mail" description="Подтверждение адреса электронной почты." noindex /><VerifyEmailPage /></>} />
+      <Route path="/verify-email" element={<><SEOHead title="Email verification" description="Confirm your email address." noindex /><VerifyEmailPage /></>} />
       <Route path="/coaches" element={<><SEOHead {...SEO_ROUTES['/coaches']} /><CoachesPage /></>} />
 
       <Route element={<PrivateRoute />}>

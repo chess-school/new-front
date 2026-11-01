@@ -11,8 +11,8 @@ import { BookStats } from '@/types/PuzzleBook';
 const fmtTime = (s: number) => {
   const m = Math.floor(s / 60);
   const h = Math.floor(m / 60);
-  if (h) return `${h}ч ${m % 60}м`;
-  return m ? `${m}м` : `${s}с`;
+  if (h) return `${h}h ${m % 60}m`;
+  return m ? `${m}m` : `${s}s`;
 };
 
 /** Модуль статистики задачника: прогресс каждого ученика (решено, ошибки, подсказки, время). */

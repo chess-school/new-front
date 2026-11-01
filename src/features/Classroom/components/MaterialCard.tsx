@@ -17,7 +17,7 @@ export const MaterialCard: React.FC<{ material: LessonMaterial; onClear?: () => 
         <MenuBookRoundedIcon fontSize="small" color="primary" sx={{ mt: 0.25 }} />
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <Typography variant="caption" color="text.secondary" display="block">
-            {t('classroom.material.now', { defaultValue: 'Сейчас разбираем' })}
+            {t('classroom.material.now', { defaultValue: 'Currently reviewing' })}
           </Typography>
           <Typography variant="subtitle2" fontWeight={700} noWrap>{material.title}</Typography>
           {material.subtitle && (
@@ -25,7 +25,7 @@ export const MaterialCard: React.FC<{ material: LessonMaterial; onClear?: () => 
           )}
         </Box>
         {onClear && (
-          <Tooltip title={t('classroom.material.clear', { defaultValue: 'Убрать' })}>
+          <Tooltip title={t('classroom.material.clear', { defaultValue: 'Clear' })}>
             <IconButton size="small" onClick={onClear}><CloseRoundedIcon fontSize="small" /></IconButton>
           </Tooltip>
         )}

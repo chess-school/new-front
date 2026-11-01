@@ -66,7 +66,7 @@ const CustomTable = <T extends RowData>({ columns, data }: CustomTableProps<T>) 
     <Paper>
       <TextField
         fullWidth
-        label="Поиск"
+        label="Search"
         variant="outlined"
         value={search}
         onChange={handleSearch}

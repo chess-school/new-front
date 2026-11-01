@@ -32,7 +32,7 @@ interface ClassroomTabsProps {
 }
 
 /**
- * Правая панель: Ходы (кликабельное дерево вариантов + навигация) / Чат / Участники.
+ * Правая панель: Moves (кликабельное дерево вариантов + навигация) / Chat / Participants.
  * Контент каждой вкладки скроллится ВНУТРИ себя — окно браузера не двигается.
  */
 export const ClassroomTabs: React.FC<ClassroomTabsProps> = ({
@@ -52,12 +52,12 @@ export const ClassroomTabs: React.FC<ClassroomTabsProps> = ({
         variant="fullWidth"
         sx={{ minHeight: 40, borderBottom: 1, borderColor: 'divider', '& .MuiTab-root': { minHeight: 40, py: 0.5 } }}
       >
-        <Tab icon={<FormatListNumberedRoundedIcon fontSize="small" />} iconPosition="start" label={t('classroom.moves.title', { defaultValue: 'Ходы' })} />
-        <Tab icon={<ChatRoundedIcon fontSize="small" />} iconPosition="start" label={t('classroom.chat.title', { defaultValue: 'Чат' })} />
+        <Tab icon={<FormatListNumberedRoundedIcon fontSize="small" />} iconPosition="start" label={t('classroom.moves.title', { defaultValue: 'Moves' })} />
+        <Tab icon={<ChatRoundedIcon fontSize="small" />} iconPosition="start" label={t('classroom.chat.title', { defaultValue: 'Chat' })} />
         <Tab
           icon={<Badge color="primary" badgeContent={participants.length} max={99}><GroupRoundedIcon fontSize="small" /></Badge>}
           iconPosition="start"
-          label={t('classroom.participants.tab', { defaultValue: 'Участники' })}
+          label={t('classroom.participants.tab', { defaultValue: 'Participants' })}
         />
       </Tabs>
 
@@ -72,7 +72,7 @@ export const ClassroomTabs: React.FC<ClassroomTabsProps> = ({
                   onSelect={canControl ? game.actions.goTo : () => {}}
                 />
               ) : (
-                <Typography variant="body2" color="text.secondary">{t('classroom.moves.empty', { defaultValue: 'Ходов пока нет' })}</Typography>
+                <Typography variant="body2" color="text.secondary">{t('classroom.moves.empty', { defaultValue: 'No moves yet' })}</Typography>
               )}
             </Box>
             {/* Навигация и ветвление — только у ведущего доску */}
@@ -85,10 +85,10 @@ export const ClassroomTabs: React.FC<ClassroomTabsProps> = ({
                 <Box sx={{ flex: 1 }} />
                 {!atRoot && (
                   <>
-                    <Tooltip title={t('classroom.moves.promote', { defaultValue: 'Повысить вариант' })}>
+                    <Tooltip title={t('classroom.moves.promote', { defaultValue: 'Promote variation' })}>
                       <IconButton size="small" onClick={game.actions.promote}><ArrowUpwardRoundedIcon fontSize="small" /></IconButton>
                     </Tooltip>
-                    <Tooltip title={t('classroom.moves.delete', { defaultValue: 'Удалить ветку' })}>
+                    <Tooltip title={t('classroom.moves.delete', { defaultValue: 'Delete branch' })}>
                       <IconButton size="small" color="error" onClick={game.actions.remove}><DeleteOutlineRoundedIcon fontSize="small" /></IconButton>
                     </Tooltip>
                   </>

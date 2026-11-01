@@ -19,7 +19,7 @@ export const MediaPickerDialog = ({ open, onClose, value, onSelect }: Props) => 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth PaperProps={{ sx: { borderRadius: 4 } }}>
       <DialogTitle sx={{ pr: 6 }}>
-        {t('media.pickTitle', 'Выбрать из медиатеки')}
+        {t('media.pickTitle', 'Pick from media library')}
         <IconButton onClick={onClose} sx={{ position: 'absolute', right: 8, top: 8 }}><CloseRoundedIcon /></IconButton>
       </DialogTitle>
       <DialogContent dividers>
@@ -28,7 +28,7 @@ export const MediaPickerDialog = ({ open, onClose, value, onSelect }: Props) => 
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>{t('common.close', 'Закрыть')}</Button>
+        <Button onClick={onClose}>{t('common.close', 'Close')}</Button>
       </DialogActions>
     </Dialog>
   );

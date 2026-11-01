@@ -53,7 +53,7 @@ export const LessonDialog: React.FC<LessonDialogProps> = ({ lesson, homework, on
         {canEnterClassroom && (
           <Button variant="contained" color="success" startIcon={<VideoCameraFrontIcon />}
             onClick={() => navigate(`/classroom/${lesson._id}`)}>
-            Войти в класс
+            Enter classroom
           </Button>
         )}
         {homework && (

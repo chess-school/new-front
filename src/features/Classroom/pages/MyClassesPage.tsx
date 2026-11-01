@@ -18,7 +18,7 @@ import { CreateLessonDialog } from '@/components/Schedule/CreateLessonDialog';
 
 /**
  * «Мои занятия» — хаб входа в интерактивный класс. Показывает ближайшие занятия из расписания
- * (групповые и индивидуальные 1-на-1, вход с отметкой присутствия) и, для тренера, его активные
+ * (групповые и индивидуальные 1-on-1, вход с отметкой присутствия) и, для тренера, его активные
  * группы (вход «по требованию»). Живой класс доступен и для групп, и для индивидуальных уроков.
  */
 export const MyClassesPage: React.FC = () => {
@@ -112,7 +112,7 @@ export const MyClassesPage: React.FC = () => {
                     </Stack>
                     <Stack direction="row" spacing={1} alignItems="center">
                       <Chip size="small" variant="outlined"
-                        label={isIndividual ? t('myClasses.individual', { defaultValue: '1-на-1' }) : t('myClasses.group', { defaultValue: 'Группа' })} />
+                        label={isIndividual ? t('myClasses.individual', { defaultValue: '1-on-1' }) : t('myClasses.group', { defaultValue: 'Group' })} />
                     </Stack>
                     <Typography variant="body2" color="text.secondary">{moment(lesson.date).format('LLL')}</Typography>
                     <Box sx={{ flex: 1 }} />

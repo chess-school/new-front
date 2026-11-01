@@ -41,7 +41,7 @@ export const SolveCard: React.FC<SolveCardProps> = ({ solve, canControl, isCoach
       <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
         {solved ? <CheckCircleRoundedIcon color="success" /> : <ExtensionRoundedIcon color="primary" />}
         <Typography variant="subtitle1" fontWeight={700} sx={{ flex: 1, minWidth: 0 }} noWrap>
-          {solve.title || t('classroom.solve.title', { defaultValue: 'Решение задачи' })}
+          {solve.title || t('classroom.solve.title', { defaultValue: 'Puzzle solution' })}
         </Typography>
         <Chip size="small" variant="outlined" label={fmt(elapsed)} sx={{ fontVariantNumeric: 'tabular-nums' }} />
       </Stack>
@@ -51,12 +51,12 @@ export const SolveCard: React.FC<SolveCardProps> = ({ solve, canControl, isCoach
           size="small"
           color={solve.sideToMove === 'w' ? 'default' : 'default'}
           label={solve.sideToMove === 'w'
-            ? t('classroom.solve.whiteToMove', { defaultValue: 'Ход белых' })
-            : t('classroom.solve.blackToMove', { defaultValue: 'Ход чёрных' })}
+            ? t('classroom.solve.whiteToMove', { defaultValue: 'White to move' })
+            : t('classroom.solve.blackToMove', { defaultValue: 'Black to move' })}
         />
         {solve.wrong > 0 && !solved && (
           <Typography variant="body2" color="error.main">
-            {t('classroom.solve.wrong', { defaultValue: 'Ошибок' })}: {solve.wrong}
+            {t('classroom.solve.wrong', { defaultValue: 'Mistakes' })}: {solve.wrong}
           </Typography>
         )}
       </Stack>
@@ -64,11 +64,11 @@ export const SolveCard: React.FC<SolveCardProps> = ({ solve, canControl, isCoach
       {solved ? (
         <Stack spacing={1} sx={{ mb: 1 }}>
           <Typography variant="body2" color="success.main" fontWeight={600}>
-            {t('classroom.solve.solved', { defaultValue: 'Задача решена! 🎉' })}
+            {t('classroom.solve.solved', { defaultValue: 'Puzzle solved! 🎉' })}
           </Typography>
           {isCoach && (
             <Button size="small" variant="contained" color="success" startIcon={<AutoFixHighRoundedIcon />} onClick={onExit}>
-              {t('classroom.solve.analyze', { defaultValue: 'Разобрать позицию' })}
+              {t('classroom.solve.analyze', { defaultValue: 'Analyse position' })}
             </Button>
           )}
         </Stack>
@@ -76,7 +76,7 @@ export const SolveCard: React.FC<SolveCardProps> = ({ solve, canControl, isCoach
         <Box sx={{ mb: 1 }}>
           <LinearProgress variant="determinate" value={movesTotal ? (movesDone / movesTotal) * 100 : 0} sx={{ borderRadius: 1, height: 6 }} />
           <Typography variant="caption" color="text.secondary">
-            {t('classroom.solve.progress', { defaultValue: 'Ходов найдено' })}: {movesDone}/{movesTotal}
+            {t('classroom.solve.progress', { defaultValue: 'Moves found' })}: {movesDone}/{movesTotal}
           </Typography>
         </Box>
       )}
@@ -84,17 +84,17 @@ export const SolveCard: React.FC<SolveCardProps> = ({ solve, canControl, isCoach
       <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
         {canControl && !solved && (
           <Button size="small" variant="outlined" color="warning" startIcon={<LightbulbRoundedIcon />} onClick={onHint}>
-            {t('classroom.solve.hint', { defaultValue: 'Подсказка' })}
+            {t('classroom.solve.hint', { defaultValue: 'Hint' })}
           </Button>
         )}
         {canControl && (
           <Button size="small" variant="outlined" color="inherit" startIcon={<RestartAltRoundedIcon />} onClick={onRestart}>
-            {t('classroom.solve.restart', { defaultValue: 'Сначала' })}
+            {t('classroom.solve.restart', { defaultValue: 'From start' })}
           </Button>
         )}
         {isCoach && !solved && (
           <Button size="small" variant="text" color="inherit" startIcon={<CloseRoundedIcon />} onClick={onExit}>
-            {t('classroom.solve.exit', { defaultValue: 'Выйти из решения' })}
+            {t('classroom.solve.exit', { defaultValue: 'Exit solving' })}
           </Button>
         )}
       </Stack>

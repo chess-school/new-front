@@ -12,7 +12,7 @@ interface ChatPanelProps {
   onSend: (text: string, to?: string) => void;
 }
 
-/** Чат урока: сообщения всем или лично выбранному участнику; поле ввода всегда закреплено снизу. */
+/** Chat урока: сообщения всем или privately выбранному участнику; поле ввода всегда закреплено снизу. */
 export const ChatPanel: React.FC<ChatPanelProps> = ({ messages, myUserId, participants, onSend }) => {
   const { t } = useTranslation();
   const [text, setText] = useState('');
@@ -44,7 +44,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ messages, myUserId, partic
       <Box ref={boxRef} sx={{ flex: 1, minHeight: 0, overflowY: 'auto', pr: 0.5 }}>
         {messages.length === 0 ? (
           <Typography variant="body2" color="text.secondary">
-            {t('classroom.chat.empty', { defaultValue: 'Сообщений пока нет — напишите первым.' })}
+            {t('classroom.chat.empty', { defaultValue: 'No messages yet — be the first to write.' })}
           </Typography>
         ) : (
           <Stack spacing={0.75}>
@@ -66,8 +66,8 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ messages, myUserId, partic
                         <LockRoundedIcon sx={{ fontSize: 12 }} />
                         <Typography variant="caption">
                           {mine
-                            ? `${t('classroom.chat.privateTo', { defaultValue: 'лично' })} ${m.toName || ''}`.trim()
-                            : t('classroom.chat.privateFrom', { defaultValue: 'лично вам' })}
+                            ? `${t('classroom.chat.privateTo', { defaultValue: 'privately' })} ${m.toName || ''}`.trim()
+                            : t('classroom.chat.privateFrom', { defaultValue: 'privately to you' })}
                         </Typography>
                       </Stack>
                     )}
@@ -88,10 +88,10 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ messages, myUserId, partic
             onChange={(e) => setTo(e.target.value)}
             SelectProps={{ MenuProps: { disablePortal: true } }}
           >
-            <MenuItem value="">{t('classroom.chat.toAll', { defaultValue: 'Всем' })}</MenuItem>
+            <MenuItem value="">{t('classroom.chat.toAll', { defaultValue: 'Everyone' })}</MenuItem>
             {others.map((p) => (
               <MenuItem key={p.userId} value={p.userId}>
-                {t('classroom.chat.toOne', { defaultValue: 'Лично' })}: {p.name}
+                {t('classroom.chat.toOne', { defaultValue: 'Private' })}: {p.name}
               </MenuItem>
             ))}
           </TextField>
@@ -100,13 +100,13 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ messages, myUserId, partic
           <TextField
             size="small" fullWidth multiline maxRows={3}
             placeholder={to
-              ? t('classroom.chat.placeholderPrivate', { defaultValue: 'Личное сообщение…' })
-              : t('classroom.chat.placeholder', { defaultValue: 'Написать сообщение…' })}
+              ? t('classroom.chat.placeholderPrivate', { defaultValue: 'Private message…' })
+              : t('classroom.chat.placeholder', { defaultValue: 'Write a message…' })}
             value={text}
             onChange={(e) => setText(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit(); } }}
           />
-          <IconButton color="primary" onClick={submit} disabled={!text.trim()} aria-label={t('classroom.chat.send', { defaultValue: 'Отправить' })}>
+          <IconButton color="primary" onClick={submit} disabled={!text.trim()} aria-label={t('classroom.chat.send', { defaultValue: 'Send' })}>
             <SendRoundedIcon />
           </IconButton>
         </Stack>

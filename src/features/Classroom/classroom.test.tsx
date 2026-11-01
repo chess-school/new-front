@@ -161,7 +161,7 @@ describe('Интерактивный класс — страница', () => {
 
     // Личное сообщение — с пометкой «лично вам» (вкладка «Чат»)
     fireEvent.click(screen.getAllByRole('tab')[1]);
-    expect(await screen.findByText('лично вам')).toBeTruthy();
+    expect(await screen.findByText('privately to you')).toBeTruthy();
     expect(screen.getByText('Только тебе')).toBeTruthy();
   });
 
@@ -177,7 +177,7 @@ describe('Интерактивный класс — страница', () => {
 
     // Карточка решения видна
     expect(screen.getByText('Мат в 2')).toBeTruthy();
-    expect(screen.getByText('Ход белых')).toBeTruthy();
+    expect(screen.getByText('White to move')).toBeTruthy();
 
     // Ход уходит как solve:move (а не обычный board:move)
     fireEvent.click(square('e2'));
@@ -186,7 +186,7 @@ describe('Интерактивный класс — страница', () => {
     expect(socket.sent.some((s) => s.event === 'board:move')).toBe(false);
 
     // Подсказка и сброс доступны
-    fireEvent.click(screen.getByRole('button', { name: /Подсказка/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Hint/ }));
     await waitFor(() => expect(socket.sent.some((s) => s.event === 'solve:hint')).toBe(true));
   });
 
@@ -200,10 +200,10 @@ describe('Интерактивный класс — страница', () => {
     await waitForBoard();
 
     // Панель инструментов скрыта, пока не нажата шестерёнка
-    expect(screen.queryByText('Задачи по темам')).toBeNull();
-    fireEvent.click(screen.getAllByRole('button', { name: 'Инструменты тренера' })[0]);
-    expect(await screen.findByText('Задачи по темам')).toBeTruthy();
-    expect(screen.getByText('Движок и анализ')).toBeTruthy();
+    expect(screen.queryByText('Puzzles by theme')).toBeNull();
+    fireEvent.click(screen.getAllByRole('button', { name: 'Coach tools' })[0]);
+    expect(await screen.findByText('Puzzles by theme')).toBeTruthy();
+    expect(screen.getByText('Engine & analysis')).toBeTruthy();
   });
 
   it('ученик: видит нотацию ходов, материал урока и чат; своё сообщение уходит на сервер', async () => {
@@ -225,14 +225,14 @@ describe('Интерактивный класс — страница', () => {
     expect(screen.getAllByText('Эндшпиль').length).toBeGreaterThan(0);
 
     // Нотация ходов — под центральной вкладкой «Анализ»
-    fireEvent.click(screen.getByRole('tab', { name: 'Анализ' }));
+    fireEvent.click(screen.getByRole('tab', { name: 'Analysis' }));
     expect(await screen.findByText('e4')).toBeTruthy();
 
     // Чат (левая колонка, виден всегда): входящее сообщение и отправка своего
     socket.serverEmit('chat:new', { message: { id: 'm1', userId: 'coach1', name: 'Coach', text: 'Привет', at: '' } });
     expect(await screen.findByText('Привет')).toBeTruthy();
-    fireEvent.change(screen.getByPlaceholderText('Написать сообщение…'), { target: { value: 'Здравствуйте' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Отправить' }));
+    fireEvent.change(screen.getByPlaceholderText('Write a message…'), { target: { value: 'Здравствуйте' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Send' }));
     await waitFor(() => expect(socket.sent.find((s) => s.event === 'chat:send')?.payload).toMatchObject({ groupId: 'g1', text: 'Здравствуйте' }));
   });
 });
