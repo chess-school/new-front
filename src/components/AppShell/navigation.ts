@@ -7,7 +7,7 @@ export type NavIcon =
   | 'home' | 'about' | 'coaches' | 'achievements'
   | 'play' | 'books' | 'puzzles' | 'rating' | 'survival' | 'blindfold' | 'analysis' | 'database'
   | 'schedule' | 'classroom' | 'inbox' | 'profile' | 'games'
-  | 'students' | 'groups' | 'review' | 'digitizer' | 'courseBuilder' | 'console' | 'coachApps' | 'public' | 'settings';
+  | 'students' | 'groups' | 'review' | 'digitizer' | 'courseBuilder' | 'console' | 'coachApps' | 'public' | 'settings' | 'media';
 
 /** Режим сайдбара: ученический (learn) или преподавательский (coach) — переключается тумблером */
 export type NavMode = 'learn' | 'coach';
@@ -135,6 +135,7 @@ export const NAV_GROUPS: NavGroup[] = [
     mode: 'coach',
     items: [
       { key: 'clubSettings', labelKey: 'nav.clubSettings', fallback: 'Club settings', to: '/club/settings', icon: 'settings', audience: 'coach', isActive: startsWith('/club/settings') },
+      { key: 'clubMedia', labelKey: 'nav.clubMedia', fallback: 'Media library', to: '/club/media', icon: 'media', audience: 'coach', isActive: startsWith('/club/media') },
       { key: 'publicClub', labelKey: 'nav.publicClub', fallback: 'Public club page', to: '/', icon: 'public', audience: 'coach', external: true },
     ],
   },

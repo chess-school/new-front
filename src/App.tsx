@@ -37,6 +37,7 @@ const MyClassesPage = lazy(() => import('./features/Classroom/pages/MyClassesPag
 const BlindfoldTrainerPage = lazy(() => import('./features/Blindfold/pages/BlindfoldTrainerPage').then((m) => ({ default: m.BlindfoldTrainerPage })));
 const OwnerDashboardPage = lazy(() => import('./features/console/OwnerDashboardPage'));
 const ClubSettingsPage = lazy(() => import('./features/console/ClubSettingsPage'));
+const MediaLibraryPage = lazy(() => import('./features/console/MediaLibraryPage'));
 const ClubSitePage = lazy(() => import('./pages/club-site/club-site-page'));
 import { GroupsPage } from './pages/groups-page/groups-page';
 import { SEOHead } from '@/shared/components/seo/SEOHead';
@@ -91,6 +92,7 @@ function MainLayout() {
       <Route element={<RoleRoute roles={['COACH', 'ADMIN']} />}>
         <Route path="/club" element={<OwnerDashboardPage />} />
         <Route path="/club/settings" element={<ClubSettingsPage />} />
+        <Route path="/club/media" element={<MediaLibraryPage />} />
         <Route path="/students" element={<StudentsPage />} />
         <Route path="/groups" element={<GroupsPage />} />
         <Route path="/digitizer" element={<DigitizerPage />} />
