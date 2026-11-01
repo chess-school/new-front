@@ -6,6 +6,8 @@ import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded';
 import { fetchClubBySlug, ClubPublic } from '@/features/clubs/clubsApi';
 import { useClubStore } from '@/features/clubs/clubStore';
+import { fetchPublicPage, SitePage } from '@/features/site/pagesApi';
+import { PageRenderer } from '@/features/site/PageRenderer';
 
 const DEFAULT_ACCENT = '#2B50E0';
 const initials = (name: string) => name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? '').join('') || 'C';
@@ -23,13 +25,18 @@ export const ClubSitePage = () => {
   const navigate = useNavigate();
   const [data, setData] = useState<ClubPublic | null>(null);
   const [state, setState] = useState<'loading' | 'ok' | 'notfound'>('loading');
+  // Опубликованная страница home клуба из блоков (шаг 3). null — своей страницы нет, показываем дефолт.
+  const [homePage, setHomePage] = useState<SitePage | null>(null);
 
   useEffect(() => {
     let alive = true;
     setState('loading');
+    setHomePage(null);
     fetchClubBySlug(slug)
       .then((d) => { if (alive) { setData(d); setState('ok'); } })
       .catch(() => { if (alive) setState('notfound'); });
+    // Кастомная страница клуба грузится параллельно и необязательна (нет — тихий фолбэк).
+    fetchPublicPage('home', slug).then((p) => { if (alive && p && p.blocks.length) setHomePage(p); });
     return () => { alive = false; };
   }, [slug]);
 
@@ -113,6 +120,9 @@ export const ClubSitePage = () => {
           </Stack>
         </Box>
       </Box>
+
+      {/* Кастомная страница клуба из блоков (шаг 3): показывается, если владелец её опубликовал. */}
+      {homePage && <PageRenderer blocks={homePage.blocks} />}
 
       {/* Тренеры */}
       {coaches.length > 0 && (
