@@ -11,6 +11,8 @@ import { useClubStore } from '@/features/clubs/clubStore';
 import {
   fetchAdminSiteSettings, saveSiteSettings, SiteFact, SiteSettingsInput,
 } from '@/features/site/siteApi';
+import { MediaPickerDialog } from '@/features/site/MediaPickerDialog';
+import PhotoLibraryRoundedIcon from '@mui/icons-material/PhotoLibraryRounded';
 
 const SWATCHES = ['#2B50E0', '#7C3AED', '#0EA5E9', '#16A34A', '#DC2626', '#B8862F', '#DB2777', '#0F766E', '#111827'];
 
@@ -44,6 +46,7 @@ export const ClubSettingsPage = () => {
   const [clubName, setClubName] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [picker, setPicker] = useState<null | 'logo' | 'bg'>(null);
 
   const clubs = useClubStore((s) => s.clubs);
   const activeClubId = useClubStore((s) => s.activeClubId);
@@ -159,7 +162,14 @@ export const ClubSettingsPage = () => {
                   helperText={t('clubSettings.siteNameHelp', 'Пусто → используется название клуба')} />
                 <TextField label={t('clubSettings.logoUrl', 'Логотип (ссылка на изображение)')} value={form.logoUrl}
                   onChange={(e) => set('logoUrl', e.target.value)} placeholder="https://…" fullWidth
-                  helperText={t('clubSettings.logoHelp', 'Загрузка файлов появится с медиатекой (шаг 2). Пока — ссылка.')} />
+                  helperText={t('clubSettings.logoHelp', 'Вставьте ссылку или выберите файл из медиатеки.')}
+                  InputProps={{ endAdornment: (
+                    <InputAdornment position="end">
+                      <Button size="small" startIcon={<PhotoLibraryRoundedIcon />} onClick={() => setPicker('logo')}>
+                        {t('clubSettings.fromMedia', 'Медиатека')}
+                      </Button>
+                    </InputAdornment>
+                  ) }} />
                 <TextField label={t('clubSettings.tagline', 'Слоган')} value={form.tagline}
                   onChange={(e) => set('tagline', e.target.value)} fullWidth />
                 <Box>
@@ -187,7 +197,14 @@ export const ClubSettingsPage = () => {
                 <TextField label={t('clubSettings.promoSubtitle', 'Подзаголовок')} value={form.promoSubtitle}
                   onChange={(e) => set('promoSubtitle', e.target.value)} fullWidth multiline minRows={2} />
                 <TextField label={t('clubSettings.bgUrl', 'Фоновое фото (ссылка)')} value={form.backgroundUrl}
-                  onChange={(e) => set('backgroundUrl', e.target.value)} fullWidth placeholder="https://…" />
+                  onChange={(e) => set('backgroundUrl', e.target.value)} fullWidth placeholder="https://…"
+                  InputProps={{ endAdornment: (
+                    <InputAdornment position="end">
+                      <Button size="small" startIcon={<PhotoLibraryRoundedIcon />} onClick={() => setPicker('bg')}>
+                        {t('clubSettings.fromMedia', 'Медиатека')}
+                      </Button>
+                    </InputAdornment>
+                  ) }} />
                 <Divider textAlign="left"><Chip label={t('clubSettings.facts', 'Цифры-факты (до 3, пустые скрываются)')} size="small" /></Divider>
                 {form.facts.map((f, i) => (
                   <Stack key={i} direction="row" spacing={1.5}>
@@ -265,6 +282,13 @@ export const ClubSettingsPage = () => {
           </Grid>
         </Grid>
       )}
+
+      <MediaPickerDialog
+        open={picker !== null}
+        onClose={() => setPicker(null)}
+        value={picker === 'logo' ? form.logoUrl : form.backgroundUrl}
+        onSelect={(url) => set(picker === 'logo' ? 'logoUrl' : 'backgroundUrl', url)}
+      />
     </PageContainer>
   );
 };

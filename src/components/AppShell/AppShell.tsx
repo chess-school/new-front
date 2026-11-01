@@ -43,6 +43,7 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher/LanguageSwitcher
 import { ThemeToggle } from '@/components/ThemeToggle/ThemeToggle';
 import { getPrimaryRole } from '@/utils/getPrimaryRole';
 import SpaceDashboardRoundedIcon from '@mui/icons-material/SpaceDashboardRounded';
+import PhotoLibraryRoundedIcon from '@mui/icons-material/PhotoLibraryRounded';
 import { useClubStore } from '@/features/clubs/clubStore';
 import { useSiteSettings } from '@/features/site/SiteSettingsContext';
 import { canCoach, isItemActive, NavIcon, NavItem, NavMode, visibleNav } from './navigation';
@@ -76,6 +77,7 @@ const ICONS: Record<NavIcon, React.ReactElement> = {
   coachApps: <PersonAddAlt1RoundedIcon />,
   public: <PublicRoundedIcon />,
   settings: <SettingsRoundedIcon />,
+  media: <PhotoLibraryRoundedIcon />,
 };
 
 const clubInitials = (name: string) =>
