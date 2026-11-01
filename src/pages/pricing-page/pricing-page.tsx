@@ -95,7 +95,7 @@ export const PricingPage = () => {
                 <Typography variant="h5">{p.name}</Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>{p.tagline}</Typography>
                 <Box sx={{ my: 2.5 }}>
-                  <Typography component="span" sx={{ fontFamily: '"Space Grotesk"', fontWeight: 700, fontSize: p.custom ? '1.9rem' : '2.4rem', color: 'text.primary', lineHeight: 1 }}>
+                  <Typography component="span" sx={{ fontFamily: '"Unbounded"', fontWeight: 700, fontSize: p.custom ? '1.9rem' : '2.4rem', color: 'text.primary', lineHeight: 1 }}>
                     {p.custom ? t('land.pricing.custom', 'Custom') : t('land.pricing.priceStub', 'Contact us')}
                   </Typography>
                                   </Box>

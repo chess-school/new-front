@@ -36,7 +36,7 @@ const BlockView = ({ block, lng }: { block: SiteBlock; lng: string }) => {
       const level = Math.min(Math.max(Number(p.level) || 2, 1), 3);
       const variant = (['h3', 'h4', 'h5'] as const)[level - 1];
       return (
-        <Typography variant={variant} sx={{ fontFamily: '"Space Grotesk"', fontWeight: 800, textAlign: p.align || 'left', mt: 1 }}>
+        <Typography variant={variant} sx={{ fontFamily: '"Unbounded"', fontWeight: 800, textAlign: p.align || 'left', mt: 1 }}>
           {txt(p.text)}
         </Typography>
       );
@@ -90,7 +90,7 @@ const BlockView = ({ block, lng }: { block: SiteBlock; lng: string }) => {
           bgcolor: p.bgColor || (bg ? undefined : 'action.hover'),
           ...(bg ? { backgroundImage: `linear-gradient(rgba(10,14,20,0.45),rgba(10,14,20,0.55)), url(${bg})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}),
         }}>
-          {txt(p.title) && <Typography variant="h4" sx={{ fontFamily: '"Space Grotesk"', fontWeight: 800 }}>{txt(p.title)}</Typography>}
+          {txt(p.title) && <Typography variant="h4" sx={{ fontFamily: '"Unbounded"', fontWeight: 800 }}>{txt(p.title)}</Typography>}
           {txt(p.subtitle) && <Typography sx={{ mt: 1.5, opacity: 0.92, maxWidth: 640 }}>{txt(p.subtitle)}</Typography>}
           {txt(p.buttonLabel) && p.buttonUrl && (
             <Box sx={{ mt: 3 }}><LinkButton label={txt(p.buttonLabel)} url={p.buttonUrl} /></Box>

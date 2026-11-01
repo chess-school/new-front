@@ -9,7 +9,7 @@ const BrandMark = ({ size = 32 }: { size?: number }) => (
   <Stack direction="row" alignItems="center" spacing={1.25} component={RouterLink} to="/"
     sx={{ textDecoration: 'none', color: 'text.primary' }}>
     <Box aria-hidden sx={{ width: size, height: size, borderRadius: 2, display: 'grid', placeItems: 'center', background: 'linear-gradient(135deg,#3A5FF0,#1E3CB0)', color: '#fff', fontSize: size * 0.58, fontWeight: 800 }}>♞</Box>
-    <Typography sx={{ fontFamily: '"Space Grotesk"', fontWeight: 700, fontSize: size >= 32 ? '1.3rem' : '1.15rem', letterSpacing: '-0.01em' }}>debiut</Typography>
+    <Typography sx={{ fontFamily: '"Unbounded"', fontWeight: 700, fontSize: size >= 32 ? '1.3rem' : '1.15rem', letterSpacing: '-0.01em' }}>debiut</Typography>
   </Stack>
 );
 

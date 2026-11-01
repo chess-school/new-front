@@ -9,9 +9,11 @@ export type ThemeMode = 'light' | 'dark';
 
 // Общие для обоих режимов
 const radius = { sm: 8, md: 12, lg: 16, xl: 22 } as const;
+// Self-hosted (public/fonts) с полным покрытием latin-ext (PL) + cyrillic/-ext (UK):
+// Onest — текст и заголовки; Unbounded — крупный дисплей/бренд; JetBrains Mono — шахматная нотация.
 const font = {
-  sans: '"Plus Jakarta Sans", "Inter", "Roboto", system-ui, -apple-system, "Segoe UI", sans-serif',
-  display: '"Space Grotesk", "Plus Jakarta Sans", "Inter", system-ui, sans-serif',
+  sans: '"Onest", "Inter", "Roboto", system-ui, -apple-system, "Segoe UI", sans-serif',
+  display: '"Unbounded", "Onest", "Inter", system-ui, sans-serif',
   mono: '"JetBrains Mono", "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
 } as const;
 

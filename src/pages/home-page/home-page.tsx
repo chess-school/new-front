@@ -282,7 +282,7 @@ export const Home = () => {
             <Grid container>
               {stats.map((s, i) => (
                 <Grid item xs={6} md={3} key={i} sx={{ textAlign: { xs: 'left', md: 'left' }, px: { md: 3 }, borderLeft: { md: i === 0 ? 0 : '1px solid rgba(20,27,46,0.1)' }, py: { xs: 1.5, md: 0.5 } }}>
-                  <Typography sx={{ fontFamily: '"Space Grotesk"', fontWeight: 700, fontSize: { xs: '1.6rem', md: '2rem' }, color: 'primary.main', lineHeight: 1.05 }}>{s.value}</Typography>
+                  <Typography sx={{ fontFamily: '"Unbounded"', fontWeight: 700, fontSize: { xs: '1.6rem', md: '2rem' }, color: 'primary.main', lineHeight: 1.05 }}>{s.value}</Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75 }}>{s.label}</Typography>
                 </Grid>
               ))}
@@ -388,7 +388,7 @@ export const Home = () => {
                     <Typography variant="h5">{p.name}</Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>{p.tagline}</Typography>
                     <Box sx={{ my: 2.5 }}>
-                      <Typography component="span" sx={{ fontFamily: '"Space Grotesk"', fontWeight: 700, fontSize: p.custom ? '1.9rem' : '2.4rem', color: 'text.primary', lineHeight: 1 }}>
+                      <Typography component="span" sx={{ fontFamily: '"Unbounded"', fontWeight: 700, fontSize: p.custom ? '1.9rem' : '2.4rem', color: 'text.primary', lineHeight: 1 }}>
                         {p.custom ? t('land.pricing.custom', 'Custom') : t('land.pricing.priceStub', 'Contact us')}
                       </Typography>
                                           </Box>

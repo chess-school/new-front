@@ -9,9 +9,9 @@
   --border-default: rgba(20, 27, 46, 0.14);
   --text-primary: #141B2E;
   --text-secondary: #5B6478;
-  --accent-gold: #2B50E0;
-  --accent-emerald: #16A34A;
-  --accent-red: #DC2626;
+  --brand-primary: #2B50E0;
+  --status-success: #16A34A;
+  --status-danger: #DC2626;
 
   /* Акцент как переменные — используются в sx через rgba(var(--accent-rgb), a) */
   --accent: #2B50E0;
@@ -25,7 +25,7 @@
   /* Старые имена — на них ссылаются стили страниц */
   --background: var(--bg-canvas);
   --navbar: var(--bg-surface);
-  --button-primary: var(--accent-gold);
+  --button-primary: var(--brand-primary);
   color-scheme: light;
 }
 
@@ -38,9 +38,9 @@
   --border-default: #232C3E;
   --text-primary: #EEF1F7;
   --text-secondary: #9AA5BC;
-  --accent-gold: #4C6FFF;
-  --accent-emerald: #22C55E;
-  --accent-red: #F0564A;
+  --brand-primary: #4C6FFF;
+  --status-success: #22C55E;
+  --status-danger: #F0564A;
 
   --accent: #4C6FFF;
   --accent-hi: #6B88FF;

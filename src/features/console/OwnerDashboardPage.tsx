@@ -83,7 +83,7 @@ export const OwnerDashboardPage = () => {
                     <Typography variant="body2" color="text.secondary">{k.label}</Typography>
                     <Box sx={{ color: 'text.disabled', '& svg': { fontSize: 20 } }}>{k.icon}</Box>
                   </Stack>
-                  <Typography sx={{ fontFamily: '"Space Grotesk"', fontWeight: 700, fontSize: { xs: '1.6rem', md: '2rem' }, mt: 1, lineHeight: 1 }}>{k.value}</Typography>
+                  <Typography sx={{ fontFamily: '"Unbounded"', fontWeight: 700, fontSize: { xs: '1.6rem', md: '2rem' }, mt: 1, lineHeight: 1 }}>{k.value}</Typography>
                   {k.sub && <Typography variant="caption" sx={{ display: 'block', mt: 1, color: 'text.secondary' }}>{k.sub}</Typography>}
                 </Paper>
               </Grid>

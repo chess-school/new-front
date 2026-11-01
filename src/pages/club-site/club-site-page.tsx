@@ -47,7 +47,7 @@ export const ClubSitePage = () => {
     return (
       <Box sx={{ minHeight: '100dvh', display: 'grid', placeItems: 'center', textAlign: 'center', p: 3 }}>
         <Box>
-          <Typography variant="h4" sx={{ fontFamily: '"Space Grotesk"' }}>{t('clubSite.notFound', 'Club not found')}</Typography>
+          <Typography variant="h4" sx={{ fontFamily: '"Unbounded"' }}>{t('clubSite.notFound', 'Club not found')}</Typography>
           <Typography color="text.secondary" sx={{ mt: 1 }}>{t('clubSite.notFoundDesc', 'This club page does not exist or is not public.')}</Typography>
           <Button component={RouterLink} to="/" variant="outlined" sx={{ mt: 3 }}>{t('clubSite.toPlatform', 'Go to debiut')}</Button>
         </Box>
@@ -92,7 +92,7 @@ export const ClubSitePage = () => {
         <Box sx={{ position: 'absolute', inset: 0, background: `radial-gradient(60% 60% at 20% 0%, ${accent}22, transparent 70%)` }} />
         <Box sx={{ position: 'relative', maxWidth: 1080, mx: 'auto', px: { xs: 2, md: 3 }, py: { xs: 7, md: 11 } }}>
           <Chip icon={<PlaceRoundedIcon />} label={club.city || t('clubSite.chessClub', 'Chess club')} sx={{ mb: 3, bgcolor: `${accent}14`, color: accent, fontWeight: 700, '& .MuiChip-icon': { color: accent } }} />
-          <Typography sx={{ fontFamily: '"Space Grotesk"', fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.03, fontSize: { xs: '2.6rem', md: '4rem' }, maxWidth: 16 + 'ch' }}>
+          <Typography sx={{ fontFamily: '"Unbounded"', fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.03, fontSize: { xs: '2.6rem', md: '4rem' }, maxWidth: 16 + 'ch' }}>
             {club.name}
           </Typography>
           <Typography sx={{ mt: 2.5, fontSize: { xs: '1.05rem', md: '1.2rem' }, color: 'text.secondary', maxWidth: 560 }}>
@@ -115,8 +115,8 @@ export const ClubSitePage = () => {
 
           {/* Факты клуба */}
           <Stack direction="row" spacing={{ xs: 3, md: 6 }} sx={{ mt: 6, flexWrap: 'wrap' }}>
-            <Box><Typography sx={{ fontFamily: '"Space Grotesk"', fontWeight: 800, fontSize: '1.8rem', color: accent, lineHeight: 1 }}>{groupsCount}</Typography><Typography variant="body2" color="text.secondary">{t('clubSite.groups', 'groups')}</Typography></Box>
-            <Box><Typography sx={{ fontFamily: '"Space Grotesk"', fontWeight: 800, fontSize: '1.8rem', color: accent, lineHeight: 1 }}>{coaches.length}</Typography><Typography variant="body2" color="text.secondary">{t('clubSite.coaches', 'coaches')}</Typography></Box>
+            <Box><Typography sx={{ fontFamily: '"Unbounded"', fontWeight: 800, fontSize: '1.8rem', color: accent, lineHeight: 1 }}>{groupsCount}</Typography><Typography variant="body2" color="text.secondary">{t('clubSite.groups', 'groups')}</Typography></Box>
+            <Box><Typography sx={{ fontFamily: '"Unbounded"', fontWeight: 800, fontSize: '1.8rem', color: accent, lineHeight: 1 }}>{coaches.length}</Typography><Typography variant="body2" color="text.secondary">{t('clubSite.coaches', 'coaches')}</Typography></Box>
           </Stack>
         </Box>
       </Box>
@@ -128,7 +128,7 @@ export const ClubSitePage = () => {
       {coaches.length > 0 && (
         <Box sx={{ maxWidth: 1080, mx: 'auto', px: { xs: 2, md: 3 }, py: { xs: 6, md: 9 } }}>
           <Typography variant="overline" sx={{ color: accent, fontWeight: 700 }}>{t('clubSite.ourCoaches', 'Our coaches')}</Typography>
-          <Typography variant="h4" sx={{ fontFamily: '"Space Grotesk"', fontWeight: 800, mb: 3 }}>{t('clubSite.coachesTitle', 'Who will teach you')}</Typography>
+          <Typography variant="h4" sx={{ fontFamily: '"Unbounded"', fontWeight: 800, mb: 3 }}>{t('clubSite.coachesTitle', 'Who will teach you')}</Typography>
           <Grid container spacing={2.5}>
             {coaches.map((c, i) => (
               <Grid item xs={12} sm={6} md={4} key={i}>
