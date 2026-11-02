@@ -351,7 +351,6 @@ ${text.trim()}` : text.trim();
           lastMove={lastMove}
           premoves
           premoveKey={exercise._id}
-          coordinates="outside"
         />
       <Zoom in={session.status === 'solved'}>
         <Box sx={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>

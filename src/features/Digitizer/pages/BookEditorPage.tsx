@@ -31,6 +31,7 @@ import { BookStatsPanel } from '../components/BookStatsPanel';
 import { MoveTreeView } from '../components/MoveTreeView';
 import { PositionEditorBoard } from '../components/PositionEditorBoard';
 import { boardStyleProps, ENGINE_ARROW } from '../components/boardStyle';
+import '../components/boardStyle.scss';
 import { PageContainer, PageHeader } from '@/shared/components/ui/PageHeader';
 import { EnginePanel } from '@/features/Chess/components/EnginePanel';
 import { useEngineAnalysis, useStockfishEngine } from '@/features/Chess/engine/useStockfish';
@@ -330,6 +331,7 @@ export const BookEditorPage: React.FC = () => {
             <Stack spacing={1.5}>
               <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                 <ResizableBoard reserveBottom={180}>
+                  <Box className="cb-pieces" sx={{ width: '100%', height: '100%' }}>
                   <Chessboard
                     id="solution-preview"
                     position={previewNode.fen}
@@ -338,6 +340,7 @@ export const BookEditorPage: React.FC = () => {
                     customArrows={bestArrow}
                     {...boardStyleProps}
                   />
+                  </Box>
                 </ResizableBoard>
               </Box>
               <Button variant="outlined" color="inherit" onClick={() => setPreviewNode(null)}>{t('digitizer.editor.backToStart')}</Button>

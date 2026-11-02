@@ -41,10 +41,11 @@ interface ChessBoardProps {
 }
 
 // Координаты — «тихая служебная» разметка (ориентир — Lichess): размер/отступы задаём от размера
-// клетки (boardWidth/8). ~17% клетки, обычная толщина, моноширинный шрифт с табличными цифрами,
-// без тени. «Воздух» от края и контраст тёмной подписи — в ChessBoard.scss (translate + точечный цвет).
-const COORD_RATIO = 0.17;
-const coordPx = (boardWidth: number) => Math.max(10, Math.round((boardWidth / 8) * COORD_RATIO));
+// клетки (boardWidth/8). ~14.5% клетки (чуть мельче — по просьбе Никиты), обычная толщина,
+// моноширинный шрифт с табличными цифрами, без тени. «Воздух» от края, горизонтальная раскладка
+// (буквы слева / цифры справа) и контраст тёмной подписи — в ChessBoard.scss.
+const COORD_RATIO = 0.145;
+const coordPx = (boardWidth: number) => Math.max(9, Math.round((boardWidth / 8) * COORD_RATIO));
 
 const PREMOVE_SQUARE = { backgroundColor: 'rgba(88, 166, 255, 0.42)' };
 const PREMOVE_DOT = 'radial-gradient(circle, rgba(88,166,255,0.55) 22%, transparent 23%)';
@@ -99,6 +100,11 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
     fontVariantNumeric: 'tabular-nums',
     textShadow: 'none',
     lineHeight: 1,
+    // Подпись поверх фигуры (у фигуры z-index:5) — страховка на случай, если широкое основание
+    // ладьи/слона дойдёт до угла. pointerEvents:none — плоская буква не перехватывает перетаскивание.
+    // ВНИМАНИЕ: z-index здесь завязан на селекторы в ChessBoard.scss (`[style*='z-index: 6']`).
+    zIndex: 6,
+    pointerEvents: 'none',
   }), [boardWidth]);
 
   // ---- Предходы
