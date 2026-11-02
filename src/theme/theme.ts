@@ -21,7 +21,9 @@ export const buildTheme = (mode: ThemeMode): Theme => {
     palette: {
       mode,
       primary: { main: t.accent.gold, light: t.accent.goldHover, dark: t.accent.goldDark, contrastText: t.contrastOnAccent },
-      secondary: { main: t.accent.emerald, contrastText: '#FFFFFF' },
+      // contrastText НЕ задаём: MUI сам возьмёт белый на тёмно-зелёном (светлая #15803D, 5.0:1)
+      // и тёмные чернила на ярко-зелёном (тёмная #22C55E) — хардкод белого давал 2.28:1 на бейдже ADMIN.
+      secondary: { main: t.accent.emerald },
       success: { main: t.accent.emerald },
       error: { main: t.accent.red },
       warning: { main: isDark ? '#D29922' : '#B45309' },
@@ -69,7 +71,7 @@ export const buildTheme = (mode: ThemeMode): Theme => {
             backgroundClip: 'content-box',
           },
           '*::-webkit-scrollbar-track': { background: 'transparent' },
-          a: { color: t.accent.gold },
+          a: { color: t.accent.goldText },
         },
       },
       MuiPaper: {
@@ -116,7 +118,7 @@ export const buildTheme = (mode: ThemeMode): Theme => {
             textTransform: 'none',
             borderColor: t.border.subtle,
             color: t.text.secondary,
-            '&.Mui-selected': { color: t.accent.gold, backgroundColor: t.accent.goldSoft, '&:hover': { backgroundColor: alpha(t.accent.gold, 0.2) } },
+            '&.Mui-selected': { color: t.accent.goldText, backgroundColor: t.accent.goldSoft, '&:hover': { backgroundColor: alpha(t.accent.gold, 0.2) } },
           },
         },
       },
@@ -149,7 +151,7 @@ export const buildTheme = (mode: ThemeMode): Theme => {
         },
       },
       MuiInputLabel: {
-        styleOverrides: { root: { color: t.text.secondary, '&.Mui-focused': { color: t.accent.gold } } },
+        styleOverrides: { root: { color: t.text.secondary, '&.Mui-focused': { color: t.accent.goldText } } },
       },
       MuiTooltip: {
         styleOverrides: {
@@ -170,7 +172,7 @@ export const buildTheme = (mode: ThemeMode): Theme => {
         styleOverrides: {
           root: {
             borderRadius: t.radius.sm,
-            '&.Mui-selected': { backgroundColor: t.accent.goldSoft, color: t.accent.gold, '& .MuiListItemIcon-root': { color: t.accent.gold } },
+            '&.Mui-selected': { backgroundColor: t.accent.goldSoft, color: t.accent.goldText, '& .MuiListItemIcon-root': { color: t.accent.goldText } },
           },
         },
       },
@@ -185,7 +187,7 @@ export const buildTheme = (mode: ThemeMode): Theme => {
       },
       MuiDivider: { styleOverrides: { root: { borderColor: t.border.subtle } } },
       MuiBottomNavigation: { styleOverrides: { root: { ...glass, borderWidth: '1px 0 0 0', height: 60 } } },
-      MuiBottomNavigationAction: { styleOverrides: { root: { color: t.text.secondary, '&.Mui-selected': { color: t.accent.gold } } } },
+      MuiBottomNavigationAction: { styleOverrides: { root: { color: t.text.secondary, '&.Mui-selected': { color: t.accent.goldText } } } },
     },
   });
 };

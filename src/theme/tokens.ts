@@ -22,10 +22,13 @@ export const lightTokens = {
   mode: 'light' as ThemeMode,
   bg: { canvas: '#F3F4F7', surface: '#FFFFFF', raised: '#F8F9FC', overlay: '#ECEFF4' },
   border: { subtle: 'rgba(20, 27, 46, 0.08)', default: 'rgba(20, 27, 46, 0.14)', strong: 'rgba(20, 27, 46, 0.24)' },
-  text: { primary: '#141B2E', secondary: '#5B6478', muted: '#8A93A6' },
+  text: { primary: '#141B2E', secondary: '#5B6478', muted: '#636C7F' },
   accent: {
-    gold: '#2B50E0', goldHover: '#3A5FF0', goldDark: '#1E3CB0', goldSoft: 'rgba(43, 80, 224, 0.08)',
-    emerald: '#16A34A', emeraldSoft: 'rgba(22, 163, 74, 0.10)',
+    // gold — главный акцент-ЗАЛИВКА (фон кнопок); goldText — тот же акцент как ТЕКСТ (ссылки/вкладки/иконки).
+    // В светлой теме совпадают (#2B50E0 проходит AA и как фон под белым, и как текст).
+    gold: '#2B50E0', goldText: '#2B50E0', goldHover: '#3A5FF0', goldDark: '#1E3CB0', goldSoft: 'rgba(43, 80, 224, 0.08)',
+    // emerald как ТЕКСТ зелёного статуса (#15803D = 5.0:1 на белом). Бейджи success — цветной текст на emeraldSoft.
+    emerald: '#15803D', emeraldSoft: 'rgba(21, 128, 61, 0.12)',
     red: '#DC2626', redSoft: 'rgba(220, 38, 38, 0.10)',
     blue: '#3B82F6', blueSoft: 'rgba(59, 130, 246, 0.10)',
     amber: '#B8862F', amberSoft: 'rgba(184, 134, 47, 0.12)',
@@ -41,9 +44,12 @@ export const darkTokens = {
   mode: 'dark' as ThemeMode,
   bg: { canvas: '#0A0E16', surface: '#121826', raised: '#1A2234', overlay: '#222C42' },
   border: { subtle: 'rgba(255, 255, 255, 0.07)', default: '#232C3E', strong: 'rgba(255, 255, 255, 0.18)' },
-  text: { primary: '#EEF1F7', secondary: '#9AA5BC', muted: '#64708A' },
+  text: { primary: '#EEF1F7', secondary: '#9AA5BC', muted: '#8390A6' },
   accent: {
-    gold: '#4C6FFF', goldHover: '#6B88FF', goldDark: '#3350D0', goldSoft: 'rgba(76, 111, 255, 0.16)',
+    // gold — акцент-ЗАЛИВКА кнопок (#3D5AFE даёт белому тексту 5.1:1); goldText — акцент как ТЕКСТ
+    // (ссылки/вкладки/иконки на тёмном, #6B88FF = 5.6:1 на surface). В тёмной теме они РАЗНЫЕ:
+    // один #4C6FFF не проходил ни как фон под белым (4.18), ни как текст (4.2 на surface).
+    gold: '#3D5AFE', goldText: '#6B88FF', goldHover: '#6B88FF', goldDark: '#3350D0', goldSoft: 'rgba(76, 111, 255, 0.16)',
     emerald: '#22C55E', emeraldSoft: 'rgba(34, 197, 94, 0.15)',
     red: '#F0564A', redSoft: 'rgba(240, 86, 74, 0.15)',
     blue: '#58A6FF', blueSoft: 'rgba(88, 166, 255, 0.14)',

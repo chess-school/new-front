@@ -102,7 +102,7 @@ export const Notifications: React.FC<NotificationsProps> = ({ navigateToRequests
   return (
     <div>
       <IconButton onClick={handleMenuOpen} aria-label={t('notifications.title', 'Notifications')} sx={{ color: 'text.primary' }}>
-        <Badge badgeContent={unreadCount} color="error">
+        <Badge badgeContent={unreadCount} color="error" sx={{ '& .MuiBadge-badge': { bgcolor: '#DC2626', color: '#fff' } }}>
           <NotificationsIcon />
         </Badge>
       </IconButton>
