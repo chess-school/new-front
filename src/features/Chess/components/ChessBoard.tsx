@@ -283,22 +283,50 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
       style={{ width: '100%', height: '100%', ['--cb-sq' as string]: `${boardWidth / 8}px` }}
     >
       {outside ? (
-        <Box sx={{ display: 'grid', gridTemplateColumns: `${coordSize + 8}px minmax(0, 1fr)`, gridTemplateRows: `minmax(0, 1fr) ${coordSize + 8}px`, columnGap: '4px' }}>
-          {/* Вертикаль 1–8 слева, выровнена по центрам рядов */}
-          <Box sx={{ gridColumn: 1, gridRow: 1, display: 'flex', flexDirection: 'column' }} aria-hidden>
+        <Box sx={{ display: 'grid', gridTemplateColumns: `minmax(0, 1fr) ${coordSize + 8}px`, gridTemplateRows: `minmax(0, 1fr) ${coordSize + 8}px`, columnGap: '4px' }}>
+          <Box sx={{ gridColumn: 1, gridRow: 1, minWidth: 0 }}>{boardEl}</Box>
+          {/* Вертикаль 1–8 справа, выровнена по центрам рядов */}
+          <Box sx={{ gridColumn: 2, gridRow: 1, display: 'flex', flexDirection: 'column' }} aria-hidden>
             {ranks.map((r) => (
               <Box key={r} sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: coordColor, fontSize: coordSize, fontFamily: tokens.font.mono, fontWeight: 600, fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>{r}</Box>
             ))}
           </Box>
-          <Box sx={{ gridColumn: 2, gridRow: 1, minWidth: 0 }}>{boardEl}</Box>
           {/* Горизонталь a–h снизу */}
-          <Box sx={{ gridColumn: 2, gridRow: 2, display: 'flex', alignItems: 'center' }} aria-hidden>
+          <Box sx={{ gridColumn: 1, gridRow: 2, display: 'flex', alignItems: 'center' }} aria-hidden>
             {files.map((f) => (
               <Box key={f} sx={{ flex: 1, textAlign: 'center', color: coordColor, fontSize: coordSize, fontFamily: tokens.font.mono, fontWeight: 600, fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>{f}</Box>
             ))}
           </Box>
         </Box>
-      ) : boardEl}
+      ) : (
+        // Inside-режим: встроенные цифры react-chessboard (слева) скрыты в ChessBoard.scss,
+        // вместо них рисуем нумерацию 1–8 вдоль ПРАВОГО края (буквы a–h остаются снизу, встроенные).
+        <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
+          {boardEl}
+          <Box aria-hidden sx={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 4 }}>
+            {ranks.map((r, i) => {
+              // Клетка правой колонки (визуально col 7) светлая при нечётном ряду — цвет подписи
+              // берём как у встроенной нотации (контраст противоположной клетки, тёмная = #5F6F96).
+              const lightSquare = i % 2 === 1;
+              return (
+                <Box
+                  key={r}
+                  sx={{
+                    position: 'absolute', top: `${i * 12.5}%`, right: 0, height: '12.5%',
+                    display: 'flex', alignItems: 'center', justifyContent: 'flex-end',
+                    pr: 'calc(var(--cb-sq, 0px) * 0.05)',
+                    fontFamily: tokens.font.mono, fontVariantNumeric: 'tabular-nums',
+                    fontWeight: 600, lineHeight: 1, fontSize: `${coordPx(boardWidth)}px`,
+                    color: lightSquare ? '#5f6f96' : tokens.board.light,
+                  }}
+                >
+                  {r}
+                </Box>
+              );
+            })}
+          </Box>
+        </Box>
+      )}
     </div>
   );
 };

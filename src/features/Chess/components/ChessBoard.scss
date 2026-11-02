@@ -3,13 +3,13 @@
 // для нотации (у фигур/стрелок другой z-index), поэтому селекторы завязаны на него и не задевают
 // ни фигуры, ни стрелки, ни фон клеток. Размер клетки приходит из JS в переменной --cb-sq.
 .cb-coord [data-boardid] {
-  // «Воздух» ~5% клетки от края. translate не трогает позиционирование углов,
-  // которое react-chessboard держит через padding-left/right (в отличие от padding-шортката).
-  // Цифры — верхний-левый угол (align-self: flex-start): сдвигаем внутрь вправо-вниз.
+  // Встроенные цифры 1–8 (align-self: flex-start, левая колонка) скрыты — вместо них рисуем
+  // свою нумерацию вдоль правого края (см. ChessBoard.tsx, inside-режим).
   [style*='z-index: 3'][style*='flex-start'] {
-    transform: translate(calc(var(--cb-sq, 0px) * 0.05), calc(var(--cb-sq, 0px) * 0.05));
+    display: none !important;
   }
-  // Буквы — нижний-правый угол (align-self: flex-end): сдвигаем внутрь влево-вверх.
+  // Буквы a–h — нижний-правый угол (align-self: flex-end): «воздух» ~5% клетки от края через
+  // translate (не трогает позиционирование углов react-chessboard, в отличие от padding-шортката).
   [style*='z-index: 3'][style*='flex-end'] {
     transform: translate(calc(var(--cb-sq, 0px) * -0.05), calc(var(--cb-sq, 0px) * -0.05));
   }
