@@ -92,7 +92,8 @@
     "play": "Play online",
     "coachApplications": "Coach applications",
     "myGames": "My games",
-    "blindfold": "Blindfold trainer"
+    "blindfold": "Blindfold trainer",
+    "clubWebsite": "Website"
   },
   "roles": {
     "admin": "Administrator",
@@ -1501,6 +1502,33 @@
     }
   },
   "clubSite": {
-    "notPublishedPreview": "This page is not published yet — visible only to you."
+    "notPublishedPreview": "This page is not published yet — visible only to you.",
+    "pageEmpty": "This page has no content yet."
+  },
+  "site": {
+    "page": {
+      "home": "Home",
+      "about": "About us",
+      "coaches": "Coaches",
+      "achievements": "Achievements"
+    },
+    "editorTitle": "Website",
+    "editorSubtitle": "Fill in your club pages with text, photos and banners. Save a draft, then publish to make it live.",
+    "save": "Save draft",
+    "publish": "Publish",
+    "statusDraft": "Draft",
+    "statusPublished": "Published",
+    "preview": "Preview",
+    "addBlock": "Add block",
+    "viewLive": "View live site",
+    "block": {
+      "heading": "Heading",
+      "text": "Text",
+      "quote": "Quote",
+      "photo": "Photo",
+      "gallery": "Gallery",
+      "banner": "Banner",
+      "divider": "Divider"
+    }
   }
 }

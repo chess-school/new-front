@@ -10,6 +10,14 @@ import { fetchPublicPage, SitePage } from '@/features/site/pagesApi';
 import { PageRenderer } from '@/features/site/PageRenderer';
 
 const DEFAULT_ACCENT = '#2B50E0';
+// Стандартные страницы сайта клуба (slug'и совпадают с редактором в кабинете). В навигации
+// показываем Home всегда + те страницы, которые владелец опубликовал (есть блоки).
+const STD_PAGES: Array<{ slug: string; labelKey: string; fallback: string }> = [
+  { slug: 'home', labelKey: 'site.page.home', fallback: 'Home' },
+  { slug: 'about', labelKey: 'site.page.about', fallback: 'About us' },
+  { slug: 'coaches', labelKey: 'site.page.coaches', fallback: 'Coaches' },
+  { slug: 'achievements', labelKey: 'site.page.achievements', fallback: 'Achievements' },
+];
 const initials = (name: string) => name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? '').join('') || 'C';
 // Контрастный текст на акценте (грубая оценка яркости)
 const onAccent = (hex: string) => {
@@ -20,23 +28,24 @@ const onAccent = (hex: string) => {
 };
 
 export const ClubSitePage = () => {
-  const { slug = '' } = useParams();
+  const { slug = '', page = 'home' } = useParams();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [data, setData] = useState<ClubPublic | null>(null);
   const [state, setState] = useState<'loading' | 'ok' | 'notfound'>('loading');
-  // Опубликованная страница home клуба из блоков (шаг 3). null — своей страницы нет, показываем дефолт.
-  const [homePage, setHomePage] = useState<SitePage | null>(null);
+  // Опубликованные страницы клуба из блоков (шаг 3/4). Ключ — slug, значение — страница или null.
+  const [pages, setPages] = useState<Record<string, SitePage | null>>({});
 
   useEffect(() => {
     let alive = true;
     setState('loading');
-    setHomePage(null);
+    setPages({});
     fetchClubBySlug(slug)
       .then((d) => { if (alive) { setData(d); setState('ok'); } })
       .catch(() => { if (alive) setState('notfound'); });
-    // Кастомная страница клуба грузится параллельно и необязательна (нет — тихий фолбэк).
-    fetchPublicPage('home', slug).then((p) => { if (alive && p && p.blocks.length) setHomePage(p); });
+    // Параллельно тянем все стандартные страницы (необязательны — нет/пусто → тихий фолбэк).
+    Promise.all(STD_PAGES.map((p) => fetchPublicPage(p.slug, slug).then((pg) => [p.slug, pg && pg.blocks.length ? pg : null] as const)))
+      .then((entries) => { if (alive) setPages(Object.fromEntries(entries)); });
     return () => { alive = false; };
   }, [slug]);
 
@@ -58,6 +67,12 @@ export const ClubSitePage = () => {
   const { club, coaches, groupsCount, membership, published } = data;
   const accent = club.brand?.primaryColor || DEFAULT_ACCENT;
   const ink = onAccent(accent);
+
+  // Навигация: Home всегда + опубликованные страницы. Текущая — из :page (дефолт home).
+  const current = STD_PAGES.some((p) => p.slug === page) ? page : 'home';
+  const navItems = STD_PAGES.filter((p) => p.slug === 'home' || pages[p.slug]);
+  const currentPage = pages[current] || null;
+  const currentMeta = STD_PAGES.find((p) => p.slug === current);
 
   const enterClub = () => {
     try { localStorage.setItem('debiut.activeClub', club._id); } catch { /* ignore */ }
@@ -91,8 +106,46 @@ export const ClubSitePage = () => {
             </Stack>
           )}
         </Box>
+        {/* Навигация по страницам сайта клуба (видна, если опубликовано больше одной) */}
+        {navItems.length > 1 && (
+          <Box sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
+            <Stack direction="row" spacing={0.5} sx={{ maxWidth: 1080, mx: 'auto', px: { xs: 1, md: 3 }, overflowX: 'auto' }}>
+              {navItems.map((p) => {
+                const isCur = p.slug === current;
+                return (
+                  <Button
+                    key={p.slug}
+                    component={RouterLink}
+                    to={p.slug === 'home' ? `/c/${club.slug}` : `/c/${club.slug}/${p.slug}`}
+                    disableRipple
+                    sx={{
+                      minWidth: 'auto', px: 1.5, py: 1.25, borderRadius: 0, flexShrink: 0, fontWeight: 600,
+                      color: isCur ? accent : 'text.secondary',
+                      borderBottom: '2px solid', borderColor: isCur ? accent : 'transparent',
+                      '&:hover': { bgcolor: 'transparent', color: 'text.primary' },
+                    }}
+                  >
+                    {t(p.labelKey, p.fallback)}
+                  </Button>
+                );
+              })}
+            </Stack>
+          </Box>
+        )}
       </Box>
 
+      {current !== 'home' ? (
+        /* ── Отдельная страница (О нас / Тренеры / Успехи) из блоков ── */
+        <Box sx={{ maxWidth: 1080, mx: 'auto', px: { xs: 2, md: 3 }, py: { xs: 5, md: 7 } }}>
+          <Typography variant="h3" sx={{ fontFamily: '"Unbounded"', fontWeight: 800, mb: 1 }}>
+            {currentPage?.title || t(currentMeta?.labelKey || '', currentMeta?.fallback || '')}
+          </Typography>
+          {currentPage ? <PageRenderer blocks={currentPage.blocks} maxWidth={980} /> : (
+            <Typography color="text.secondary" sx={{ mt: 2 }}>{t('clubSite.pageEmpty', 'This page has no content yet.')}</Typography>
+          )}
+        </Box>
+      ) : (
+      <>
       {/* Hero */}
       <Box sx={{ position: 'relative', overflow: 'hidden' }}>
         <Box sx={{ position: 'absolute', inset: 0, background: `radial-gradient(60% 60% at 20% 0%, ${accent}22, transparent 70%)` }} />
@@ -127,8 +180,8 @@ export const ClubSitePage = () => {
         </Box>
       </Box>
 
-      {/* Кастомная страница клуба из блоков (шаг 3): показывается, если владелец её опубликовал. */}
-      {homePage && <PageRenderer blocks={homePage.blocks} />}
+      {/* Кастомная страница home из блоков (шаг 3): показывается, если владелец её опубликовал. */}
+      {pages.home && <PageRenderer blocks={pages.home.blocks} />}
 
       {/* Тренеры */}
       {coaches.length > 0 && (
@@ -154,6 +207,8 @@ export const ClubSitePage = () => {
             ))}
           </Grid>
         </Box>
+      )}
+      </>
       )}
 
       {/* CTA + футер платформы */}

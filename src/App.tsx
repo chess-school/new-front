@@ -38,6 +38,7 @@ const BlindfoldTrainerPage = lazy(() => import('./features/Blindfold/pages/Blind
 const OwnerDashboardPage = lazy(() => import('./features/console/OwnerDashboardPage'));
 const ClubSettingsPage = lazy(() => import('./features/console/ClubSettingsPage'));
 const MediaLibraryPage = lazy(() => import('./features/console/MediaLibraryPage'));
+const ClubSitePagesPage = lazy(() => import('./features/console/ClubSitePagesPage'));
 const ClubSitePage = lazy(() => import('./pages/club-site/club-site-page'));
 import { GroupsPage } from './pages/groups-page/groups-page';
 import { NotFoundPage } from '@/pages/not-found/NotFoundPage';
@@ -61,6 +62,7 @@ function MainLayout() {
       <Route path="/pricing" element={<PricingPage />} />
       <Route path="/create-club" element={<CreateClubPage />} />
       <Route path="/c/:slug" element={<ClubSitePage />} />
+      <Route path="/c/:slug/:page" element={<ClubSitePage />} />
       <Route path="/about" element={<><SEOHead {...SEO_ROUTES['/about']} /><About /></>} />
       <Route path="/achievements" element={<><SEOHead {...SEO_ROUTES['/achievements']} /><Achievements /></>} />
       <Route element={<GuestRoute />}>
@@ -94,6 +96,7 @@ function MainLayout() {
         <Route path="/club" element={<OwnerDashboardPage />} />
         <Route path="/club/settings" element={<ClubSettingsPage />} />
         <Route path="/club/media" element={<MediaLibraryPage />} />
+        <Route path="/club/site" element={<ClubSitePagesPage />} />
         <Route path="/students" element={<StudentsPage />} />
         <Route path="/groups" element={<GroupsPage />} />
         <Route path="/digitizer" element={<DigitizerPage />} />

@@ -125,7 +125,8 @@
     "play": "Graj online",
     "coachApplications": "Zgłoszenia trenerów",
     "myGames": "Moje partie",
-    "blindfold": "Trening w ciemno"
+    "blindfold": "Trening w ciemno",
+    "clubWebsite": "Strona WWW"
   },
   "roles": {
     "admin": "Administrator",
@@ -1514,6 +1515,33 @@
     }
   },
   "clubSite": {
-    "notPublishedPreview": "Ta strona nie jest jeszcze opublikowana — widzisz ją tylko Ty."
+    "notPublishedPreview": "Ta strona nie jest jeszcze opublikowana — widzisz ją tylko Ty.",
+    "pageEmpty": "Ta strona nie ma jeszcze treści."
+  },
+  "site": {
+    "page": {
+      "home": "Strona główna",
+      "about": "O nas",
+      "coaches": "Trenerzy",
+      "achievements": "Osiągnięcia"
+    },
+    "editorTitle": "Strona WWW",
+    "editorSubtitle": "Wypełnij strony klubu tekstem, zdjęciami i banerami. Zapisz wersję roboczą, a następnie opublikuj.",
+    "save": "Zapisz wersję roboczą",
+    "publish": "Opublikuj",
+    "statusDraft": "Wersja robocza",
+    "statusPublished": "Opublikowano",
+    "preview": "Podgląd",
+    "addBlock": "Dodaj blok",
+    "viewLive": "Zobacz na żywo",
+    "block": {
+      "heading": "Nagłówek",
+      "text": "Tekst",
+      "quote": "Cytat",
+      "photo": "Zdjęcie",
+      "gallery": "Galeria",
+      "banner": "Baner",
+      "divider": "Separator"
+    }
   }
 }
