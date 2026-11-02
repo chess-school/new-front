@@ -114,7 +114,8 @@
       "email": "Enter your email",
       "password": "Enter your password"
     },
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "loadError": "Failed to load. Please try again."
   },
   "homePage": {
     "hero": {
@@ -421,7 +422,16 @@
     "tabAccount": "Account",
     "sectionProfile": "Profile",
     "passwordHint": "Use at least 8 characters.",
-    "otherNotFound": "This profile is not available."
+    "otherNotFound": "This profile is not available.",
+    "tabClubs": "Clubs",
+    "clubsEmpty": "You're not a member of any club yet.",
+    "openClub": "Open",
+    "clubRole": {
+      "owner": "Owner",
+      "trainer": "Coach",
+      "student": "Student",
+      "parent": "Parent"
+    }
   },
   "coaches": {
     "title": "Our Coaches",
@@ -1489,5 +1499,8 @@
       "answerWasPiece": "It was the {{piece}}.",
       "clickHint": "Click the square on the blank board."
     }
+  },
+  "clubSite": {
+    "notPublishedPreview": "This page is not published yet — visible only to you."
   }
 }

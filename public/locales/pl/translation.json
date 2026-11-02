@@ -147,7 +147,8 @@
       "email": "Wprowadź swój e-mail",
       "password": "Wprowadź swoje hasło"
     },
-    "cancel": "Anuluj"
+    "cancel": "Anuluj",
+    "loadError": "Nie udało się załadować. Spróbuj ponownie."
   },
   "homePage": {
     "hero": {
@@ -442,7 +443,16 @@
     "tabAccount": "Konto",
     "sectionProfile": "Profil",
     "passwordHint": "Użyj co najmniej 8 znaków.",
-    "otherNotFound": "Ten profil jest niedostępny."
+    "otherNotFound": "Ten profil jest niedostępny.",
+    "tabClubs": "Kluby",
+    "clubsEmpty": "Nie należysz jeszcze do żadnego klubu.",
+    "openClub": "Otwórz",
+    "clubRole": {
+      "owner": "Właściciel",
+      "trainer": "Trener",
+      "student": "Uczeń",
+      "parent": "Rodzic"
+    }
   },
   "coaches": {
     "title": "Nasi trenerzy",
@@ -1502,5 +1512,8 @@
       "answerWasPiece": "To był {{piece}}.",
       "clickHint": "Kliknij pole na pustej szachownicy."
     }
+  },
+  "clubSite": {
+    "notPublishedPreview": "Ta strona nie jest jeszcze opublikowana — widzisz ją tylko Ty."
   }
 }
