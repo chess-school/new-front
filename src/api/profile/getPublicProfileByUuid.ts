@@ -1,9 +1,16 @@
 import axiosInstance from '@/api';
 import { User } from '@/types/User';
 
+/**
+ * Публичный профиль пользователя по uuid (GET /users/:uuid) — для просмотра чужого
+ * профиля (тренер смотрит ученика и т.п.). Бэкенд отдаёт только несекретные поля
+ * (без email/phone). Возвращает undefined, если профиль не найден/недоступен.
+ */
 export const getPublicProfileByUuid = async (uuid: string): Promise<User | undefined> => {
-    // В будущем это может быть /users/:uuid, но сейчас ищем тренера
-    const response = await axiosInstance.get(`/coaches?uuid=${uuid}`);
-    // Ответ getCoaches возвращает coach DTO, который содержит user object
-    return response.data?.user;
+    try {
+        const response = await axiosInstance.get(`/users/${encodeURIComponent(uuid)}`, { silent: true });
+        return response.data as User;
+    } catch {
+        return undefined;
+    }
 };

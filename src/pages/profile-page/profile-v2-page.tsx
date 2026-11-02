@@ -11,6 +11,7 @@ import EventNoteRoundedIcon from '@mui/icons-material/EventNoteRounded';
 import { PageContainer } from '@/shared/components/ui/PageHeader';
 import { ProfileHeader } from '@/components/Profile/ProfileHeader';
 import { ProfileStats } from '@/components/Profile/ProfileStats';
+import { ProfileClubs } from '@/components/Profile/ProfileClubs';
 import { AccountSettings } from '@/components/Profile/AccountSettings';
 import { User } from '@/types/User';
 
@@ -18,7 +19,7 @@ export const TestProfileV2Page: React.FC = () => {
   const { uuid } = useParams<{ uuid: string }>();
   const { user: loggedInUser, loading, isAuthenticated, refetchUser } = useAuth();
   const { t } = useTranslation();
-  const [tab, setTab] = useState<'overview' | 'account'>('overview');
+  const [tab, setTab] = useState<'overview' | 'clubs' | 'account'>('overview');
 
   // Чужой профиль: подгружаем по uuid (сейчас резолвятся тренеры через /coaches).
   const isMyProfile = !!loggedInUser && loggedInUser.uuid === uuid;
@@ -78,10 +79,13 @@ export const TestProfileV2Page: React.FC = () => {
 
       <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mb: 3, borderBottom: '1px solid', borderColor: 'divider' }}>
         <Tab value="overview" label={t('profile.tabOverview', 'Overview')} />
+        <Tab value="clubs" label={t('profile.tabClubs', 'Clubs')} />
         <Tab value="account" label={t('profile.tabAccount', 'Account')} />
       </Tabs>
 
-      {tab === 'overview' ? (
+      {tab === 'clubs' && <ProfileClubs />}
+
+      {tab === 'overview' && (
         <>
           <ProfileStats user={loggedInUser} />
           <Typography variant="h6" component="h2" sx={{ mb: 2 }}>{t('profile.quickLinks', 'Continue training')}</Typography>
@@ -102,9 +106,9 @@ export const TestProfileV2Page: React.FC = () => {
             ))}
           </Grid>
         </>
-      ) : (
-        <AccountSettings user={loggedInUser} refetchUser={refetchUser} />
       )}
+
+      {tab === 'account' && <AccountSettings user={loggedInUser} refetchUser={refetchUser} />}
     </PageContainer>
   );
 };

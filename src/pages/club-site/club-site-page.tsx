@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, Typography, Button, Stack, Grid, Paper, Chip, CircularProgress, Avatar } from '@mui/material';
+import { Box, Typography, Button, Stack, Grid, Paper, Chip, CircularProgress, Avatar, Alert } from '@mui/material';
 import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
@@ -55,7 +55,7 @@ export const ClubSitePage = () => {
     );
   }
 
-  const { club, coaches, groupsCount, membership } = data;
+  const { club, coaches, groupsCount, membership, published } = data;
   const accent = club.brand?.primaryColor || DEFAULT_ACCENT;
   const ink = onAccent(accent);
 
@@ -67,6 +67,12 @@ export const ClubSitePage = () => {
 
   return (
     <Box sx={{ minHeight: '100dvh', bgcolor: 'background.default' }}>
+      {/* Клуб не опубликован (suspended) — страницу видит только владелец/участник как превью */}
+      {published === false && (
+        <Alert severity="warning" sx={{ borderRadius: 0, justifyContent: 'center', '& .MuiAlert-message': { fontWeight: 600 } }}>
+          {t('clubSite.notPublishedPreview', 'This page is not published yet — visible only to you.')}
+        </Alert>
+      )}
       {/* Header клуба */}
       <Box component="header" sx={{ position: 'sticky', top: 0, zIndex: 10, borderBottom: '1px solid', borderColor: 'divider', bgcolor: 'color-mix(in srgb, var(--bg-canvas) 82%, transparent)', backdropFilter: 'blur(14px)' }}>
         <Box sx={{ maxWidth: 1080, mx: 'auto', px: { xs: 2, md: 3 }, height: 64, display: 'flex', alignItems: 'center', gap: 2 }}>

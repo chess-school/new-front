@@ -53,6 +53,8 @@ export interface ClubPublic {
   coaches: { name: string; headline: string; title: string | null }[];
   groupsCount: number;
   membership: { role: string; status: string } | null;
+  /** false — клуб suspended (виден только владельцу/участнику как превью). */
+  published?: boolean;
 }
 
 /** Публичная витрина клуба для сайта /c/<slug> */
