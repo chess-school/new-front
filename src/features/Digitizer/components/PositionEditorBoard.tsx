@@ -6,6 +6,7 @@ import { Arrow } from 'react-chessboard/dist/chessboard/types';
 import { Square } from 'chess.js';
 import { useTranslation } from 'react-i18next';
 import { boardStyleProps } from './boardStyle';
+import './boardStyle.scss';
 
 // Свободная расстановка: фигуры двигаются без проверки правил, сброс за доску — удаление,
 // клик по полю с выбранной фигурой из палитры — установка
@@ -107,6 +108,7 @@ export const PositionEditorBoard: React.FC<PositionEditorBoardProps> = ({ fen, o
     <Stack spacing={1.5}>
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
       <ResizableBoard reserveBottom={200}>
+      <Box className="cb-pieces" sx={{ width: '100%', height: '100%' }}>
       <Chessboard
         id="position-editor"
         position={fen.split(' ')[0]}
@@ -119,6 +121,7 @@ export const PositionEditorBoard: React.FC<PositionEditorBoardProps> = ({ fen, o
         customArrows={arrows}
         {...boardStyleProps}
       />
+      </Box>
       </ResizableBoard>
       </Box>
       <ToggleButtonGroup

@@ -90,7 +90,7 @@ export const AnalysisBoard: React.FC<AnalysisBoardProps> = ({
   const onMove = (from: Square, to: Square, promotion?: string): boolean => actions.play({ from, to, promotion });
 
   const board = (
-    <ChessBoard fen={fen} onMove={onMove} boardOrientation={orientation} movable="both" customArrows={arrows} lastMove={lastMove} coordinates="outside" />
+    <ChessBoard fen={fen} onMove={onMove} boardOrientation={orientation} movable="both" customArrows={arrows} lastMove={lastMove} />
   );
 
   const atStart = current.id === tree.rootId;

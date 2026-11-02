@@ -29,6 +29,7 @@ import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import SkipNextIcon from '@mui/icons-material/SkipNext';
+import CachedRoundedIcon from '@mui/icons-material/CachedRounded';
 import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
 import FormatListNumberedRoundedIcon from '@mui/icons-material/FormatListNumberedRounded';
 import MenuBookRoundedIcon from '@mui/icons-material/MenuBookRounded';
@@ -48,6 +49,8 @@ export const AnalysisPage: React.FC = () => {
     useEffect(() => { if (incomingPgn) loadPgn(incomingPgn); }, [incomingPgn, loadPgn]);
     const hasMoves = game.tree.nodes[game.tree.rootId].children.length > 0;
     const [inputPgn, setInputPgn] = useState('');
+    // Ориентация доски: кнопка-разворот в панели навигации (как на Lichess/в режиме решения)
+    const [orientation, setOrientation] = useState<'white' | 'black'>('white');
     const [isEngineOn, setIsEngineOn] = useState(false);
     // Stockfish: воркер создаётся при первом включении анализа и уничтожается при уходе со страницы.
     // Анализ перезапускается на каждой новой позиции, ответы прерванного поиска отбрасываются.
@@ -232,6 +235,7 @@ export const AnalysisPage: React.FC = () => {
             <IconButton aria-label="back" onClick={actions.back} disabled={ply === 0}><ArrowLeftIcon /></IconButton>
             <IconButton aria-label="forward" onClick={actions.forward} disabled={current.children.length === 0}><ArrowRightIcon /></IconButton>
             <IconButton aria-label="end" onClick={actions.toEnd} disabled={current.children.length === 0}><SkipNextIcon /></IconButton>
+            <IconButton aria-label={t('chessGame.flipBoard', 'Flip board')} title={t('chessGame.flipBoard', 'Flip board')} onClick={() => setOrientation((o) => (o === 'white' ? 'black' : 'white'))}><CachedRoundedIcon /></IconButton>
         </Stack>
     );
 
@@ -239,7 +243,7 @@ export const AnalysisPage: React.FC = () => {
         <PageContainer dense>
             <PageHeader dense eyebrow={t('nav.analysis', 'Analysis')} title={t('chessGame.title')} subtitle={t('chessGame.subtitle')} />
             <ChessArena
-                board={<ChessBoard fen={fen} onMove={(from, to, promotion) => actions.play({ from, to, promotion })} customArrows={bestArrows} lastMove={lastMove} movable="both" />}
+                board={<ChessBoard fen={fen} onMove={(from, to, promotion) => actions.play({ from, to, promotion })} boardOrientation={orientation} customArrows={bestArrows} lastMove={lastMove} movable="both" />}
                 showEval={isEngineOn}
                 evalResult={engineResult}
                 header={<AnalysisPanel evaluation={liveEvaluation} depth={liveDepth} principalVariation={livePV} isAnalyzing={isLiveAnalyzing} isEngineOn={isEngineOn} onToggleEngine={handleToggleEngine} engineName={engine?.name} />}
