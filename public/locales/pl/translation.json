@@ -435,7 +435,14 @@
     "roles": "Role",
     "provisional": "Wstępny · brak partii rankingowych",
     "gamesCount": "{{count}} partii rankingowych",
-    "rdHint": "Odchylenie rankingu — im mniejsze, tym bardziej wiarygodny ranking"
+    "rdHint": "Odchylenie rankingu — im mniejsze, tym bardziej wiarygodny ranking",
+    "alsoRoles": "Także",
+    "noRatingHint": "Zagraj partie rankingowe, aby uzyskać ranking",
+    "tabOverview": "Przegląd",
+    "tabAccount": "Konto",
+    "sectionProfile": "Profil",
+    "passwordHint": "Użyj co najmniej 8 znaków.",
+    "otherNotFound": "Ten profil jest niedostępny."
   },
   "coaches": {
     "title": "Nasi trenerzy",
@@ -480,9 +487,11 @@
     "updated": "Profil zaktualizowano pomyślnie",
     "passwordChanged": "Hasło zmieniono pomyślnie",
     "updateFailed": "Nie udało się zaktualizować profilu",
-    "passwordMismatch": "Hasła nie pasują lub brakuje obecnego hasła",
+    "passwordMismatch": "Sprawdź obecne hasło i upewnij się, że nowe hasła są zgodne (min. 8 znaków).",
     "cancel": "Anuluj",
-    "save": "Zapisz"
+    "save": "Zapisz",
+    "togglePassword": "Pokaż/ukryj hasło",
+    "passwordNoMatch": "Hasła nie są zgodne"
   },
   "schedule": {
     "myScheduleTitle": "Mój harmonogram",

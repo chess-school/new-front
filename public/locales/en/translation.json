@@ -414,7 +414,14 @@
     "roles": "Roles",
     "provisional": "Provisional · no rated games yet",
     "gamesCount": "{{count}} rated games",
-    "rdHint": "Rating deviation — lower means a more reliable rating"
+    "rdHint": "Rating deviation — lower means a more reliable rating",
+    "alsoRoles": "Also",
+    "noRatingHint": "Play rated games to get a rating",
+    "tabOverview": "Overview",
+    "tabAccount": "Account",
+    "sectionProfile": "Profile",
+    "passwordHint": "Use at least 8 characters.",
+    "otherNotFound": "This profile is not available."
   },
   "coaches": {
     "title": "Our Coaches",
@@ -459,9 +466,11 @@
     "updated": "Profile updated successfully",
     "passwordChanged": "Password changed successfully",
     "updateFailed": "Failed to update profile",
-    "passwordMismatch": "Password mismatch or missing current password",
+    "passwordMismatch": "Check the current password and make sure the new passwords match (min 8 characters).",
     "cancel": "Cancel",
-    "save": "Save"
+    "save": "Save",
+    "togglePassword": "Show/hide password",
+    "passwordNoMatch": "Passwords don't match"
   },
   "register": {
     "title": "Sign Up",
