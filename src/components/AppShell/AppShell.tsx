@@ -44,6 +44,7 @@ import { ThemeToggle } from '@/components/ThemeToggle/ThemeToggle';
 import { getPrimaryRole } from '@/utils/getPrimaryRole';
 import SpaceDashboardRoundedIcon from '@mui/icons-material/SpaceDashboardRounded';
 import PhotoLibraryRoundedIcon from '@mui/icons-material/PhotoLibraryRounded';
+import WebRoundedIcon from '@mui/icons-material/WebRounded';
 import { useClubStore } from '@/features/clubs/clubStore';
 import { useSiteSettings } from '@/features/site/SiteSettingsContext';
 import { canCoach, isItemActive, NavIcon, NavItem, NavMode, visibleNav } from './navigation';
@@ -78,6 +79,7 @@ const ICONS: Record<NavIcon, React.ReactElement> = {
   public: <PublicRoundedIcon />,
   settings: <SettingsRoundedIcon />,
   media: <PhotoLibraryRoundedIcon />,
+  website: <WebRoundedIcon />,
 };
 
 const clubInitials = (name: string) =>
