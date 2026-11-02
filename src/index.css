@@ -9,12 +9,14 @@
   --border-default: rgba(20, 27, 46, 0.14);
   --text-primary: #141B2E;
   --text-secondary: #5B6478;
+  --text-muted: #636C7F;
   --brand-primary: #2B50E0;
-  --status-success: #16A34A;
+  --status-success: #15803D;
   --status-danger: #DC2626;
 
   /* Акцент как переменные — используются в sx через rgba(var(--accent-rgb), a) */
   --accent: #2B50E0;
+  --accent-text: #2B50E0; /* акцент как ТЕКСТ (ссылки/вкладки) — в светлой совпадает с заливкой */
   --accent-hi: #3A5FF0;
   --accent-lo: #1E3CB0;
   --accent-rgb: 43, 80, 224;
@@ -38,11 +40,17 @@
   --border-default: #232C3E;
   --text-primary: #EEF1F7;
   --text-secondary: #9AA5BC;
-  --brand-primary: #4C6FFF;
+  --text-muted: #8390A6;
+  /* brand-primary — ЗАЛИВКА кнопок (→ --button-primary); для акцента-ТЕКСТА в тёмной теме брать
+     --accent-text (#6B88FF). #3D5AFE даёт белому тексту 5.1:1 (было #4C6FFF = 4.18, не проходило). */
+  --brand-primary: #3D5AFE;
   --status-success: #22C55E;
   --status-danger: #F0564A;
 
-  --accent: #4C6FFF;
+  /* В тёмной теме заливка и текст акцента РАЗНЫЕ: --accent (#3D5AFE) — фон кнопок под белым,
+     --accent-text (#6B88FF) — ссылки/вкладки/иконки на тёмном (#4C6FFF не проходил ни там, ни там). */
+  --accent: #3D5AFE;
+  --accent-text: #6B88FF;
   --accent-hi: #6B88FF;
   --accent-lo: #3350D0;
   --accent-rgb: 76, 111, 255;

@@ -62,7 +62,7 @@
 
     &.rbc-active,
     &:active {
-      color: #1a1405;
+      color: #fff; // белый на синей заливке brand-primary (5.1–5.7:1); было #1a1405 — остаток золотой кнопки (2.9:1)
       background: var(--brand-primary) !important;
       box-shadow: none !important;
     }
@@ -115,7 +115,7 @@
 }
 
 .rbc-today {
-  background: rgba(138, 43, 43, 0.08);
+  background: rgba(var(--accent-rgb), 0.08); // было бордовое rgba(138,43,43) — остаток старого бренда
 }
 
 .rbc-date-cell {
@@ -124,7 +124,7 @@
 
   &.rbc-now {
     font-weight: 800;
-    color: var(--brand-primary);
+    color: var(--accent-text); // акцент как ТЕКСТ (в тёмной #6B88FF), не заливочный brand-primary
   }
 
   > a,
@@ -168,7 +168,7 @@
 }
 
 .rbc-show-more {
-  color: var(--brand-primary);
+  color: var(--accent-text); // акцент-текст (тёмная #6B88FF)
   background: transparent;
   font-weight: 600;
   font-size: 0.75rem;

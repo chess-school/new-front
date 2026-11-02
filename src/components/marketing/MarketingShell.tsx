@@ -24,7 +24,8 @@ const MarketingNav = () => {
   return (
     <Box component="header" sx={{
       position: 'sticky', top: 0, zIndex: 20, borderBottom: '1px solid', borderColor: 'divider',
-      bgcolor: 'rgba(243,244,247,0.78)', backdropFilter: 'blur(14px)',
+      // Тема-зависимое «стекло»: var(--bg-canvas) переключается светлое/тёмное по data-theme.
+      bgcolor: 'color-mix(in srgb, var(--bg-canvas) 80%, transparent)', backdropFilter: 'blur(14px)',
     }}>
       <PageContainer>
         <Stack direction="row" alignItems="center" spacing={2} sx={{ height: 64 }}>

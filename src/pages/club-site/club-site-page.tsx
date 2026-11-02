@@ -68,7 +68,7 @@ export const ClubSitePage = () => {
   return (
     <Box sx={{ minHeight: '100dvh', bgcolor: 'background.default' }}>
       {/* Header клуба */}
-      <Box component="header" sx={{ position: 'sticky', top: 0, zIndex: 10, borderBottom: '1px solid', borderColor: 'divider', bgcolor: 'rgba(243,244,247,0.82)', backdropFilter: 'blur(14px)' }}>
+      <Box component="header" sx={{ position: 'sticky', top: 0, zIndex: 10, borderBottom: '1px solid', borderColor: 'divider', bgcolor: 'color-mix(in srgb, var(--bg-canvas) 82%, transparent)', backdropFilter: 'blur(14px)' }}>
         <Box sx={{ maxWidth: 1080, mx: 'auto', px: { xs: 2, md: 3 }, height: 64, display: 'flex', alignItems: 'center', gap: 2 }}>
           <Stack direction="row" alignItems="center" spacing={1.25} sx={{ flex: 1, minWidth: 0 }}>
             <Box sx={{ width: 34, height: 34, borderRadius: 2, flexShrink: 0, display: 'grid', placeItems: 'center', bgcolor: accent, color: ink, fontWeight: 800, fontSize: 14 }}>{initials(club.name)}</Box>
