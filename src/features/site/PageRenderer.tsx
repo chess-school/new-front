@@ -12,9 +12,12 @@ import { SiteBlock, BlockImage, I18nText, pickText } from './pagesApi';
 const imgSrc = (img?: BlockImage): string => mediaUrl((img && img.url) || '');
 
 // Внутренняя ссылка (/…) рендерится через RouterLink, внешняя (http…) — обычным href в новой вкладке.
-const LinkButton = ({ label, url, color }: { label: string; url: string; color?: string }) => {
+const LinkButton = ({ label, url, color, onColor }: { label: string; url: string; color?: string; onColor?: boolean }) => {
   if (!label || !url) return null;
-  const sx = { borderRadius: 2.5, ...(color ? { bgcolor: color, '&:hover': { bgcolor: color, filter: 'brightness(0.95)' } } : {}) };
+  // onColor — кнопка на цветном/тёмном фоне баннера: белая заливка + тёмный текст (хорошо видна).
+  const sx = onColor
+    ? { borderRadius: 2.5, bgcolor: '#fff', color: '#141B2E', '&:hover': { bgcolor: '#fff', filter: 'brightness(0.95)' } }
+    : { borderRadius: 2.5, ...(color ? { bgcolor: color, color: '#fff', '&:hover': { bgcolor: color, filter: 'brightness(0.95)' } } : {}) };
   return url.startsWith('/')
     ? <Button component={RouterLink} to={url} variant="contained" sx={sx}>{label}</Button>
     : <Button component="a" href={url} target="_blank" rel="noopener noreferrer" variant="contained" sx={sx}>{label}</Button>;
@@ -34,9 +37,12 @@ const BlockView = ({ block, lng }: { block: SiteBlock; lng: string }) => {
   switch (block.type) {
     case 'heading': {
       const level = Math.min(Math.max(Number(p.level) || 2, 1), 3);
+      // Семантический тег соответствует уровню (h1/h2/h3) — корректная иерархия для SEO/a11y;
+      // визуальный размер держим компактным под колонку контента.
+      const component = (['h1', 'h2', 'h3'] as const)[level - 1];
       const variant = (['h3', 'h4', 'h5'] as const)[level - 1];
       return (
-        <Typography variant={variant} sx={{ fontFamily: '"Unbounded"', fontWeight: 800, textAlign: p.align || 'left', mt: 1 }}>
+        <Typography component={component} variant={variant} sx={{ fontFamily: '"Unbounded"', fontWeight: 800, textAlign: p.align || 'left', mt: 1 }}>
           {txt(p.text)}
         </Typography>
       );
@@ -93,7 +99,7 @@ const BlockView = ({ block, lng }: { block: SiteBlock; lng: string }) => {
           {txt(p.title) && <Typography variant="h4" sx={{ fontFamily: '"Unbounded"', fontWeight: 800 }}>{txt(p.title)}</Typography>}
           {txt(p.subtitle) && <Typography sx={{ mt: 1.5, opacity: 0.92, maxWidth: 640 }}>{txt(p.subtitle)}</Typography>}
           {txt(p.buttonLabel) && p.buttonUrl && (
-            <Box sx={{ mt: 3 }}><LinkButton label={txt(p.buttonLabel)} url={p.buttonUrl} /></Box>
+            <Box sx={{ mt: 3 }}><LinkButton label={txt(p.buttonLabel)} url={p.buttonUrl} onColor={!!(bg || p.bgColor)} /></Box>
           )}
         </Box>
       );

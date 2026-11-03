@@ -8,14 +8,14 @@ import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
 import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
 import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 import UploadFileRoundedIcon from '@mui/icons-material/UploadFileRounded';
-import { message } from 'antd';
+import { message, Modal } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { PageContainer } from '@/shared/components/ui/PageHeader';
 import { SEOHead } from '@/shared/components/seo/SEOHead';
 import { useClubStore } from '@/features/clubs/clubStore';
 import { SiteBlockEditor } from './SiteBlockEditor';
 import { PageRenderer } from '@/features/site/PageRenderer';
-import { fetchAdminPage, savePage, publishPage, generatePages, SiteBlock } from '@/features/site/pagesApi';
+import { fetchAdminPage, savePage, publishPage, generatePages, fetchPagesList, SiteBlock } from '@/features/site/pagesApi';
 
 // Стандартный набор страниц сайта клуба (slug'и фиксированы — совпадают с публичной навигацией).
 const STANDARD_PAGES: Array<{ slug: string; labelKey: string; fallback: string }> = [
@@ -37,6 +37,8 @@ export default function ClubSitePagesPage() {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
+  // Статусы всех страниц (для точек в табах и кнопки «Publish all»).
+  const [pageStatuses, setPageStatuses] = useState<Record<string, string>>({});
 
   // Диалог автогенерации
   const [genOpen, setGenOpen] = useState(false);
@@ -61,11 +63,16 @@ export default function ClubSitePagesPage() {
     return () => { alive = false; };
   }, [slug, reloadKey]);
 
-  const doGenerate = async () => {
-    if (!genText.trim() && !genUrls.trim() && !genFile) {
-      message.warning(t('site.gen.needInput', 'Add text, a document or a link first.'));
-      return;
-    }
+  // Список страниц клуба → карта slug→status (для точек в табах и Publish all).
+  useEffect(() => {
+    let alive = true;
+    fetchPagesList()
+      .then((list) => { if (alive) setPageStatuses(Object.fromEntries(list.map((p) => [p.slug, p.status]))); })
+      .catch(() => { /* нет страниц — тихо */ });
+    return () => { alive = false; };
+  }, [reloadKey]);
+
+  const runGenerate = async () => {
     setGenerating(true);
     try {
       const pages = await generatePages({ text: genText, urls: genUrls, document: genFile || undefined });
@@ -78,6 +85,44 @@ export default function ClubSitePagesPage() {
       message.error(err.response?.data?.msg || t('site.gen.failed', 'Generation failed. Try again with more text.'));
     } finally {
       setGenerating(false);
+    }
+  };
+
+  // Перед генерацией: проверка ввода + подтверждение перезаписи, если черновики уже есть.
+  const doGenerate = () => {
+    if (!genText.trim() && !genUrls.trim() && !genFile) {
+      message.warning(t('site.gen.needInput', 'Add text, a document or a link first.'));
+      return;
+    }
+    if (Object.keys(pageStatuses).length > 0) {
+      Modal.confirm({
+        title: t('site.gen.confirmTitle', 'Replace all page drafts?'),
+        content: t('site.gen.confirmBody', 'AI generation overwrites the current drafts of all four pages. Already-published pages stay live until you publish again. Continue?'),
+        okText: t('site.gen.generate', 'Generate'),
+        cancelText: t('common.cancel', 'Cancel'),
+        onOk: runGenerate,
+      });
+    } else {
+      runGenerate();
+    }
+  };
+
+  // Publish all — сохранить текущий черновик и опубликовать ВСЕ существующие страницы разом.
+  const doPublishAll = async () => {
+    setBusy(true);
+    try {
+      await savePage(slug, { title, blocks });
+      const list = await fetchPagesList();
+      const slugs = list.map((p) => p.slug);
+      await Promise.all(slugs.map((s) => publishPage(s)));
+      setStatus('published');
+      setReloadKey((k) => k + 1);
+      message.success(t('site.publishedAll', { count: slugs.length, defaultValue: 'Published {{count}} pages — your site is live' }));
+    } catch (e) {
+      const err = e as { response?: { data?: { msg?: string } } };
+      message.error(err.response?.data?.msg || t('site.publishFailed', 'Failed to publish'));
+    } finally {
+      setBusy(false);
     }
   };
 
@@ -133,7 +178,16 @@ export default function ClubSitePagesPage() {
       </Typography>
 
       <Tabs value={slug} onChange={(_, v) => setSlug(v)} variant="scrollable" scrollButtons="auto" sx={{ mb: 3, borderBottom: '1px solid', borderColor: 'divider' }}>
-        {STANDARD_PAGES.map((p) => <Tab key={p.slug} value={p.slug} label={t(p.labelKey, p.fallback)} />)}
+        {STANDARD_PAGES.map((p) => (
+          <Tab key={p.slug} value={p.slug} label={(
+            <Stack direction="row" spacing={0.75} alignItems="center">
+              <span>{t(p.labelKey, p.fallback)}</span>
+              {pageStatuses[p.slug] && (
+                <Box component="span" title={pageStatuses[p.slug]} sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: pageStatuses[p.slug] === 'published' ? 'success.main' : 'warning.main' }} />
+              )}
+            </Stack>
+          )} />
+        ))}
       </Tabs>
 
       {loading ? (
@@ -154,9 +208,10 @@ export default function ClubSitePagesPage() {
 
             <SiteBlockEditor blocks={blocks} onChange={setBlocks} />
 
-            <Stack direction="row" spacing={1.5} sx={{ mt: 3 }}>
+            <Stack direction="row" spacing={1.5} sx={{ mt: 3, flexWrap: 'wrap', rowGap: 1.5 }}>
               <Button variant="outlined" startIcon={<SaveRoundedIcon />} onClick={doSave} disabled={busy}>{t('site.save', 'Save draft')}</Button>
-              <Button variant="contained" startIcon={<PublishRoundedIcon />} onClick={doPublish} disabled={busy}>{t('site.publish', 'Publish')}</Button>
+              <Button variant="outlined" startIcon={<PublishRoundedIcon />} onClick={doPublish} disabled={busy}>{t('site.publishThis', 'Publish this page')}</Button>
+              <Button variant="contained" startIcon={<PublishRoundedIcon />} onClick={doPublishAll} disabled={busy}>{t('site.publishAll', 'Publish all')}</Button>
             </Stack>
           </Grid>
 
