@@ -94,3 +94,13 @@ export const publishPage = async (pageSlug: string): Promise<void> => {
 export const deletePage = async (pageSlug: string): Promise<void> => {
   await api.delete(`/site/pages/${pageSlug}`);
 };
+
+/** Автогенерация черновиков 4 страниц из текста/документа/ссылок (ИИ на бэке). Возвращает сводку. */
+export const generatePages = async (input: { text?: string; urls?: string; document?: File }): Promise<Array<{ slug: string; blocks: number }>> => {
+  const fd = new FormData();
+  if (input.text) fd.append('text', input.text);
+  if (input.urls) fd.append('urls', input.urls);
+  if (input.document) fd.append('document', input.document);
+  // Долгий вызов (claude -p ходит в сеть) — поднимаем таймаут axios до 4 минут.
+  return (await api.post('/site/pages/generate', fd, { timeout: 240000 })).data.data.pages;
+};
