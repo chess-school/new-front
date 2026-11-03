@@ -4,6 +4,7 @@ import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import { useParams, Link as RouterLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { fetchClubCoach, PublicCoachProfile } from '@/features/clubs/clubsApi';
+import { TrialRequestForm } from '@/features/leads/TrialRequestForm';
 import { useSiteSettings } from '@/features/site/SiteSettingsContext';
 import { SEOHead } from '@/shared/components/seo/SEOHead';
 import { buildTheme } from '@/theme/theme';
@@ -21,6 +22,7 @@ export const CoachProfilePage = () => {
 
   const [data, setData] = useState<PublicCoachProfile | null>(null);
   const [state, setState] = useState<'loading' | 'ok' | 'notfound'>('loading');
+  const [trialOpen, setTrialOpen] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -97,9 +99,17 @@ export const CoachProfilePage = () => {
             </Typography>
           )}
 
-          {/* Кнопка «Записаться на пробное» + форма заявки — в следующем инкременте (этап Leads). */}
+          <Button
+            onClick={() => setTrialOpen(true)}
+            variant="contained"
+            size="large"
+            sx={{ mt: 4, px: 4, py: 1.5, borderRadius: 3, bgcolor: accent, '&:hover': { bgcolor: accent, filter: 'brightness(0.95)' } }}
+          >
+            {t('coachProfile.bookTrial', { name: coach.name, defaultValue: 'Book a trial with {{name}}' })}
+          </Button>
         </Box>
       </Box>
+      <TrialRequestForm open={trialOpen} onClose={() => setTrialOpen(false)} slug={club.slug} coachUuid={coach.uuid} coachName={coach.name} />
     </ThemeProvider>
   );
 };
