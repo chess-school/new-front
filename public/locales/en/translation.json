@@ -1529,6 +1529,20 @@
       "gallery": "Gallery",
       "banner": "Banner",
       "divider": "Divider"
+    },
+    "gen": {
+      "button": "Generate with AI",
+      "title": "Generate pages with AI",
+      "hint": "Paste text about your club, upload a document, or drop public links. The AI will draft all four pages — you can edit and publish them afterwards. Login-walled feeds (e.g. a private Facebook timeline) cannot be imported.",
+      "text": "Text about your club",
+      "textPh": "Mission, history, coaches, achievements, schedule…",
+      "urls": "Links (one per line)",
+      "upload": "Upload document (.docx/.txt)",
+      "generate": "Generate",
+      "generating": "Generating…",
+      "done": "Generated {{count}} draft pages — review and publish",
+      "failed": "Generation failed. Try again with more text.",
+      "needInput": "Add text, a document or a link first."
     }
   }
 }

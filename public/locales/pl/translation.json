@@ -1542,6 +1542,20 @@
       "gallery": "Galeria",
       "banner": "Baner",
       "divider": "Separator"
+    },
+    "gen": {
+      "button": "Generuj z AI",
+      "title": "Generowanie stron przez AI",
+      "hint": "Wklej tekst o klubie, wgraj dokument lub podaj publiczne linki. AI przygotuje wszystkie cztery strony — potem je zredagujesz i opublikujesz. Treści za logowaniem (np. prywatna oś czasu na Facebooku) nie zostaną zaimportowane.",
+      "text": "Tekst o klubie",
+      "textPh": "Misja, historia, trenerzy, osiągnięcia, grafik…",
+      "urls": "Linki (po jednym w wierszu)",
+      "upload": "Wgraj dokument (.docx/.txt)",
+      "generate": "Generuj",
+      "generating": "Generowanie…",
+      "done": "Utworzono {{count}} wersji roboczych — sprawdź i opublikuj",
+      "failed": "Generowanie nie powiodło się. Spróbuj z większą ilością tekstu.",
+      "needInput": "Najpierw dodaj tekst, dokument lub link."
     }
   }
 }
