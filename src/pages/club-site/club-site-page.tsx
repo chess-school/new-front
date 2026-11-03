@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, Typography, Button, Stack, Grid, Paper, Chip, CircularProgress, Avatar, Alert } from '@mui/material';
+import { Box, Typography, Button, Stack, Grid, Paper, Chip, CircularProgress, Avatar, Alert, ThemeProvider } from '@mui/material';
 import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
@@ -8,8 +8,15 @@ import { fetchClubBySlug, ClubPublic } from '@/features/clubs/clubsApi';
 import { useClubStore } from '@/features/clubs/clubStore';
 import { fetchPublicPage, SitePage } from '@/features/site/pagesApi';
 import { PageRenderer } from '@/features/site/PageRenderer';
+import { useSiteSettings } from '@/features/site/SiteSettingsContext';
+import { SEOHead } from '@/shared/components/seo/SEOHead';
+import { buildTheme } from '@/theme/theme';
 
 const DEFAULT_ACCENT = '#2B50E0';
+// Публичный сайт клуба ВСЕГДА в светлой теме бренда — не зависит от mob-theme зрителя.
+// Светлую MUI-палитру даём через локальный ThemeProvider(light); единственное прямое
+// использование CSS-переменной (стекло шапки) заменено светлым литералом ниже.
+const LIGHT_THEME = buildTheme('light');
 // Стандартные страницы сайта клуба (slug'и совпадают с редактором в кабинете). В навигации
 // показываем Home всегда + те страницы, которые владелец опубликовал (есть блоки).
 const STD_PAGES: Array<{ slug: string; labelKey: string; fallback: string }> = [
@@ -30,6 +37,7 @@ const onAccent = (hex: string) => {
 export const ClubSitePage = () => {
   const { slug = '', page = 'home' } = useParams();
   const { t } = useTranslation();
+  const settings = useSiteSettings();
   const navigate = useNavigate();
   const [data, setData] = useState<ClubPublic | null>(null);
   const [state, setState] = useState<'loading' | 'ok' | 'notfound'>('loading');
@@ -65,8 +73,16 @@ export const ClubSitePage = () => {
   }
 
   const { club, coaches, groupsCount, membership, published } = data;
-  const accent = club.brand?.primaryColor || DEFAULT_ACCENT;
+  // Идентичность сайта — из настроек клуба (Site name / tagline / бренд), а не из generic-i18n.
+  const siteName = (settings.isClub && settings.siteName) || club.name;
+  const accent = settings.primaryColor || club.brand?.primaryColor || DEFAULT_ACCENT;
   const ink = onAccent(accent);
+  const heroSubtitle = settings.tagline || t('clubSite.tagline', 'Group and individual lessons, online classes on a shared board, puzzles and progress tracking — for every level.');
+  // Факты в hero: показываем ТОЛЬКО ненулевые (без «0 groups · 0 coaches»).
+  const heroFacts = [
+    groupsCount > 0 ? { value: String(groupsCount), label: t('clubSite.groups', 'groups') } : null,
+    coaches.length > 0 ? { value: String(coaches.length), label: t('clubSite.coaches', 'coaches') } : null,
+  ].filter(Boolean) as Array<{ value: string; label: string }>;
 
   // Навигация: Home всегда + опубликованные страницы. Текущая — из :page (дефолт home).
   const current = STD_PAGES.some((p) => p.slug === page) ? page : 'home';
@@ -81,7 +97,17 @@ export const ClubSitePage = () => {
   };
 
   return (
-    <Box sx={{ minHeight: '100dvh', bgcolor: 'background.default' }}>
+    <ThemeProvider theme={LIGHT_THEME}>
+      <SEOHead
+        title={`${siteName}${club.city ? ` — ${club.city}` : ''}`}
+        description={heroSubtitle}
+        canonicalPath={`/c/${club.slug}`}
+        ogTitle={siteName}
+        ogDescription={heroSubtitle}
+        ogImage={settings.logoUrl || club.logoUrl || undefined}
+        ogType="website"
+      />
+    <Box sx={{ minHeight: '100dvh', bgcolor: 'background.default', color: 'text.primary' }}>
       {/* Клуб не опубликован (suspended) — страницу видит только владелец/участник как превью */}
       {published === false && (
         <Alert severity="warning" sx={{ borderRadius: 0, justifyContent: 'center', '& .MuiAlert-message': { fontWeight: 600 } }}>
@@ -89,11 +115,15 @@ export const ClubSitePage = () => {
         </Alert>
       )}
       {/* Header клуба */}
-      <Box component="header" sx={{ position: 'sticky', top: 0, zIndex: 10, borderBottom: '1px solid', borderColor: 'divider', bgcolor: 'color-mix(in srgb, var(--bg-canvas) 82%, transparent)', backdropFilter: 'blur(14px)' }}>
+      <Box component="header" sx={{ position: 'sticky', top: 0, zIndex: 10, borderBottom: '1px solid', borderColor: 'divider', bgcolor: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(14px)' }}>
         <Box sx={{ maxWidth: 1080, mx: 'auto', px: { xs: 2, md: 3 }, height: 64, display: 'flex', alignItems: 'center', gap: 2 }}>
           <Stack direction="row" alignItems="center" spacing={1.25} sx={{ flex: 1, minWidth: 0 }}>
-            <Box sx={{ width: 34, height: 34, borderRadius: 2, flexShrink: 0, display: 'grid', placeItems: 'center', bgcolor: accent, color: ink, fontWeight: 800, fontSize: 14 }}>{initials(club.name)}</Box>
-            <Typography sx={{ fontWeight: 700, fontSize: '1.1rem' }} noWrap>{club.name}</Typography>
+            {settings.logoUrl ? (
+              <Box component="img" src={settings.logoUrl} alt={siteName} sx={{ width: 34, height: 34, borderRadius: 2, flexShrink: 0, objectFit: 'cover' }} />
+            ) : (
+              <Box sx={{ width: 34, height: 34, borderRadius: 2, flexShrink: 0, display: 'grid', placeItems: 'center', bgcolor: accent, color: ink, fontWeight: 800, fontSize: 14 }}>{initials(siteName)}</Box>
+            )}
+            <Typography sx={{ fontWeight: 700, fontSize: '1.1rem' }} noWrap>{siteName}</Typography>
           </Stack>
           {membership ? (
             <Button onClick={enterClub} variant="contained" endIcon={<ArrowForwardRoundedIcon />} sx={{ bgcolor: accent, color: ink, borderRadius: 2.5, '&:hover': { bgcolor: accent, filter: 'brightness(0.95)' } }}>
@@ -137,7 +167,7 @@ export const ClubSitePage = () => {
       {current !== 'home' ? (
         /* ── Отдельная страница (О нас / Тренеры / Успехи) из блоков ── */
         <Box sx={{ maxWidth: 1080, mx: 'auto', px: { xs: 2, md: 3 }, py: { xs: 5, md: 7 } }}>
-          <Typography variant="h3" sx={{ fontFamily: '"Unbounded"', fontWeight: 800, mb: 1 }}>
+          <Typography component="h1" variant="h3" sx={{ fontFamily: '"Unbounded"', fontWeight: 800, mb: 1 }}>
             {currentPage?.title || t(currentMeta?.labelKey || '', currentMeta?.fallback || '')}
           </Typography>
           {currentPage ? <PageRenderer blocks={currentPage.blocks} maxWidth={980} /> : (
@@ -150,12 +180,12 @@ export const ClubSitePage = () => {
       <Box sx={{ position: 'relative', overflow: 'hidden' }}>
         <Box sx={{ position: 'absolute', inset: 0, background: `radial-gradient(60% 60% at 20% 0%, ${accent}22, transparent 70%)` }} />
         <Box sx={{ position: 'relative', maxWidth: 1080, mx: 'auto', px: { xs: 2, md: 3 }, py: { xs: 7, md: 11 } }}>
-          <Chip icon={<PlaceRoundedIcon />} label={club.city || t('clubSite.chessClub', 'Chess club')} sx={{ mb: 3, bgcolor: `${accent}14`, color: accent, fontWeight: 700, '& .MuiChip-icon': { color: accent } }} />
-          <Typography sx={{ fontFamily: '"Unbounded"', fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.03, fontSize: { xs: '2.6rem', md: '4rem' }, maxWidth: 16 + 'ch' }}>
-            {club.name}
+          {club.city && <Chip icon={<PlaceRoundedIcon />} label={club.city} sx={{ mb: 3, bgcolor: `${accent}14`, color: accent, fontWeight: 700, '& .MuiChip-icon': { color: accent } }} />}
+          <Typography component="h1" sx={{ fontFamily: '"Unbounded"', fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.03, fontSize: { xs: '2.6rem', md: '4rem' }, maxWidth: 16 + 'ch' }}>
+            {siteName}
           </Typography>
           <Typography sx={{ mt: 2.5, fontSize: { xs: '1.05rem', md: '1.2rem' }, color: 'text.secondary', maxWidth: 560 }}>
-            {t('clubSite.tagline', 'Group and individual lessons, online classes on a shared board, puzzles and progress tracking — for every level.')}
+            {heroSubtitle}
           </Typography>
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 4.5 }}>
             {membership ? (
@@ -167,16 +197,22 @@ export const ClubSitePage = () => {
                 {t('clubSite.join', 'Join the club')}
               </Button>
             )}
-            <Button size="large" component={RouterLink} to="/puzzles" variant="outlined" color="inherit" sx={{ px: 4, py: 1.5, borderRadius: 3, color: 'text.primary', borderColor: 'divider' }}>
-              {t('clubSite.tryPuzzles', 'Try a puzzle')}
-            </Button>
+            {/* Вторичный CTA — к реальному разделу этого сайта, а не на /puzzles за логином. */}
+            {coaches.length > 0 && (
+              <Button size="large" component="a" href="#coaches" variant="outlined" color="inherit" sx={{ px: 4, py: 1.5, borderRadius: 3, color: 'text.primary', borderColor: 'divider' }}>
+                {t('clubSite.meetCoaches', 'Meet the coaches')}
+              </Button>
+            )}
           </Stack>
 
-          {/* Факты клуба */}
-          <Stack direction="row" spacing={{ xs: 3, md: 6 }} sx={{ mt: 6, flexWrap: 'wrap' }}>
-            <Box><Typography sx={{ fontFamily: '"Unbounded"', fontWeight: 800, fontSize: '1.8rem', color: accent, lineHeight: 1 }}>{groupsCount}</Typography><Typography variant="body2" color="text.secondary">{t('clubSite.groups', 'groups')}</Typography></Box>
-            <Box><Typography sx={{ fontFamily: '"Unbounded"', fontWeight: 800, fontSize: '1.8rem', color: accent, lineHeight: 1 }}>{coaches.length}</Typography><Typography variant="body2" color="text.secondary">{t('clubSite.coaches', 'coaches')}</Typography></Box>
-          </Stack>
+          {/* Факты клуба — только ненулевые */}
+          {heroFacts.length > 0 && (
+            <Stack direction="row" spacing={{ xs: 3, md: 6 }} sx={{ mt: 6, flexWrap: 'wrap' }}>
+              {heroFacts.map((f) => (
+                <Box key={f.label}><Typography sx={{ fontFamily: '"Unbounded"', fontWeight: 800, fontSize: '1.8rem', color: accent, lineHeight: 1 }}>{f.value}</Typography><Typography variant="body2" color="text.secondary">{f.label}</Typography></Box>
+              ))}
+            </Stack>
+          )}
         </Box>
       </Box>
 
@@ -185,7 +221,7 @@ export const ClubSitePage = () => {
 
       {/* Тренеры */}
       {coaches.length > 0 && (
-        <Box sx={{ maxWidth: 1080, mx: 'auto', px: { xs: 2, md: 3 }, py: { xs: 6, md: 9 } }}>
+        <Box id="coaches" sx={{ maxWidth: 1080, mx: 'auto', px: { xs: 2, md: 3 }, py: { xs: 6, md: 9 }, scrollMarginTop: '80px' }}>
           <Typography variant="overline" sx={{ color: accent, fontWeight: 700 }}>{t('clubSite.ourCoaches', 'Our coaches')}</Typography>
           <Typography variant="h4" sx={{ fontFamily: '"Unbounded"', fontWeight: 800, mb: 3 }}>{t('clubSite.coachesTitle', 'Who will teach you')}</Typography>
           <Grid container spacing={2.5}>
@@ -215,7 +251,7 @@ export const ClubSitePage = () => {
       <Box sx={{ borderTop: '1px solid', borderColor: 'divider', mt: 4 }}>
         <Box sx={{ maxWidth: 1080, mx: 'auto', px: { xs: 2, md: 3 }, py: 5, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
           <Typography variant="body2" color="text.secondary">
-            {club.name} · {t('clubSite.poweredBy', 'powered by')} <Box component={RouterLink} to="/" sx={{ color: 'primary.main', fontWeight: 700, textDecoration: 'none' }}>debiut</Box>
+            {settings.footer?.text || siteName} · {t('clubSite.poweredBy', 'powered by')} <Box component={RouterLink} to="/" sx={{ color: 'primary.main', fontWeight: 700, textDecoration: 'none' }}>debiut</Box>
           </Typography>
           {!membership && (
             <Button component={RouterLink} to={`/register?club=${club.slug}`} variant="contained" sx={{ bgcolor: accent, color: ink, borderRadius: 2.5, '&:hover': { bgcolor: accent, filter: 'brightness(0.95)' } }}>{t('clubSite.join', 'Join the club')}</Button>
@@ -223,6 +259,7 @@ export const ClubSitePage = () => {
         </Box>
       </Box>
     </Box>
+    </ThemeProvider>
   );
 };
 
