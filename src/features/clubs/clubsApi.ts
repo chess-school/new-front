@@ -50,7 +50,7 @@ export const fetchOverview = async (): Promise<ClubOverview | null> =>
 
 export interface ClubPublic {
   club: { _id: string; name: string; slug: string; city?: string; logoUrl?: string; brand?: { primaryColor?: string }; plan?: string };
-  coaches: { name: string; headline: string; title: string | null }[];
+  coaches: { name: string; headline: string; title: string | null; photoUrl?: string | null; bio?: string; tags?: string[]; uuid?: string | null }[];
   groupsCount: number;
   membership: { role: string; status: string } | null;
   /** false — клуб suspended (виден только владельцу/участнику как превью). */

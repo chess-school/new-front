@@ -228,9 +228,9 @@ export const ClubSitePage = () => {
           <Grid container spacing={2.5}>
             {coaches.map((c, i) => (
               <Grid item xs={12} sm={6} md={4} key={i}>
-                <Paper sx={{ p: 2.5, borderRadius: 4, border: '1px solid', borderColor: 'divider', height: '100%' }}>
+                <Paper sx={{ p: 2.5, borderRadius: 4, border: '1px solid', borderColor: 'divider', height: '100%', display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                   <Stack direction="row" spacing={1.75} alignItems="center">
-                    <Avatar sx={{ width: 48, height: 48, bgcolor: `${accent}1A`, color: accent, fontWeight: 700 }}>{initials(c.name)}</Avatar>
+                    <Avatar src={c.photoUrl || undefined} sx={{ width: 52, height: 52, bgcolor: `${accent}1A`, color: accent, fontWeight: 700 }}>{initials(c.name)}</Avatar>
                     <Box sx={{ minWidth: 0 }}>
                       <Stack direction="row" spacing={0.75} alignItems="center">
                         {c.title && c.title !== 'None' && <Chip label={c.title} size="small" sx={{ height: 18, fontSize: 10, fontWeight: 700, bgcolor: `${accent}14`, color: accent }} />}
@@ -239,6 +239,16 @@ export const ClubSitePage = () => {
                       {c.headline && <Typography variant="body2" color="text.secondary" noWrap>{c.headline}</Typography>}
                     </Box>
                   </Stack>
+                  {c.bio && (
+                    <Typography variant="body2" color="text.secondary" sx={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                      {c.bio}
+                    </Typography>
+                  )}
+                  {!!(c.tags && c.tags.length) && (
+                    <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap sx={{ mt: 'auto' }}>
+                      {c.tags.map((tg) => <Chip key={tg} label={tg} size="small" variant="outlined" sx={{ height: 22, fontSize: 11 }} />)}
+                    </Stack>
+                  )}
                 </Paper>
               </Grid>
             ))}
