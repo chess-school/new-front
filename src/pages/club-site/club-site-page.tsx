@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Box, Typography, Button, Stack, Grid, Paper, Chip, CircularProgress, Avatar, Alert, ThemeProvider } from '@mui/material';
 import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -13,10 +13,9 @@ import { SEOHead } from '@/shared/components/seo/SEOHead';
 import { buildTheme } from '@/theme/theme';
 
 const DEFAULT_ACCENT = '#2B50E0';
-// Публичный сайт клуба ВСЕГДА в светлой теме бренда — не зависит от mob-theme зрителя.
-// Светлую MUI-палитру даём через локальный ThemeProvider(light); единственное прямое
-// использование CSS-переменной (стекло шапки) заменено светлым литералом ниже.
-const LIGHT_THEME = buildTheme('light');
+// Публичный сайт клуба использует ТЕМУ БРЕНДА, выбранную владельцем (светлая по умолчанию),
+// а не mob-theme зрителя. MUI-палитру даём через локальный ThemeProvider; стекло шапки —
+// режим-зависимый литерал (единственное прямое использование CSS-переменной убрано).
 // Стандартные страницы сайта клуба (slug'и совпадают с редактором в кабинете). В навигации
 // показываем Home всегда + те страницы, которые владелец опубликовал (есть блоки).
 const STD_PAGES: Array<{ slug: string; labelKey: string; fallback: string }> = [
@@ -38,6 +37,8 @@ export const ClubSitePage = () => {
   const { slug = '', page = 'home' } = useParams();
   const { t } = useTranslation();
   const settings = useSiteSettings();
+  const siteMode = settings.theme?.mode === 'dark' ? 'dark' : 'light';
+  const siteTheme = useMemo(() => buildTheme(siteMode), [siteMode]);
   const navigate = useNavigate();
   const [data, setData] = useState<ClubPublic | null>(null);
   const [state, setState] = useState<'loading' | 'ok' | 'notfound'>('loading');
@@ -97,7 +98,7 @@ export const ClubSitePage = () => {
   };
 
   return (
-    <ThemeProvider theme={LIGHT_THEME}>
+    <ThemeProvider theme={siteTheme}>
       <SEOHead
         title={`${siteName}${club.city ? ` — ${club.city}` : ''}`}
         description={heroSubtitle}
@@ -115,7 +116,7 @@ export const ClubSitePage = () => {
         </Alert>
       )}
       {/* Header клуба */}
-      <Box component="header" sx={{ position: 'sticky', top: 0, zIndex: 10, borderBottom: '1px solid', borderColor: 'divider', bgcolor: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(14px)' }}>
+      <Box component="header" sx={{ position: 'sticky', top: 0, zIndex: 10, borderBottom: '1px solid', borderColor: 'divider', bgcolor: siteMode === 'dark' ? 'rgba(18,24,38,0.82)' : 'rgba(255,255,255,0.82)', backdropFilter: 'blur(14px)' }}>
         <Box sx={{ maxWidth: 1080, mx: 'auto', px: { xs: 2, md: 3 }, height: 64, display: 'flex', alignItems: 'center', gap: 2 }}>
           <Stack direction="row" alignItems="center" spacing={1.25} sx={{ flex: 1, minWidth: 0 }}>
             {settings.logoUrl ? (

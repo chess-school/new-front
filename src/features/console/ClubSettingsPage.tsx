@@ -26,6 +26,7 @@ const onAccent = (hex: string) => {
 
 type FormState = {
   siteName: string; logoUrl: string; tagline: string; primaryColor: string;
+  themeMode: 'light' | 'dark';
   promoTitle: string; promoSubtitle: string; backgroundUrl: string;
   facts: SiteFact[];
   footerText: string; legalName: string;
@@ -34,6 +35,7 @@ type FormState = {
 
 const EMPTY: FormState = {
   siteName: '', logoUrl: '', tagline: '', primaryColor: '#2B50E0',
+  themeMode: 'light',
   promoTitle: '', promoSubtitle: '', backgroundUrl: '',
   facts: [{ value: '', label: '' }, { value: '', label: '' }, { value: '', label: '' }],
   footerText: '', legalName: '',
@@ -70,6 +72,7 @@ export const ClubSettingsPage = () => {
           logoUrl: s?.logoUrl ?? '',
           tagline: s?.tagline ?? '',
           primaryColor: d.club.primaryColor || '#2B50E0',
+          themeMode: s?.theme?.mode === 'dark' ? 'dark' : 'light',
           promoTitle: s?.auth?.promoTitle ?? '',
           promoSubtitle: s?.auth?.promoSubtitle ?? '',
           backgroundUrl: s?.auth?.backgroundUrl ?? '',
@@ -104,6 +107,7 @@ export const ClubSettingsPage = () => {
       logoUrl: form.logoUrl,
       tagline: form.tagline,
       primaryColor: form.primaryColor,
+      theme: { mode: form.themeMode },
       auth: {
         promoTitle: form.promoTitle,
         promoSubtitle: form.promoSubtitle,
@@ -185,6 +189,19 @@ export const ClubSettingsPage = () => {
                       size="small" sx={{ width: 130 }}
                       InputProps={{ startAdornment: <InputAdornment position="start"><Box sx={{ width: 16, height: 16, borderRadius: '4px', bgcolor: form.primaryColor }} /></InputAdornment> }} />
                   </Stack>
+                </Box>
+                <Box>
+                  <Typography variant="body2" sx={{ mb: 1, color: 'text.secondary' }}>{t('clubSettings.theme', 'Site theme')}</Typography>
+                  <Stack direction="row" spacing={1}>
+                    {(['light', 'dark'] as const).map((m) => (
+                      <Button key={m} onClick={() => set('themeMode', m)} variant={form.themeMode === m ? 'contained' : 'outlined'} size="small" sx={{ borderRadius: 2, minWidth: 92 }}>
+                        {m === 'light' ? t('clubSettings.themeLight', 'Light') : t('clubSettings.themeDark', 'Dark')}
+                      </Button>
+                    ))}
+                  </Stack>
+                  <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
+                    {t('clubSettings.themeHelp', 'Applies to your public club site for all visitors.')}
+                  </Typography>
                 </Box>
               </Stack>
             </Paper>

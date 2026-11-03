@@ -1,8 +1,47 @@
-import { Box, Typography, Divider, Stack, Button, ImageList, ImageListItem } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { Box, Typography, Divider, Stack, Button, ImageList, ImageListItem, IconButton } from '@mui/material';
+import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
+import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
 import { mediaUrl } from './mediaApi';
 import { SiteBlock, BlockImage, I18nText, pickText } from './pagesApi';
+
+// Слайдер (карусель) — полноширинный, с автопрокруткой, стрелками и точками. Чистый React/MUI.
+const SliderView = ({ items, interval }: { items: BlockImage[]; interval?: number }) => {
+  const imgs = (items || []).map((i) => mediaUrl((i && i.url) || '')).filter(Boolean);
+  const [idx, setIdx] = useState(0);
+  const ms = Math.max(2, Math.min(15, Number(interval) || 5)) * 1000;
+  useEffect(() => {
+    if (imgs.length < 2) return undefined;
+    const id = setInterval(() => setIdx((v) => (v + 1) % imgs.length), ms);
+    return () => clearInterval(id);
+  }, [imgs.length, ms]);
+  if (!imgs.length) return null;
+  const go = (d: number) => setIdx((v) => (v + d + imgs.length) % imgs.length);
+  const navBtn = { position: 'absolute', top: '50%', transform: 'translateY(-50%)', bgcolor: 'rgba(0,0,0,0.35)', color: '#fff', '&:hover': { bgcolor: 'rgba(0,0,0,0.55)' } } as const;
+  return (
+    <Box sx={{ position: 'relative', borderRadius: 3, overflow: 'hidden', bgcolor: '#000' }}>
+      <Box sx={{ position: 'relative', pt: '46%' }}>
+        {imgs.map((src, k) => (
+          <Box key={k} component="img" src={src} alt="" loading="lazy"
+            sx={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: k === idx ? 1 : 0, transition: 'opacity .6s ease' }} />
+        ))}
+      </Box>
+      {imgs.length > 1 && (
+        <>
+          <IconButton size="small" onClick={() => go(-1)} sx={{ ...navBtn, left: 8 }}><ChevronLeftRoundedIcon /></IconButton>
+          <IconButton size="small" onClick={() => go(1)} sx={{ ...navBtn, right: 8 }}><ChevronRightRoundedIcon /></IconButton>
+          <Stack direction="row" spacing={1} sx={{ position: 'absolute', bottom: 10, left: 0, right: 0, justifyContent: 'center' }}>
+            {imgs.map((_, k) => (
+              <Box key={k} onClick={() => setIdx(k)} sx={{ width: 9, height: 9, borderRadius: '50%', cursor: 'pointer', bgcolor: k === idx ? '#fff' : 'rgba(255,255,255,0.5)' }} />
+            ))}
+          </Stack>
+        </>
+      )}
+    </Box>
+  );
+};
 
 // PageRenderer — показывает страницу клуба как список БЛОКОВ-данных (шаг 3). Никакого
 // dangerouslySetInnerHTML: всё, что пришло из блока, рендерится как текст/картинка/ссылка.
@@ -87,6 +126,8 @@ const BlockView = ({ block, lng }: { block: SiteBlock; lng: string }) => {
         </ImageList>
       );
     }
+    case 'slider':
+      return <SliderView items={p.items || []} interval={p.interval} />;
     case 'banner': {
       const bg = imgSrc(p.bg);
       return (
