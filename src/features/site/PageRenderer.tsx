@@ -1,11 +1,69 @@
 import { useEffect, useState } from 'react';
-import { Box, Typography, Divider, Stack, Button, ImageList, ImageListItem, IconButton } from '@mui/material';
+import { Box, Typography, Divider, Stack, Button, ImageList, ImageListItem, IconButton, Avatar, Chip, Grid, Paper } from '@mui/material';
 import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
 import { mediaUrl } from './mediaApi';
 import { SiteBlock, BlockImage, I18nText, pickText } from './pagesApi';
+
+// Публичная карточка тренера (данные подставляются вживую, в блоке не хранятся).
+export interface PublicCoach {
+  uuid?: string | null; name: string; headline?: string; title?: string | null;
+  photoUrl?: string | null; bio?: string; tags?: string[];
+}
+const coachInitials = (name: string) => name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? '').join('') || 'C';
+
+const CoachCard = ({ c, list }: { c: PublicCoach; list?: boolean }) => (
+  <Paper variant="outlined" sx={{ p: 2.5, borderRadius: 4, height: '100%', display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+    <Stack direction="row" spacing={1.75} alignItems="center">
+      <Avatar src={c.photoUrl || undefined} sx={{ width: 52, height: 52, bgcolor: 'primary.main', color: 'primary.contrastText', fontWeight: 700 }}>{coachInitials(c.name)}</Avatar>
+      <Box sx={{ minWidth: 0 }}>
+        <Stack direction="row" spacing={0.75} alignItems="center">
+          {c.title && c.title !== 'None' && <Chip label={c.title} size="small" color="primary" variant="outlined" sx={{ height: 18, fontSize: 10, fontWeight: 700 }} />}
+          <Typography sx={{ fontWeight: 700 }} noWrap>{c.name}</Typography>
+        </Stack>
+        {c.headline && <Typography variant="body2" color="text.secondary" noWrap>{c.headline}</Typography>}
+      </Box>
+    </Stack>
+    {c.bio && (
+      <Typography variant="body2" color="text.secondary" sx={{ display: '-webkit-box', WebkitLineClamp: list ? 2 : 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{c.bio}</Typography>
+    )}
+    {!!(c.tags && c.tags.length) && (
+      <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap sx={{ mt: 'auto' }}>
+        {c.tags.map((tg) => <Chip key={tg} label={tg} size="small" variant="outlined" sx={{ height: 22, fontSize: 11 }} />)}
+      </Stack>
+    )}
+  </Paper>
+);
+
+// Блок «Тренеры»: заголовок/подзаголовок из настроек блока + живой список тренеров клуба.
+const CoachesBlock = ({ title, subtitle, layout, limit, coaches }: { title: string; subtitle: string; layout: string; limit: number; coaches?: PublicCoach[] }) => {
+  // coaches === undefined → превью в редакторе (живых данных нет): показываем пояснение.
+  if (coaches === undefined) {
+    return (
+      <Box sx={{ p: 3, borderRadius: 3, border: '1px dashed', borderColor: 'divider', textAlign: 'center', color: 'text.secondary' }}>
+        {title && <Typography component="h2" variant="h6" sx={{ fontFamily: '"Unbounded"', fontWeight: 800, color: 'text.primary', mb: 0.5 }}>{title}</Typography>}
+        <Typography variant="body2">Coaches of your club appear here automatically on the published site.</Typography>
+      </Box>
+    );
+  }
+  const list = coaches.slice(0, limit && limit > 0 ? limit : undefined);
+  if (!list.length) return null;   // нет видимых тренеров — блок не рендерится
+  return (
+    <Box>
+      {title && <Typography component="h2" variant="h4" sx={{ fontFamily: '"Unbounded"', fontWeight: 800, mb: subtitle ? 0.5 : 2 }}>{title}</Typography>}
+      {subtitle && <Typography color="text.secondary" sx={{ mb: 2.5, maxWidth: 640 }}>{subtitle}</Typography>}
+      {layout === 'list' ? (
+        <Stack spacing={1.5}>{list.map((c, i) => <CoachCard key={c.uuid || i} c={c} list />)}</Stack>
+      ) : (
+        <Grid container spacing={2.5}>
+          {list.map((c, i) => <Grid item xs={12} sm={6} md={4} key={c.uuid || i}><CoachCard c={c} /></Grid>)}
+        </Grid>
+      )}
+    </Box>
+  );
+};
 
 // Слайдер (карусель) — полноширинный, с автопрокруткой, стрелками и точками. Чистый React/MUI.
 const SliderView = ({ items, interval }: { items: BlockImage[]; interval?: number }) => {
@@ -69,7 +127,7 @@ const videoEmbed = (provider?: string, id?: string): string | null => {
 };
 
 /** Один блок. T — функция выбора языка для многоязычных полей. */
-const BlockView = ({ block, lng }: { block: SiteBlock; lng: string }) => {
+const BlockView = ({ block, lng, coaches }: { block: SiteBlock; lng: string; coaches?: PublicCoach[] }) => {
   const p = block.props || {};
   const txt = (v?: I18nText) => pickText(v, lng);
 
@@ -128,6 +186,8 @@ const BlockView = ({ block, lng }: { block: SiteBlock; lng: string }) => {
     }
     case 'slider':
       return <SliderView items={p.items || []} interval={p.interval} />;
+    case 'coaches':
+      return <CoachesBlock title={txt(p.title)} subtitle={txt(p.subtitle)} layout={p.layout || 'grid'} limit={Number(p.limit) || 0} coaches={coaches || []} />;
     case 'banner': {
       const bg = imgSrc(p.bg);
       return (
@@ -163,15 +223,15 @@ const BlockView = ({ block, lng }: { block: SiteBlock; lng: string }) => {
   }
 };
 
-/** Рендер страницы клуба из массива блоков. */
-export const PageRenderer = ({ blocks, maxWidth = 820 }: { blocks: SiteBlock[]; maxWidth?: number }) => {
+/** Рендер страницы клуба из массива блоков. coaches — живой список тренеров клуба (для блока coaches). */
+export const PageRenderer = ({ blocks, maxWidth = 820, coaches }: { blocks: SiteBlock[]; maxWidth?: number; coaches?: PublicCoach[] }) => {
   const { i18n } = useTranslation();
   const lng = i18n.language || 'en';
   if (!blocks || !blocks.length) return null;
   return (
     <Box sx={{ maxWidth, mx: 'auto', px: { xs: 2, md: 3 }, py: { xs: 4, md: 6 } }}>
       <Stack spacing={{ xs: 3, md: 4 }}>
-        {blocks.map((b, idx) => <BlockView key={b.id || idx} block={b} lng={lng} />)}
+        {blocks.map((b, idx) => <BlockView key={b.id || idx} block={b} lng={lng} coaches={coaches} />)}
       </Stack>
     </Box>
   );

@@ -171,7 +171,7 @@ export const ClubSitePage = () => {
           <Typography component="h1" variant="h3" sx={{ fontFamily: '"Unbounded"', fontWeight: 800, mb: 1 }}>
             {currentPage?.title || t(currentMeta?.labelKey || '', currentMeta?.fallback || '')}
           </Typography>
-          {currentPage ? <PageRenderer blocks={currentPage.blocks} maxWidth={980} /> : (
+          {currentPage ? <PageRenderer blocks={currentPage.blocks} maxWidth={980} coaches={coaches} /> : (
             <Typography color="text.secondary" sx={{ mt: 2 }}>{t('clubSite.pageEmpty', 'This page has no content yet.')}</Typography>
           )}
         </Box>
@@ -218,7 +218,7 @@ export const ClubSitePage = () => {
       </Box>
 
       {/* Кастомная страница home из блоков (шаг 3): показывается, если владелец её опубликовал. */}
-      {pages.home && <PageRenderer blocks={pages.home.blocks} />}
+      {pages.home && <PageRenderer blocks={pages.home.blocks} coaches={coaches} />}
 
       {/* Тренеры */}
       {coaches.length > 0 && (

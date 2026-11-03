@@ -26,6 +26,7 @@ const BLOCK_TYPES: Array<{ type: BlockType; labelKey: string; fallback: string }
   { type: 'photo', labelKey: 'site.block.photo', fallback: 'Photo' },
   { type: 'gallery', labelKey: 'site.block.gallery', fallback: 'Gallery' },
   { type: 'slider', labelKey: 'site.block.slider', fallback: 'Slider' },
+  { type: 'coaches', labelKey: 'site.block.coaches', fallback: 'Coaches' },
   { type: 'banner', labelKey: 'site.block.banner', fallback: 'Banner' },
   { type: 'divider', labelKey: 'site.block.divider', fallback: 'Divider' },
 ];
@@ -38,6 +39,7 @@ const EMPTY_PROPS: Record<BlockType, SiteBlock['props']> = {
   photo: { url: '', alt: '', caption: i18nAll('') },
   gallery: { items: [] },
   slider: { items: [], interval: 5 },
+  coaches: { title: i18nAll('Our coaches'), subtitle: i18nAll(''), layout: 'grid', limit: 0 },
   banner: { bgColor: '#2B50E0', title: i18nAll(''), subtitle: i18nAll(''), buttonLabel: i18nAll(''), buttonUrl: '' },
   video: { provider: 'youtube', videoId: '' },
 };
@@ -160,6 +162,26 @@ export const SiteBlockEditor = ({ blocks, onChange }: Props) => {
           </Stack>
         );
       }
+      case 'coaches':
+        return (
+          <Stack spacing={1.5}>
+            <Typography variant="body2" color="text.secondary">{t('site.coaches.hint', 'Shows your club coaches automatically — add coaches and fill their profiles; they appear here on the published site.')}</Typography>
+            <TextField label={t('site.f.title', 'Title')} fullWidth value={pickText(b.props.title, lng)} onChange={(e) => patch(i, { title: i18nAll(e.target.value) })} />
+            <TextField label={t('site.f.subtitle', 'Subtitle')} fullWidth value={pickText(b.props.subtitle, lng)} onChange={(e) => patch(i, { subtitle: i18nAll(e.target.value) })} />
+            <Stack direction="row" spacing={1.5}>
+              <Select size="small" value={b.props.layout ?? 'grid'} onChange={(e) => patch(i, { layout: e.target.value as 'grid' | 'list' })}>
+                <MenuItem value="grid">{t('site.coaches.grid', 'Grid')}</MenuItem>
+                <MenuItem value="list">{t('site.coaches.list', 'List')}</MenuItem>
+              </Select>
+              <Select size="small" value={b.props.limit ?? 0} onChange={(e) => patch(i, { limit: Number(e.target.value) })}>
+                <MenuItem value={0}>{t('site.coaches.all', 'All')}</MenuItem>
+                <MenuItem value={3}>3</MenuItem>
+                <MenuItem value={6}>6</MenuItem>
+                <MenuItem value={9}>9</MenuItem>
+              </Select>
+            </Stack>
+          </Stack>
+        );
       case 'banner':
         return (
           <Stack spacing={1.5}>
