@@ -171,7 +171,7 @@ export const ClubSitePage = () => {
           <Typography component="h1" variant="h3" sx={{ fontFamily: '"Unbounded"', fontWeight: 800, mb: 1 }}>
             {currentPage?.title || t(currentMeta?.labelKey || '', currentMeta?.fallback || '')}
           </Typography>
-          {currentPage ? <PageRenderer blocks={currentPage.blocks} maxWidth={980} coaches={coaches} /> : (
+          {currentPage ? <PageRenderer blocks={currentPage.blocks} maxWidth={980} coaches={coaches} clubSlug={club.slug} /> : (
             <Typography color="text.secondary" sx={{ mt: 2 }}>{t('clubSite.pageEmpty', 'This page has no content yet.')}</Typography>
           )}
         </Box>
@@ -218,7 +218,7 @@ export const ClubSitePage = () => {
       </Box>
 
       {/* Кастомная страница home из блоков (шаг 3): показывается, если владелец её опубликовал. */}
-      {pages.home && <PageRenderer blocks={pages.home.blocks} coaches={coaches} />}
+      {pages.home && <PageRenderer blocks={pages.home.blocks} coaches={coaches} clubSlug={club.slug} />}
 
       {/* Тренеры */}
       {coaches.length > 0 && (
@@ -228,7 +228,10 @@ export const ClubSitePage = () => {
           <Grid container spacing={2.5}>
             {coaches.map((c, i) => (
               <Grid item xs={12} sm={6} md={4} key={i}>
-                <Paper sx={{ p: 2.5, borderRadius: 4, border: '1px solid', borderColor: 'divider', height: '100%', display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                <Paper
+                  {...(c.uuid ? { component: RouterLink, to: `/c/${club.slug}/coaches/${c.uuid}` } : {})}
+                  sx={{ p: 2.5, borderRadius: 4, border: '1px solid', borderColor: 'divider', height: '100%', display: 'flex', flexDirection: 'column', gap: 1.5, textDecoration: 'none', color: 'inherit', ...(c.uuid ? { transition: 'box-shadow .15s, border-color .15s', '&:hover': { borderColor: accent, boxShadow: 3 } } : {}) }}
+                >
                   <Stack direction="row" spacing={1.75} alignItems="center">
                     <Avatar src={c.photoUrl || undefined} sx={{ width: 52, height: 52, bgcolor: `${accent}1A`, color: accent, fontWeight: 700 }}>{initials(c.name)}</Avatar>
                     <Box sx={{ minWidth: 0 }}>
