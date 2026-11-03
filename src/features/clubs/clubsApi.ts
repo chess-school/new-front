@@ -60,3 +60,15 @@ export interface ClubPublic {
 /** Публичная витрина клуба для сайта /c/<slug> */
 export const fetchClubBySlug = async (slug: string): Promise<ClubPublic> =>
   (await api.get(`/clubs/by-slug/${encodeURIComponent(slug)}`, { silent: true })).data.data;
+
+export interface PublicCoachProfile {
+  club: { name: string; slug: string; city: string; primaryColor: string | null; logoUrl: string | null };
+  coach: {
+    uuid: string; name: string; photoUrl: string | null; headline: string; bio: string;
+    tags: string[]; title: string | null; rating: { standard?: number; rapid?: number; blitz?: number } | null;
+  };
+}
+
+/** Публичный профиль одного тренера клуба (/c/<slug>/coaches/<uuid>) */
+export const fetchClubCoach = async (slug: string, uuid: string): Promise<PublicCoachProfile> =>
+  (await api.get(`/clubs/by-slug/${encodeURIComponent(slug)}/coaches/${encodeURIComponent(uuid)}`, { silent: true })).data.data;

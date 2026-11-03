@@ -40,6 +40,7 @@ const ClubSettingsPage = lazy(() => import('./features/console/ClubSettingsPage'
 const MediaLibraryPage = lazy(() => import('./features/console/MediaLibraryPage'));
 const ClubSitePagesPage = lazy(() => import('./features/console/ClubSitePagesPage'));
 const ClubSitePage = lazy(() => import('./pages/club-site/club-site-page'));
+const CoachProfilePage = lazy(() => import('./pages/club-site/coach-profile-page'));
 import { GroupsPage } from './pages/groups-page/groups-page';
 import { NotFoundPage } from '@/pages/not-found/NotFoundPage';
 import { SEOHead } from '@/shared/components/seo/SEOHead';
@@ -62,6 +63,7 @@ function MainLayout() {
       <Route path="/pricing" element={<PricingPage />} />
       <Route path="/create-club" element={<CreateClubPage />} />
       <Route path="/c/:slug" element={<ClubSitePage />} />
+      <Route path="/c/:slug/coaches/:uuid" element={<CoachProfilePage />} />
       <Route path="/c/:slug/:page" element={<ClubSitePage />} />
       <Route path="/about" element={<><SEOHead {...SEO_ROUTES['/about']} /><About /></>} />
       <Route path="/achievements" element={<><SEOHead {...SEO_ROUTES['/achievements']} /><Achievements /></>} />
