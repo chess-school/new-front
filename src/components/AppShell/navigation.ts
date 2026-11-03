@@ -136,6 +136,7 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { key: 'clubSettings', labelKey: 'nav.clubSettings', fallback: 'Club settings', to: '/club/settings', icon: 'settings', audience: 'coach', isActive: startsWith('/club/settings') },
       { key: 'clubWebsite', labelKey: 'nav.clubWebsite', fallback: 'Website', to: '/club/site', icon: 'website', audience: 'coach', isActive: startsWith('/club/site') },
+      { key: 'clubLeads', labelKey: 'nav.clubLeads', fallback: 'Leads', to: '/club/leads', icon: 'inbox', audience: 'coach', isActive: startsWith('/club/leads') },
       { key: 'clubMedia', labelKey: 'nav.clubMedia', fallback: 'Media library', to: '/club/media', icon: 'media', audience: 'coach', isActive: startsWith('/club/media') },
       { key: 'publicClub', labelKey: 'nav.publicClub', fallback: 'Public club page', to: '/', icon: 'public', audience: 'coach', external: true },
     ],
