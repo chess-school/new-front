@@ -11,7 +11,7 @@ export interface BlockImage { assetId?: string; url?: string; alt?: string }
 
 export interface SiteBlock {
   id?: string;
-  type: 'heading' | 'text' | 'quote' | 'divider' | 'photo' | 'gallery' | 'banner' | 'video' | 'slider';
+  type: 'heading' | 'text' | 'quote' | 'divider' | 'photo' | 'gallery' | 'banner' | 'video' | 'slider' | 'coaches';
   // props зависят от type; описываем объединением известных полей (все опциональны).
   props: {
     text?: I18nText;
@@ -36,6 +36,9 @@ export interface SiteBlock {
     // video
     provider?: 'youtube' | 'vimeo';
     videoId?: string;
+    // coaches
+    layout?: 'grid' | 'list';
+    limit?: number;
   };
 }
 
