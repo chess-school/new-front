@@ -24,6 +24,7 @@ export interface SiteSettings {
   footer: { text: string; legalName: string; links: SiteLink[] };
   socials: Partial<Record<'facebook' | 'instagram' | 'twitter' | 'youtube' | 'telegram', string>>;
   menu: SiteMenuItem[];
+  theme: { mode: 'light' | 'dark' };
 }
 
 /** Нейтральные дефолты платформы — пока бэк не ответил (и как fallback при ошибке). */
@@ -40,6 +41,7 @@ export const PLATFORM_SITE: SiteSettings = {
   footer: { text: '', legalName: 'debiut', links: [] },
   socials: {},
   menu: [],
+  theme: { mode: 'light' },
 };
 
 /** Загрузить настройки сайта. slug — для публичного сайта клуба /c/<slug> и окна входа /login?club=<slug>.
@@ -58,6 +60,7 @@ export interface SiteSettingsInput {
   auth?: { promoTitle?: string; promoSubtitle?: string; backgroundUrl?: string; buttonColor?: string; facts?: SiteFact[] };
   footer?: { text?: string; legalName?: string };
   socials?: Partial<Record<'facebook' | 'instagram' | 'twitter' | 'youtube' | 'telegram', string>>;
+  theme?: { mode?: 'light' | 'dark' };
 }
 
 export interface AdminSiteData {

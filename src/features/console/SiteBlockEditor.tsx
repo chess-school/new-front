@@ -25,6 +25,7 @@ const BLOCK_TYPES: Array<{ type: BlockType; labelKey: string; fallback: string }
   { type: 'quote', labelKey: 'site.block.quote', fallback: 'Quote' },
   { type: 'photo', labelKey: 'site.block.photo', fallback: 'Photo' },
   { type: 'gallery', labelKey: 'site.block.gallery', fallback: 'Gallery' },
+  { type: 'slider', labelKey: 'site.block.slider', fallback: 'Slider' },
   { type: 'banner', labelKey: 'site.block.banner', fallback: 'Banner' },
   { type: 'divider', labelKey: 'site.block.divider', fallback: 'Divider' },
 ];
@@ -36,6 +37,7 @@ const EMPTY_PROPS: Record<BlockType, SiteBlock['props']> = {
   divider: {},
   photo: { url: '', alt: '', caption: i18nAll('') },
   gallery: { items: [] },
+  slider: { items: [], interval: 5 },
   banner: { bgColor: '#2B50E0', title: i18nAll(''), subtitle: i18nAll(''), buttonLabel: i18nAll(''), buttonUrl: '' },
   video: { provider: 'youtube', videoId: '' },
 };
@@ -129,6 +131,32 @@ export const SiteBlockEditor = ({ blocks, onChange }: Props) => {
             <Button size="small" startIcon={<PhotoLibraryRoundedIcon />} onClick={() => openPicker((url) => patch(i, { items: [...items, { url }] }))} sx={{ alignSelf: 'flex-start' }}>
               {t('site.gallery.add', 'Add image')}
             </Button>
+          </Stack>
+        );
+      }
+      case 'slider': {
+        const items = b.props.items ?? [];
+        return (
+          <Stack spacing={1.5}>
+            <Typography variant="body2" color="text.secondary">{t('site.slider.hint', 'A full-width image carousel that auto-advances.')}</Typography>
+            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+              {items.map((it, k) => (
+                <Box key={k} sx={{ position: 'relative' }}>
+                  <Box component="img" src={mediaUrl(it.url || '')} alt="" sx={{ width: 84, height: 84, objectFit: 'cover', borderRadius: 1.5, border: '1px solid', borderColor: 'divider' }} />
+                  <IconButton size="small" onClick={() => patch(i, { items: items.filter((_, x) => x !== k) })} sx={{ position: 'absolute', top: -8, right: -8, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider' }}>
+                    <DeleteOutlineRoundedIcon fontSize="small" />
+                  </IconButton>
+                </Box>
+              ))}
+            </Stack>
+            <Stack direction="row" spacing={1.5} alignItems="center">
+              <Button size="small" startIcon={<PhotoLibraryRoundedIcon />} onClick={() => openPicker((url) => patch(i, { items: [...items, { url }] }))}>
+                {t('site.slider.add', 'Add slide')}
+              </Button>
+              <TextField type="number" size="small" label={t('site.f.interval', 'Seconds per slide')} value={b.props.interval ?? 5}
+                onChange={(e) => patch(i, { interval: Math.max(2, Math.min(15, Number(e.target.value) || 5)) })}
+                sx={{ width: 160 }} inputProps={{ min: 2, max: 15 }} />
+            </Stack>
           </Stack>
         );
       }

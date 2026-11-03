@@ -11,7 +11,7 @@ export interface BlockImage { assetId?: string; url?: string; alt?: string }
 
 export interface SiteBlock {
   id?: string;
-  type: 'heading' | 'text' | 'quote' | 'divider' | 'photo' | 'gallery' | 'banner' | 'video';
+  type: 'heading' | 'text' | 'quote' | 'divider' | 'photo' | 'gallery' | 'banner' | 'video' | 'slider';
   // props зависят от type; описываем объединением известных полей (все опциональны).
   props: {
     text?: I18nText;
@@ -23,8 +23,9 @@ export interface SiteBlock {
     assetId?: string;
     url?: string;
     alt?: string;
-    // gallery
+    // gallery / slider
     items?: BlockImage[];
+    interval?: number;   // slider: секунд между слайдами
     // banner
     bg?: BlockImage;
     bgColor?: string;
