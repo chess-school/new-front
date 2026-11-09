@@ -187,7 +187,7 @@ export const ClassroomPage: React.FC = () => {
   const annotSquares = useMemo(() => annotationSquareStyles(annotations), [annotations]);
   // Подсветка поля-подсказки в режиме решения (над аннотациями)
   const solveSquareStyles = useMemo(() => (
-    solve?.hintAt ? { ...annotSquares, [solve.hintAt]: { boxShadow: 'inset 0 0 0 4px rgba(229,184,73,0.9)' } } : annotSquares
+    solve?.hintAt ? { ...annotSquares, [solve.hintAt]: { boxShadow: 'inset 0 0 0 4px rgba(43,80,224,0.9)' } } : annotSquares
   ), [annotSquares, solve?.hintAt]);
   const customArrows = useMemo<Arrow[]>(() => [...boardArrows, ...annotArrows], [boardArrows, annotArrows]);
   // react-chessboard дёргает onArrowsChange один раз при монтировании с [] — не затираем им аннотации

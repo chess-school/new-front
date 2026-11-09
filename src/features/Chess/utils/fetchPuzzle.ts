@@ -21,7 +21,7 @@ export const fetchPuzzleForRun = async (
         source,
         exclude,
         ...(w === null ? {} : { minRating: Math.max(0, rating - w), maxRating: Math.min(4000, rating + w) }),
-      });
+      }, { silent: true });
     } catch (e) {
       if ((e as AxiosError).response?.status !== 404) throw e;
     }
