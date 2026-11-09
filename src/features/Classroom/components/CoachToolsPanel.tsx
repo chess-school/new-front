@@ -81,9 +81,9 @@ const DARK_MENU_PROPS = {
       '& .MuiMenuItem-root': {
         color: '#f0f6fc',
         whiteSpace: 'normal',
-        '&:hover': { bgcolor: 'rgba(229,184,73,0.14)' },
-        '&.Mui-selected': { bgcolor: 'rgba(229,184,73,0.22)' },
-        '&.Mui-selected:hover': { bgcolor: 'rgba(229,184,73,0.30)' },
+        '&:hover': { bgcolor: 'rgba(76,111,255,0.16)' },
+        '&.Mui-selected': { bgcolor: 'rgba(76,111,255,0.26)' },
+        '&.Mui-selected:hover': { bgcolor: 'rgba(76,111,255,0.34)' },
       },
     },
   },
@@ -93,7 +93,7 @@ const DARK_MENU_PROPS = {
 const DARK_FIELD_SX = {
   '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(240,246,252,0.18)' },
   '&:hover .MuiOutlinedInput-root:not(.Mui-focused) .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(240,246,252,0.30)' },
-  '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#E5B849' },
+  '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#6B88FF' },
 };
 
 export interface CoachEngineBinding {
