@@ -84,7 +84,7 @@ const SquareCell: React.FC<SquareCellProps> = ({
 }) => {
   const bg = highlight === 'correct' ? '#2E7D32'
     : highlight === 'wrong' ? '#C62828'
-    : highlight === 'ask' ? '#B8860B'
+    : highlight === 'ask' ? '#2B50E0'
     : dark ? DARK : LIGHT;
   return (
     <Box

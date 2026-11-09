@@ -583,7 +583,7 @@ ${text.trim()}` : text.trim();
     <PageContainer dense>
       {topBar}
       {/* Светлая подложка-«сцена» — доска парит на ней, а не на почти чёрном фоне */}
-      <Box sx={{ borderRadius: 4, p: { xs: 1.5, md: 3 }, background: 'linear-gradient(180deg, #1C2430 0%, #141A24 100%)', border: '1px solid', borderColor: 'rgba(255,255,255,0.05)' }}>
+      <Box sx={{ borderRadius: 4, p: { xs: 1.5, md: 3 }, background: (t) => t.palette.mode === 'dark' ? 'linear-gradient(180deg, #1C2430 0%, #141A24 100%)' : 'linear-gradient(180deg, #EEF2F8 0%, #E2E8F2 100%)', border: '1px solid', borderColor: (t) => t.palette.mode === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(16,24,40,0.08)' }}>
       {analysisMode ? (
         // Разбор: доска разбора сама раскладывает арену; тренеру — список задач доп. вкладкой
         <AnalysisBoard

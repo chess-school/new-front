@@ -270,7 +270,7 @@ const Conversation: React.FC<{ room: ChatRoom }> = ({ room }) => {
           maxWidth: '82%', px: 1.5, py: 0.75, borderRadius: 2.5,
           borderBottomRightRadius: mine ? 6 : undefined, borderBottomLeftRadius: mine ? undefined : 6,
           bgcolor: mine ? tokens.accent.goldSoft : 'surface.raised',
-          border: 1, borderColor: mine ? 'rgba(138,43,43,0.28)' : 'divider',
+          border: 1, borderColor: mine ? 'rgba(43, 80, 224,0.28)' : 'divider',
           opacity: m.status === 'pending' ? 0.75 : 1,
         }}>
           <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', lineHeight: 1.45 }}>{m.text}</Typography>

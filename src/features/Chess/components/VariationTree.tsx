@@ -48,7 +48,7 @@ export const VariationTree: React.FC<VariationTreeProps> = ({ tree, currentId, o
           fontWeight: active ? 700 : opts.cell ? 500 : 400,
           color: active ? 'primary.main' : 'text.primary',
           bgcolor: active ? tokens.accent.goldSoft : 'transparent',
-          boxShadow: active ? 'inset 0 0 0 1px rgba(138,43,43,0.35)' : 'none',
+          boxShadow: active ? 'inset 0 0 0 1px rgba(43, 80, 224,0.35)' : 'none',
           '&:hover': { bgcolor: active ? tokens.accent.goldSoft : 'action.hover' },
         }}
       >
