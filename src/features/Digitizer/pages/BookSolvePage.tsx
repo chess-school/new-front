@@ -423,7 +423,7 @@ ${text.trim()}` : text.trim();
       : (blackName || t('digitizer.solve.black', { defaultValue: 'Black' }));
     return (
       <Stack direction="row" alignItems="center" spacing={1} sx={{ px: 0.5, py: 0.25, minWidth: 0 }}>
-        <Box sx={{ width: 13, height: 13, borderRadius: '50%', flexShrink: 0, bgcolor: color === 'white' ? '#EADECA' : '#1A1A1A', border: '1px solid', borderColor: 'rgba(255,255,255,0.3)' }} />
+        <Box sx={{ width: 13, height: 13, borderRadius: '50%', flexShrink: 0, bgcolor: color === 'white' ? '#EADECA' : '#1A1A1A', border: '1px solid', borderColor: 'divider' }} />
         <Typography variant="body2" noWrap sx={{ fontWeight: 700, minWidth: 0 }}>{name}</Typography>
       </Stack>
     );

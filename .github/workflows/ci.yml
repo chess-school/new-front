@@ -1,0 +1,34 @@
+name: CI (lint + tests + a11y + build)
+
+# Гейт качества фронта: eslint, vitest (включая axe-core a11y-прогон ключевых
+# экранов в обеих темах) и прод-сборку. Ловит регрессии до зеркала/деплоя.
+on:
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [dev]
+
+jobs:
+  quality-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Tests (vitest + axe-core a11y)
+        run: npm test
+
+      - name: Build
+        run: npm run build

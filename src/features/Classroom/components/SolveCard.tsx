@@ -74,7 +74,7 @@ export const SolveCard: React.FC<SolveCardProps> = ({ solve, canControl, isCoach
         </Stack>
       ) : (
         <Box sx={{ mb: 1 }}>
-          <LinearProgress variant="determinate" value={movesTotal ? (movesDone / movesTotal) * 100 : 0} sx={{ borderRadius: 1, height: 6 }} />
+          <LinearProgress variant="determinate" aria-label={t('classroom.solve.progress', { defaultValue: 'Moves found' })} value={movesTotal ? (movesDone / movesTotal) * 100 : 0} sx={{ borderRadius: 1, height: 6 }} />
           <Typography variant="caption" color="text.secondary">
             {t('classroom.solve.progress', { defaultValue: 'Moves found' })}: {movesDone}/{movesTotal}
           </Typography>
