@@ -11,6 +11,7 @@ import { PageRenderer } from '@/features/site/PageRenderer';
 import { useSiteSettings } from '@/features/site/SiteSettingsContext';
 import { SEOHead } from '@/shared/components/seo/SEOHead';
 import { buildTheme } from '@/theme/theme';
+import { TrialRequestForm } from '@/features/leads/TrialRequestForm';
 
 const DEFAULT_ACCENT = '#2B50E0';
 // Публичный сайт клуба использует ТЕМУ БРЕНДА, выбранную владельцем (светлая по умолчанию),
@@ -44,6 +45,8 @@ export const ClubSitePage = () => {
   const [state, setState] = useState<'loading' | 'ok' | 'notfound'>('loading');
   // Опубликованные страницы клуба из блоков (шаг 3/4). Ключ — slug, значение — страница или null.
   const [pages, setPages] = useState<Record<string, SitePage | null>>({});
+  // Форма «Записаться на пробное» — главный лид-канал сайта клуба (доступен независимо от тренеров).
+  const [trialOpen, setTrialOpen] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -133,7 +136,7 @@ export const ClubSitePage = () => {
           ) : (
             <Stack direction="row" spacing={1}>
               <Button component={RouterLink} to="/login" color="inherit" sx={{ color: 'text.primary', fontWeight: 600, display: { xs: 'none', sm: 'inline-flex' } }}>{t('clubSite.login', 'Log in')}</Button>
-              <Button component={RouterLink} to={`/register?club=${club.slug}`} variant="contained" sx={{ bgcolor: accent, color: ink, borderRadius: 2.5, '&:hover': { bgcolor: accent, filter: 'brightness(0.95)' } }}>{t('clubSite.join', 'Join the club')}</Button>
+              <Button onClick={() => setTrialOpen(true)} variant="contained" sx={{ bgcolor: accent, color: ink, borderRadius: 2.5, '&:hover': { bgcolor: accent, filter: 'brightness(0.95)' } }}>{t('clubSite.bookTrial', 'Book a trial')}</Button>
             </Stack>
           )}
         </Box>
@@ -194,14 +197,18 @@ export const ClubSitePage = () => {
                 {t('clubSite.enter', 'Open my account')}
               </Button>
             ) : (
-              <Button size="large" component={RouterLink} to={`/register?club=${club.slug}`} endIcon={<ArrowForwardRoundedIcon />} variant="contained" sx={{ bgcolor: accent, color: ink, px: 4, py: 1.5, borderRadius: 3, '&:hover': { bgcolor: accent, filter: 'brightness(0.95)' } }}>
-                {t('clubSite.join', 'Join the club')}
+              <Button size="large" onClick={() => setTrialOpen(true)} endIcon={<ArrowForwardRoundedIcon />} variant="contained" sx={{ bgcolor: accent, color: ink, px: 4, py: 1.5, borderRadius: 3, '&:hover': { bgcolor: accent, filter: 'brightness(0.95)' } }}>
+                {t('clubSite.bookTrial', 'Book a trial')}
               </Button>
             )}
-            {/* Вторичный CTA — к реальному разделу этого сайта, а не на /puzzles за логином. */}
-            {coaches.length > 0 && (
+            {/* Вторичный CTA: знакомство с тренерами, иначе — вступление в клуб (регистрация). */}
+            {coaches.length > 0 ? (
               <Button size="large" component="a" href="#coaches" variant="outlined" color="inherit" sx={{ px: 4, py: 1.5, borderRadius: 3, color: 'text.primary', borderColor: 'divider' }}>
                 {t('clubSite.meetCoaches', 'Meet the coaches')}
+              </Button>
+            ) : !membership && (
+              <Button size="large" component={RouterLink} to={`/register?club=${club.slug}`} variant="outlined" color="inherit" sx={{ px: 4, py: 1.5, borderRadius: 3, color: 'text.primary', borderColor: 'divider' }}>
+                {t('clubSite.join', 'Join the club')}
               </Button>
             )}
           </Stack>
@@ -272,6 +279,8 @@ export const ClubSitePage = () => {
           )}
         </Box>
       </Box>
+
+      <TrialRequestForm open={trialOpen} onClose={() => setTrialOpen(false)} slug={club.slug} />
     </Box>
     </ThemeProvider>
   );

@@ -17,9 +17,9 @@ interface AnalysisPanelProps {
 /** Цвет оценки: перевес белых — светлый, чёрных — мягкий красный, равенство — янтарный */
 const evalColor = (evaluation: string | null) => {
   if (!evaluation) return 'text.secondary';
-  if (evaluation.startsWith('-')) return tokens.accent.red;
+  if (evaluation.startsWith('-')) return 'error.main';
   if (evaluation === '0.00') return tokens.accent.gold;
-  return tokens.text.primary;
+  return 'text.primary';
 };
 
 export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({

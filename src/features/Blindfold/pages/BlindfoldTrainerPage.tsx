@@ -108,12 +108,12 @@ const SquareCell: React.FC<SquareCellProps> = ({
     >
       {/* координаты в углах */}
       {showFileLabel && (
-        <Box component="span" sx={{ position: 'absolute', right: 3, bottom: 1, fontSize: 10, opacity: 0.7, color: dark ? LIGHT : DARK }}>
+        <Box component="span" sx={{ position: 'absolute', right: 3, bottom: 1, fontSize: 10, opacity: highlight ? 0.95 : 0.7, color: highlight ? '#fff' : (dark ? LIGHT : DARK) }}>
           {showFileLabel}
         </Box>
       )}
       {showRankLabel && (
-        <Box component="span" sx={{ position: 'absolute', left: 3, top: 1, fontSize: 10, opacity: 0.7, color: dark ? LIGHT : DARK }}>
+        <Box component="span" sx={{ position: 'absolute', left: 3, top: 1, fontSize: 10, opacity: highlight ? 0.95 : 0.7, color: highlight ? '#fff' : (dark ? LIGHT : DARK) }}>
           {showRankLabel}
         </Box>
       )}
