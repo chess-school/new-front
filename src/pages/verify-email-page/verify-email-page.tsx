@@ -99,7 +99,7 @@ export const VerifyEmailPage: React.FC = () => {
   return (
     <Box sx={{ px: 2, py: { xs: 4, md: 8 }, display: 'flex', justifyContent: 'center' }}>
     <Paper sx={{ textAlign: 'center', p: { xs: 3, sm: 5 }, maxWidth: 560, width: '100%', borderRadius: 4 }}>
-      <Box sx={{ width: 64, height: 64, mx: 'auto', mb: 2.5, borderRadius: '50%', display: 'grid', placeItems: 'center', bgcolor: 'rgba(138,43,43,0.12)', color: 'primary.main' }}>
+      <Box sx={{ width: 64, height: 64, mx: 'auto', mb: 2.5, borderRadius: '50%', display: 'grid', placeItems: 'center', bgcolor: 'rgba(43, 80, 224,0.12)', color: 'primary.main' }}>
         {isPolling || (token && !successMessage && !errorMessage) ? <CircularProgress size={28} /> : <MarkEmailUnreadRoundedIcon />}
       </Box>
       <Typography variant="h4" gutterBottom>

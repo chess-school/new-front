@@ -16,7 +16,7 @@ export const MyCoachWidget: React.FC<MyCoachWidgetProps> = ({ coach, isLoading }
   if (!coach) return null;
 
   return (
-    <Paper component={RouterLink} to={`/profile/${coach._id}`} sx={{ p: 2, color: 'text.primary', height: '100%', display: 'block', textDecoration: 'none', transition: 'transform 0.2s, border-color 0.2s', '&:hover': { transform: 'translateY(-2px)', borderColor: 'rgba(138,43,43,0.35)' } }}>
+    <Paper component={RouterLink} to={`/profile/${coach._id}`} sx={{ p: 2, color: 'text.primary', height: '100%', display: 'block', textDecoration: 'none', transition: 'transform 0.2s, border-color 0.2s', '&:hover': { transform: 'translateY(-2px)', borderColor: 'rgba(43, 80, 224,0.35)' } }}>
       <Stack direction="row" spacing={2} alignItems="center">
         <Avatar src={getAvatarUrl(coach._id)} sx={{ width: 56, height: 56 }}/>
         <Box>

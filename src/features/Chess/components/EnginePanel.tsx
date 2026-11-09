@@ -20,7 +20,7 @@ interface EnginePanelProps {
 const scoreColor = (line: Pick<EngineLine, 'scoreCp' | 'mate'> | undefined) => {
   if (!line) return 'text.secondary';
   const negative = line.mate !== undefined ? line.mate < 0 : (line.scoreCp ?? 0) < 0;
-  return negative ? tokens.accent.red : tokens.text.primary;
+  return negative ? 'error.main' : 'text.primary';
 };
 
 /** Оценка позиции и лучшие линии движка */

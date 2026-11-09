@@ -92,7 +92,7 @@ export const MyGamesPage: React.FC = () => {
                 sx={{
                   p: { xs: 1.5, sm: 2 }, display: 'flex', alignItems: 'center', gap: { xs: 1.5, sm: 2 }, cursor: 'pointer',
                   transition: 'border-color .15s ease, transform .15s ease',
-                  '&:hover': { borderColor: 'rgba(138,43,43,0.35)', transform: 'translateY(-1px)' },
+                  '&:hover': { borderColor: 'rgba(43, 80, 224,0.35)', transform: 'translateY(-1px)' },
                 }}
               >
                 <Box sx={{

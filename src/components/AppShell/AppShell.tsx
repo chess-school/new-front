@@ -366,10 +366,10 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
       <Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
         <AppBar position="sticky" sx={{
           top: 0, zIndex: (th) => th.zIndex.appBar,
-          // Фирменная золотая градиентная hairline сверху
+          // Фирменная синяя градиентная hairline сверху
           '&::before': {
             content: '""', position: 'absolute', top: 0, left: 0, right: 0, height: 2,
-            background: 'linear-gradient(90deg, transparent, rgba(138,43,43,0.7) 35%, rgba(240,198,90,0.9) 50%, rgba(138,43,43,0.7) 65%, transparent)',
+            background: 'linear-gradient(90deg, transparent, rgba(43, 80, 224,0.7) 35%, rgba(93, 135, 255,0.95) 50%, rgba(43, 80, 224,0.7) 65%, transparent)',
           },
         }}>
           <Toolbar sx={{ gap: 1, minHeight: { xs: 56, lg: 60 }, px: { xs: 1.5, sm: 2.5 } }}>

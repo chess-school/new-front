@@ -48,7 +48,7 @@ export const CoachesBlock = () => {
                   height: '100%',
                   display: 'flex',
                   flexDirection: 'column',
-                  '&:hover': { borderColor: 'rgba(138,43,43,0.35)', transform: 'translateY(-4px)', boxShadow: '0 16px 32px rgba(0,0,0,0.35)' },
+                  '&:hover': { borderColor: 'rgba(43, 80, 224,0.35)', transform: 'translateY(-4px)', boxShadow: '0 16px 32px rgba(0,0,0,0.35)' },
                 }}
               >
                 <CardMedia
@@ -73,7 +73,7 @@ export const CoachesBlock = () => {
                       variant="outlined"
                       icon={<WorkspacePremiumRoundedIcon sx={{ fontSize: 16 }} />}
                       label={t("homePage.coaches.experienceYears", { count: coach.experience, defaultValue: "{{count}} yrs experience" })}
-                      sx={{ mt: 1.25, color: 'primary.main', borderColor: 'rgba(138,43,43,0.35)' }}
+                      sx={{ mt: 1.25, color: 'primary.main', borderColor: 'rgba(43, 80, 224,0.35)' }}
                     />
                   )}
                 </CardContent>

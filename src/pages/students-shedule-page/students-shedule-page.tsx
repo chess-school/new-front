@@ -126,7 +126,7 @@ const StudentSchedulePage: React.FC = () => {
                         onClick={() => (a.kind === 'puzzles' && a.puzzleBook)
                           ? navigate(`/books/${a.puzzleBook._id}/solve`)
                           : setSelectedAssignment(a)}
-                        sx={{ p: 1.5, cursor: 'pointer', bgcolor: 'surface.raised', transition: 'border-color .15s ease', '&:hover': { borderColor: 'rgba(138,43,43,0.4)' } }}
+                        sx={{ p: 1.5, cursor: 'pointer', bgcolor: 'surface.raised', transition: 'border-color .15s ease', '&:hover': { borderColor: 'rgba(43, 80, 224,0.4)' } }}
                       >
                         <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1}>
                           <Typography fontWeight="bold" noWrap>{a.title}</Typography>
@@ -161,7 +161,7 @@ const StudentSchedulePage: React.FC = () => {
                       key={lesson._id}
                       variant="outlined"
                       onClick={() => setSelectedLesson(lesson)}
-                      sx={{ p: 1.5, cursor: 'pointer', bgcolor: 'surface.raised', transition: 'border-color .15s ease', '&:hover': { borderColor: 'rgba(138,43,43,0.4)' } }}
+                      sx={{ p: 1.5, cursor: 'pointer', bgcolor: 'surface.raised', transition: 'border-color .15s ease', '&:hover': { borderColor: 'rgba(43, 80, 224,0.4)' } }}
                     >
                       <Typography fontWeight="bold">{lesson.title}</Typography>
                       <Typography variant="body2" color="text.secondary">{moment(lesson.date).format('LLL')}</Typography>

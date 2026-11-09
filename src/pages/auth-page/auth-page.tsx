@@ -41,11 +41,11 @@ export const AuthPage: React.FC = () => {
           ) : (
             <Box aria-hidden sx={{ width: 40, height: 40, borderRadius: 2, display: 'grid', placeItems: 'center', background: accent, color: '#fff', fontSize: 24, fontWeight: 800 }}>♞</Box>
           )}
-          <Typography variant="h6" sx={{ fontWeight: 700 }}>{brandName}</Typography>
+          <Typography variant="h6" sx={{ fontWeight: 700, color: '#F3F4F6' }}>{brandName}</Typography>
         </Stack>
 
         <Box sx={{ position: 'relative', zIndex: 2 }}>
-          <Typography variant="h2" sx={{ fontSize: { md: '3rem', lg: '3.6rem' }, lineHeight: 1.05 }}>
+          <Typography variant="h2" sx={{ fontSize: { md: '3rem', lg: '3.6rem' }, lineHeight: 1.05, color: '#F3F4F6' }}>
             {promoTitle}
           </Typography>
           <Typography sx={{ mt: 2.5, color: 'rgba(243,244,246,0.75)', fontSize: '1.1rem', maxWidth: 440, lineHeight: 1.6 }}>
@@ -58,7 +58,7 @@ export const AuthPage: React.FC = () => {
             {facts.map((s, i) => (
               <Box key={i}>
                 <Typography sx={{ fontFamily: '"Unbounded"', fontWeight: 800, fontSize: '1.6rem', color: 'primary.main', lineHeight: 1 }}>{s.value}</Typography>
-                <Typography variant="caption" color="text.secondary">{s.label}</Typography>
+                <Typography variant="caption" sx={{ color: 'rgba(243,244,246,0.6)' }}>{s.label}</Typography>
               </Box>
             ))}
           </Stack>
