@@ -18,7 +18,9 @@ interface GetRandomPuzzleParams {
  * Запрашивает случайную задачу с сервера.
  * @param params - Опциональные параметры для фильтрации по рейтингу и источнику.
  */
-export const getRandomPuzzle = async (params?: GetRandomPuzzleParams): Promise<IPuzzle> => {
-  const response = await axiosInstance.get('/puzzles/random', { params });
+export const getRandomPuzzle = async (params?: GetRandomPuzzleParams, opts?: { silent?: boolean }): Promise<IPuzzle> => {
+  // silent — для перебора рейтинг-окон в режимах на время: ожидаемый 404 не должен
+  // плодить глобальные тосты (страница сама покажет плашку «нет задач»).
+  const response = await axiosInstance.get('/puzzles/random', { params, silent: opts?.silent });
   return response.data.data;
 };

@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { Box, Typography, Stack } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { AuthForm } from '@/components/AuthForm';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher/LanguageSwitcher';
 import { useSiteSettings } from '@/features/site/SiteSettingsContext';
 import './styles.scss';
 
@@ -69,6 +70,15 @@ export const AuthPage: React.FC = () => {
 
       {/* Правая панель — форма на чистом фоне */}
       <Box className="auth-page-wrapper auth-page-wrapper--split">
+        {/* Переключатель языка — панель всегда тёмная, форсируем светлый текст независимо от темы */}
+        <Box sx={{
+          position: 'absolute', top: 16, right: 16, zIndex: 3, width: 150,
+          '& .MuiOutlinedInput-root': { color: '#F3F4F6' },
+          '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.3)' },
+          '& .MuiSvgIcon-root': { color: '#F3F4F6' },
+        }}>
+          <LanguageSwitcher />
+        </Box>
         <AuthForm mode={mode} />
       </Box>
     </Box>

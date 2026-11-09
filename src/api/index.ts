@@ -22,7 +22,7 @@ type ApiErrorData = { msg?: string; message?: string; detail?: string; data?: un
 
 const getIssueMessage = (error: AxiosError<ApiErrorData>, description: string) => {
   notification.error({
-    message: 'Ошибка', 
+    message: i18n.t('common.error', 'Error'),
     description,
   });
   return Promise.reject(error);
@@ -56,8 +56,8 @@ axiosInstance.interceptors.response.use(
 
     if (error.response?.status === 401) {
       notification.error({
-        message: 'Сессия истекла',
-        description: error.response?.data?.msg || error.response?.data?.message || 'Пожалуйста, войдите в систему снова.',
+        message: i18n.t('common.sessionExpired', 'Session expired'),
+        description: error.response?.data?.msg || error.response?.data?.message || i18n.t('common.pleaseLoginAgain', 'Please log in again.'),
       });
       
       localStorage.removeItem('token');
@@ -73,7 +73,7 @@ axiosInstance.interceptors.response.use(
 
     if (error.response?.status !== 504) { 
       if (error.message === 'Network Error' || !error.response) {
-        return getIssueMessage(error, 'Ошибка сети или сервер недоступен. Попробуйте позже.');
+        return getIssueMessage(error, i18n.t('common.networkError', 'Network error or the server is unavailable. Please try again later.'));
       }
       const data: unknown = error.response?.data;
       const message = typeof data === 'string' ? data : '';
@@ -89,7 +89,7 @@ axiosInstance.interceptors.response.use(
         return getIssueMessage(error, description);
       }
       notification.error({
-        message: 'Ошибка',
+        message: i18n.t('common.error', 'Error'),
         description: message || error.message,
       });
     }

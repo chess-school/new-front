@@ -101,7 +101,7 @@ const SquareCell: React.FC<SquareCellProps> = ({
         bgcolor: bg,
         cursor: clickable ? 'pointer' : 'default',
         transition: 'background-color .3s ease',
-        outline: selected ? '3px solid #E5B849' : 'none',
+        outline: selected ? '3px solid #8C9BFF' : 'none',
         outlineOffset: '-3px',
         '&:hover': clickable ? { filter: 'brightness(1.12)' } : undefined,
       }}

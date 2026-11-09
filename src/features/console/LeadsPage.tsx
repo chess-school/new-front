@@ -10,6 +10,16 @@ import { SEOHead } from '@/shared/components/seo/SEOHead';
 import { fetchLeads, updateLead, Lead, LeadStatus } from '@/features/leads/leadsApi';
 
 const STATUSES: LeadStatus[] = ['new', 'contacted', 'trial_scheduled', 'trial_done', 'converted', 'lost'];
+// Ключи i18n подписей из формы заявки (trial.*) — чтобы в таблице было «Knows the rules», а не сырое «rules».
+const LEVEL_I18N: Record<string, [string, string]> = {
+  new: ['trial.levelNew', 'New to chess'],
+  rules: ['trial.levelRules', 'Knows the rules'],
+  tournaments: ['trial.levelTourn', 'Plays tournaments'],
+};
+const FORMAT_I18N: Record<string, [string, string]> = {
+  offline: ['trial.offline', 'In person'],
+  online: ['trial.online', 'Online'],
+};
 const statusColor = (s: LeadStatus): 'default' | 'info' | 'warning' | 'success' | 'error' =>
   s === 'new' ? 'info' : s === 'converted' ? 'success' : s === 'lost' ? 'error' : 'warning';
 
@@ -86,7 +96,18 @@ export default function LeadsPage() {
                       {l.phone && <Typography variant="body2" color="text.secondary">{l.phone}</Typography>}
                     </Stack>
                   </TableCell>
-                  <TableCell>{l.level ? t(`leads.level.${l.level}`, l.level) : '—'}</TableCell>
+                  <TableCell>
+                    <Stack spacing={0.25}>
+                      <Typography variant="body2">
+                        {l.level ? t(LEVEL_I18N[l.level]?.[0] || '', LEVEL_I18N[l.level]?.[1] || l.level) : '—'}
+                      </Typography>
+                      {(l.format || l.preferredTime) && (
+                        <Typography variant="caption" color="text.secondary">
+                          {[l.format ? t(FORMAT_I18N[l.format]?.[0] || '', FORMAT_I18N[l.format]?.[1] || l.format) : null, l.preferredTime || null].filter(Boolean).join(' · ')}
+                        </Typography>
+                      )}
+                    </Stack>
+                  </TableCell>
                   <TableCell>
                     <Select
                       size="small"
