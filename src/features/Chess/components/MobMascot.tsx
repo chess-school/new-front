@@ -18,8 +18,8 @@ const cheer = keyframes`
   100% { transform: translateY(0) rotate(0); }
 `;
 
-const GOLD = '#E5B849';
-const GOLD_DARK = '#B88A2E';
+const GOLD = '#8C9BFF';
+const GOLD_DARK = '#5B6BE0';
 const BODY = '#38415C';
 const BELLY = '#4A5878';
 const INK = '#12161F';
