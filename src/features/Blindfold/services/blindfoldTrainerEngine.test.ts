@@ -280,6 +280,18 @@ describe('blindfoldTrainerEngine', () => {
       }
     });
 
+    it('состав сбалансирован: количества n/r/b/q отличаются не более чем на 1 (нет 3 ферзей)', () => {
+      for (const seed of [1, 4, 17, 88, 333]) {
+        for (const pieceCount of [4, 6, 8, 10]) {
+          const line = generateLine({ pieceCount, maxMoves: 1, rng: makeRng(seed) });
+          const counts: Record<string, number> = { n: 0, r: 0, b: 0, q: 0 };
+          for (const p of line.initial) counts[p.type]++;
+          const vals = Object.values(counts);
+          expect(Math.max(...vals) - Math.min(...vals)).toBeLessThanOrEqual(1);
+        }
+      }
+    });
+
     it('смена вектора: одна фигура не ходит больше 2 раз подряд', () => {
       for (const seed of [1, 2, 7, 42, 101, 2024, 55555, 123, 777]) {
         for (const pieceCount of [4, 6, 8, 10]) {

@@ -1474,7 +1474,9 @@
       "memorizeTime": "Time to memorise (seconds)",
       "lineLength": "Line length (moves)",
       "difficultyHint": "More pieces — harder to hold in your head.",
-      "change": "Settings"
+      "change": "Settings",
+      "timeLimit": "Time per move (seconds)",
+      "noLimit": "no limit"
     },
     "phase": {
       "memorize": "Memorise",
@@ -1490,14 +1492,16 @@
       "progress": "Move {{i}} / {{n}}",
       "pickHint": "Pick the piece from the palette below.",
       "boardHint": "The board is blank — the highlighted square is the target.",
-      "correctMove": "Correct! {{piece}} → {{square}}"
+      "correctMove": "Correct! {{piece}} → {{square}}",
+      "timeLeft": "⏱ {{s}}s"
     },
     "reveal": {
       "wrong": "Not quite.",
       "yourPick": "You picked {{piece}}.",
       "answerWas": "The {{piece}} on {{square}} moves to {{target}}.",
       "next": "Next",
-      "results": "See results"
+      "results": "See results",
+      "timeout": "Time’s up."
     },
     "gameover": {
       "outOfLives": "Out of lives",

@@ -1487,7 +1487,9 @@
       "memorizeTime": "Czas na zapamiętanie (sekundy)",
       "lineLength": "Długość partii (ruchy)",
       "difficultyHint": "Więcej figur — trudniej utrzymać w pamięci.",
-      "change": "Ustawienia"
+      "change": "Ustawienia",
+      "timeLimit": "Czas na ruch (sekundy)",
+      "noLimit": "bez limitu"
     },
     "phase": {
       "memorize": "Zapamiętaj",
@@ -1503,14 +1505,16 @@
       "progress": "Ruch {{i}} / {{n}}",
       "pickHint": "Wybierz figurę z palety poniżej.",
       "boardHint": "Szachownica jest pusta — podświetlone pole to cel.",
-      "correctMove": "Dobrze! {{piece}} → {{square}}"
+      "correctMove": "Dobrze! {{piece}} → {{square}}",
+      "timeLeft": "⏱ {{s}}s"
     },
     "reveal": {
       "wrong": "Niezupełnie.",
       "yourPick": "Wybrałeś: {{piece}}.",
       "answerWas": "{{piece}} na {{square}} idzie na {{target}}.",
       "next": "Dalej",
-      "results": "Zobacz wynik"
+      "results": "Zobacz wynik",
+      "timeout": "Czas minął."
     },
     "gameover": {
       "outOfLives": "Koniec żyć",
