@@ -177,6 +177,32 @@ export function placePieces(pieceCount: number, rng: () => number): Piece[] {
   return pieces;
 }
 
+/**
+ * Фигуры для режима ЛИНИИ: только настоящие «двигающиеся» фигуры со сменой вектора —
+ * конь, ладья, слон, ферзь (БЕЗ пешек: пешка почти всегда «мёртвая» и неинтересна, и БЕЗ королей).
+ */
+export const LINE_PIECE_TYPES: PieceType[] = ['n', 'r', 'b', 'q'];
+
+/**
+ * Расстановка для линии: ГАРАНТИРУЕТ по одной фигуре каждого типа (конь, ладья, слон, ферзь),
+ * чтобы в задании нельзя было ответить «на глаз» (как с двумя ферзями) — нужно знать, где какая
+ * фигура. Лишние фигуры (сверх 4) — случайные из того же набора. Цвета случайны, поля различны.
+ */
+export function placeLinePieces(pieceCount: number, rng: () => number): Piece[] {
+  const n = clamp(pieceCount, 4, 10);
+  const freeSquares = [...ALL_SQUARES];
+  const pieces: Piece[] = [];
+  for (let i = 0; i < n; i++) {
+    const sqIdx = randInt(rng, freeSquares.length);
+    const square = freeSquares.splice(sqIdx, 1)[0];
+    // Первые четыре фигуры — обязательный набор n/r/b/q; дальше — случайные из набора.
+    const type = i < LINE_PIECE_TYPES.length ? LINE_PIECE_TYPES[i] : pick(rng, LINE_PIECE_TYPES);
+    const color = pick(rng, COLORS);
+    pieces.push({ id: `p${i}`, type, color, square });
+  }
+  return pieces;
+}
+
 /** Снимок позиции: поле → фигура, стоящая на нём */
 const indexBySquare = (pieces: Piece[]): Record<string, Piece> => {
   const map: Record<string, Piece> = {};
@@ -430,24 +456,42 @@ export function generateLine(opts: GenerateLineOptions): BlindfoldLine {
   const pieceCount = clamp(opts.pieceCount, 4, 10);
   const maxMoves = clamp(opts.maxMoves, 1, 200);
 
-  const pieces = placePieces(pieceCount, rng);
+  const pieces = placeLinePieces(pieceCount, rng);
   const live: Record<string, Piece> = {};
   for (const p of pieces) live[p.square] = p; // те же объекты — двигаем их по ходу
   const initial = pieces.map((p) => ({ ...p }));
 
+  const MAX_SAME_RUN = 2; // максимум ходов подряд одной фигурой — дальше заставляем сменить вектор
+
   const steps: LineStep[] = [];
+  let lastId: string | null = null; // кто ходил в прошлый раз
+  let run = 0;                       // сколько ходов подряд ходит lastId
   for (let m = 0; m < maxMoves; m++) {
     const reach = reachMap(live);
-    const unique: string[] = [];
-    for (const [sq, ps] of reach) if (ps.length === 1) unique.push(sq);
+    // Кандидаты: поля, достижимые РОВНО одной фигурой (инвариант задания)
+    const unique: Array<[string, Piece]> = [];
+    for (const [sq, ps] of reach) if (ps.length === 1) unique.push([sq, ps[0]]);
     if (unique.length === 0) break;
-    const target = pick(rng, unique);
-    const piece = reach.get(target)![0];
+
+    // Смена вектора: если есть ход ДРУГОЙ фигурой — всегда берём его (нельзя «вести» одну фигуру).
+    const diff = lastId === null ? unique : unique.filter(([, p]) => p.id !== lastId);
+    let pool: Array<[string, Piece]>;
+    if (diff.length > 0) {
+      pool = diff;
+    } else {
+      // Сменить фигуру нельзя (уникальную цель даёт только прошлая фигура).
+      if (run >= MAX_SAME_RUN) break; // не тянем одну фигуру дольше лимита — обрываем линию
+      pool = unique;
+    }
+
+    const [target, piece] = pick(rng, pool);
     steps.push({ target, pieceType: piece.type, pieceColor: piece.color, from: piece.square });
     // применяем ход
     delete live[piece.square];
     piece.square = target;
     live[target] = piece;
+    run = piece.id === lastId ? run + 1 : 1;
+    lastId = piece.id;
   }
   return { initial, steps };
 }

@@ -243,6 +243,19 @@ describe('blindfoldTrainerEngine', () => {
     });
   });
 
+  // Максимум ходов подряд одной и той же фигурой (смена вектора): фигура, сходившая на `target`,
+  // при следующем ходе стоит на этом `target` (её новый `from`). Так считаем непрерывный прогон.
+  const maxSamePieceRun = (line: BlindfoldLine): number => {
+    let run = 1, best = line.steps.length ? 1 : 0;
+    for (let i = 1; i < line.steps.length; i++) {
+      const s = line.steps[i], p = line.steps[i - 1];
+      const samePiece = s.from === p.target && s.pieceType === p.pieceType && s.pieceColor === p.pieceColor;
+      run = samePiece ? run + 1 : 1;
+      if (run > best) best = run;
+    }
+    return best;
+  };
+
   describe('generateLine: эволюция позиции, инвариант на каждом ходу', () => {
     it('на каждом ходу до цели достаёт ровно одна фигура — именно ходящая', () => {
       for (const seed of [1, 2, 7, 42, 101, 2024, 55555]) {
@@ -251,6 +264,27 @@ describe('blindfoldTrainerEngine', () => {
           expect(line.initial.length).toBe(pieceCount);
           expect(line.steps.length).toBeGreaterThan(0);
           verifyLineInvariant(line);
+        }
+      }
+    });
+
+    it('состав: в каждой линии есть конь, ладья, слон и ферзь (нет пешек/королей)', () => {
+      for (const seed of [1, 3, 9, 50, 404, 9999]) {
+        for (const pieceCount of [4, 6, 8, 10]) {
+          const line = generateLine({ pieceCount, maxMoves: 75, rng: makeRng(seed) });
+          const types = new Set(line.initial.map((p) => p.type));
+          for (const req of ['n', 'r', 'b', 'q']) expect(types.has(req as never)).toBe(true);
+          expect(types.has('p' as never)).toBe(false);
+          expect(types.has('k' as never)).toBe(false);
+        }
+      }
+    });
+
+    it('смена вектора: одна фигура не ходит больше 2 раз подряд', () => {
+      for (const seed of [1, 2, 7, 42, 101, 2024, 55555, 123, 777]) {
+        for (const pieceCount of [4, 6, 8, 10]) {
+          const line = generateLine({ pieceCount, maxMoves: 75, rng: makeRng(seed) });
+          expect(maxSamePieceRun(line)).toBeLessThanOrEqual(2);
         }
       }
     });
