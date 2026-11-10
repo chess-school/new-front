@@ -1,26 +1,21 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Box, Button, Collapse, Fade, Paper, Slider, Stack,
   ToggleButton, ToggleButtonGroup, Typography,
 } from '@mui/material';
 import FavoriteRounded from '@mui/icons-material/FavoriteRounded';
 import FavoriteBorderRounded from '@mui/icons-material/FavoriteBorderRounded';
+import { Chessboard } from 'react-chessboard';
+import type { BoardPosition } from 'react-chessboard/dist/chessboard/types';
 import { PageContainer, PageHeader } from '@/shared/components/ui/PageHeader';
 import { useTranslation } from 'react-i18next';
 
 import {
   buildLineBlock, type BlindfoldLine, type LineStep, type Piece, type PieceType,
 } from '../services/blindfoldTrainerEngine';
+import { PIECE_SVG, type PieceCode } from '../pieceSvgs';
 
-// ---------------------------------------------------------------- доска / глифы
-
-const FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-// Рисуем сверху вниз: ранг 8 → 1, слева направо: файл a → h (вид «от белых»)
-const RANKS = [8, 7, 6, 5, 4, 3, 2, 1];
-
-const GLYPH: Record<PieceType, string> = {
-  q: '♛', r: '♜', b: '♝', n: '♞', p: '♟',
-};
+// ---------------------------------------------------------------- фигуры / доска
 
 const PIECE_NAME_KEYS: Record<PieceType, string> = {
   q: 'queen', r: 'rook', b: 'bishop', n: 'knight', p: 'pawn',
@@ -28,6 +23,9 @@ const PIECE_NAME_KEYS: Record<PieceType, string> = {
 const PIECE_NAME_EN: Record<PieceType, string> = {
   q: 'Queen', r: 'Rook', b: 'Bishop', n: 'Knight', p: 'Pawn',
 };
+
+const LIGHT = '#E9EDF2';
+const DARK = '#6E7F95';
 
 // settings → memorize → question → reveal → gameover
 type Phase = 'settings' | 'memorize' | 'question' | 'reveal' | 'gameover';
@@ -42,6 +40,15 @@ const ANSWER_PIECE_OPTIONS: { type: PieceType; color: 'w' | 'b' }[] = [
   ...(['q', 'r', 'b', 'n', 'p'] as PieceType[]).map((type) => ({ type, color: 'w' as const })),
   ...(['q', 'r', 'b', 'n', 'p'] as PieceType[]).map((type) => ({ type, color: 'b' as const })),
 ];
+
+const toPieceCode = (p: { type: PieceType; color: 'w' | 'b' }): PieceCode =>
+  `${p.color}${p.type.toUpperCase()}` as PieceCode;
+
+const toBoardPosition = (bySquare: Record<string, Piece>): BoardPosition => {
+  const pos: Record<string, PieceCode> = {};
+  for (const sq of Object.keys(bySquare)) pos[sq] = toPieceCode(bySquare[sq]);
+  return pos as BoardPosition;
+};
 
 // Блок заранее подготовленных и протестированных линий, кэш по числу фигур.
 // Детерминирован (buildLineBlock сканирует сиды по порядку) — инвариант проверяется юнит-тестами.
@@ -72,74 +79,13 @@ const applyMove = (prev: Record<string, Piece>, step: LineStep): Record<string, 
   return next;
 };
 
-// ---------------------------------------------------------------- клетка доски
-
-interface SquareCellProps {
-  square: string;
-  dark: boolean;
-  piece?: Piece;
-  hidden: boolean; // слепая фаза — фигуры скрыты
-  showFileLabel?: string;
-  showRankLabel?: string;
-  highlight?: 'correct' | 'ask';
-}
-
-const LIGHT = '#E9EDF2';
-const DARK = '#6E7F95';
-
-const PieceGlyph: React.FC<{ piece: Piece }> = ({ piece }) => (
+// фигура из палитры (тот же SVG-набор, что и на доске)
+const PaletteGlyph: React.FC<{ code: PieceCode }> = ({ code }) => (
   <Box
-    component="span"
-    sx={{
-      fontSize: { xs: '6.5vw', sm: 32, md: 38 },
-      lineHeight: 1,
-      userSelect: 'none',
-      color: piece.color === 'w' ? '#FFFFFF' : '#111418',
-      textShadow: piece.color === 'w'
-        ? '0 0 1px #000, 0 0 1px #000, 0 1px 2px rgba(0,0,0,.4)'
-        : '0 0 1px rgba(255,255,255,.4)',
-    }}
-  >
-    {GLYPH[piece.type]}
-  </Box>
+    sx={{ width: 30, height: 30, display: 'grid', placeItems: 'center' }}
+    dangerouslySetInnerHTML={{ __html: PIECE_SVG[code] }}
+  />
 );
-
-const SquareCell: React.FC<SquareCellProps> = ({
-  square, dark, piece, hidden, showFileLabel, showRankLabel, highlight,
-}) => {
-  const bg = highlight === 'correct' ? '#2E7D32'
-    : highlight === 'ask' ? '#2B50E0'
-    : dark ? DARK : LIGHT;
-  return (
-    <Box
-      aria-label={square}
-      sx={{
-        position: 'relative',
-        aspectRatio: '1 / 1',
-        display: 'grid',
-        placeItems: 'center',
-        bgcolor: bg,
-        transition: 'background-color .3s ease',
-      }}
-    >
-      {showFileLabel && (
-        <Box component="span" sx={{ position: 'absolute', right: 3, bottom: 1, fontSize: 10, opacity: highlight ? 0.95 : 0.7, color: highlight ? '#fff' : (dark ? LIGHT : DARK) }}>
-          {showFileLabel}
-        </Box>
-      )}
-      {showRankLabel && (
-        <Box component="span" sx={{ position: 'absolute', left: 3, top: 1, fontSize: 10, opacity: highlight ? 0.95 : 0.7, color: highlight ? '#fff' : (dark ? LIGHT : DARK) }}>
-          {showRankLabel}
-        </Box>
-      )}
-      <Fade in={!hidden && !!piece} timeout={400}>
-        <Box sx={{ display: 'grid', placeItems: 'center' }}>
-          {piece && <PieceGlyph piece={piece} />}
-        </Box>
-      </Fade>
-    </Box>
-  );
-};
 
 // ---------------------------------------------------------------- жизни (сердечки)
 
@@ -180,6 +126,20 @@ export const BlindfoldTrainerPage: React.FC = () => {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const flashRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // ширина доски — чтобы react-chessboard масштабировался по контейнеру
+  const boardWrapRef = useRef<HTMLDivElement | null>(null);
+  const [boardWidth, setBoardWidth] = useState<number>(400);
+  useEffect(() => {
+    const el = boardWrapRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver((entries) => {
+      const w = entries[0]?.contentRect.width;
+      if (w) setBoardWidth(Math.max(240, Math.min(Math.floor(w), 520)));
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   const clearTimers = useCallback(() => {
     if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null; }
     if (flashRef.current) { clearTimeout(flashRef.current); flashRef.current = null; }
@@ -194,9 +154,9 @@ export const BlindfoldTrainerPage: React.FC = () => {
   const startGame = useCallback(() => {
     clearTimers();
     const block = getBlock(pieceCount);
-    const picked = block[Math.floor(Math.random() * block.length)];
-    setLine(picked);
-    setLive(indexBySquare(picked.initial));
+    const chosen = block[Math.floor(Math.random() * block.length)];
+    setLine(chosen);
+    setLive(indexBySquare(chosen.initial));
     setStepIndex(0);
     setLives(LIVES);
     setCorrect(0);
@@ -247,7 +207,7 @@ export const BlindfoldTrainerPage: React.FC = () => {
         const next = stepIndex + 1;
         if (next >= limit) setPhase('gameover');
         else { setStepIndex(next); setPicked(null); }
-      }, 700);
+      }, 750);
     } else {
       setLives((l) => Math.max(0, l - 1));
       setPhase('reveal'); // показываем позицию (до хода) после ошибки
@@ -267,15 +227,23 @@ export const BlindfoldTrainerPage: React.FC = () => {
 
   const ended = lives <= 0 || stepIndex + 1 >= limit;
 
-  // что показываем на доске: в вопросе — пусто; иначе текущая позиция
-  const piecesOnBoard = phase === 'question' ? {} : live;
-  const hidden = phase === 'question';
+  // позиция на доске: в вопросе — пусто (слепо); иначе текущая
+  const boardPosition = useMemo<BoardPosition>(
+    () => (phase === 'question' ? {} : toBoardPosition(live)),
+    [phase, live],
+  );
 
-  const squareHighlight = useCallback((sq: string): SquareCellProps['highlight'] => {
-    if (!current) return undefined;
-    if ((phase === 'question' || phase === 'reveal') && sq === current.target) return 'ask';
-    if (phase === 'reveal' && sq === current.from) return 'correct';
-    return undefined;
+  // подсветка: цель (синяя) в вопросе и разборе; поле ходящей фигуры (зелёное) в разборе
+  const squareStyles = useMemo<Record<string, React.CSSProperties>>(() => {
+    const styles: Record<string, React.CSSProperties> = {};
+    if (!current) return styles;
+    if (phase === 'question' || phase === 'reveal') {
+      styles[current.target] = { background: 'rgba(43,80,224,.45)' };
+    }
+    if (phase === 'reveal') {
+      styles[current.from] = { background: 'rgba(46,125,50,.55)' };
+    }
+    return styles;
   }, [current, phase]);
 
   const pieceLabel = (p: { type: PieceType; color: 'w' | 'b' }) => {
@@ -294,17 +262,10 @@ export const BlindfoldTrainerPage: React.FC = () => {
           disabled={!!picked}
           selected={false}
           onClick={() => onPickPiece(type, color)}
-          sx={{
-            fontSize: 26,
-            lineHeight: 1,
-            p: 0.75,
-            color: color === 'w' ? '#FFFFFF' : '#111418',
-            textShadow: color === 'w' ? '0 0 1px #000, 0 0 1px #000' : 'none',
-            bgcolor: 'rgba(110,127,149,.35)',
-          }}
+          sx={{ p: 0.5, bgcolor: 'rgba(110,127,149,.18)' }}
           aria-label={pieceLabel({ type, color })}
         >
-          {GLYPH[type]}
+          <PaletteGlyph code={toPieceCode({ type, color })} />
         </ToggleButton>
       ))}
     </Box>
@@ -312,38 +273,21 @@ export const BlindfoldTrainerPage: React.FC = () => {
 
   // --- рендер доски ---
   const board = (
-    <Box
-      sx={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(8, 1fr)',
-        width: '100%',
-        maxWidth: 520,
-        mx: 'auto',
-        border: '4px solid',
-        borderColor: 'rgba(0,0,0,.35)',
-        borderRadius: 1,
-        overflow: 'hidden',
-        boxShadow: 3,
-      }}
-    >
-      {RANKS.map((rank, rIdx) =>
-        FILES.map((file, fIdx) => {
-          const sq = `${file}${rank}`;
-          const dark = (rIdx + fIdx) % 2 === 1;
-          return (
-            <SquareCell
-              key={sq}
-              square={sq}
-              dark={dark}
-              piece={piecesOnBoard[sq]}
-              hidden={hidden}
-              highlight={squareHighlight(sq)}
-              showFileLabel={rIdx === 7 ? file : undefined}
-              showRankLabel={fIdx === 0 ? String(rank) : undefined}
-            />
-          );
-        }),
-      )}
+    <Box ref={boardWrapRef} sx={{ width: '100%', maxWidth: 520, mx: 'auto' }}>
+      <Chessboard
+        id="blindfold-board"
+        position={boardPosition}
+        boardWidth={boardWidth}
+        arePiecesDraggable={false}
+        arePremovesAllowed={false}
+        areArrowsAllowed={false}
+        showBoardNotation
+        animationDuration={200}
+        customSquareStyles={squareStyles}
+        customBoardStyle={{ borderRadius: 6, boxShadow: '0 2px 12px rgba(0,0,0,.3)' }}
+        customDarkSquareStyle={{ backgroundColor: DARK }}
+        customLightSquareStyle={{ backgroundColor: LIGHT }}
+      />
     </Box>
   );
 
