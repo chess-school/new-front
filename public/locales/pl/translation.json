@@ -1472,10 +1472,10 @@
   },
   "blindfold": {
     "title": "Gra na ślepo",
-    "subtitle": "Zapamiętaj jedną pozycję, trzymaj ją w głowie i wskazuj figurę, która może dojść na podane pole.",
+    "subtitle": "Zapamiętaj pozycję, a potem śledź partię w głowie: po każdym ruchu wskaż jedyną figurę, która może dojść na podane pole.",
     "start": "Start",
     "again": "Zagraj ponownie",
-    "rules": "Jedna pozycja, 3 życia. Zapamiętaj ją raz, a potem wskazuj figurę, która może pójść na podane pole.",
+    "rules": "3 życia. Pozycja zmienia się po każdym ruchu — trzymaj ją w głowie i wskazuj jedyną figurę, która może dojść na podane pole.",
     "score": "Poprawne",
     "livesLabel": "Życia",
     "color": {
@@ -1485,7 +1485,7 @@
     "settings": {
       "pieceCount": "Liczba figur",
       "memorizeTime": "Czas na zapamiętanie (sekundy)",
-      "questions": "Pytań z rzędu",
+      "lineLength": "Długość partii (ruchy)",
       "difficultyHint": "Więcej figur — trudniej utrzymać w pamięci.",
       "change": "Ustawienia"
     },
@@ -1496,25 +1496,25 @@
       "gameover": "Koniec gry"
     },
     "memorize": {
-      "hint": "Zapamiętaj każdą figurę i jej pole — tę jedną pozycję trzymasz w głowie."
+      "hint": "Zapamiętaj pozycję — zmienia się po każdym ruchu. Śledź ją w głowie."
     },
     "question": {
       "prompt": "Która figura może pójść na {{square}}?",
-      "progress": "Pytanie {{i}} / {{n}}",
+      "progress": "Ruch {{i}} / {{n}}",
       "pickHint": "Wybierz figurę z palety poniżej.",
       "boardHint": "Szachownica jest pusta — podświetlone pole to cel.",
-      "correct": "Dobrze!"
+      "correctMove": "Dobrze! {{piece}} → {{square}}"
     },
     "reveal": {
       "wrong": "Niezupełnie.",
       "yourPick": "Wybrałeś: {{piece}}.",
-      "answerWas": "{{piece}} na {{square}} mogła pójść na {{target}}.",
+      "answerWas": "{{piece}} na {{square}} idzie na {{target}}.",
       "next": "Dalej",
       "results": "Zobacz wynik"
     },
     "gameover": {
       "outOfLives": "Koniec żyć",
-      "finished": "Seria ukończona",
+      "finished": "Partia ukończona",
       "result": "Poprawne: {{correct}} z {{asked}}.",
       "best": "Najlepszy wynik w tej sesji: {{count}}"
     },

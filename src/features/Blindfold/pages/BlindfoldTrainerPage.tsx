@@ -9,7 +9,7 @@ import { PageContainer, PageHeader } from '@/shared/components/ui/PageHeader';
 import { useTranslation } from 'react-i18next';
 
 import {
-  generatePosition, type BlindfoldPosition, type Piece, type PieceType, type UniqueTarget,
+  buildLineBlock, type BlindfoldLine, type LineStep, type Piece, type PieceType,
 } from '../services/blindfoldTrainerEngine';
 
 // ---------------------------------------------------------------- доска / глифы
@@ -18,8 +18,6 @@ const FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 // Рисуем сверху вниз: ранг 8 → 1, слева направо: файл a → h (вид «от белых»)
 const RANKS = [8, 7, 6, 5, 4, 3, 2, 1];
 
-// Юникод-глифы шахматных фигур. Берём «заливные» глифы для обоих цветов,
-// а цвет фигуры передаём через CSS color + обводку — так белые видны и на светлых полях.
 const GLYPH: Record<PieceType, string> = {
   q: '♛', r: '♜', b: '♝', n: '♞', p: '♟',
 };
@@ -36,6 +34,8 @@ type Phase = 'settings' | 'memorize' | 'question' | 'reveal' | 'gameover';
 
 const PIECE_CHOICES = [4, 6, 8, 10] as const;
 const LIVES = 3;
+const BLOCK_SIZE = 12;      // сколько линий держим в блоке на каждый расклад
+const MAX_LINE_MOVES = 75;  // линии в блоке длиной ровно 75 ходов
 
 // Палитра ответов: 5 типов × 2 цвета (белые сверху, чёрные снизу)
 const ANSWER_PIECE_OPTIONS: { type: PieceType; color: 'w' | 'b' }[] = [
@@ -43,14 +43,33 @@ const ANSWER_PIECE_OPTIONS: { type: PieceType; color: 'w' | 'b' }[] = [
   ...(['q', 'r', 'b', 'n', 'p'] as PieceType[]).map((type) => ({ type, color: 'b' as const })),
 ];
 
-/** Fisher–Yates (Math.random — только для перемешивания очереди вопросов, не для генерации позиции) */
-const shuffle = <T,>(arr: T[]): T[] => {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
+// Блок заранее подготовленных и протестированных линий, кэш по числу фигур.
+// Детерминирован (buildLineBlock сканирует сиды по порядку) — инвариант проверяется юнит-тестами.
+const blockCache = new Map<number, BlindfoldLine[]>();
+const getBlock = (pieceCount: number): BlindfoldLine[] => {
+  let block = blockCache.get(pieceCount);
+  if (!block || block.length === 0) {
+    block = buildLineBlock({ pieceCount, count: BLOCK_SIZE, minMoves: MAX_LINE_MOVES, maxMoves: MAX_LINE_MOVES });
+    blockCache.set(pieceCount, block);
   }
-  return a;
+  return block;
+};
+
+// Снимок позиции из списка фигур
+const indexBySquare = (pieces: Piece[]): Record<string, Piece> => {
+  const map: Record<string, Piece> = {};
+  for (const p of pieces) map[p.square] = { ...p };
+  return map;
+};
+
+// Применить ход линии к позиции (возвращает новый объект)
+const applyMove = (prev: Record<string, Piece>, step: LineStep): Record<string, Piece> => {
+  const next = { ...prev };
+  const mover = next[step.from];
+  if (!mover) return next;
+  delete next[step.from];
+  next[step.target] = { ...mover, square: step.target };
+  return next;
 };
 
 // ---------------------------------------------------------------- клетка доски
@@ -103,7 +122,6 @@ const SquareCell: React.FC<SquareCellProps> = ({
         transition: 'background-color .3s ease',
       }}
     >
-      {/* координаты в углах */}
       {showFileLabel && (
         <Box component="span" sx={{ position: 'absolute', right: 3, bottom: 1, fontSize: 10, opacity: highlight ? 0.95 : 0.7, color: highlight ? '#fff' : (dark ? LIGHT : DARK) }}>
           {showFileLabel}
@@ -143,25 +161,22 @@ export const BlindfoldTrainerPage: React.FC = () => {
   // настройки
   const [pieceCount, setPieceCount] = useState<number>(6);
   const [memorizeTime, setMemorizeTime] = useState<number>(8); // секунд на запоминание
-  const [totalQuestions, setTotalQuestions] = useState<number>(60); // длина серии
+  const [lineLength, setLineLength] = useState<number>(60);     // длина разыгрываемой линии
 
   // состояние партии
   const [phase, setPhase] = useState<Phase>('settings');
-  const [position, setPosition] = useState<BlindfoldPosition | null>(null);
+  const [line, setLine] = useState<BlindfoldLine | null>(null);
+  const [live, setLive] = useState<Record<string, Piece>>({}); // текущая (эволюционирующая) позиция
+  const [stepIndex, setStepIndex] = useState<number>(0);
   const [memorizeLeft, setMemorizeLeft] = useState<number>(0);
   const [lives, setLives] = useState<number>(LIVES);
   const [correct, setCorrect] = useState<number>(0);
-  const [asked, setAsked] = useState<number>(0);
   const [best, setBest] = useState<number>(0);
 
-  // текущий вопрос + ответ
-  const [current, setCurrent] = useState<UniqueTarget | null>(null);
+  // ответ текущего хода
   const [picked, setPicked] = useState<{ type: PieceType; color: 'w' | 'b' } | null>(null);
   const [lastCorrect, setLastCorrect] = useState<boolean>(false);
 
-  // рефы для колбэков/интервалов (не завязаны на ре-рендер)
-  const positionRef = useRef<BlindfoldPosition | null>(null);
-  const queueRef = useRef<UniqueTarget[]>([]);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const flashRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -172,26 +187,19 @@ export const BlindfoldTrainerPage: React.FC = () => {
 
   useEffect(() => () => clearTimers(), [clearTimers]);
 
-  // Следующий вопрос из перемешанной очереди (пополняется заново, когда опустеет)
-  const drawQuestion = useCallback(() => {
-    const pos = positionRef.current;
-    if (!pos || pos.targets.length === 0) return;
-    if (queueRef.current.length === 0) queueRef.current = shuffle(pos.targets);
-    setCurrent(queueRef.current.shift() ?? null);
-    setPicked(null);
-  }, []);
+  const limit = line ? Math.min(lineLength, line.steps.length) : 0;
+  const current: LineStep | null = line && stepIndex < line.steps.length ? line.steps[stepIndex] : null;
 
   // --- запуск партии ---
   const startGame = useCallback(() => {
     clearTimers();
-    const pos = generatePosition({ pieceCount });
-    positionRef.current = pos;
-    queueRef.current = shuffle(pos.targets);
-    setPosition(pos);
+    const block = getBlock(pieceCount);
+    const picked = block[Math.floor(Math.random() * block.length)];
+    setLine(picked);
+    setLive(indexBySquare(picked.initial));
+    setStepIndex(0);
     setLives(LIVES);
     setCorrect(0);
-    setAsked(0);
-    setCurrent(null);
     setPicked(null);
     setMemorizeLeft(memorizeTime);
     setPhase('memorize');
@@ -199,10 +207,8 @@ export const BlindfoldTrainerPage: React.FC = () => {
 
   const toSettings = useCallback(() => {
     clearTimers();
-    setPosition(null);
-    positionRef.current = null;
-    queueRef.current = [];
-    setCurrent(null);
+    setLine(null);
+    setLive({});
     setPhase('settings');
   }, [clearTimers]);
 
@@ -214,7 +220,6 @@ export const BlindfoldTrainerPage: React.FC = () => {
       setMemorizeLeft((left) => {
         if (left <= 1) {
           clearTimers();
-          drawQuestion();
           setPhase('question');
           return 0;
         }
@@ -228,44 +233,48 @@ export const BlindfoldTrainerPage: React.FC = () => {
   // выбор фигуры из палитры
   const onPickPiece = useCallback((type: PieceType, color: 'w' | 'b') => {
     if (phase !== 'question' || !current || picked) return;
-    const ok = current.piece.type === type && current.piece.color === color;
+    const ok = current.pieceType === type && current.pieceColor === color;
     setPicked({ type, color });
     setLastCorrect(ok);
-    const nextAsked = asked + 1;
-    setAsked(nextAsked);
 
     if (ok) {
       const nextCorrect = correct + 1;
       setCorrect(nextCorrect);
       setBest((b) => (nextCorrect > b ? nextCorrect : b));
+      setLive((prev) => applyMove(prev, current)); // позиция меняется
       // короткая зелёная вспышка, затем следующий вопрос (доску не раскрываем)
       flashRef.current = setTimeout(() => {
-        if (nextAsked >= totalQuestions) setPhase('gameover');
-        else drawQuestion();
-      }, 650);
+        const next = stepIndex + 1;
+        if (next >= limit) setPhase('gameover');
+        else { setStepIndex(next); setPicked(null); }
+      }, 700);
     } else {
       setLives((l) => Math.max(0, l - 1));
-      setPhase('reveal'); // показываем доску после ошибки
+      setPhase('reveal'); // показываем позицию (до хода) после ошибки
     }
-  }, [phase, current, picked, asked, correct, totalQuestions, drawQuestion]);
+  }, [phase, current, picked, correct, stepIndex, limit]);
 
-  // «Дальше» из reveal (после ошибки)
+  // «Дальше» из reveal (после ошибки): применяем правильный ход и идём дальше
   const onContinue = useCallback(() => {
-    if (lives <= 0 || asked >= totalQuestions) { setPhase('gameover'); return; }
-    drawQuestion();
+    if (!current) return;
+    setLive((prev) => applyMove(prev, current));
+    const next = stepIndex + 1;
+    if (lives <= 0 || next >= limit) { setPhase('gameover'); return; }
+    setStepIndex(next);
+    setPicked(null);
     setPhase('question');
-  }, [lives, asked, totalQuestions, drawQuestion]);
+  }, [current, stepIndex, lives, limit]);
 
-  const ended = lives <= 0 || asked >= totalQuestions;
+  const ended = lives <= 0 || stepIndex + 1 >= limit;
 
-  // что показываем на доске: в вопросе — пусто; иначе расстановка
-  const piecesOnBoard = position && phase !== 'question' ? position.bySquare : {};
+  // что показываем на доске: в вопросе — пусто; иначе текущая позиция
+  const piecesOnBoard = phase === 'question' ? {} : live;
   const hidden = phase === 'question';
 
   const squareHighlight = useCallback((sq: string): SquareCellProps['highlight'] => {
     if (!current) return undefined;
     if ((phase === 'question' || phase === 'reveal') && sq === current.target) return 'ask';
-    if (phase === 'reveal' && sq === current.piece.square) return 'correct';
+    if (phase === 'reveal' && sq === current.from) return 'correct';
     return undefined;
   }, [current, phase]);
 
@@ -343,7 +352,7 @@ export const BlindfoldTrainerPage: React.FC = () => {
       <PageHeader
         eyebrow={t('nav.groups.training', 'Training')}
         title={t('blindfold.title', 'Blindfold vision')}
-        subtitle={t('blindfold.subtitle', 'Memorise one position, then keep it in your head and name the piece that can reach each called square.')}
+        subtitle={t('blindfold.subtitle', 'Memorise the position, then follow the line in your head: each move, name the only piece that can reach the called square.')}
         actions={phase !== 'settings' ? (
           <Stack direction="row" spacing={2} alignItems="center">
             <Lives lives={lives} />
@@ -396,11 +405,11 @@ export const BlindfoldTrainerPage: React.FC = () => {
 
               <Box>
                 <Typography variant="subtitle2" gutterBottom>
-                  {t('blindfold.settings.questions', 'Questions in a row')}: {totalQuestions}
+                  {t('blindfold.settings.lineLength', 'Line length (moves)')}: {lineLength}
                 </Typography>
                 <Slider
-                  value={totalQuestions}
-                  onChange={(_, v) => setTotalQuestions(v as number)}
+                  value={lineLength}
+                  onChange={(_, v) => setLineLength(v as number)}
                   min={50}
                   max={75}
                   step={1}
@@ -410,7 +419,7 @@ export const BlindfoldTrainerPage: React.FC = () => {
               </Box>
 
               <Typography variant="body2" color="text.secondary">
-                {t('blindfold.rules', 'One position, 3 lives. Memorise it once, then name the piece that can move to each called square.')}
+                {t('blindfold.rules', '3 lives. The position changes after every move — keep it in your head and name the only piece that can reach the called square.')}
               </Typography>
 
               <Button variant="contained" size="large" onClick={startGame}>
@@ -434,7 +443,7 @@ export const BlindfoldTrainerPage: React.FC = () => {
                 <>
                   <Typography variant="h3" sx={{ fontVariantNumeric: 'tabular-nums' }}>{memorizeLeft}</Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {t('blindfold.memorize.hint', 'Remember every piece and its square — you keep this one position in your head.')}
+                    {t('blindfold.memorize.hint', 'Remember the position — it changes with every move. Track it in your head.')}
                   </Typography>
                 </>
               )}
@@ -442,7 +451,7 @@ export const BlindfoldTrainerPage: React.FC = () => {
               {(phase === 'question' || phase === 'reveal') && current && (
                 <>
                   <Typography variant="caption" color="text.secondary">
-                    {t('blindfold.question.progress', 'Question {{i}} / {{n}}', { i: asked + (phase === 'reveal' ? 0 : 1), n: totalQuestions })}
+                    {t('blindfold.question.progress', 'Move {{i}} / {{n}}', { i: stepIndex + 1, n: limit })}
                   </Typography>
                   <Typography variant="h6">
                     {t('blindfold.question.prompt', 'Which piece can move to {{square}}?', { square: current.target })}
@@ -450,11 +459,14 @@ export const BlindfoldTrainerPage: React.FC = () => {
                 </>
               )}
 
-              {phase === 'question' && (
+              {phase === 'question' && current && (
                 <>
                   {picked && lastCorrect && (
                     <Typography variant="subtitle1" sx={{ color: 'success.main', fontWeight: 700 }}>
-                      {t('blindfold.question.correct', 'Correct!')}
+                      {t('blindfold.question.correctMove', 'Correct! {{piece}} → {{square}}', {
+                        piece: pieceLabel({ type: current.pieceType, color: current.pieceColor }),
+                        square: current.target,
+                      })}
                     </Typography>
                   )}
                   {!picked && (
@@ -477,9 +489,9 @@ export const BlindfoldTrainerPage: React.FC = () => {
                       </Typography>
                     )}
                     <Typography variant="body2" color="text.secondary">
-                      {t('blindfold.reveal.answerWas', 'The {{piece}} on {{square}} could move to {{target}}.', {
-                        piece: pieceLabel(current.piece),
-                        square: current.piece.square,
+                      {t('blindfold.reveal.answerWas', 'The {{piece}} on {{square}} moves to {{target}}.', {
+                        piece: pieceLabel({ type: current.pieceType, color: current.pieceColor }),
+                        square: current.from,
                         target: current.target,
                       })}
                     </Typography>
@@ -494,10 +506,10 @@ export const BlindfoldTrainerPage: React.FC = () => {
                 <Fade in>
                   <Stack spacing={1.5}>
                     <Typography variant="h6">
-                      {lives <= 0 ? t('blindfold.gameover.outOfLives', 'Out of lives') : t('blindfold.gameover.finished', 'Series complete')}
+                      {lives <= 0 ? t('blindfold.gameover.outOfLives', 'Out of lives') : t('blindfold.gameover.finished', 'Line complete')}
                     </Typography>
                     <Typography variant="body2">
-                      {t('blindfold.gameover.result', 'Correct: {{correct}} of {{asked}}.', { correct, asked })}
+                      {t('blindfold.gameover.result', 'Correct: {{correct}} of {{asked}}.', { correct, asked: Math.min(stepIndex + 1, limit) })}
                     </Typography>
                     {best > 0 && (
                       <Typography variant="body2" color="text.secondary">
