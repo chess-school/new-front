@@ -1472,11 +1472,11 @@
   },
   "blindfold": {
     "title": "Gra na ślepo",
-    "subtitle": "Zapamiętaj pozycję, a potem — na pustej szachownicy — wskaż jedyną figurę, która może pójść na wskazane pole.",
+    "subtitle": "Zapamiętaj jedną pozycję, trzymaj ją w głowie i wskazuj figurę, która może dojść na podane pole.",
     "start": "Start",
     "again": "Zagraj ponownie",
-    "rules": "3 życia. W każdej rundzie podawane jest jedno pole — znajdź jedyną figurę, która może na nie pójść.",
-    "score": "Rozwiązane",
+    "rules": "Jedna pozycja, 3 życia. Zapamiętaj ją raz, a potem wskazuj figurę, która może pójść na podane pole.",
+    "score": "Poprawne",
     "livesLabel": "Życia",
     "color": {
       "white": "Białe",
@@ -1485,34 +1485,37 @@
     "settings": {
       "pieceCount": "Liczba figur",
       "memorizeTime": "Czas na zapamiętanie (sekundy)",
+      "questions": "Pytań z rzędu",
       "difficultyHint": "Więcej figur — trudniej utrzymać w pamięci.",
       "change": "Ustawienia"
     },
     "phase": {
       "memorize": "Zapamiętaj",
-      "recall": "Znajdź figurę",
+      "question": "Wskaż figurę",
       "reveal": "Odpowiedź",
       "gameover": "Koniec gry"
     },
     "memorize": {
-      "hint": "Zapamiętaj każdą figurę i jej pole."
+      "hint": "Zapamiętaj każdą figurę i jej pole — tę jedną pozycję trzymasz w głowie."
     },
-    "recall": {
-      "prompt": "Tylko jedna figura może pójść na {{square}}. Która?",
-      "clickHint": "Kliknij pole, na którym stoi — szachownica jest pusta.",
-      "thinking": "Wyobraź sobie figury i kliknij właściwe pole."
+    "question": {
+      "prompt": "Która figura może pójść na {{square}}?",
+      "progress": "Pytanie {{i}} / {{n}}",
+      "pickHint": "Wybierz figurę z palety poniżej.",
+      "boardHint": "Szachownica jest pusta — podświetlone pole to cel.",
+      "correct": "Dobrze!"
     },
     "reveal": {
-      "correct": "Dobrze!",
       "wrong": "Niezupełnie.",
+      "yourPick": "Wybrałeś: {{piece}}.",
       "answerWas": "{{piece}} na {{square}} mogła pójść na {{target}}.",
-      "lostLife": "Tracisz życie.",
       "next": "Dalej",
       "results": "Zobacz wynik"
     },
     "gameover": {
-      "title": "Koniec żyć",
-      "solved": "Rozpoznano figur: {{count}}.",
+      "outOfLives": "Koniec żyć",
+      "finished": "Seria ukończona",
+      "result": "Poprawne: {{correct}} z {{asked}}.",
       "best": "Najlepszy wynik w tej sesji: {{count}}"
     },
     "piece": {

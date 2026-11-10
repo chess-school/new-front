@@ -9,7 +9,7 @@ import { PageContainer, PageHeader } from '@/shared/components/ui/PageHeader';
 import { useTranslation } from 'react-i18next';
 
 import {
-  generatePuzzle, type BlindfoldPuzzle, type Piece, type PieceType,
+  generatePosition, type BlindfoldPosition, type Piece, type PieceType, type UniqueTarget,
 } from '../services/blindfoldTrainerEngine';
 
 // ---------------------------------------------------------------- доска / глифы
@@ -31,11 +31,27 @@ const PIECE_NAME_EN: Record<PieceType, string> = {
   q: 'Queen', r: 'Rook', b: 'Bishop', n: 'Knight', p: 'Pawn',
 };
 
-// settings → memorize → recall → reveal → gameover
-type Phase = 'settings' | 'memorize' | 'recall' | 'reveal' | 'gameover';
+// settings → memorize → question → reveal → gameover
+type Phase = 'settings' | 'memorize' | 'question' | 'reveal' | 'gameover';
 
 const PIECE_CHOICES = [4, 6, 8, 10] as const;
 const LIVES = 3;
+
+// Палитра ответов: 5 типов × 2 цвета (белые сверху, чёрные снизу)
+const ANSWER_PIECE_OPTIONS: { type: PieceType; color: 'w' | 'b' }[] = [
+  ...(['q', 'r', 'b', 'n', 'p'] as PieceType[]).map((type) => ({ type, color: 'w' as const })),
+  ...(['q', 'r', 'b', 'n', 'p'] as PieceType[]).map((type) => ({ type, color: 'b' as const })),
+];
+
+/** Fisher–Yates (Math.random — только для перемешивания очереди вопросов, не для генерации позиции) */
+const shuffle = <T,>(arr: T[]): T[] => {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};
 
 // ---------------------------------------------------------------- клетка доски
 
@@ -46,9 +62,7 @@ interface SquareCellProps {
   hidden: boolean; // слепая фаза — фигуры скрыты
   showFileLabel?: string;
   showRankLabel?: string;
-  clickable: boolean;
-  highlight?: 'correct' | 'wrong' | 'ask';
-  onClick?: () => void;
+  highlight?: 'correct' | 'ask';
 }
 
 const LIGHT = '#E9EDF2';
@@ -72,28 +86,21 @@ const PieceGlyph: React.FC<{ piece: Piece }> = ({ piece }) => (
 );
 
 const SquareCell: React.FC<SquareCellProps> = ({
-  square, dark, piece, hidden, showFileLabel, showRankLabel, clickable, highlight, onClick,
+  square, dark, piece, hidden, showFileLabel, showRankLabel, highlight,
 }) => {
   const bg = highlight === 'correct' ? '#2E7D32'
-    : highlight === 'wrong' ? '#C62828'
     : highlight === 'ask' ? '#2B50E0'
     : dark ? DARK : LIGHT;
   return (
     <Box
-      role={clickable ? 'button' : undefined}
-      aria-label={clickable ? square : undefined}
-      tabIndex={clickable ? 0 : undefined}
-      onClick={clickable ? onClick : undefined}
-      onKeyDown={clickable ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick?.(); } } : undefined}
+      aria-label={square}
       sx={{
         position: 'relative',
         aspectRatio: '1 / 1',
         display: 'grid',
         placeItems: 'center',
         bgcolor: bg,
-        cursor: clickable ? 'pointer' : 'default',
         transition: 'background-color .3s ease',
-        '&:hover': clickable ? { filter: 'brightness(1.12)' } : undefined,
       }}
     >
       {/* координаты в углах */}
@@ -135,53 +142,71 @@ export const BlindfoldTrainerPage: React.FC = () => {
 
   // настройки
   const [pieceCount, setPieceCount] = useState<number>(6);
-  const [memorizeTime, setMemorizeTime] = useState<number>(6); // секунд на запоминание
+  const [memorizeTime, setMemorizeTime] = useState<number>(8); // секунд на запоминание
+  const [totalQuestions, setTotalQuestions] = useState<number>(60); // длина серии
 
   // состояние партии
   const [phase, setPhase] = useState<Phase>('settings');
-  const [puzzle, setPuzzle] = useState<BlindfoldPuzzle | null>(null);
+  const [position, setPosition] = useState<BlindfoldPosition | null>(null);
   const [memorizeLeft, setMemorizeLeft] = useState<number>(0);
   const [lives, setLives] = useState<number>(LIVES);
-  const [solved, setSolved] = useState<number>(0);
+  const [correct, setCorrect] = useState<number>(0);
+  const [asked, setAsked] = useState<number>(0);
   const [best, setBest] = useState<number>(0);
 
-  // ответ текущего раунда
-  const [pickedSquare, setPickedSquare] = useState<string | null>(null);
+  // текущий вопрос + ответ
+  const [current, setCurrent] = useState<UniqueTarget | null>(null);
+  const [picked, setPicked] = useState<{ type: PieceType; color: 'w' | 'b' } | null>(null);
   const [lastCorrect, setLastCorrect] = useState<boolean>(false);
 
-  // таймеры
+  // рефы для колбэков/интервалов (не завязаны на ре-рендер)
+  const positionRef = useRef<BlindfoldPosition | null>(null);
+  const queueRef = useRef<UniqueTarget[]>([]);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const flashRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const clearTimers = useCallback(() => {
     if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null; }
+    if (flashRef.current) { clearTimeout(flashRef.current); flashRef.current = null; }
   }, []);
 
   useEffect(() => () => clearTimers(), [clearTimers]);
 
-  // --- запуск раунда / партии ---
+  // Следующий вопрос из перемешанной очереди (пополняется заново, когда опустеет)
+  const drawQuestion = useCallback(() => {
+    const pos = positionRef.current;
+    if (!pos || pos.targets.length === 0) return;
+    if (queueRef.current.length === 0) queueRef.current = shuffle(pos.targets);
+    setCurrent(queueRef.current.shift() ?? null);
+    setPicked(null);
+  }, []);
 
-  const nextRound = useCallback(() => {
+  // --- запуск партии ---
+  const startGame = useCallback(() => {
     clearTimers();
-    const p = generatePuzzle({ pieceCount });
-    setPuzzle(p);
-    setPickedSquare(null);
+    const pos = generatePosition({ pieceCount });
+    positionRef.current = pos;
+    queueRef.current = shuffle(pos.targets);
+    setPosition(pos);
+    setLives(LIVES);
+    setCorrect(0);
+    setAsked(0);
+    setCurrent(null);
+    setPicked(null);
     setMemorizeLeft(memorizeTime);
     setPhase('memorize');
   }, [clearTimers, pieceCount, memorizeTime]);
 
-  const startGame = useCallback(() => {
-    setLives(LIVES);
-    setSolved(0);
-    nextRound();
-  }, [nextRound]);
-
   const toSettings = useCallback(() => {
     clearTimers();
-    setPuzzle(null);
+    setPosition(null);
+    positionRef.current = null;
+    queueRef.current = [];
+    setCurrent(null);
     setPhase('settings');
   }, [clearTimers]);
 
-  // отсчёт фазы запоминания → recall
+  // отсчёт фазы запоминания → первый вопрос
   useEffect(() => {
     if (phase !== 'memorize') return;
     setMemorizeLeft(memorizeTime);
@@ -189,7 +214,8 @@ export const BlindfoldTrainerPage: React.FC = () => {
       setMemorizeLeft((left) => {
         if (left <= 1) {
           clearTimers();
-          setPhase('recall');
+          drawQuestion();
+          setPhase('question');
           return 0;
         }
         return left - 1;
@@ -199,51 +225,81 @@ export const BlindfoldTrainerPage: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
-  // клик по клетке в фазе recall — назвать фигуру (указать её поле)
-  const onSquareClick = useCallback((sq: string) => {
-    if (phase !== 'recall' || !puzzle) return;
-    const ok = sq === puzzle.answerSquare;
-    setPickedSquare(sq);
+  // выбор фигуры из палитры
+  const onPickPiece = useCallback((type: PieceType, color: 'w' | 'b') => {
+    if (phase !== 'question' || !current || picked) return;
+    const ok = current.piece.type === type && current.piece.color === color;
+    setPicked({ type, color });
     setLastCorrect(ok);
-    setPhase('reveal');
+    const nextAsked = asked + 1;
+    setAsked(nextAsked);
+
     if (ok) {
-      const next = solved + 1;
-      setSolved(next);
-      setBest((b) => (next > b ? next : b));
+      const nextCorrect = correct + 1;
+      setCorrect(nextCorrect);
+      setBest((b) => (nextCorrect > b ? nextCorrect : b));
+      // короткая зелёная вспышка, затем следующий вопрос (доску не раскрываем)
+      flashRef.current = setTimeout(() => {
+        if (nextAsked >= totalQuestions) setPhase('gameover');
+        else drawQuestion();
+      }, 650);
     } else {
       setLives((l) => Math.max(0, l - 1));
+      setPhase('reveal'); // показываем доску после ошибки
     }
-  }, [phase, puzzle, solved]);
+  }, [phase, current, picked, asked, correct, totalQuestions, drawQuestion]);
 
-  // «Дальше» из reveal: конец партии при 0 жизней, иначе новый раунд
+  // «Дальше» из reveal (после ошибки)
   const onContinue = useCallback(() => {
-    if (!lastCorrect && lives <= 0) { setPhase('gameover'); return; }
-    nextRound();
-  }, [lastCorrect, lives, nextRound]);
+    if (lives <= 0 || asked >= totalQuestions) { setPhase('gameover'); return; }
+    drawQuestion();
+    setPhase('question');
+  }, [lives, asked, totalQuestions, drawQuestion]);
 
-  const outOfLives = !lastCorrect && lives <= 0;
+  const ended = lives <= 0 || asked >= totalQuestions;
 
-  // что показываем на доске: в recall — пусто; иначе расстановка пазла
-  const piecesOnBoard = puzzle && phase !== 'recall' ? puzzle.bySquare : {};
-  const hidden = phase === 'recall';
+  // что показываем на доске: в вопросе — пусто; иначе расстановка
+  const piecesOnBoard = position && phase !== 'question' ? position.bySquare : {};
+  const hidden = phase === 'question';
 
-  // подсветка клетки
   const squareHighlight = useCallback((sq: string): SquareCellProps['highlight'] => {
-    if (!puzzle) return undefined;
-    // поле-цель подсвечиваем синим в recall и reveal
-    if ((phase === 'recall' || phase === 'reveal') && sq === puzzle.target) return 'ask';
-    if (phase === 'reveal') {
-      if (sq === puzzle.answerSquare) return 'correct';
-      if (!lastCorrect && sq === pickedSquare && sq !== puzzle.answerSquare) return 'wrong';
-    }
+    if (!current) return undefined;
+    if ((phase === 'question' || phase === 'reveal') && sq === current.target) return 'ask';
+    if (phase === 'reveal' && sq === current.piece.square) return 'correct';
     return undefined;
-  }, [puzzle, phase, lastCorrect, pickedSquare]);
+  }, [current, phase]);
 
-  const pieceLabel = (p: Piece) => {
+  const pieceLabel = (p: { type: PieceType; color: 'w' | 'b' }) => {
     const name = t(`blindfold.piece.${PIECE_NAME_KEYS[p.type]}`, PIECE_NAME_EN[p.type]);
     const color = p.color === 'w' ? t('blindfold.color.white', 'White') : t('blindfold.color.black', 'Black');
     return `${color} ${name.toLowerCase()}`;
   };
+
+  // палитра выбора фигуры (под жизнями)
+  const palette = (
+    <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 1 }}>
+      {ANSWER_PIECE_OPTIONS.map(({ type, color }) => (
+        <ToggleButton
+          key={`${color}${type}`}
+          value={`${color}${type}`}
+          disabled={!!picked}
+          selected={false}
+          onClick={() => onPickPiece(type, color)}
+          sx={{
+            fontSize: 26,
+            lineHeight: 1,
+            p: 0.75,
+            color: color === 'w' ? '#FFFFFF' : '#111418',
+            textShadow: color === 'w' ? '0 0 1px #000, 0 0 1px #000' : 'none',
+            bgcolor: 'rgba(110,127,149,.35)',
+          }}
+          aria-label={pieceLabel({ type, color })}
+        >
+          {GLYPH[type]}
+        </ToggleButton>
+      ))}
+    </Box>
+  );
 
   // --- рендер доски ---
   const board = (
@@ -265,7 +321,6 @@ export const BlindfoldTrainerPage: React.FC = () => {
         FILES.map((file, fIdx) => {
           const sq = `${file}${rank}`;
           const dark = (rIdx + fIdx) % 2 === 1;
-          const clickable = phase === 'recall';
           return (
             <SquareCell
               key={sq}
@@ -273,11 +328,9 @@ export const BlindfoldTrainerPage: React.FC = () => {
               dark={dark}
               piece={piecesOnBoard[sq]}
               hidden={hidden}
-              clickable={clickable}
               highlight={squareHighlight(sq)}
               showFileLabel={rIdx === 7 ? file : undefined}
               showRankLabel={fIdx === 0 ? String(rank) : undefined}
-              onClick={() => onSquareClick(sq)}
             />
           );
         }),
@@ -290,20 +343,20 @@ export const BlindfoldTrainerPage: React.FC = () => {
       <PageHeader
         eyebrow={t('nav.groups.training', 'Training')}
         title={t('blindfold.title', 'Blindfold vision')}
-        subtitle={t('blindfold.subtitle', 'Memorise the position, then — on a blank board — find the one piece that can move to the named square.')}
+        subtitle={t('blindfold.subtitle', 'Memorise one position, then keep it in your head and name the piece that can reach each called square.')}
         actions={phase !== 'settings' ? (
           <Stack direction="row" spacing={2} alignItems="center">
             <Lives lives={lives} />
             <Typography variant="body2" color="text.secondary">
-              {t('blindfold.score', 'Solved')}: <b>{solved}</b>
+              {t('blindfold.score', 'Correct')}: <b>{correct}</b>
             </Typography>
           </Stack>
         ) : undefined}
       />
 
       <Stack direction={{ xs: 'column', md: 'row' }} spacing={3} alignItems="flex-start">
-        {/* ЛЕВО: настройки / статус */}
-        <Paper variant="outlined" sx={{ p: 3, width: { xs: '100%', md: 340 }, flexShrink: 0 }}>
+        {/* ЛЕВО: настройки / статус + палитра под жизнями */}
+        <Paper variant="outlined" sx={{ p: 3, width: { xs: '100%', md: 360 }, flexShrink: 0 }}>
           <Collapse in={phase === 'settings'} unmountOnExit>
             <Stack spacing={3}>
               <Box>
@@ -333,16 +386,31 @@ export const BlindfoldTrainerPage: React.FC = () => {
                 <Slider
                   value={memorizeTime}
                   onChange={(_, v) => setMemorizeTime(v as number)}
-                  min={2}
-                  max={15}
+                  min={3}
+                  max={20}
                   step={1}
-                  marks={[{ value: 2, label: '2' }, { value: 8, label: '8' }, { value: 15, label: '15' }]}
+                  marks={[{ value: 3, label: '3' }, { value: 10, label: '10' }, { value: 20, label: '20' }]}
+                  valueLabelDisplay="auto"
+                />
+              </Box>
+
+              <Box>
+                <Typography variant="subtitle2" gutterBottom>
+                  {t('blindfold.settings.questions', 'Questions in a row')}: {totalQuestions}
+                </Typography>
+                <Slider
+                  value={totalQuestions}
+                  onChange={(_, v) => setTotalQuestions(v as number)}
+                  min={50}
+                  max={75}
+                  step={1}
+                  marks={[{ value: 50, label: '50' }, { value: 60, label: '60' }, { value: 75, label: '75' }]}
                   valueLabelDisplay="auto"
                 />
               </Box>
 
               <Typography variant="body2" color="text.secondary">
-                {t('blindfold.rules', '3 lives. Each round one square is named — find the only piece that can move there.')}
+                {t('blindfold.rules', 'One position, 3 lives. Memorise it once, then name the piece that can move to each called square.')}
               </Typography>
 
               <Button variant="contained" size="large" onClick={startGame}>
@@ -356,7 +424,7 @@ export const BlindfoldTrainerPage: React.FC = () => {
               <Box>
                 <Typography variant="overline" color="text.secondary">
                   {phase === 'memorize' && t('blindfold.phase.memorize', 'Memorise')}
-                  {phase === 'recall' && t('blindfold.phase.recall', 'Find the piece')}
+                  {phase === 'question' && t('blindfold.phase.question', 'Name the piece')}
                   {phase === 'reveal' && t('blindfold.phase.reveal', 'Answer')}
                   {phase === 'gameover' && t('blindfold.phase.gameover', 'Game over')}
                 </Typography>
@@ -366,42 +434,57 @@ export const BlindfoldTrainerPage: React.FC = () => {
                 <>
                   <Typography variant="h3" sx={{ fontVariantNumeric: 'tabular-nums' }}>{memorizeLeft}</Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {t('blindfold.memorize.hint', 'Remember every piece and its square.')}
+                    {t('blindfold.memorize.hint', 'Remember every piece and its square — you keep this one position in your head.')}
                   </Typography>
                 </>
               )}
 
-              {phase === 'recall' && puzzle && (
+              {(phase === 'question' || phase === 'reveal') && current && (
                 <>
-                  <Typography variant="h6">
-                    {t('blindfold.recall.prompt', 'Only one piece can move to {{square}}. Which one?', { square: puzzle.target })}
+                  <Typography variant="caption" color="text.secondary">
+                    {t('blindfold.question.progress', 'Question {{i}} / {{n}}', { i: asked + (phase === 'reveal' ? 0 : 1), n: totalQuestions })}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {t('blindfold.recall.clickHint', 'Click the square it stands on — the board is blank.')}
+                  <Typography variant="h6">
+                    {t('blindfold.question.prompt', 'Which piece can move to {{square}}?', { square: current.target })}
                   </Typography>
                 </>
               )}
 
-              {phase === 'reveal' && puzzle && (
+              {phase === 'question' && (
+                <>
+                  {picked && lastCorrect && (
+                    <Typography variant="subtitle1" sx={{ color: 'success.main', fontWeight: 700 }}>
+                      {t('blindfold.question.correct', 'Correct!')}
+                    </Typography>
+                  )}
+                  {!picked && (
+                    <Typography variant="caption" color="text.secondary">
+                      {t('blindfold.question.pickHint', 'Pick the piece from the palette below.')}
+                    </Typography>
+                  )}
+                </>
+              )}
+
+              {phase === 'reveal' && current && (
                 <Fade in>
                   <Stack spacing={1.5}>
-                    <Typography variant="subtitle1" sx={{ color: lastCorrect ? 'success.main' : 'error.main', fontWeight: 700 }}>
-                      {lastCorrect ? t('blindfold.reveal.correct', 'Correct!') : t('blindfold.reveal.wrong', 'Not quite.')}
+                    <Typography variant="subtitle1" sx={{ color: 'error.main', fontWeight: 700 }}>
+                      {t('blindfold.reveal.wrong', 'Not quite.')}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {t('blindfold.reveal.answerWas', 'The {{piece}} on {{square}} could move to {{target}}.', {
-                        piece: pieceLabel(puzzle.answerPiece),
-                        square: puzzle.answerSquare,
-                        target: puzzle.target,
-                      })}
-                    </Typography>
-                    {!lastCorrect && (
-                      <Typography variant="caption" color="text.secondary">
-                        {t('blindfold.reveal.lostLife', 'Lost a life.')}
+                    {picked && (
+                      <Typography variant="body2" color="text.secondary">
+                        {t('blindfold.reveal.yourPick', 'You picked {{piece}}.', { piece: pieceLabel(picked) })}
                       </Typography>
                     )}
+                    <Typography variant="body2" color="text.secondary">
+                      {t('blindfold.reveal.answerWas', 'The {{piece}} on {{square}} could move to {{target}}.', {
+                        piece: pieceLabel(current.piece),
+                        square: current.piece.square,
+                        target: current.target,
+                      })}
+                    </Typography>
                     <Button variant="contained" onClick={onContinue} sx={{ mt: 1 }}>
-                      {outOfLives ? t('blindfold.reveal.results', 'See results') : t('blindfold.reveal.next', 'Next')}
+                      {ended ? t('blindfold.reveal.results', 'See results') : t('blindfold.reveal.next', 'Next')}
                     </Button>
                   </Stack>
                 </Fade>
@@ -410,9 +493,11 @@ export const BlindfoldTrainerPage: React.FC = () => {
               {phase === 'gameover' && (
                 <Fade in>
                   <Stack spacing={1.5}>
-                    <Typography variant="h6">{t('blindfold.gameover.title', 'Out of lives')}</Typography>
+                    <Typography variant="h6">
+                      {lives <= 0 ? t('blindfold.gameover.outOfLives', 'Out of lives') : t('blindfold.gameover.finished', 'Series complete')}
+                    </Typography>
                     <Typography variant="body2">
-                      {t('blindfold.gameover.solved', 'You identified {{count}} pieces.', { count: solved })}
+                      {t('blindfold.gameover.result', 'Correct: {{correct}} of {{asked}}.', { correct, asked })}
                     </Typography>
                     {best > 0 && (
                       <Typography variant="body2" color="text.secondary">
@@ -431,11 +516,15 @@ export const BlindfoldTrainerPage: React.FC = () => {
                 </Fade>
               )}
 
+              {/* жизни + палитра выбора фигуры ПОД жизнями */}
               {phase !== 'gameover' && (
                 <Paper variant="outlined" sx={{ p: 2 }}>
-                  <Stack direction="row" justifyContent="space-between" alignItems="center">
-                    <Typography variant="caption" color="text.secondary">{t('blindfold.livesLabel', 'Lives')}</Typography>
-                    <Lives lives={lives} />
+                  <Stack spacing={1.5}>
+                    <Stack direction="row" justifyContent="space-between" alignItems="center">
+                      <Typography variant="caption" color="text.secondary">{t('blindfold.livesLabel', 'Lives')}</Typography>
+                      <Lives lives={lives} />
+                    </Stack>
+                    {phase === 'question' && palette}
                   </Stack>
                 </Paper>
               )}
@@ -446,9 +535,9 @@ export const BlindfoldTrainerPage: React.FC = () => {
         {/* ПРАВО: доска */}
         <Box sx={{ flexGrow: 1, width: '100%' }}>
           {board}
-          {phase === 'recall' && (
+          {phase === 'question' && (
             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', textAlign: 'center', mt: 1 }}>
-              {t('blindfold.recall.thinking', 'Picture the pieces in your head and click the right square.')}
+              {t('blindfold.question.boardHint', 'The board is blank — the highlighted square is the target.')}
             </Typography>
           )}
         </Box>

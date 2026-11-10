@@ -344,6 +344,55 @@ function fallbackPuzzle(pieceCount: number): BlindfoldPuzzle {
 }
 
 /**
+ * Список ВСЕХ пустых полей, достижимых РОВНО ОДНОЙ фигурой (без взятий), и этих фигур.
+ * Это пул вопросов для фиксированной позиции: «какая фигура может пойти на это поле?».
+ */
+export interface UniqueTarget { target: string; piece: Piece; }
+
+export function uniqueReachTargets(bySquare: Record<string, Piece>): UniqueTarget[] {
+  const reach = reachMap(bySquare);
+  const out: UniqueTarget[] = [];
+  for (const [sq, ps] of reach) if (ps.length === 1) out.push({ target: sq, piece: { ...ps[0] } });
+  return out;
+}
+
+/**
+ * Одна ПОЗИЦИЯ для всей серии: расстановка + список полей, каждое из которых достижимо ровно
+ * одной фигурой. По этой позиции задаётся много вопросов подряд (позиция не меняется).
+ */
+export interface BlindfoldPosition {
+  pieces: Piece[];
+  bySquare: Record<string, Piece>;
+  targets: UniqueTarget[];
+}
+
+/**
+ * Сгенерировать позицию для серии: случайная расстановка, у которой есть хотя бы одно поле,
+ * достижимое ровно одной фигурой (чем больше таких полей — тем разнообразнее вопросы).
+ * После maxAttempts неудач берётся детерминированный фолбэк.
+ */
+export function generatePosition(opts: GeneratePuzzleOptions): BlindfoldPosition {
+  const rng = opts.rng ?? Math.random;
+  const pieceCount = clamp(opts.pieceCount, 4, 10);
+  const maxAttempts = opts.maxAttempts ?? 200;
+
+  let best: BlindfoldPosition | null = null;
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    const pieces = placePieces(pieceCount, rng);
+    const bySquare = indexBySquare(pieces);
+    const targets = uniqueReachTargets(bySquare);
+    if (targets.length === 0) continue;
+    // Берём позицию с наибольшим числом уникальных целей (разнообразнее серия)
+    if (!best || targets.length > best.targets.length) best = { pieces, bySquare, targets };
+    if (best.targets.length >= 6) break; // достаточно разнообразия — не крутим дальше
+  }
+  if (best) return best;
+
+  const fb = fallbackPuzzle(pieceCount);
+  return { pieces: fb.pieces, bySquare: fb.bySquare, targets: uniqueReachTargets(fb.bySquare) };
+}
+
+/**
  * Сгенерировать пазл: случайная позиция, у которой есть ПУСТОЕ поле, достижимое РОВНО ОДНОЙ фигурой.
  * Такое поле выбирается целью, а его единственная достающая фигура — ответом.
  */

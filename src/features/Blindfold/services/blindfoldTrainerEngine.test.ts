@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
-  BlindfoldSession, Piece, buildQuestion, generatePuzzle, generateSession,
-  legalDestinations, makeRng, reachMap,
+  BlindfoldSession, Piece, buildQuestion, generatePosition, generatePuzzle, generateSession,
+  legalDestinations, makeRng, reachMap, uniqueReachTargets,
 } from './blindfoldTrainerEngine';
 
 /** Проверка, что поле лежит на доске 'a1'..'h8' */
@@ -180,6 +180,38 @@ describe('blindfoldTrainerEngine', () => {
       const reachers = reachMap(puz.bySquare).get('c6') ?? [];
       expect(reachers.length).toBe(1);
       expect(reachers[0].square).toBe('d4');
+    });
+  });
+
+  describe('generatePosition: одна позиция + пул целей', () => {
+    it('каждая цель достижима ровно одной фигурой — своей', () => {
+      for (const seed of [1, 5, 42, 777, 20240]) {
+        for (const pieceCount of [4, 6, 8, 10]) {
+          const pos = generatePosition({ pieceCount, rng: makeRng(seed) });
+          expect(pos.pieces.length).toBe(pieceCount);
+          expect(pos.targets.length).toBeGreaterThan(0);
+          const reach = reachMap(pos.bySquare);
+          for (const { target, piece } of pos.targets) {
+            // цель пуста
+            expect(pos.bySquare[target]).toBeUndefined();
+            // ровно одна достающая фигура — именно эта, на своём поле
+            const reachers = reach.get(target) ?? [];
+            expect(reachers.length).toBe(1);
+            expect(reachers[0].square).toBe(piece.square);
+            expect(pos.bySquare[piece.square]).toBeDefined();
+          }
+        }
+      }
+    });
+
+    it('детерминизм: одинаковый seed → одинаковая позиция', () => {
+      const a = generatePosition({ pieceCount: 6, rng: makeRng(2024) });
+      const b = generatePosition({ pieceCount: 6, rng: makeRng(2024) });
+      expect(a).toEqual(b);
+    });
+
+    it('uniqueReachTargets на пустой позиции = []', () => {
+      expect(uniqueReachTargets({})).toEqual([]);
     });
   });
 });

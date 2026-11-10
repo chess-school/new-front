@@ -1459,11 +1459,11 @@
   },
   "blindfold": {
     "title": "Blindfold vision",
-    "subtitle": "Memorise the position, then — on a blank board — find the one piece that can move to the named square.",
+    "subtitle": "Memorise one position, then keep it in your head and name the piece that can reach each called square.",
     "start": "Start",
     "again": "Play again",
-    "rules": "3 lives. Each round one square is named — find the only piece that can move there.",
-    "score": "Solved",
+    "rules": "One position, 3 lives. Memorise it once, then name the piece that can move to each called square.",
+    "score": "Correct",
     "livesLabel": "Lives",
     "color": {
       "white": "White",
@@ -1472,34 +1472,37 @@
     "settings": {
       "pieceCount": "Number of pieces",
       "memorizeTime": "Time to memorise (seconds)",
+      "questions": "Questions in a row",
       "difficultyHint": "More pieces — harder to hold in your head.",
       "change": "Settings"
     },
     "phase": {
       "memorize": "Memorise",
-      "recall": "Find the piece",
+      "question": "Name the piece",
       "reveal": "Answer",
       "gameover": "Game over"
     },
     "memorize": {
-      "hint": "Remember every piece and its square."
+      "hint": "Remember every piece and its square — you keep this one position in your head."
     },
-    "recall": {
-      "prompt": "Only one piece can move to {{square}}. Which one?",
-      "clickHint": "Click the square it stands on — the board is blank.",
-      "thinking": "Picture the pieces in your head and click the right square."
+    "question": {
+      "prompt": "Which piece can move to {{square}}?",
+      "progress": "Question {{i}} / {{n}}",
+      "pickHint": "Pick the piece from the palette below.",
+      "boardHint": "The board is blank — the highlighted square is the target.",
+      "correct": "Correct!"
     },
     "reveal": {
-      "correct": "Correct!",
       "wrong": "Not quite.",
+      "yourPick": "You picked {{piece}}.",
       "answerWas": "The {{piece}} on {{square}} could move to {{target}}.",
-      "lostLife": "Lost a life.",
       "next": "Next",
       "results": "See results"
     },
     "gameover": {
-      "title": "Out of lives",
-      "solved": "You identified {{count}} pieces.",
+      "outOfLives": "Out of lives",
+      "finished": "Series complete",
+      "result": "Correct: {{correct}} of {{asked}}.",
       "best": "Best this session: {{count}}"
     },
     "piece": {
