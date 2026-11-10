@@ -1459,10 +1459,10 @@
   },
   "blindfold": {
     "title": "Blindfold vision",
-    "subtitle": "Memorise one position, then keep it in your head and name the piece that can reach each called square.",
+    "subtitle": "Memorise the position, then follow the line in your head: each move, name the only piece that can reach the called square.",
     "start": "Start",
     "again": "Play again",
-    "rules": "One position, 3 lives. Memorise it once, then name the piece that can move to each called square.",
+    "rules": "3 lives. The position changes after every move — keep it in your head and name the only piece that can reach the called square.",
     "score": "Correct",
     "livesLabel": "Lives",
     "color": {
@@ -1472,7 +1472,7 @@
     "settings": {
       "pieceCount": "Number of pieces",
       "memorizeTime": "Time to memorise (seconds)",
-      "questions": "Questions in a row",
+      "lineLength": "Line length (moves)",
       "difficultyHint": "More pieces — harder to hold in your head.",
       "change": "Settings"
     },
@@ -1483,25 +1483,25 @@
       "gameover": "Game over"
     },
     "memorize": {
-      "hint": "Remember every piece and its square — you keep this one position in your head."
+      "hint": "Remember the position — it changes with every move. Track it in your head."
     },
     "question": {
       "prompt": "Which piece can move to {{square}}?",
-      "progress": "Question {{i}} / {{n}}",
+      "progress": "Move {{i}} / {{n}}",
       "pickHint": "Pick the piece from the palette below.",
       "boardHint": "The board is blank — the highlighted square is the target.",
-      "correct": "Correct!"
+      "correctMove": "Correct! {{piece}} → {{square}}"
     },
     "reveal": {
       "wrong": "Not quite.",
       "yourPick": "You picked {{piece}}.",
-      "answerWas": "The {{piece}} on {{square}} could move to {{target}}.",
+      "answerWas": "The {{piece}} on {{square}} moves to {{target}}.",
       "next": "Next",
       "results": "See results"
     },
     "gameover": {
       "outOfLives": "Out of lives",
-      "finished": "Series complete",
+      "finished": "Line complete",
       "result": "Correct: {{correct}} of {{asked}}.",
       "best": "Best this session: {{count}}"
     },

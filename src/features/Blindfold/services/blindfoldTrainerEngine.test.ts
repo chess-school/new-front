@@ -1,8 +1,36 @@
 import { describe, expect, it } from 'vitest';
 import {
-  BlindfoldSession, Piece, buildQuestion, generatePosition, generatePuzzle, generateSession,
-  legalDestinations, makeRng, reachMap, uniqueReachTargets,
+  BlindfoldLine, BlindfoldSession, Piece, buildLineBlock, buildQuestion, generateLine,
+  generatePosition, generatePuzzle, generateSession, legalDestinations, makeRng, reachMap,
+  uniqueReachTargets,
 } from './blindfoldTrainerEngine';
+
+/**
+ * Проигрывает линию от initial, на КАЖДОМ ходу проверяя инвариант:
+ *   — до цели достаёт РОВНО одна фигура;
+ *   — это фигура с указанными type/color, стоящая на `from`;
+ *   — цель пуста (ход без взятия).
+ * Возвращает фактическую длину проверенной линии.
+ */
+const verifyLineInvariant = (line: BlindfoldLine): number => {
+  const live: Record<string, Piece> = {};
+  for (const p of line.initial) live[p.square] = { ...p };
+  for (const step of line.steps) {
+    const reach = reachMap(live);
+    const reachers = reach.get(step.target) ?? [];
+    expect(reachers.length).toBe(1); // ровно одна фигура достаёт до цели
+    const mover = reachers[0];
+    expect(mover.square).toBe(step.from);
+    expect(mover.type).toBe(step.pieceType);
+    expect(mover.color).toBe(step.pieceColor);
+    expect(live[step.target]).toBeUndefined(); // цель пуста
+    // применяем ход
+    delete live[step.from];
+    mover.square = step.target;
+    live[step.target] = mover;
+  }
+  return line.steps.length;
+};
 
 /** Проверка, что поле лежит на доске 'a1'..'h8' */
 const onBoard = (sq: string) =>
@@ -212,6 +240,44 @@ describe('blindfoldTrainerEngine', () => {
 
     it('uniqueReachTargets на пустой позиции = []', () => {
       expect(uniqueReachTargets({})).toEqual([]);
+    });
+  });
+
+  describe('generateLine: эволюция позиции, инвариант на каждом ходу', () => {
+    it('на каждом ходу до цели достаёт ровно одна фигура — именно ходящая', () => {
+      for (const seed of [1, 2, 7, 42, 101, 2024, 55555]) {
+        for (const pieceCount of [4, 6, 8, 10]) {
+          const line = generateLine({ pieceCount, maxMoves: 75, rng: makeRng(seed) });
+          expect(line.initial.length).toBe(pieceCount);
+          expect(line.steps.length).toBeGreaterThan(0);
+          verifyLineInvariant(line);
+        }
+      }
+    });
+
+    it('детерминизм: одинаковый seed → одинаковая линия', () => {
+      const a = generateLine({ pieceCount: 6, maxMoves: 40, rng: makeRng(123) });
+      const b = generateLine({ pieceCount: 6, maxMoves: 40, rng: makeRng(123) });
+      expect(a).toEqual(b);
+    });
+  });
+
+  describe('buildLineBlock: блок заранее подготовленных и протестированных линий', () => {
+    it('набирает нужное число линий требуемой длины, инвариант держится у ВСЕХ', () => {
+      for (const pieceCount of [4, 6, 8, 10]) {
+        const block = buildLineBlock({ pieceCount, count: 8, minMoves: 75, maxMoves: 75, maxSeeds: 2000 });
+        expect(block.length).toBe(8);
+        for (const line of block) {
+          expect(line.steps.length).toBeGreaterThanOrEqual(75);
+          verifyLineInvariant(line);
+        }
+      }
+    });
+
+    it('детерминизм: один и тот же блок при тех же параметрах', () => {
+      const a = buildLineBlock({ pieceCount: 6, count: 4, minMoves: 60, maxMoves: 75, maxSeeds: 2000 });
+      const b = buildLineBlock({ pieceCount: 6, count: 4, minMoves: 60, maxMoves: 75, maxSeeds: 2000 });
+      expect(a).toEqual(b);
     });
   });
 });

@@ -392,6 +392,84 @@ export function generatePosition(opts: GeneratePuzzleOptions): BlindfoldPosition
   return { pieces: fb.pieces, bySquare: fb.bySquare, targets: uniqueReachTargets(fb.bySquare) };
 }
 
+// ---------------------------------------------------------------- ЛИНИЯ (эволюция позиции)
+
+/**
+ * Один ход линии: названное поле-цель и ЕДИНСТВЕННАЯ фигура, которая может туда пойти,
+ * в позиции НА ЭТОМ ходу (инвариант — ровно одна). После ответа фигура идёт `from → target`,
+ * и следующий вопрос задаётся уже по изменившейся позиции.
+ */
+export interface LineStep {
+  target: string;
+  pieceType: PieceType;
+  pieceColor: Color;
+  from: string;
+}
+
+export interface BlindfoldLine {
+  /** Стартовая расстановка (для фазы запоминания и воспроизведения) */
+  initial: Piece[];
+  /** Последовательность ходов; на каждом цель достижима ровно одной фигурой */
+  steps: LineStep[];
+}
+
+export interface GenerateLineOptions {
+  pieceCount: number;
+  maxMoves: number;
+  rng?: () => number;
+}
+
+/**
+ * Сгенерировать ЛИНИЮ: на каждом ходу выбираем поле, достижимое РОВНО ОДНОЙ фигурой (без взятий),
+ * фиксируем вопрос и двигаем эту фигуру туда — позиция меняется. Так инвариант «на каждом ходу ровно
+ * одна фигура достаёт до цели» выполняется ПО ПОСТРОЕНИЮ. Если уникальных целей не осталось — линия
+ * обрывается раньше maxMoves.
+ */
+export function generateLine(opts: GenerateLineOptions): BlindfoldLine {
+  const rng = opts.rng ?? Math.random;
+  const pieceCount = clamp(opts.pieceCount, 4, 10);
+  const maxMoves = clamp(opts.maxMoves, 1, 200);
+
+  const pieces = placePieces(pieceCount, rng);
+  const live: Record<string, Piece> = {};
+  for (const p of pieces) live[p.square] = p; // те же объекты — двигаем их по ходу
+  const initial = pieces.map((p) => ({ ...p }));
+
+  const steps: LineStep[] = [];
+  for (let m = 0; m < maxMoves; m++) {
+    const reach = reachMap(live);
+    const unique: string[] = [];
+    for (const [sq, ps] of reach) if (ps.length === 1) unique.push(sq);
+    if (unique.length === 0) break;
+    const target = pick(rng, unique);
+    const piece = reach.get(target)![0];
+    steps.push({ target, pieceType: piece.type, pieceColor: piece.color, from: piece.square });
+    // применяем ход
+    delete live[piece.square];
+    piece.square = target;
+    live[target] = piece;
+  }
+  return { initial, steps };
+}
+
+/**
+ * Детерминированный БЛОК заранее подготовленных линий: сканируем сиды по порядку и берём первые
+ * `count` линий длиной не меньше `minMoves`. Результат зависит только от входа — его инвариант
+ * проверяется тестами (на каждом ходу каждой линии до цели достаёт ровно одна фигура).
+ */
+export function buildLineBlock(opts: {
+  pieceCount: number; count: number; minMoves: number; maxMoves: number; maxSeeds?: number;
+}): BlindfoldLine[] {
+  const { pieceCount, count, minMoves, maxMoves } = opts;
+  const maxSeeds = opts.maxSeeds ?? 20000;
+  const lines: BlindfoldLine[] = [];
+  for (let seed = 1; seed <= maxSeeds && lines.length < count; seed++) {
+    const line = generateLine({ pieceCount, maxMoves, rng: makeRng(seed) });
+    if (line.steps.length >= minMoves) lines.push(line);
+  }
+  return lines;
+}
+
 /**
  * Сгенерировать пазл: случайная позиция, у которой есть ПУСТОЕ поле, достижимое РОВНО ОДНОЙ фигурой.
  * Такое поле выбирается целью, а его единственная достающая фигура — ответом.
