@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
-  BlindfoldSession, Piece, buildQuestion, generateSession, legalDestinations, makeRng,
+  BlindfoldSession, Piece, buildQuestion, generatePuzzle, generateSession,
+  legalDestinations, makeRng, reachMap,
 } from './blindfoldTrainerEngine';
 
 /** Проверка, что поле лежит на доске 'a1'..'h8' */
@@ -142,5 +143,43 @@ describe('blindfoldTrainerEngine', () => {
 
     // wp использован, чтобы не ругался линтер на неиспользуемую переменную
     expect(['where-piece', 'what-on-square']).toContain(wp.kind);
+  });
+
+  describe('generatePuzzle: «одна фигура достаёт до поля»', () => {
+    it('детерминизм: одинаковый seed → одинаковый пазл', () => {
+      const a = generatePuzzle({ pieceCount: 6, rng: makeRng(2024) });
+      const b = generatePuzzle({ pieceCount: 6, rng: makeRng(2024) });
+      expect(a).toEqual(b);
+    });
+
+    it('инвариант: цель пуста и достижима РОВНО одной фигурой — ответной', () => {
+      for (const seed of [1, 2, 3, 7, 42, 101, 777, 55555]) {
+        for (const pieceCount of [4, 6, 8, 10]) {
+          const puz = generatePuzzle({ pieceCount, rng: makeRng(seed) });
+          // Цель — пустое поле
+          expect(puz.bySquare[puz.target]).toBeUndefined();
+          // До цели достаёт ровно одна фигура
+          const reach = reachMap(puz.bySquare);
+          const reachers = reach.get(puz.target) ?? [];
+          expect(reachers.length).toBe(1);
+          // И это ответная фигура на своём поле
+          expect(reachers[0].square).toBe(puz.answerSquare);
+          expect(puz.bySquare[puz.answerSquare]).toBeDefined();
+          expect(puz.answerPiece.square).toBe(puz.answerSquare);
+          // Фигур ровно pieceCount, поля различны
+          expect(puz.pieces.length).toBe(pieceCount);
+          expect(new Set(puz.pieces.map((p) => p.square)).size).toBe(pieceCount);
+        }
+      }
+    });
+
+    it('фолбэк при maxAttempts=0 всё равно корректен (конь d4 → c6)', () => {
+      const puz = generatePuzzle({ pieceCount: 6, rng: makeRng(1), maxAttempts: 0 });
+      expect(puz.target).toBe('c6');
+      expect(puz.answerSquare).toBe('d4');
+      const reachers = reachMap(puz.bySquare).get('c6') ?? [];
+      expect(reachers.length).toBe(1);
+      expect(reachers[0].square).toBe('d4');
+    });
   });
 });

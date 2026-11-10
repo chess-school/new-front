@@ -1471,47 +1471,56 @@
     "start": "Zacznij"
   },
   "blindfold": {
-    "title": "Pamięć w ciemno",
-    "subtitle": "Zapamiętaj pozycję, prześledź ruchy w głowie, a następnie odpowiedz, gdzie znalazły się figury.",
+    "title": "Gra na ślepo",
+    "subtitle": "Zapamiętaj pozycję, a potem — na pustej szachownicy — wskaż jedyną figurę, która może pójść na wskazane pole.",
     "start": "Start",
     "again": "Zagraj ponownie",
+    "rules": "3 życia. W każdej rundzie podawane jest jedno pole — znajdź jedyną figurę, która może na nie pójść.",
+    "score": "Rozwiązane",
+    "livesLabel": "Życia",
     "color": {
       "white": "Białe",
       "black": "Czarne"
     },
-    "stats": {
-      "inline": "{{correct}}/{{attempts}} poprawnych · {{pct}}%",
-      "title": "Twoje statystyki",
-      "line": "Poprawnie {{correct}} z {{attempts}} — {{pct}}%"
-    },
     "settings": {
       "pieceCount": "Liczba figur",
-      "moveCount": "Długość serii (ruchy)",
-      "speed": "Szybkość pokazu / ruchu (sekundy)",
+      "memorizeTime": "Czas na zapamiętanie (sekundy)",
+      "difficultyHint": "Więcej figur — trudniej utrzymać w pamięci.",
       "change": "Ustawienia"
     },
     "phase": {
       "memorize": "Zapamiętaj",
-      "blindfold": "Ruchy w ciemno",
-      "question": "Pytanie",
-      "result": "Wynik"
+      "recall": "Znajdź figurę",
+      "reveal": "Odpowiedź",
+      "gameover": "Koniec gry"
     },
     "memorize": {
       "hint": "Zapamiętaj każdą figurę i jej pole."
     },
-    "blindfold": {
-      "progress": "Ruch {{i}} / {{n}}",
-      "hint": "Śledź ruchy w głowie — szachownica jest pusta."
+    "recall": {
+      "prompt": "Tylko jedna figura może pójść na {{square}}. Która?",
+      "clickHint": "Kliknij pole, na którym stoi — szachownica jest pusta.",
+      "thinking": "Wyobraź sobie figury i kliknij właściwe pole."
     },
-    "question": {
-      "timer": "Czas: {{s}} s",
-      "wherePiece": "Na którym polu stoi {{piece}}?",
-      "whatOnSquare": "Jaka figura stoi na {{square}}?",
-      "right": "Poprawnie!",
+    "reveal": {
+      "correct": "Dobrze!",
       "wrong": "Niezupełnie.",
-      "answerWasSquare": "Była na {{square}}.",
-      "answerWasPiece": "To był {{piece}}.",
-      "clickHint": "Kliknij pole na pustej szachownicy."
+      "answerWas": "{{piece}} na {{square}} mogła pójść na {{target}}.",
+      "lostLife": "Tracisz życie.",
+      "next": "Dalej",
+      "results": "Zobacz wynik"
+    },
+    "gameover": {
+      "title": "Koniec żyć",
+      "solved": "Rozpoznano figur: {{count}}.",
+      "best": "Najlepszy wynik w tej sesji: {{count}}"
+    },
+    "piece": {
+      "queen": "Hetman",
+      "rook": "Wieża",
+      "bishop": "Goniec",
+      "knight": "Skoczek",
+      "pawn": "Pion"
     }
   },
   "clubSite": {
