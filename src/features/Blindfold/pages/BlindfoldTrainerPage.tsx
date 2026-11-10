@@ -35,10 +35,11 @@ const LIVES = 3;
 const BLOCK_SIZE = 12;      // сколько линий держим в блоке на каждый расклад
 const MAX_LINE_MOVES = 75;  // линии в блоке длиной ровно 75 ходов
 
-// Палитра ответов: 5 типов × 2 цвета (белые сверху, чёрные снизу)
+// Палитра ответов: конь/ладья/слон/ферзь × 2 цвета (пешек/королей в тренажёре нет).
+// Белые сверху, чёрные снизу.
 const ANSWER_PIECE_OPTIONS: { type: PieceType; color: 'w' | 'b' }[] = [
-  ...(['q', 'r', 'b', 'n', 'p'] as PieceType[]).map((type) => ({ type, color: 'w' as const })),
-  ...(['q', 'r', 'b', 'n', 'p'] as PieceType[]).map((type) => ({ type, color: 'b' as const })),
+  ...(['q', 'r', 'b', 'n'] as PieceType[]).map((type) => ({ type, color: 'w' as const })),
+  ...(['q', 'r', 'b', 'n'] as PieceType[]).map((type) => ({ type, color: 'b' as const })),
 ];
 
 const toPieceCode = (p: { type: PieceType; color: 'w' | 'b' }): PieceCode =>
@@ -254,7 +255,7 @@ export const BlindfoldTrainerPage: React.FC = () => {
 
   // палитра выбора фигуры (под жизнями)
   const palette = (
-    <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 1 }}>
+    <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1 }}>
       {ANSWER_PIECE_OPTIONS.map(({ type, color }) => (
         <ToggleButton
           key={`${color}${type}`}
