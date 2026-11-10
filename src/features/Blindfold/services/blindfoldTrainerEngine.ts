@@ -153,6 +153,37 @@ export function legalDestinations(piece: Piece, occupied: Record<string, Piece>)
   return dests;
 }
 
+// ---------------------------------------------------------------- РАССТАНОВКА
+
+/**
+ * Случайная расстановка pieceCount фигур (БЕЗ королей) на РАЗНЫХ полях.
+ * pieceCount зажимается в [4,10]. Пешка на последней для своего цвета горизонтали стала бы
+ * «мёртвой» (ходов нет, превращение исключено) — её тип меняем на ферзя.
+ * Порядок обращений к rng (для каждой фигуры: поле → тип → цвет) стабилен — расстановка детерминирована.
+ */
+export function placePieces(pieceCount: number, rng: () => number): Piece[] {
+  const n = clamp(pieceCount, 4, 10);
+  const freeSquares = [...ALL_SQUARES];
+  const pieces: Piece[] = [];
+  for (let i = 0; i < n; i++) {
+    const sqIdx = randInt(rng, freeSquares.length);
+    const square = freeSquares.splice(sqIdx, 1)[0];
+    let type = pick(rng, PIECE_TYPES);
+    const color = pick(rng, COLORS);
+    const lastRank = color === 'w' ? 8 : 1;
+    if (type === 'p' && rankOf(square) === lastRank) type = 'q';
+    pieces.push({ id: `p${i}`, type, color, square });
+  }
+  return pieces;
+}
+
+/** Снимок позиции: поле → фигура, стоящая на нём */
+const indexBySquare = (pieces: Piece[]): Record<string, Piece> => {
+  const map: Record<string, Piece> = {};
+  for (const p of pieces) map[p.square] = p;
+  return map;
+};
+
 // ---------------------------------------------------------------- СЕССИЯ
 
 /**
@@ -162,26 +193,10 @@ export function legalDestinations(piece: Piece, occupied: Record<string, Piece>)
  */
 export function generateSession(opts: GenerateOptions): BlindfoldSession {
   const rng = opts.rng ?? Math.random;
-  const pieceCount = clamp(opts.pieceCount, 4, 10);
   const moveCount = clamp(opts.moveCount, 10, 50);
 
   // --- Расстановка на РАЗНЫХ полях ---
-  const freeSquares = [...ALL_SQUARES];
-  const initial: Piece[] = [];
-  const occupied: Record<string, Piece> = {};
-  for (let i = 0; i < pieceCount; i++) {
-    const sqIdx = randInt(rng, freeSquares.length);
-    const square = freeSquares.splice(sqIdx, 1)[0];
-    let type = pick(rng, PIECE_TYPES);
-    const color = pick(rng, COLORS);
-    // Пешка на последней для своего цвета горизонтали не имела бы ходов и была бы «застрявшей»
-    // (превращения нет) — заменяем её тип, чтобы расстановка не содержала мёртвых пешек.
-    const lastRank = color === 'w' ? 8 : 1;
-    if (type === 'p' && rankOf(square) === lastRank) type = 'q';
-    const piece: Piece = { id: `p${i}`, type, color, square };
-    initial.push(piece);
-    occupied[square] = piece;
-  }
+  const initial = placePieces(opts.pieceCount, rng);
 
   // --- Разыгрывание ходов ---
   // live: поле → фигура (мутируемая копия текущей позиции). У каждой фигуры поле обновляем.
@@ -263,4 +278,96 @@ const PIECE_NAMES_RU: Record<PieceType, string> = {
 /** Человекочитаемое описание хода по-русски, напр. «Конь b1 → c3» */
 export function describeStep(step: BlindfoldStep): string {
   return `${PIECE_NAMES_RU[step.type]} ${step.from} → ${step.to}`;
+}
+
+// ---------------------------------------------------------------- ПАЗЛ «ОДНА ФИГУРА → ПОЛЕ»
+
+/**
+ * Пазл слепой видимости: статичная позиция и ПУСТОЕ поле-цель, на которое может легально пойти
+ * РОВНО ОДНА фигура (без взятий). Ученик, держа позицию в голове, называет эту фигуру —
+ * указывает поле, где она стоит (`answerSquare`).
+ */
+export interface BlindfoldPuzzle {
+  pieces: Piece[];
+  bySquare: Record<string, Piece>;
+  /** Названное поле-цель (пустое) */
+  target: string;
+  /** Поле, на котором стоит единственная достающая до цели фигура — правильный ответ */
+  answerSquare: string;
+  answerPiece: Piece;
+}
+
+export interface GeneratePuzzleOptions {
+  pieceCount: number;
+  rng?: () => number;
+  /** Сколько раз пробовать случайную расстановку, прежде чем взять детерминированный фолбэк */
+  maxAttempts?: number;
+}
+
+/**
+ * Для позиции `bySquare` — карта: пустое поле → список фигур, которые могут легально пойти туда
+ * (без взятий). Поля, на которые никто не ходит, в карте отсутствуют.
+ */
+export function reachMap(bySquare: Record<string, Piece>): Map<string, Piece[]> {
+  const reach = new Map<string, Piece[]>();
+  for (const sq of Object.keys(bySquare)) {
+    const piece = bySquare[sq];
+    for (const dest of legalDestinations(piece, bySquare)) {
+      const arr = reach.get(dest);
+      if (arr) arr.push(piece);
+      else reach.set(dest, [piece]);
+    }
+  }
+  return reach;
+}
+
+/**
+ * Детерминированный фолбэк, если случайная расстановка maxAttempts раз не дала поля с единственной
+ * достающей фигурой (практически не случается для pieceCount≥4). Конь на d4 — единственный, кто
+ * достаёт до c6; остальные — белые пешки, не бьющие (ходов на c6 ни у кого больше нет).
+ */
+function fallbackPuzzle(pieceCount: number): BlindfoldPuzzle {
+  const n = clamp(pieceCount, 4, 10);
+  const pawnSquares = ['a2', 'b2', 'e2', 'f2', 'g2', 'h2', 'a3', 'h3', 'd2'];
+  const pieces: Piece[] = [{ id: 'p0', type: 'n', color: 'w', square: 'd4' }];
+  for (let i = 1; i < n; i++) {
+    pieces.push({ id: `p${i}`, type: 'p', color: 'w', square: pawnSquares[i - 1] });
+  }
+  const answerPiece = pieces[0];
+  return {
+    pieces,
+    bySquare: indexBySquare(pieces),
+    target: 'c6',
+    answerSquare: 'd4',
+    answerPiece: { ...answerPiece },
+  };
+}
+
+/**
+ * Сгенерировать пазл: случайная позиция, у которой есть ПУСТОЕ поле, достижимое РОВНО ОДНОЙ фигурой.
+ * Такое поле выбирается целью, а его единственная достающая фигура — ответом.
+ */
+export function generatePuzzle(opts: GeneratePuzzleOptions): BlindfoldPuzzle {
+  const rng = opts.rng ?? Math.random;
+  const pieceCount = clamp(opts.pieceCount, 4, 10);
+  const maxAttempts = opts.maxAttempts ?? 200;
+
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    const pieces = placePieces(pieceCount, rng);
+    const bySquare = indexBySquare(pieces);
+    const reach = reachMap(bySquare);
+    // Поля, на которые может пойти ровно одна фигура
+    const unique: Array<[string, Piece]> = [];
+    for (const [sq, ps] of reach) if (ps.length === 1) unique.push([sq, ps[0]]);
+    if (unique.length === 0) continue;
+    const [target, answerPiece] = pick(rng, unique);
+    return {
+      pieces,
+      bySquare,
+      target,
+      answerSquare: answerPiece.square,
+      answerPiece: { ...answerPiece },
+    };
+  }
+  return fallbackPuzzle(pieceCount);
 }

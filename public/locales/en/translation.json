@@ -1458,47 +1458,56 @@
     "start": "Start"
   },
   "blindfold": {
-    "title": "Blindfold memory",
-    "subtitle": "Memorise the position, follow the moves in your head, then answer where the pieces ended up.",
+    "title": "Blindfold vision",
+    "subtitle": "Memorise the position, then — on a blank board — find the one piece that can move to the named square.",
     "start": "Start",
     "again": "Play again",
+    "rules": "3 lives. Each round one square is named — find the only piece that can move there.",
+    "score": "Solved",
+    "livesLabel": "Lives",
     "color": {
       "white": "White",
       "black": "Black"
     },
-    "stats": {
-      "inline": "{{correct}}/{{attempts}} correct · {{pct}}%",
-      "title": "Your stats",
-      "line": "Correct {{correct}} of {{attempts}} — {{pct}}%"
-    },
     "settings": {
       "pieceCount": "Number of pieces",
-      "moveCount": "Series length (moves)",
-      "speed": "Show / move speed (seconds)",
+      "memorizeTime": "Time to memorise (seconds)",
+      "difficultyHint": "More pieces — harder to hold in your head.",
       "change": "Settings"
     },
     "phase": {
       "memorize": "Memorise",
-      "blindfold": "Blindfold moves",
-      "question": "Question",
-      "result": "Result"
+      "recall": "Find the piece",
+      "reveal": "Answer",
+      "gameover": "Game over"
     },
     "memorize": {
       "hint": "Remember every piece and its square."
     },
-    "blindfold": {
-      "progress": "Move {{i}} / {{n}}",
-      "hint": "Track the moves in your head — the board is blank."
+    "recall": {
+      "prompt": "Only one piece can move to {{square}}. Which one?",
+      "clickHint": "Click the square it stands on — the board is blank.",
+      "thinking": "Picture the pieces in your head and click the right square."
     },
-    "question": {
-      "timer": "Time: {{s}}s",
-      "wherePiece": "Which square holds the {{piece}}?",
-      "whatOnSquare": "Which piece stands on {{square}}?",
-      "right": "Correct!",
+    "reveal": {
+      "correct": "Correct!",
       "wrong": "Not quite.",
-      "answerWasSquare": "It was on {{square}}.",
-      "answerWasPiece": "It was the {{piece}}.",
-      "clickHint": "Click the square on the blank board."
+      "answerWas": "The {{piece}} on {{square}} could move to {{target}}.",
+      "lostLife": "Lost a life.",
+      "next": "Next",
+      "results": "See results"
+    },
+    "gameover": {
+      "title": "Out of lives",
+      "solved": "You identified {{count}} pieces.",
+      "best": "Best this session: {{count}}"
+    },
+    "piece": {
+      "queen": "Queen",
+      "rook": "Rook",
+      "bishop": "Bishop",
+      "knight": "Knight",
+      "pawn": "Pawn"
     }
   },
   "clubSite": {
