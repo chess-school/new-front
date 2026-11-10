@@ -184,9 +184,10 @@ export function placePieces(pieceCount: number, rng: () => number): Piece[] {
 export const LINE_PIECE_TYPES: PieceType[] = ['n', 'r', 'b', 'q'];
 
 /**
- * Расстановка для линии: ГАРАНТИРУЕТ по одной фигуре каждого типа (конь, ладья, слон, ферзь),
- * чтобы в задании нельзя было ответить «на глаз» (как с двумя ферзями) — нужно знать, где какая
- * фигура. Лишние фигуры (сверх 4) — случайные из того же набора. Цвета случайны, поля различны.
+ * Расстановка для линии: СБАЛАНСИРОВАННЫЙ состав по кругу конь→ладья→слон→ферзь. Первые четыре
+ * фигуры дают обязательный набор n/r/b/q (нельзя ответить «на глаз» — надо знать, где какая),
+ * дальше набор повторяется по кругу, так что перекоса (например, трёх ферзей) не бывает.
+ * Цвета случайны, поля различны.
  */
 export function placeLinePieces(pieceCount: number, rng: () => number): Piece[] {
   const n = clamp(pieceCount, 4, 10);
@@ -195,8 +196,7 @@ export function placeLinePieces(pieceCount: number, rng: () => number): Piece[] 
   for (let i = 0; i < n; i++) {
     const sqIdx = randInt(rng, freeSquares.length);
     const square = freeSquares.splice(sqIdx, 1)[0];
-    // Первые четыре фигуры — обязательный набор n/r/b/q; дальше — случайные из набора.
-    const type = i < LINE_PIECE_TYPES.length ? LINE_PIECE_TYPES[i] : pick(rng, LINE_PIECE_TYPES);
+    const type = LINE_PIECE_TYPES[i % LINE_PIECE_TYPES.length];
     const color = pick(rng, COLORS);
     pieces.push({ id: `p${i}`, type, color, square });
   }

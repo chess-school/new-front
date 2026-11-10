@@ -109,6 +109,7 @@ export const BlindfoldTrainerPage: React.FC = () => {
   const [pieceCount, setPieceCount] = useState<number>(6);
   const [memorizeTime, setMemorizeTime] = useState<number>(8); // секунд на запоминание
   const [lineLength, setLineLength] = useState<number>(60);     // длина разыгрываемой линии
+  const [timeLimit, setTimeLimit] = useState<number>(10);       // секунд на ход, 0 = без лимита
 
   // состояние партии
   const [phase, setPhase] = useState<Phase>('settings');
@@ -123,9 +124,12 @@ export const BlindfoldTrainerPage: React.FC = () => {
   // ответ текущего хода
   const [picked, setPicked] = useState<{ type: PieceType; color: 'w' | 'b' } | null>(null);
   const [lastCorrect, setLastCorrect] = useState<boolean>(false);
+  const [timedOut, setTimedOut] = useState<boolean>(false);
+  const [answerLeft, setAnswerLeft] = useState<number>(0); // остаток времени на ход
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const flashRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const moveTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // ширина доски — чтобы react-chessboard масштабировался по контейнеру
   const boardWrapRef = useRef<HTMLDivElement | null>(null);
@@ -144,6 +148,7 @@ export const BlindfoldTrainerPage: React.FC = () => {
   const clearTimers = useCallback(() => {
     if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null; }
     if (flashRef.current) { clearTimeout(flashRef.current); flashRef.current = null; }
+    if (moveTimerRef.current) { clearInterval(moveTimerRef.current); moveTimerRef.current = null; }
   }, []);
 
   useEffect(() => () => clearTimers(), [clearTimers]);
@@ -162,6 +167,7 @@ export const BlindfoldTrainerPage: React.FC = () => {
     setLives(LIVES);
     setCorrect(0);
     setPicked(null);
+    setTimedOut(false);
     setMemorizeLeft(memorizeTime);
     setPhase('memorize');
   }, [clearTimers, pieceCount, memorizeTime]);
@@ -191,10 +197,38 @@ export const BlindfoldTrainerPage: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
+  // время на ход вышло — засчитываем как ошибку
+  const handleTimeout = useCallback(() => {
+    if (phase !== 'question' || !current || picked) return;
+    setTimedOut(true);
+    setLastCorrect(false);
+    setLives((l) => Math.max(0, l - 1));
+    setPhase('reveal');
+  }, [phase, current, picked]);
+
+  // таймер хода: отсчёт на каждом вопросе; 0 = без лимита
+  useEffect(() => {
+    if (phase !== 'question' || picked || timeLimit <= 0) return;
+    setAnswerLeft(timeLimit);
+    moveTimerRef.current = setInterval(() => {
+      setAnswerLeft((s) => {
+        if (s <= 1) {
+          if (moveTimerRef.current) { clearInterval(moveTimerRef.current); moveTimerRef.current = null; }
+          handleTimeout();
+          return 0;
+        }
+        return s - 1;
+      });
+    }, 1000);
+    return () => { if (moveTimerRef.current) { clearInterval(moveTimerRef.current); moveTimerRef.current = null; } };
+  }, [phase, stepIndex, picked, timeLimit, handleTimeout]);
+
   // выбор фигуры из палитры
   const onPickPiece = useCallback((type: PieceType, color: 'w' | 'b') => {
     if (phase !== 'question' || !current || picked) return;
+    if (moveTimerRef.current) { clearInterval(moveTimerRef.current); moveTimerRef.current = null; }
     const ok = current.pieceType === type && current.pieceColor === color;
+    setTimedOut(false);
     setPicked({ type, color });
     setLastCorrect(ok);
 
@@ -223,6 +257,7 @@ export const BlindfoldTrainerPage: React.FC = () => {
     if (lives <= 0 || next >= limit) { setPhase('gameover'); return; }
     setStepIndex(next);
     setPicked(null);
+    setTimedOut(false);
     setPhase('question');
   }, [current, stepIndex, lives, limit]);
 
@@ -363,6 +398,22 @@ export const BlindfoldTrainerPage: React.FC = () => {
                 />
               </Box>
 
+              <Box>
+                <Typography variant="subtitle2" gutterBottom>
+                  {t('blindfold.settings.timeLimit', 'Time per move (seconds)')}:{' '}
+                  {timeLimit === 0 ? t('blindfold.settings.noLimit', 'no limit') : timeLimit}
+                </Typography>
+                <Slider
+                  value={timeLimit}
+                  onChange={(_, v) => setTimeLimit(v as number)}
+                  min={0}
+                  max={30}
+                  step={1}
+                  marks={[{ value: 0, label: '∞' }, { value: 10, label: '10' }, { value: 30, label: '30' }]}
+                  valueLabelDisplay="auto"
+                />
+              </Box>
+
               <Typography variant="body2" color="text.secondary">
                 {t('blindfold.rules', '3 lives. The position changes after every move — keep it in your head and name the only piece that can reach the called square.')}
               </Typography>
@@ -395,9 +446,19 @@ export const BlindfoldTrainerPage: React.FC = () => {
 
               {(phase === 'question' || phase === 'reveal') && current && (
                 <>
-                  <Typography variant="caption" color="text.secondary">
-                    {t('blindfold.question.progress', 'Move {{i}} / {{n}}', { i: stepIndex + 1, n: limit })}
-                  </Typography>
+                  <Stack direction="row" justifyContent="space-between" alignItems="baseline">
+                    <Typography variant="caption" color="text.secondary">
+                      {t('blindfold.question.progress', 'Move {{i}} / {{n}}', { i: stepIndex + 1, n: limit })}
+                    </Typography>
+                    {phase === 'question' && timeLimit > 0 && !picked && (
+                      <Typography
+                        variant="caption"
+                        sx={{ fontVariantNumeric: 'tabular-nums', fontWeight: 700, color: answerLeft <= 3 ? 'error.main' : 'text.secondary' }}
+                      >
+                        {t('blindfold.question.timeLeft', '⏱ {{s}}s', { s: answerLeft })}
+                      </Typography>
+                    )}
+                  </Stack>
                   <Typography variant="h6">
                     {t('blindfold.question.prompt', 'Which piece can move to {{square}}?', { square: current.target })}
                   </Typography>
@@ -426,7 +487,7 @@ export const BlindfoldTrainerPage: React.FC = () => {
                 <Fade in>
                   <Stack spacing={1.5}>
                     <Typography variant="subtitle1" sx={{ color: 'error.main', fontWeight: 700 }}>
-                      {t('blindfold.reveal.wrong', 'Not quite.')}
+                      {timedOut ? t('blindfold.reveal.timeout', 'Time’s up.') : t('blindfold.reveal.wrong', 'Not quite.')}
                     </Typography>
                     {picked && (
                       <Typography variant="body2" color="text.secondary">

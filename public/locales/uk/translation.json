@@ -1487,7 +1487,9 @@
       "memorizeTime": "Час на запам'ятовування (секунди)",
       "lineLength": "Довжина партії (ходи)",
       "difficultyHint": "Більше фігур — важче тримати в голові.",
-      "change": "Налаштування"
+      "change": "Налаштування",
+      "timeLimit": "Час на хід (секунди)",
+      "noLimit": "без ліміту"
     },
     "phase": {
       "memorize": "Запам'ятай",
@@ -1503,14 +1505,16 @@
       "progress": "Хід {{i}} / {{n}}",
       "pickHint": "Обери фігуру з палітри нижче.",
       "boardHint": "Дошка порожня — підсвічена клітинка це ціль.",
-      "correctMove": "Правильно! {{piece}} → {{square}}"
+      "correctMove": "Правильно! {{piece}} → {{square}}",
+      "timeLeft": "⏱ {{s}}s"
     },
     "reveal": {
       "wrong": "Не зовсім.",
       "yourPick": "Ти обрав: {{piece}}.",
       "answerWas": "{{piece}} на {{square}} іде на {{target}}.",
       "next": "Далі",
-      "results": "Переглянути результат"
+      "results": "Переглянути результат",
+      "timeout": "Час вийшов."
     },
     "gameover": {
       "outOfLives": "Життя скінчилися",
