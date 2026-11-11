@@ -42,7 +42,7 @@ export const GameClock: React.FC<{ clock: ClockState; color: Color; receivedAt: 
         px: 1.5, py: 1, borderRadius: 2, minWidth: 96, textAlign: 'right', fontVariantNumeric: 'tabular-nums',
         transition: 'background-color .2s ease, color .2s ease',
         bgcolor: low ? tokens.accent.redSoft : ticking ? tokens.accent.goldSoft : 'surface.raised',
-        color: low ? tokens.accent.red : ticking ? 'text.primary' : 'text.secondary',
+        color: low ? 'error.main' : ticking ? 'text.primary' : 'text.secondary',
         border: 1, borderColor: low ? 'rgba(248,81,73,0.5)' : ticking ? 'rgba(43, 80, 224,0.45)' : 'divider',
         animation: low && ticking ? 'clockPulse 1s ease-in-out infinite' : 'none',
         '@keyframes clockPulse': { '50%': { boxShadow: `0 0 0 3px ${tokens.accent.redSoft}` } },

@@ -60,7 +60,7 @@ export const VariationTree: React.FC<VariationTreeProps> = ({ tree, currentId, o
           <ChatBubbleOutlineRoundedIcon
             aria-label={t('analysisBoard.annotation.hasComment', 'Has a comment')}
             data-testid="move-comment-icon"
-            sx={{ fontSize: '0.85em', color: tokens.accent.gold, alignSelf: 'center' }}
+            sx={{ fontSize: '0.85em', color: 'primary.main', alignSelf: 'center' }}
           />
         )}
       </Box>

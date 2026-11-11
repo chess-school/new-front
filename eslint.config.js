@@ -23,6 +23,13 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
+      // Корневая причина 4 контраст-багов (White to move / оценка Stockfish / карточка solve /
+      // заголовок входа): статический `tokens.text.*` / `tokens.accent.*` как color НЕ флипается
+      // с темой (tokens = светлая палитра) → тёмный текст на тёмном фоне. Берём MUI-токен темы.
+      'no-restricted-syntax': ['error', {
+        selector: "Property[key.name='color'] MemberExpression[object.object.name='tokens'][object.property.name=/^(text|accent)$/]",
+        message: "Не задавай color статическим tokens.text.*/tokens.accent.* — он не меняется с темой. Используй MUI-токен: 'text.primary'/'text.secondary' или 'primary.main'/'success.main'/'error.main'/'info.main' (либо tokensFor(mode) при необходимости).",
+      }],
     },
   },
 )

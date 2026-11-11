@@ -9,6 +9,8 @@ import { AppThemeProvider } from '@/theme';
 import { AuthForm } from '@/components/AuthForm/AuthForm';
 import { SolveCard } from '@/features/Classroom/components/SolveCard';
 import type { SolveState } from '@/features/Classroom/classroomApi';
+import { MarkdownView } from '@/features/CoursePlayer/components/MarkdownView';
+import { PuzzleSourceDialogs } from '@/features/CourseBuilder/components/PuzzleSourceDialogs';
 
 // AuthForm дёргает API-модули при сабмите — мокаем, сам сабмит в a11y-прогоне не вызываем.
 vi.mock('@/api/login', () => ({ loginUser: vi.fn() }));
@@ -43,6 +45,9 @@ const SUBJECTS: Record<string, React.ReactNode> = {
   'AuthForm (register)': <AuthForm mode="register" />,
   'SolveCard (solving)': <SolveCard solve={solve()} canControl isCoach={false} onHint={vi.fn()} onRestart={vi.fn()} onExit={vi.fn()} />,
   'SolveCard (solved)': <SolveCard solve={solve({ status: 'solved', index: 6 })} canControl isCoach onHint={vi.fn()} onRestart={vi.fn()} onExit={vi.fn()} />,
+  // Курсы (Фаза A/B): листовые компоненты плеера/редактора — проверяем aria в обеих темах.
+  'Course MarkdownView': <MarkdownView body={'## Heading\n\nSome **bold** and *italic* text.\n\n- one\n- two'} />,
+  'Course PuzzleSourceDialogs': <PuzzleSourceDialogs onAdd={() => {}} />,
 };
 
 describe('a11y (axe-core): ключевые экраны без нарушений доступности в обеих темах', () => {
