@@ -10,6 +10,7 @@ import DeleteOutlineRounded from '@mui/icons-material/DeleteOutlineRounded';
 import AddRounded from '@mui/icons-material/AddRounded';
 import SaveRounded from '@mui/icons-material/SaveRounded';
 import ArrowBackRounded from '@mui/icons-material/ArrowBackRounded';
+import VisibilityRounded from '@mui/icons-material/VisibilityRounded';
 import ExpandMoreRounded from '@mui/icons-material/ExpandMoreRounded';
 import ExpandLessRounded from '@mui/icons-material/ExpandLessRounded';
 import { useTranslation } from 'react-i18next';
@@ -244,6 +245,9 @@ export const CourseEditorPage: React.FC = () => {
         actions={(
           <Stack direction="row" spacing={1}>
             <Button variant="outlined" onClick={() => navigate('/club/courses')} startIcon={<ArrowBackRounded />}>{t('common.back', 'Back')}</Button>
+            <Button variant="outlined" startIcon={<VisibilityRounded />} onClick={() => window.open(`/courses/${courseId}`, '_blank', 'noopener')}>
+              {t('courses.preview', 'Preview')}
+            </Button>
             <Button variant="outlined" color={status === 'published' ? 'warning' : 'success'} onClick={togglePublish}>
               {status === 'published' ? t('courses.unpublish', 'Unpublish') : t('courses.publish', 'Publish')}
             </Button>
