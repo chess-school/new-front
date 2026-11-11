@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 
 import type { CourseBlock, PuzzleBlock, GameBlock, TextBlock, CoursePuzzle } from '@/features/Courses/types/courseBlocks';
 import { newInlinePuzzle } from '../lib/courseDraft';
+import { PuzzleSourceDialogs } from './PuzzleSourceDialogs';
 
 const LIGHT = '#E9EDF2';
 const DARK = '#6E7F95';
@@ -175,11 +176,12 @@ const PuzzleBlockEditor: React.FC<{ block: PuzzleBlock; onChange: (b: PuzzleBloc
           onRemove={() => removePuzzle(i)}
         />
       ))}
-      <Box>
+      <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
         <Button size="small" startIcon={<AddRounded />} onClick={addPuzzle} variant="outlined">
           {t('courses.block.puzzle.add', 'Add puzzle')}
         </Button>
-      </Box>
+        <PuzzleSourceDialogs onAdd={(added) => onChange({ ...block, puzzles: [...block.puzzles, ...added] })} />
+      </Stack>
     </Stack>
   );
 };
