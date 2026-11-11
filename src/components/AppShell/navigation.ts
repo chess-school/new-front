@@ -114,6 +114,10 @@ export const NAV_GROUPS: NavGroup[] = [
     mode: 'coach',
     items: [
       {
+        key: 'courses', labelKey: 'nav.courses', fallback: 'Courses', to: '/club/courses', icon: 'courseBuilder', audience: 'coach',
+        isActive: startsWith('/club/courses'),
+      },
+      {
         key: 'review', labelKey: 'nav.review', fallback: 'Review work', to: '/inbox?tab=homework', icon: 'review', audience: 'coach', badge: 'review',
         isActive: (pathname, search) => pathname === '/inbox' && /[?&]tab=homework\b/.test(search),
       },

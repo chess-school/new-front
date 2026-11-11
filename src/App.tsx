@@ -40,6 +40,8 @@ const ClubSettingsPage = lazy(() => import('./features/console/ClubSettingsPage'
 const MediaLibraryPage = lazy(() => import('./features/console/MediaLibraryPage'));
 const ClubSitePagesPage = lazy(() => import('./features/console/ClubSitePagesPage'));
 const LeadsPage = lazy(() => import('./features/console/LeadsPage'));
+const CoursesListPage = lazy(() => import('./features/CourseBuilder/pages/CoursesListPage').then((m) => ({ default: m.CoursesListPage })));
+const CourseEditorPage = lazy(() => import('./features/CourseBuilder/pages/CourseEditorPage').then((m) => ({ default: m.CourseEditorPage })));
 const ClubSitePage = lazy(() => import('./pages/club-site/club-site-page'));
 const CoachProfilePage = lazy(() => import('./pages/club-site/coach-profile-page'));
 import { GroupsPage } from './pages/groups-page/groups-page';
@@ -101,6 +103,8 @@ function MainLayout() {
         <Route path="/club/media" element={<MediaLibraryPage />} />
         <Route path="/club/site" element={<ClubSitePagesPage />} />
         <Route path="/club/leads" element={<LeadsPage />} />
+        <Route path="/club/courses" element={<CoursesListPage />} />
+        <Route path="/club/courses/:courseId/edit" element={<CourseEditorPage />} />
         <Route path="/students" element={<StudentsPage />} />
         <Route path="/groups" element={<GroupsPage />} />
         <Route path="/digitizer" element={<DigitizerPage />} />
