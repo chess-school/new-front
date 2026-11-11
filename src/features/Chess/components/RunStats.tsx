@@ -41,7 +41,9 @@ export const RunStats: React.FC<{ stats: RunStat[] }> = ({ stats }) => (
 
 /** Бейдж статуса задачи: решено — изумрудный, ошибка — красный, нейтральный — янтарный */
 export const StatusBadge: React.FC<{ tone: StatTone | 'neutral'; icon?: React.ReactElement; children: React.ReactNode; testId?: string }> = ({ tone, icon, children, testId }) => {
-  const colors = tone === 'neutral' ? { fg: tokens.text.primary, bg: 'action.hover' } : TONES[tone];
+  // 'text.primary' (MUI-токен) флипается с темой; статический tokens.text.primary был тёмным
+  // и в тёмной теме сливался с фоном (напр. «White to move» на /puzzles).
+  const colors = tone === 'neutral' ? { fg: 'text.primary', bg: 'action.hover' } : TONES[tone];
   return (
     <Stack direction="row" spacing={1} alignItems="center"
       sx={{ px: 1.5, py: 1.1, borderRadius: 2, bgcolor: colors.bg, color: colors.fg, border: 1, borderColor: tone === 'neutral' ? 'divider' : 'transparent', transition: 'background-color .25s ease, color .25s ease' }}>

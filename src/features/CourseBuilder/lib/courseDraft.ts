@@ -116,16 +116,16 @@ export const validateDraft = (c: CourseContent): string[] => {
   const problems: string[] = [];
   c.chapters.forEach((ch, ci) => {
     const label = `${ci + 1}. ${ch.title || '—'}`;
-    if (!ch.title.trim()) problems.push(`Глава ${ci + 1}: нужен заголовок`);
+    if (!ch.title.trim()) problems.push(`Chapter ${ci + 1}: title required`);
     ch.blocks.forEach((b, bi) => {
-      const where = `Глава «${label}», блок ${bi + 1}`;
+      const where = `Chapter “${label}”, block ${bi + 1}`;
       if (b.type === 'puzzle') {
-        if (b.puzzles.length === 0) problems.push(`${where}: нет задач`);
+        if (b.puzzles.length === 0) problems.push(`${where}: no puzzles`);
         b.puzzles.forEach((p, pi) => {
-          if (p.kind === 'inline' && !p.fen.trim()) problems.push(`${where}, задача ${pi + 1}: нужен FEN`);
+          if (p.kind === 'inline' && !p.fen.trim()) problems.push(`${where}, puzzle ${pi + 1}: FEN required`);
         });
       }
-      if (b.type === 'game' && !b.pgn.trim()) problems.push(`${where}: нужен PGN партии`);
+      if (b.type === 'game' && !b.pgn.trim()) problems.push(`${where}: game PGN required`);
     });
   });
   return problems;
