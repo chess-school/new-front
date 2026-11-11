@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Stack, Paper, Typography, Button, Chip, CircularProgress, Alert, LinearProgress, Divider } from '@mui/material';
 import ArrowBackRounded from '@mui/icons-material/ArrowBackRounded';
@@ -9,7 +9,7 @@ import SportsEsportsRounded from '@mui/icons-material/SportsEsportsRounded';
 import { useTranslation } from 'react-i18next';
 
 import { PageContainer, PageHeader } from '@/shared/components/ui/PageHeader';
-import { getCourse } from '@/api/courses';
+import { getCourse, getMyCourseProgress, markCourseBlockComplete } from '@/api/courses';
 import type { CourseDetail } from '@/types/Course';
 import type { CourseBlock } from '@/features/Courses/types/courseBlocks';
 import { MarkdownView } from '../components/MarkdownView';
@@ -60,13 +60,22 @@ export const CoursePlayerPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [done, setDone] = useState<Set<string>>(new Set());
+  const posted = useRef<Set<string>>(new Set()); // блоки, уже отправленные на бэк (гард от повторов)
 
   useEffect(() => {
     let alive = true;
     (async () => {
       try {
         const c = await getCourse(courseId);
-        if (alive) setCourse(c);
+        if (!alive) return;
+        setCourse(c);
+        // Гидратация прогресса (не блокируем показ курса, если прогресс не пришёл)
+        try {
+          const completed = await getMyCourseProgress(courseId);
+          if (!alive) return;
+          setDone(new Set(completed));
+          completed.forEach((id) => posted.current.add(id)); // уже на бэке — не слать повторно
+        } catch { /* нет доступа к прогрессу — не критично */ }
       } catch {
         if (alive) setNotFound(true);
       } finally {
@@ -76,9 +85,13 @@ export const CoursePlayerPage: React.FC = () => {
     return () => { alive = false; };
   }, [courseId]);
 
-  const markDone = useCallback((id: string) => {
-    setDone((prev) => (prev.has(id) ? prev : new Set(prev).add(id)));
-  }, []);
+  const markDone = useCallback((blockId: string, chapterId?: string) => {
+    setDone((prev) => (prev.has(blockId) ? prev : new Set(prev).add(blockId)));
+    if (!posted.current.has(blockId)) {
+      posted.current.add(blockId);
+      markCourseBlockComplete(courseId, blockId, chapterId).catch(() => { /* фоновая отметка — молча */ });
+    }
+  }, [courseId]);
 
   const chapters = useMemo(() => course?.modules?.chapters ?? [], [course]);
   const totalBlocks = useMemo(() => chapters.reduce((n, ch) => n + ch.blocks.length, 0), [chapters]);
@@ -132,7 +145,7 @@ export const CoursePlayerPage: React.FC = () => {
             <Divider sx={{ mb: 2 }} />
             <Stack spacing={2.5}>
               {ch.blocks.map((b) => (
-                <BlockView key={b.id} block={b} done={done.has(b.id)} onDone={() => markDone(b.id)} />
+                <BlockView key={b.id} block={b} done={done.has(b.id)} onDone={() => markDone(b.id, ch.id)} />
               ))}
               {ch.blocks.length === 0 && (
                 <Typography variant="body2" color="text.secondary">{t('coursePlayer.noBlocks', 'No blocks in this chapter.')}</Typography>

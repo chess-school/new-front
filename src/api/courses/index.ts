@@ -31,3 +31,39 @@ export const updateCourse = async (
 export const setCourseStatus = async (courseId: string, status: CourseStatus): Promise<void> => {
   await axiosInstance.patch(`/courses/${courseId}/status`, { status });
 };
+
+// --- Прогресс по курсу (Фаза A5) ---
+
+/** Свой прогресс: id пройденных блоков. */
+export const getMyCourseProgress = async (courseId: string): Promise<string[]> => {
+  const res = await axiosInstance.get(`/courses/${courseId}/progress`, { silent: true });
+  return res.data?.data?.completed ?? [];
+};
+
+/** Отметить блок пройденным (идемпотентно). Тихо — фоновая отметка не должна шуметь тостами. */
+export const markCourseBlockComplete = async (
+  courseId: string, blockId: string, chapterId?: string,
+): Promise<void> => {
+  await axiosInstance.post(`/courses/${courseId}/progress`, { blockId, chapterId }, { silent: true });
+};
+
+export interface CourseProgressStudent {
+  studentId: string;
+  uuid?: string;
+  name: string;
+  avatarUrl?: string;
+  completed: number;
+  total: number;
+  percent: number;
+  lastAt: string | null;
+}
+export interface CourseProgressSummary {
+  total: number;
+  students: CourseProgressStudent[];
+}
+
+/** Сводка по ученикам (COACH/ADMIN). */
+export const getCourseProgressSummary = async (courseId: string): Promise<CourseProgressSummary> => {
+  const res = await axiosInstance.get(`/courses/${courseId}/progress/summary`);
+  return res.data.data;
+};
