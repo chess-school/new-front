@@ -175,7 +175,7 @@ const MessageStatus: React.FC<{ message: ChatMessage; onRetry: () => void }> = (
     );
   }
   return message.readAt
-    ? <DoneAllRoundedIcon aria-label={t('chat.status.read', 'Read')} data-status="read" sx={{ ...sx, color: tokens.accent.blue }} />
+    ? <DoneAllRoundedIcon aria-label={t('chat.status.read', 'Read')} data-status="read" sx={{ ...sx, color: 'info.main' }} />
     : <DoneRoundedIcon aria-label={t('chat.status.sent', 'Sent')} data-status="sent" sx={{ ...sx, opacity: 0.8 }} />;
 };
 

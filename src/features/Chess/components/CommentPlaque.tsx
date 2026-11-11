@@ -31,7 +31,7 @@ export const CommentPlaque: React.FC<CommentPlaqueProps> = ({ node }) => {
       }}
     >
       <Stack direction="row" spacing={1} alignItems="flex-start">
-        <ChatBubbleOutlineRoundedIcon sx={{ fontSize: '1rem', color: tokens.accent.gold, mt: '2px' }} />
+        <ChatBubbleOutlineRoundedIcon sx={{ fontSize: '1rem', color: 'primary.main', mt: '2px' }} />
         <Box sx={{ minWidth: 0 }}>
           <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 600, display: 'block' }}>
             {label}

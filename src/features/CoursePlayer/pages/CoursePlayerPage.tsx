@@ -12,6 +12,7 @@ import { PageContainer, PageHeader } from '@/shared/components/ui/PageHeader';
 import { getCourse, getMyCourseProgress, markCourseBlockComplete } from '@/api/courses';
 import type { CourseDetail } from '@/types/Course';
 import type { CourseBlock } from '@/features/Courses/types/courseBlocks';
+import { courseProgressStats } from '../lib/progress';
 import { MarkdownView } from '../components/MarkdownView';
 import { PuzzleBlockPlayer } from '../components/PuzzleBlockPlayer';
 import { GameBlockPlayer } from '../components/GameBlockPlayer';
@@ -94,16 +95,12 @@ export const CoursePlayerPage: React.FC = () => {
   }, [courseId]);
 
   const chapters = useMemo(() => course?.modules?.chapters ?? [], [course]);
-  const totalBlocks = useMemo(() => chapters.reduce((n, ch) => n + ch.blocks.length, 0), [chapters]);
-  // Прогресс считаем ТОЛЬКО по блокам, реально существующим в курсе: completed может содержать
-  // id блоков, удалённых после прохождения, — иначе доля превышала бы 100% (баг 150%).
-  const blockIdSet = useMemo(() => new Set(chapters.flatMap((ch) => ch.blocks.map((b) => b.id))), [chapters]);
-  const completedCount = useMemo(() => {
-    let n = 0;
-    done.forEach((id) => { if (blockIdSet.has(id)) n += 1; });
-    return n;
-  }, [done, blockIdSet]);
-  const progress = totalBlocks ? Math.round((completedCount / totalBlocks) * 100) : 0;
+  // Прогресс — через чистый courseProgressStats (учитывает только существующие блоки, ≤100%;
+  // покрыт юнит-тестом progress.test.ts против регресса бага E3 «150%»).
+  const { completed: completedCount, total: totalBlocks, percent: progress } = useMemo(
+    () => courseProgressStats(chapters, done),
+    [chapters, done],
+  );
 
   if (loading) {
     return <PageContainer><Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}><CircularProgress /></Box></PageContainer>;

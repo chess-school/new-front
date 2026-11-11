@@ -43,8 +43,8 @@ export const PuzzleRunReview: React.FC<{ attempts: RunAttempt[] }> = ({ attempts
               sx={{ mb: 0.5, border: 1, borderColor: i === selected ? 'transparent' : 'divider' }}>
               <ListItemIcon sx={{ minWidth: 32 }}>
                 {a.solved
-                  ? <CheckCircleRoundedIcon fontSize="small" sx={{ color: tokens.accent.emerald }} />
-                  : <CancelRoundedIcon fontSize="small" sx={{ color: tokens.accent.red }} />}
+                  ? <CheckCircleRoundedIcon fontSize="small" sx={{ color: 'success.main' }} />
+                  : <CancelRoundedIcon fontSize="small" sx={{ color: 'error.main' }} />}
               </ListItemIcon>
               <ListItemText
                 primary={a.puzzle.source.kind === 'book' ? `${a.puzzle.source.title}` : `#${i + 1}`}
@@ -63,7 +63,7 @@ export const PuzzleRunReview: React.FC<{ attempts: RunAttempt[] }> = ({ attempts
               label={t(current.solved ? 'puzzleRun.solved' : 'puzzleRun.failed')}
               sx={{
                 mb: 1.5, fontWeight: 700,
-                color: current.solved ? tokens.accent.emerald : tokens.accent.red,
+                color: current.solved ? 'success.main' : 'error.main',
                 bgcolor: current.solved ? tokens.accent.emeraldSoft : tokens.accent.redSoft,
                 '& .MuiChip-icon': { color: 'inherit' },
               }}
