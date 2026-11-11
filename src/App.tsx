@@ -42,6 +42,7 @@ const ClubSitePagesPage = lazy(() => import('./features/console/ClubSitePagesPag
 const LeadsPage = lazy(() => import('./features/console/LeadsPage'));
 const CoursesListPage = lazy(() => import('./features/CourseBuilder/pages/CoursesListPage').then((m) => ({ default: m.CoursesListPage })));
 const CourseEditorPage = lazy(() => import('./features/CourseBuilder/pages/CourseEditorPage').then((m) => ({ default: m.CourseEditorPage })));
+const CoursePlayerPage = lazy(() => import('./features/CoursePlayer/pages/CoursePlayerPage').then((m) => ({ default: m.CoursePlayerPage })));
 const ClubSitePage = lazy(() => import('./pages/club-site/club-site-page'));
 const CoachProfilePage = lazy(() => import('./pages/club-site/coach-profile-page'));
 import { GroupsPage } from './pages/groups-page/groups-page';
@@ -90,6 +91,7 @@ function MainLayout() {
         <Route path="/inbox" element={<InboxPage />} />
         <Route path="/books" element={<PuzzleBooksPage />} />
         <Route path="/books/:bookId/solve" element={<BookSolvePage />} />
+        <Route path="/courses/:courseId" element={<CoursePlayerPage />} />
         <Route path="/play" element={<PlayLobbyPage />} />
         <Route path="/play/:gameId" element={<PlayGamePage />} />
         <Route path="/my-classes" element={<MyClassesPage />} />
