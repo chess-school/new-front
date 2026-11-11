@@ -58,12 +58,13 @@ const BookCover: React.FC<{ title: string }> = ({ title }) => {
         maskImage: 'linear-gradient(135deg, transparent 5%, black 70%)',
         WebkitMaskImage: 'linear-gradient(135deg, transparent 5%, black 70%)',
       }} />
-      <Box sx={{ position: 'absolute', right: 18, top: 10, fontSize: 64, lineHeight: 1, color: alpha(tokens.text.primary, 0.85), textShadow: '0 6px 24px rgba(0,0,0,0.5)' }}>
+      {/* Обложка всегда тёмный градиент → текст светлый фикс.цветом (tokens.text.primary — тёмный, сливался) */}
+      <Box sx={{ position: 'absolute', right: 18, top: 10, fontSize: 64, lineHeight: 1, color: alpha('#EEF1F7', 0.85), textShadow: '0 6px 24px rgba(0,0,0,0.5)' }}>
         ♞
       </Box>
       <Typography sx={{
         position: 'absolute', left: 16, right: 96, bottom: 14, fontWeight: 800, fontSize: '1.05rem', lineHeight: 1.2,
-        color: tokens.text.primary, letterSpacing: '-0.01em', textShadow: '0 2px 12px rgba(0,0,0,0.6)',
+        color: '#EEF1F7', letterSpacing: '-0.01em', textShadow: '0 2px 12px rgba(0,0,0,0.6)',
         display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
       }}>
         {title}
