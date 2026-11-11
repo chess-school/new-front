@@ -5,7 +5,7 @@ import HourglassTopRoundedIcon from '@mui/icons-material/HourglassTopRounded';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import { useTranslation } from 'react-i18next';
 import { CoachDto, CoachRequestStatus } from '@/api/coaches';
-import { tokens } from '@/theme/tokens';
+import { tokens, accentText } from '@/theme/tokens';
 import { bestFideRating, fideTitle, fullName, initials, platformRating } from './coachUtils';
 
 interface CoachCardProps {
@@ -32,13 +32,13 @@ export const CoachCard: React.FC<CoachCardProps> = ({ coach, requestStatus, isMe
       <CardActionArea onClick={() => onOpen(coach)} sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'stretch', p: 2.5 }}>
         <Stack direction="row" spacing={2} alignItems="center">
           <Avatar src={coach.user.avatarUrl || undefined} alt={fullName(coach.user)}
-            sx={{ width: 64, height: 64, fontSize: 22, fontWeight: 700, bgcolor: 'surface.overlay', color: 'primary.main', border: 2, borderColor: title ? 'primary.main' : 'divider' }}>
+            sx={{ width: 64, height: 64, fontSize: 22, fontWeight: 700, bgcolor: 'surface.overlay', color: accentText, border: 2, borderColor: title ? 'primary.main' : 'divider' }}>
             {initials(coach.user)}
           </Avatar>
           <Box sx={{ minWidth: 0 }}>
             <Stack direction="row" spacing={0.75} alignItems="center">
               {title && (
-                <Box component="span" sx={{ px: 0.75, borderRadius: 1, bgcolor: tokens.accent.goldSoft, color: 'primary.main', fontWeight: 800, fontSize: '0.75rem', lineHeight: '20px' }}>
+                <Box component="span" sx={{ px: 0.75, borderRadius: 1, bgcolor: tokens.accent.goldSoft, color: accentText, fontWeight: 800, fontSize: '0.75rem', lineHeight: '20px' }}>
                   {title}
                 </Box>
               )}

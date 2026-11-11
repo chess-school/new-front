@@ -106,6 +106,10 @@ export const buildTheme = (mode: ThemeMode): Theme => {
         styleOverrides: {
           root: { borderRadius: t.radius.sm, paddingInline: 16 },
           containedPrimary: { '&:hover': { backgroundColor: t.accent.goldHover } },
+          // text/outlined primary красят ТЕКСТ в primary.main (gold-ЗАЛИВКА) — в тёмной теме это 3.4–3.8:1.
+          // Для текста берём goldText (dark #6B88FF, 5.6:1; в светлой совпадает с gold → без изменений).
+          textPrimary: { color: t.accent.goldText },
+          outlinedPrimary: { color: t.accent.goldText },
           outlined: { borderColor: t.border.default, '&:hover': { borderColor: t.border.strong, backgroundColor: inkAlpha(0.04) } },
           outlinedInherit: { borderColor: t.border.default },
           sizeLarge: { paddingBlock: 10, fontSize: '1rem' },

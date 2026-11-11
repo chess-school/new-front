@@ -68,6 +68,14 @@ export const tokensFor = (mode: ThemeMode): Tokens => (mode === 'dark' ? (darkTo
 /** Дефолтный набор для статических импортов вне темы (светлый) */
 export const tokens = lightTokens;
 
+/**
+ * Акцентный ЦВЕТ ТЕКСТА для sx (`color: accentText`): theme-aware goldText, проходит AA в обеих
+ * темах. Использовать вместо `color: 'primary.main'` для текста/иконок — primary.main это
+ * gold-ЗАЛИВКА (в тёмной #3D5AFE, 3.76:1 как текст), а goldText (#6B88FF) даёт 5.6:1; в светлой
+ * они совпадают, так что замена без визуальных изменений для light.
+ */
+export const accentText = (theme: { palette: { mode: ThemeMode } }): string => tokensFor(theme.palette.mode).accent.goldText;
+
 /** Стекло для выплывающих панелей — зависит от режима */
 export const glassFor = (t: Tokens) => ({
   backgroundColor: t.mode === 'dark' ? 'rgba(18, 24, 38, 0.74)' : 'rgba(255, 255, 255, 0.82)',

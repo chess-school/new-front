@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { accentText } from '@/theme/tokens';
 import {
   AppBar, Avatar, Badge, Box, Button, Chip, Divider, Drawer, IconButton, InputBase, List, ListItemButton, ListItemIcon, ListItemText,
   ListSubheader, Menu, MenuItem, Skeleton, Stack, Toolbar, ToggleButton, ToggleButtonGroup, Tooltip, Typography, useMediaQuery, useTheme,
@@ -101,7 +102,7 @@ const ClubSwitcher: React.FC = () => {
     return (
       <Stack direction="row" alignItems="center" spacing={1.25} component={RouterLink} to="/create-club"
         sx={{ p: 1, borderRadius: 2.5, border: '1px dashed', borderColor: 'divider', textDecoration: 'none', color: 'text.primary', '&:hover': { borderColor: 'primary.main' } }}>
-        <Box sx={{ width: 34, height: 34, borderRadius: 2, display: 'grid', placeItems: 'center', bgcolor: 'rgba(43,80,224,0.1)', color: 'primary.main' }}><AddRoundedIcon fontSize="small" /></Box>
+        <Box sx={{ width: 34, height: 34, borderRadius: 2, display: 'grid', placeItems: 'center', bgcolor: 'rgba(43,80,224,0.1)', color: accentText }}><AddRoundedIcon fontSize="small" /></Box>
         <Typography sx={{ fontWeight: 600, fontSize: 13.5 }}>{t('club.create', 'Create a club')}</Typography>
       </Stack>
     );
@@ -113,7 +114,7 @@ const ClubSwitcher: React.FC = () => {
     <>
       <Stack direction="row" alignItems="center" spacing={1.25} onClick={(e) => { if (multi) setAnchor(e.currentTarget); }}
         sx={{ p: 1, borderRadius: 2.5, border: '1px solid', borderColor: 'divider', bgcolor: 'background.paper', cursor: multi ? 'pointer' : 'default', '&:hover': { borderColor: multi ? 'text.disabled' : 'divider' } }}>
-        <Box sx={{ width: 34, height: 34, borderRadius: 2, flexShrink: 0, display: 'grid', placeItems: 'center', bgcolor: 'rgba(43,80,224,0.12)', color: 'primary.main', fontWeight: 800, fontSize: 13 }}>{clubInitials(c.name)}</Box>
+        <Box sx={{ width: 34, height: 34, borderRadius: 2, flexShrink: 0, display: 'grid', placeItems: 'center', bgcolor: 'rgba(43,80,224,0.12)', color: accentText, fontWeight: 800, fontSize: 13 }}>{clubInitials(c.name)}</Box>
         <Box sx={{ minWidth: 0, flex: 1 }}>
           <Typography sx={{ fontWeight: 700, fontSize: 13.5, lineHeight: 1.2 }} noWrap>{c.name}</Typography>
           <Typography sx={{ fontSize: 11.5, color: 'text.secondary', lineHeight: 1.2, textTransform: 'capitalize' }} noWrap>{t(`club.role.${active.role}`, active.role)}</Typography>
@@ -123,7 +124,7 @@ const ClubSwitcher: React.FC = () => {
       <Menu anchorEl={anchor} open={!!anchor} onClose={() => setAnchor(null)} sx={{ '& .MuiPaper-root': { minWidth: 230 } }}>
         {clubs.map((entry) => (
           <MenuItem key={entry.club._id} selected={entry.club._id === activeClubId} onClick={() => { setAnchor(null); setActive(entry.club._id); }}>
-            <Box sx={{ width: 26, height: 26, borderRadius: 1.5, mr: 1.25, display: 'grid', placeItems: 'center', bgcolor: 'rgba(43,80,224,0.12)', color: 'primary.main', fontWeight: 700, fontSize: 11 }}>{clubInitials(entry.club.name)}</Box>
+            <Box sx={{ width: 26, height: 26, borderRadius: 1.5, mr: 1.25, display: 'grid', placeItems: 'center', bgcolor: 'rgba(43,80,224,0.12)', color: accentText, fontWeight: 700, fontSize: 11 }}>{clubInitials(entry.club.name)}</Box>
             <ListItemText primary={entry.club.name} secondary={t(`club.role.${entry.role}`, entry.role)}
               primaryTypographyProps={{ fontSize: 14, fontWeight: 600 }} secondaryTypographyProps={{ fontSize: 11, sx: { textTransform: 'capitalize' } }} />
           </MenuItem>
@@ -303,7 +304,7 @@ const SidebarContent: React.FC<{ onNavigate?: () => void }> = ({ onNavigate }) =
             >
               <Badge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot"
                 sx={{ '& .MuiBadge-dot': { bgcolor: 'success.main', border: '2px solid', borderColor: 'background.paper', width: 10, height: 10, borderRadius: '50%' } }}>
-                <Avatar sx={{ width: 38, height: 38, bgcolor: 'surface.overlay', color: 'primary.main', fontWeight: 700, fontSize: '0.95rem' }}>
+                <Avatar sx={{ width: 38, height: 38, bgcolor: 'primary.main', color: 'primary.contrastText', fontWeight: 700, fontSize: '0.95rem' }}>
                   {(user.firstName?.[0] ?? '') + (user.lastName?.[0] ?? '')}
                 </Avatar>
               </Badge>
