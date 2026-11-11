@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Stack, Typography } from '@mui/material';
+import { accentText } from '@/theme/tokens';
 
 interface PageHeaderProps {
   title: React.ReactNode;
@@ -25,7 +26,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ title, subtitle, eyebrow
   <Stack direction={{ xs: 'column', sm: 'row' }} alignItems={{ xs: 'flex-start', sm: 'flex-end' }} justifyContent="space-between"
     spacing={2} sx={{ mb: { xs: 2.5, md: 4 } }}>
     <Box sx={{ minWidth: 0 }}>
-      {eyebrow && <Typography variant="overline" sx={{ color: 'primary.main', display: 'block', mb: 0.5 }}>{eyebrow}</Typography>}
+      {eyebrow && <Typography variant="overline" sx={{ color: accentText, display: 'block', mb: 0.5 }}>{eyebrow}</Typography>}
       <Typography variant="h3" component="h1">{title}</Typography>
       {subtitle && <Typography variant="body1" color="text.secondary" sx={{ mt: 1, maxWidth: 720 }}>{subtitle}</Typography>}
     </Box>

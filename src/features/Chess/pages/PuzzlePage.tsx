@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { getRandomPuzzle } from '@/api/puzzles';
 import { IPuzzle, PUZZLE_SOURCES, PuzzleSourceFilter } from '@/types/Puzzles';
 import { PageContainer, PageHeader } from '@/shared/components/ui/PageHeader';
-import { tokens } from '@/theme/tokens';
+import { tokens, accentText } from '@/theme/tokens';
 import { ChessBoard } from '../components/ChessBoard';
 import { PuzzleAnalysis } from '../components/PuzzleAnalysis';
 import { PuzzleSourcePicker } from '../components/PuzzleSourcePicker';
@@ -145,7 +145,7 @@ export const PuzzlePage: React.FC = () => {
             ) : (
                 <Stack direction="row" spacing={1} alignItems="center">
                     <Typography color="text.secondary">{t('puzzles.ratingLabel')}</Typography>
-                    <Chip label={puzzle.rating} size="small" sx={{ fontFamily: tokens.font.mono, fontWeight: 700, bgcolor: tokens.accent.goldSoft, color: 'primary.main' }} />
+                    <Chip label={puzzle.rating} size="small" sx={{ fontFamily: tokens.font.mono, fontWeight: 700, bgcolor: tokens.accent.goldSoft, color: accentText }} />
                 </Stack>
             )}
             {puzzle.themes?.some((th) => !META_THEMES.has(th)) && (
