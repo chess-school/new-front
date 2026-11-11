@@ -18,6 +18,9 @@ import { engineArrows } from '../engine/evaluation';
 import { ChessArena, ArenaPanel } from '../components/ChessArena';
 import { PageContainer, PageHeader } from '@/shared/components/ui/PageHeader';
 import { OpeningMoveBar } from '@/features/Chess/components/OpeningMoveBar';
+import { SaveToCourseDialog } from '@/features/CourseBuilder/components/SaveToCourseDialog';
+import { useAuthUser } from '@/hooks/useStudent';
+import BookmarkAddRoundedIcon from '@mui/icons-material/BookmarkAddRounded';
 
 // --- ИЗМЕНЕНИЕ: Импортируем новый сервис getGamesByHistory ---
 import { getOpeningBook, getGamesByHistory } from '@/api/chessDB';
@@ -51,6 +54,10 @@ export const AnalysisPage: React.FC = () => {
     const [inputPgn, setInputPgn] = useState('');
     // Ориентация доски: кнопка-разворот в панели навигации (как на Lichess/в режиме решения)
     const [orientation, setOrientation] = useState<'white' | 'black'>('white');
+    // «Забрать с доски в курс» — только тренерам/админам (владельцам курсов)
+    const { user } = useAuthUser();
+    const isCoach = (user?.roles || []).some((r: string) => r === 'COACH' || r === 'ADMIN');
+    const [saveToCourseOpen, setSaveToCourseOpen] = useState(false);
     const [isEngineOn, setIsEngineOn] = useState(false);
     // Stockfish: воркер создаётся при первом включении анализа и уничтожается при уходе со страницы.
     // Анализ перезапускается на каждой новой позиции, ответы прерванного поиска отбрасываются.
@@ -223,6 +230,11 @@ export const AnalysisPage: React.FC = () => {
                     <Button variant="text" color="inherit" startIcon={<ContentCopyRoundedIcon />} onClick={handleCopyPgn} disabled={!hasMoves}>
                         {t('chessGame.copyPgnTree', 'Copy PGN (variations, glyphs, comments)')}
                     </Button>
+                    {isCoach && (
+                        <Button variant="text" color="inherit" startIcon={<BookmarkAddRoundedIcon />} onClick={() => setSaveToCourseOpen(true)} disabled={!hasMoves}>
+                            {t('courses.saveToCourse.action', 'Save to course')}
+                        </Button>
+                    )}
                 </Stack>
             ),
         },
@@ -252,6 +264,14 @@ export const AnalysisPage: React.FC = () => {
                 activePanel={panels[activeTab]?.key}
                 onPanelChange={(key) => setActiveTab(tabIndex[key] ?? 0)}
             />
+            {isCoach && (
+                <SaveToCourseDialog
+                    open={saveToCourseOpen}
+                    onClose={() => setSaveToCourseOpen(false)}
+                    pgn={saveToCourseOpen ? actions.exportPgn() : ''}
+                    orientation={orientation}
+                />
+            )}
         </PageContainer>
     );
 };
