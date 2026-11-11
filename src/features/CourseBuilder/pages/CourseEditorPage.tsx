@@ -14,7 +14,7 @@ import VisibilityRounded from '@mui/icons-material/VisibilityRounded';
 import ExpandMoreRounded from '@mui/icons-material/ExpandMoreRounded';
 import ExpandLessRounded from '@mui/icons-material/ExpandLessRounded';
 import { useTranslation } from 'react-i18next';
-import { notification } from 'antd';
+import { notification, Modal } from 'antd';
 
 import { PageContainer, PageHeader } from '@/shared/components/ui/PageHeader';
 import type { CourseContent, CourseBlock, CourseBlockType, CourseChapter } from '@/features/Courses/types/courseBlocks';
@@ -63,13 +63,13 @@ const BlockCard: React.FC<{
           sx={{ flexGrow: 1 }}
         />
         <Tooltip title={t('common.moveUp', 'Move up')}>
-          <span><IconButton size="small" disabled={index === 0} onClick={() => onMove(-1)}><ArrowUpwardRounded fontSize="small" /></IconButton></span>
+          <span><IconButton size="small" aria-label={t('common.moveUp', 'Move up')} disabled={index === 0} onClick={() => onMove(-1)}><ArrowUpwardRounded fontSize="small" /></IconButton></span>
         </Tooltip>
         <Tooltip title={t('common.moveDown', 'Move down')}>
-          <span><IconButton size="small" disabled={index === total - 1} onClick={() => onMove(1)}><ArrowDownwardRounded fontSize="small" /></IconButton></span>
+          <span><IconButton size="small" aria-label={t('common.moveDown', 'Move down')} disabled={index === total - 1} onClick={() => onMove(1)}><ArrowDownwardRounded fontSize="small" /></IconButton></span>
         </Tooltip>
         <Tooltip title={t('common.delete', 'Delete')}>
-          <IconButton size="small" color="error" onClick={onRemove}><DeleteOutlineRounded fontSize="small" /></IconButton>
+          <IconButton size="small" color="error" aria-label={t('common.delete', 'Delete')} onClick={onRemove}><DeleteOutlineRounded fontSize="small" /></IconButton>
         </Tooltip>
       </Stack>
       <Collapse in={open} unmountOnExit>
@@ -104,13 +104,13 @@ const ChapterCard: React.FC<{
           <Typography variant="overline" color="text.secondary">{t('courses.chapter', 'Chapter')} {index + 1}</Typography>
           <Box sx={{ flexGrow: 1 }} />
           <Tooltip title={t('common.moveUp', 'Move up')}>
-            <span><IconButton size="small" disabled={index === 0} onClick={() => onMove(-1)}><ArrowUpwardRounded fontSize="small" /></IconButton></span>
+            <span><IconButton size="small" aria-label={t('common.moveUp', 'Move up')} disabled={index === 0} onClick={() => onMove(-1)}><ArrowUpwardRounded fontSize="small" /></IconButton></span>
           </Tooltip>
           <Tooltip title={t('common.moveDown', 'Move down')}>
-            <span><IconButton size="small" disabled={index === total - 1} onClick={() => onMove(1)}><ArrowDownwardRounded fontSize="small" /></IconButton></span>
+            <span><IconButton size="small" aria-label={t('common.moveDown', 'Move down')} disabled={index === total - 1} onClick={() => onMove(1)}><ArrowDownwardRounded fontSize="small" /></IconButton></span>
           </Tooltip>
           <Tooltip title={t('common.delete', 'Delete')}>
-            <IconButton size="small" color="error" onClick={onRemove}><DeleteOutlineRounded fontSize="small" /></IconButton>
+            <IconButton size="small" color="error" aria-label={t('common.delete', 'Delete')} onClick={onRemove}><DeleteOutlineRounded fontSize="small" /></IconButton>
           </Tooltip>
         </Stack>
         <TextField
@@ -304,7 +304,14 @@ export const CourseEditorPage: React.FC = () => {
             total={content.chapters.length}
             onPatch={(patch) => mutate(updateChapter(content, ch.id, patch))}
             onMove={(dir) => mutate(moveChapter(content, ch.id, dir))}
-            onRemove={() => mutate(removeChapter(content, ch.id))}
+            onRemove={() => Modal.confirm({
+              title: t('courses.deleteChapterConfirm', 'Delete this chapter?'),
+              content: ch.title || undefined,
+              okText: t('common.delete', 'Delete'),
+              okButtonProps: { danger: true },
+              cancelText: t('common.cancel', 'Cancel'),
+              onOk: () => mutate(removeChapter(content, ch.id)),
+            })}
             onAddBlock={(type) => mutate(addBlock(content, ch.id, type))}
             onBlockChange={(b) => mutate(updateBlock(content, ch.id, b))}
             onBlockMove={(blockId, dir) => mutate(moveBlock(content, ch.id, blockId, dir))}

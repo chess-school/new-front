@@ -95,7 +95,15 @@ export const CoursePlayerPage: React.FC = () => {
 
   const chapters = useMemo(() => course?.modules?.chapters ?? [], [course]);
   const totalBlocks = useMemo(() => chapters.reduce((n, ch) => n + ch.blocks.length, 0), [chapters]);
-  const progress = totalBlocks ? Math.round((done.size / totalBlocks) * 100) : 0;
+  // Прогресс считаем ТОЛЬКО по блокам, реально существующим в курсе: completed может содержать
+  // id блоков, удалённых после прохождения, — иначе доля превышала бы 100% (баг 150%).
+  const blockIdSet = useMemo(() => new Set(chapters.flatMap((ch) => ch.blocks.map((b) => b.id))), [chapters]);
+  const completedCount = useMemo(() => {
+    let n = 0;
+    done.forEach((id) => { if (blockIdSet.has(id)) n += 1; });
+    return n;
+  }, [done, blockIdSet]);
+  const progress = totalBlocks ? Math.round((completedCount / totalBlocks) * 100) : 0;
 
   if (loading) {
     return <PageContainer><Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}><CircularProgress /></Box></PageContainer>;
@@ -122,7 +130,7 @@ export const CoursePlayerPage: React.FC = () => {
         <Paper sx={{ p: 2, mb: 3 }}>
           <Stack direction="row" spacing={2} alignItems="center">
             <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'nowrap' }}>
-              {t('coursePlayer.progress', 'Progress')}: {done.size} / {totalBlocks}
+              {t('coursePlayer.progress', 'Progress')}: {completedCount} / {totalBlocks}
             </Typography>
             <LinearProgress variant="determinate" value={progress} aria-label={t('coursePlayer.progress', 'Progress')} sx={{ flexGrow: 1, borderRadius: 1, height: 8 }} />
             <Typography variant="body2" sx={{ fontWeight: 700 }}>{progress}%</Typography>

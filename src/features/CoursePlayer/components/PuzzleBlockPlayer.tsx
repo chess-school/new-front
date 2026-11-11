@@ -12,7 +12,8 @@ import { useSolveSession } from '@/features/Digitizer/hooks/useSolveSession';
 import type { Exercise } from '@/types/PuzzleBook';
 import type { PuzzleBlock } from '@/features/Courses/types/courseBlocks';
 
-const HINT_STYLE: React.CSSProperties = { background: 'radial-gradient(circle, rgba(88,166,255,0.55) 20%, transparent 21%)' };
+// Кольцо вокруг клетки фигуры + мягкая заливка — видно из-под фигуры (точка-по-центру пряталась под ней).
+const HINT_STYLE: React.CSSProperties = { boxShadow: 'inset 0 0 0 4px rgba(88,166,255,0.95)', backgroundColor: 'rgba(88,166,255,0.25)' };
 
 /** Один блок задач: ученик решает задачи по очереди; блок «пройден», когда решена последняя. */
 export const PuzzleBlockPlayer: React.FC<{ block: PuzzleBlock; onComplete?: () => void }> = ({ block, onComplete }) => {
