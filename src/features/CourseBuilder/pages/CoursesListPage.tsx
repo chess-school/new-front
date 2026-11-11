@@ -37,7 +37,7 @@ export const CoursesListPage: React.FC = () => {
 
   const handleCreate = async () => {
     const title = newTitle.trim();
-    if (!title) return;
+    if (!title || creating) return; // Enter в обход disabled-кнопки не должен задваивать курс
     setCreating(true);
     try {
       const course = await createCourse({ title, description: '' });
