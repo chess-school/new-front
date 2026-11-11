@@ -25,6 +25,7 @@ import {
   addBlock, updateBlock, removeBlock, moveBlock, validateDraft,
 } from '../lib/courseDraft';
 import { BlockEditor } from '../components/BlockEditor';
+import { ProgressSummaryPanel } from '../components/ProgressSummaryPanel';
 
 const BLOCK_TYPES: CourseBlockType[] = ['text', 'puzzle', 'game'];
 
@@ -285,6 +286,8 @@ export const CourseEditorPage: React.FC = () => {
             />
           </Stack>
         </Paper>
+
+        {courseId && <ProgressSummaryPanel courseId={courseId} />}
 
         {problems.length > 0 && (
           <Alert severity="warning">
