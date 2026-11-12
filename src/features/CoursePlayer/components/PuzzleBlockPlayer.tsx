@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Box, Stack, Typography, Button, Chip, Alert, LinearProgress } from '@mui/material';
 import LightbulbOutlined from '@mui/icons-material/LightbulbOutlined';
 import ReplayRounded from '@mui/icons-material/ReplayRounded';
@@ -24,9 +24,16 @@ export const PuzzleBlockPlayer: React.FC<{ block: PuzzleBlock; onComplete?: () =
     () => block.puzzles.filter((p) => p.kind === 'inline') as unknown as Exercise[],
     [block.puzzles],
   );
-  const [idx, setIdx] = useState(0);
+  // Позиция внутри блока переживает перезагрузку (ученик продолжает, а не начинает с 1/7).
+  const storageKey = `cpz:${block.id}`;
+  const [idx, setIdx] = useState(() => {
+    const v = Number(localStorage.getItem(storageKey));
+    return Number.isInteger(v) && v > 0 && v < exercises.length ? v : 0;
+  });
   const [wrong, setWrong] = useState(false);
   const current = exercises[idx];
+
+  useEffect(() => { try { localStorage.setItem(storageKey, String(idx)); } catch { /* quota */ } }, [idx, storageKey]);
 
   const s = useSolveSession(current);
 
@@ -45,7 +52,7 @@ export const PuzzleBlockPlayer: React.FC<{ block: PuzzleBlock; onComplete?: () =
   };
 
   const next = () => {
-    if (isLast) { onComplete?.(); return; }
+    if (isLast) { try { localStorage.removeItem(storageKey); } catch { /* ignore */ } onComplete?.(); return; }
     setIdx((i) => i + 1);
     setWrong(false);
   };

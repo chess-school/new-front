@@ -27,6 +27,16 @@ const STARTING_RATING = 800;
 const RATING_WINDOW = 100;
 const NEXT_PUZZLE_DELAY_MS = 500;
 
+// Темы для забега (value = тег базы Lichess; '' = любая). Фильтр по теме уже поддержан бэком.
+const SURVIVAL_THEMES: { value: string; label: string }[] = [
+  { value: '', label: 'Any theme' },
+  { value: 'fork', label: 'Fork' }, { value: 'pin', label: 'Pin' }, { value: 'skewer', label: 'Skewer' },
+  { value: 'mateIn1', label: 'Mate in 1' }, { value: 'mateIn2', label: 'Mate in 2' }, { value: 'mateIn3', label: 'Mate in 3' },
+  { value: 'backRankMate', label: 'Back-rank mate' }, { value: 'discoveredAttack', label: 'Discovered attack' },
+  { value: 'sacrifice', label: 'Sacrifice' }, { value: 'deflection', label: 'Deflection' }, { value: 'hangingPiece', label: 'Hanging piece' },
+  { value: 'endgame', label: 'Endgame' }, { value: 'rookEndgame', label: 'Rook endgame' }, { value: 'promotion', label: 'Promotion' },
+];
+
 export const SurvivalModePage: React.FC = () => {
     const { t } = useTranslation();
 
@@ -43,22 +53,28 @@ export const SurvivalModePage: React.FC = () => {
     const session = usePuzzleSession(puzzle, { opponentDelayMs: 300 });
     const recorded = useRef<string | null>(null);
     const nextTimer = useRef<ReturnType<typeof setTimeout>>();
+    const seen = useRef<string[]>([]); // недавние id — чтобы задачи не повторялись за забег
+    // Тема задач (опционально) — в URL, shareable. '' = любая.
+    const [theme, setTheme] = useQueryParam<string>('theme', '', SURVIVAL_THEMES.map((x) => x.value));
 
-    const loadNextPuzzle = useCallback(async (ratingTarget: number, exclude?: string) => {
+    const loadNextPuzzle = useCallback(async (ratingTarget: number) => {
         try {
-            const next = await fetchPuzzleForRun(source, ratingTarget, RATING_WINDOW, exclude);
+            const exclude = seen.current.length ? seen.current.slice(-40).join(',') : undefined;
+            const next = await fetchPuzzleForRun(source, ratingTarget, RATING_WINDOW, exclude, theme || undefined);
             if (!next) {
                 setNoPuzzles(true);
                 setIsGameActive(false);
                 return;
             }
+            seen.current.push(next._id);
+            if (seen.current.length > 60) seen.current = seen.current.slice(-60);
             recorded.current = null;
             setPuzzle(next);
         } catch {
             notification.error({ message: t('puzzles.loadError'), description: undefined });
             setIsGameActive(false);
         }
-    }, [source, t]);
+    }, [source, theme, t]);
 
     const startGame = () => {
         clearTimeout(nextTimer.current);
@@ -70,6 +86,7 @@ export const SurvivalModePage: React.FC = () => {
         setCurrentRating(STARTING_RATING);
         setAttempts([]);
         setPuzzle(null);
+        seen.current = [];
         loadNextPuzzle(STARTING_RATING);
     };
 
@@ -108,7 +125,7 @@ export const SurvivalModePage: React.FC = () => {
         setTimer(INITIAL_TIME_PER_PUZZLE + CORRECT_PUZZLE_BONUS);
         const newRating = currentRating + 25;
         setCurrentRating(newRating);
-        nextTimer.current = setTimeout(() => loadNextPuzzle(newRating, puzzle._id), NEXT_PUZZLE_DELAY_MS);
+        nextTimer.current = setTimeout(() => loadNextPuzzle(newRating), NEXT_PUZZLE_DELAY_MS);
     // currentRating читается на момент решения; повторный запуск отсекает recorded
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [session.status, isGameActive, puzzle]);
@@ -151,6 +168,9 @@ export const SurvivalModePage: React.FC = () => {
                     stats={finished ? <RunStats stats={stats} /> : null}
                     source={source}
                     onSourceChange={setSource}
+                    themeOptions={SURVIVAL_THEMES}
+                    theme={theme}
+                    onThemeChange={setTheme}
                     startLabel={finished ? t('survival.playAgain') : t('survival.start')}
                     onStart={startGame}
                     starting={isGameActive}
