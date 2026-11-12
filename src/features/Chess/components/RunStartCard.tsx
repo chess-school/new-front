@@ -57,7 +57,7 @@ export const RunStartCard: React.FC<RunStartCardProps> = ({
           <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
             {t('puzzles.themeLabel', 'Theme')}
           </Typography>
-          <TextField select size="small" value={theme ?? ''} onChange={(e) => onThemeChange(e.target.value)} disabled={starting} sx={{ minWidth: 220 }}>
+          <TextField select size="small" value={theme ?? ''} onChange={(e) => onThemeChange(e.target.value)} disabled={starting} sx={{ minWidth: 220 }} SelectProps={{ displayEmpty: true }}>
             {themeOptions.map((o) => (
               <MenuItem key={o.value || 'any'} value={o.value}>{t(`puzzles.theme.${o.value || 'any'}`, o.label)}</MenuItem>
             ))}

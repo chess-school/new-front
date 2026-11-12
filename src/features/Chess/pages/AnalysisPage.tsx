@@ -95,23 +95,13 @@ export const AnalysisPage: React.FC = () => {
             }
         };
 
-        // Новая логика для поиска партий по истории ходов
+        // Поиск партий по истории ходов. В начальной позиции pgnHistory пуст — бэкенд отдаёт
+        // выборку партий (старт = корень всех партий), поэтому НЕ обрываемся на ply===0.
         const fetchPositionGames = async () => {
-            // Если мы в начальной позиции, нет смысла искать
-            if (ply === 0) {
-                setPositionGames([]);
-                return;
-            }
-
             // PGN линии до текущей позиции (по пути в дереве, без вариантов)
             const tempGame = new Chess();
             for (const node of path.slice(1)) tempGame.move(node.san);
             const pgnHistory = tempGame.pgn({ maxWidth: 5000, newline: ' ' });
-
-            if (!pgnHistory) {
-                setPositionGames([]);
-                return;
-            }
 
             setIsLoadingPositionGames(true);
             try {
