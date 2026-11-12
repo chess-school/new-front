@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import type { NavMode, NavUser } from './navigation';
 
@@ -61,8 +61,8 @@ export const ViewProvider: React.FC<{ children: React.ReactNode }> = ({ children
         : 'student';
 
   const coachCapable = effRole === 'admin' || effRole === 'coach';
-  // Симулируем не-coach роль (или обычный ученик) → режим принудительно learn.
-  useEffect(() => { if (!coachCapable && mode === 'coach') setModeState('learn'); }, [coachCapable, mode]);
+  // effMode — ПРОИЗВОДНЫЙ (не coach-роль → learn). НЕ мутируем сохранённый mode: при загрузке auth
+  // user ещё null → coachCapable false, и клампящий setState навсегда сбивал бы выбор coach на learn.
   const effMode: NavMode = coachCapable ? mode : 'learn';
 
   const value: ViewValue = {
