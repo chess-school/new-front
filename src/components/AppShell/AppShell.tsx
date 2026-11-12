@@ -49,7 +49,8 @@ import PhotoLibraryRoundedIcon from '@mui/icons-material/PhotoLibraryRounded';
 import WebRoundedIcon from '@mui/icons-material/WebRounded';
 import { useClubStore } from '@/features/clubs/clubStore';
 import { useSiteSettings } from '@/features/site/SiteSettingsContext';
-import { canCoach, isItemActive, NavIcon, NavItem, NavMode, NavUser, visibleNav } from './navigation';
+import { isItemActive, NavIcon, NavItem, NavMode, visibleNav } from './navigation';
+import { useView, RoleView } from './ViewContext';
 
 export const SIDEBAR_WIDTH = 264;
 
@@ -176,36 +177,9 @@ const SidebarContent: React.FC<{ onNavigate?: () => void }> = ({ onNavigate }) =
   const user = auth?.user ?? null;
   const isAuthenticated = !!auth?.isAuthenticated;
 
-  // Admin-only «смотреть как роль» — для детального аудита UI с позиции разных ролей.
-  // ТОЛЬКО отрисовка меню/вида: права на сервере остаются реальными (это не обход прав).
-  const realIsAdmin = (user?.roles ?? []).map((r) => String(r).toUpperCase()).includes('ADMIN');
-  const [roleView, setRoleView] = useState<string>(() => {
-    try { return realIsAdmin ? localStorage.getItem('debiut.roleView') || 'real' : 'real'; } catch { return 'real'; }
-  });
-  const setRole = (v: string) => {
-    setRoleView(v);
-    try { localStorage.setItem('debiut.roleView', v); } catch { /* ignore */ }
-  };
-  // Эффективные user/auth для меню (подмена только у реального ADMIN).
-  const simulating = realIsAdmin && roleView !== 'real';
-  const effUser: NavUser | null = !simulating
-    ? user
-    : roleView === 'guest'
-      ? null
-      : { roles: [roleView === 'student' ? 'USER' : roleView === 'coach' ? 'COACH' : 'ADMIN'] };
-  const effAuth = simulating ? roleView !== 'guest' : isAuthenticated;
-  const coachCapable = canCoach(effUser, effAuth);
-
-  // Режим сайдбара Learn/Coach (тумблер виден только тренеру/админу), запоминается
-  const [mode, setMode] = useState<NavMode>(() => {
-    try {
-      const saved = localStorage.getItem('debiut.navMode');
-      if (saved === 'coach' || saved === 'learn') return saved;
-    } catch { /* ignore */ }
-    return 'coach';
-  });
-  useEffect(() => { if (!coachCapable && mode === 'coach') setMode('learn'); }, [coachCapable, mode]);
-  const effMode: NavMode = coachCapable ? mode : 'learn';
+  // Единый «вид» (режим сайдбара + админская симуляция роли) — из ViewContext.
+  // Только отрисовка/навигация: права на сервере реальные (роут-гарды проверяют настоящую роль).
+  const { mode: effMode, setMode, roleView, setRoleView: setRole, realIsAdmin, coachCapable, effUser, effAuth, isSimulating: simulating } = useView();
   const groups = visibleNav(effUser, effAuth, effMode);
 
   // При смене режима/симулируемой роли меню прокручиваем наверх (иначе открывается с середины).
@@ -252,7 +226,7 @@ const SidebarContent: React.FC<{ onNavigate?: () => void }> = ({ onNavigate }) =
             <Select
               value={roleView}
               onChange={(e) => {
-                const v = String(e.target.value);
+                const v = String(e.target.value) as RoleView;
                 setRole(v);
                 // Coach/Admin → сразу режим Coach (иначе меню осталось бы в Learn на /club); иначе Learn.
                 const toCoach = v === 'coach' || v === 'real' || v === 'admin';

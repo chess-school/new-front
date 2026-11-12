@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { getMyLessons, Lesson } from '@/api/lessons';
 import { getMyAssignments } from '@/api/homework';
 import { MyAssignment } from '@/types/Homework';
-import { useAuth } from '@/context/AuthContext';
+import { useView } from '@/components/AppShell/ViewContext';
 import ScheduleCalendar from '@/shared/components/Calendar/SheduleCalendar';
 import { PageContainer, PageHeader } from '@/shared/components/ui/PageHeader';
 import { CreateLessonDialog } from '@/components/Schedule/CreateLessonDialog';
@@ -28,8 +28,9 @@ import { assignmentState, STATE_COLORS, STATE_ORDER } from './assignmentState';
 const StudentSchedulePage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const isCoach = !!user?.roles?.some((r) => r === 'COACH' || r === 'ADMIN');
+  // Тренерские действия показываем по ЭФФЕКТИВНОМУ виду (режим Coach), а не по реальной роли —
+  // чтобы предпросмотр «как ученик» не показывал «Assign puzzles»/«Create lesson».
+  const { canViewCoach: isCoach } = useView();
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [assignments, setAssignments] = useState<MyAssignment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
