@@ -43,15 +43,19 @@ export const RatingClimbPage: React.FC = () => {
     const session = usePuzzleSession(puzzle, { opponentDelayMs: 300 });
     const recorded = useRef<string | null>(null);
     const nextTimer = useRef<ReturnType<typeof setTimeout>>();
+    const seen = useRef<string[]>([]); // недавние id — чтобы задачи не повторялись за забег
 
-    const loadNextPuzzle = useCallback(async (ratingTarget: number, exclude?: string) => {
+    const loadNextPuzzle = useCallback(async (ratingTarget: number) => {
         try {
+            const exclude = seen.current.length ? seen.current.slice(-40).join(',') : undefined;
             const next = await fetchPuzzleForRun(source, ratingTarget, RATING_WINDOW, exclude);
             if (!next) {
                 setNoPuzzles(true);
                 setIsGameActive(false);
                 return;
             }
+            seen.current.push(next._id);
+            if (seen.current.length > 60) seen.current = seen.current.slice(-60);
             recorded.current = null;
             setPuzzle(next);
         } catch {
@@ -71,6 +75,7 @@ export const RatingClimbPage: React.FC = () => {
         setHighestRating(0);
         setAttempts([]);
         setPuzzle(null);
+        seen.current = [];
         loadNextPuzzle(STARTING_RATING);
     };
 
@@ -108,7 +113,7 @@ export const RatingClimbPage: React.FC = () => {
         setHighestRating((h) => Math.max(h, puzzle.rating));
         const newRating = currentRating + 50;
         setCurrentRating(newRating);
-        nextTimer.current = setTimeout(() => loadNextPuzzle(newRating, puzzle._id), NEXT_PUZZLE_DELAY_MS);
+        nextTimer.current = setTimeout(() => loadNextPuzzle(newRating), NEXT_PUZZLE_DELAY_MS);
     // record/currentRating читаются на момент решения; повторный запуск отсекает recorded
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [session.status, isGameActive, puzzle]);
@@ -120,7 +125,7 @@ export const RatingClimbPage: React.FC = () => {
             // Ошибка: задача не засчитана, следующая — проще
             const newRating = Math.max(STARTING_RATING, currentRating - 100);
             setCurrentRating(newRating);
-            loadNextPuzzle(newRating, puzzle._id);
+            loadNextPuzzle(newRating);
         }
         return verdict === 'correct';
     };

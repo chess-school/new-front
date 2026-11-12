@@ -12,7 +12,8 @@ export const fetchPuzzleForRun = async (
   source: PuzzleSourceFilter,
   rating: number,
   window: number,
-  exclude?: string,
+  exclude?: string, // один id или список через запятую (анти-повтор)
+  theme?: string,
 ): Promise<IPuzzle | null> => {
   const windows: (number | null)[] = [window, Math.max(window, 300), null];
   for (const w of windows) {
@@ -20,6 +21,7 @@ export const fetchPuzzleForRun = async (
       return await getRandomPuzzle({
         source,
         exclude,
+        ...(theme ? { theme } : {}),
         ...(w === null ? {} : { minRating: Math.max(0, rating - w), maxRating: Math.min(4000, rating + w) }),
       }, { silent: true });
     } catch (e) {

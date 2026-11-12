@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, CircularProgress, Paper, Stack, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, MenuItem, Paper, Stack, TextField, Typography } from '@mui/material';
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 import { useTranslation } from 'react-i18next';
 import { PuzzleSourceFilter } from '@/types/Puzzles';
@@ -18,11 +18,16 @@ interface RunStartCardProps {
   onStart: () => void;
   /** Забег запущен, первая задача ещё грузится */
   starting?: boolean;
+  /** Необязательный фильтр по теме (напр. «Выживание»); '' = любая */
+  themeOptions?: { value: string; label: string }[];
+  theme?: string;
+  onThemeChange?: (value: string) => void;
 }
 
 /** Стартовый экран забега («Рейтинг», «Выживание»): выбор источника задач и запуск; после забега — итоги */
 export const RunStartCard: React.FC<RunStartCardProps> = ({
   icon, title, description, stats, source, onSourceChange, startLabel, onStart, starting,
+  themeOptions, theme, onThemeChange,
 }) => {
   const { t } = useTranslation();
   return (
@@ -47,6 +52,18 @@ export const RunStartCard: React.FC<RunStartCardProps> = ({
           <PuzzleSourcePicker value={source} onChange={onSourceChange} disabled={starting} />
         </Box>
       </Stack>
+      {themeOptions && onThemeChange && (
+        <Stack spacing={1} alignItems="center" sx={{ mt: 2 }}>
+          <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+            {t('puzzles.themeLabel', 'Theme')}
+          </Typography>
+          <TextField select size="small" value={theme ?? ''} onChange={(e) => onThemeChange(e.target.value)} disabled={starting} sx={{ minWidth: 220 }}>
+            {themeOptions.map((o) => (
+              <MenuItem key={o.value || 'any'} value={o.value}>{t(`puzzles.theme.${o.value || 'any'}`, o.label)}</MenuItem>
+            ))}
+          </TextField>
+        </Stack>
+      )}
       <Button variant="contained" size="large" onClick={onStart} disabled={starting}
         startIcon={starting ? <CircularProgress size={18} color="inherit" /> : <PlayArrowRoundedIcon />}
         sx={{ mt: 3, minWidth: 220 }}>

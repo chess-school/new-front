@@ -61,6 +61,8 @@
     "timeLeft": "Czas"
   },
   "auth": {
+    "promoTitle": "Trenuj. Rywalizuj. Rozwijaj się.",
+    "promoSubtitle": "Lekcje, zadania i gry online — wszystko na jednej platformie.",
     "sign_in": "Zaloguj się",
     "no_account": "Nie masz konta?",
     "sign_up": "Zarejestruj się",

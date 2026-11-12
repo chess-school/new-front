@@ -343,6 +343,8 @@
     "login": "Invalid email or password"
   },
   "auth": {
+    "promoTitle": "Train. Compete. Improve.",
+    "promoSubtitle": "Lessons, puzzles and online games — all inside one platform.",
     "sign_in": "Sign In",
     "no_account": "Don't have an account?",
     "sign_up": "Sign up",
