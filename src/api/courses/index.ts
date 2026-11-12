@@ -9,6 +9,12 @@ export const getMyCourses = async (): Promise<CourseSummary[]> => {
   return res.data.data;
 };
 
+/** Курсы, на которые зачислен текущий ученик (раздел «My courses»). */
+export const getEnrolledCourses = async (): Promise<CourseSummary[]> => {
+  const res = await axiosInstance.get('/courses/enrolled');
+  return res.data.data;
+};
+
 /** Один курс с нормализованным контентом (modules = {version,chapters[blocks]}). */
 export const getCourse = async (courseId: string): Promise<CourseDetail> => {
   const res = await axiosInstance.get(`/courses/${courseId}`);

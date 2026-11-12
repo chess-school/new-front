@@ -44,105 +44,85 @@ const startsWith = (prefix: string) => (pathname: string) => pathname === prefix
 export const NAV_GROUPS: NavGroup[] = [
   // ─────────────── Режим LEARN (ученик) ───────────────
   {
-    key: 'training',
-    labelKey: 'nav.groups.training',
-    fallback: 'Training',
-    mode: 'learn',
+    key: 'game', labelKey: 'nav.groups.game', fallback: 'Game', mode: 'learn',
     items: [
       { key: 'play', labelKey: 'nav.play', fallback: 'Play online', to: '/play', icon: 'play', audience: 'student' },
-      { key: 'books', labelKey: 'nav.books', fallback: 'Books & courses', to: '/books', icon: 'books', audience: 'student' },
+      { key: 'myGames', labelKey: 'nav.myGames', fallback: 'My games', to: '/my-games', icon: 'games', audience: 'student' },
+    ],
+  },
+  {
+    key: 'puzzlesGroup', labelKey: 'nav.groups.puzzles', fallback: 'Puzzles', mode: 'learn',
+    items: [
       { key: 'puzzles', labelKey: 'nav.puzzles', fallback: 'Puzzles', to: '/puzzles', icon: 'puzzles', audience: 'guest' },
       { key: 'rating', labelKey: 'nav.rating', fallback: 'Rating climb', to: '/rating', icon: 'rating', audience: 'guest' },
       { key: 'survival', labelKey: 'nav.survival', fallback: 'Survival', to: '/survival', icon: 'survival', audience: 'guest' },
       { key: 'blindfold', labelKey: 'nav.blindfold', fallback: 'Blindfold memory', to: '/blindfold', icon: 'blindfold', audience: 'guest' },
+    ],
+  },
+  {
+    key: 'study', labelKey: 'nav.groups.study', fallback: 'Study', mode: 'learn',
+    items: [
+      { key: 'myCourses', labelKey: 'nav.myCourses', fallback: 'My courses', to: '/my-courses', icon: 'courseBuilder', audience: 'student', isActive: startsWith('/my-courses') },
+      { key: 'books', labelKey: 'nav.puzzleBooks', fallback: 'Puzzle books', to: '/books', icon: 'books', audience: 'student' },
       { key: 'analysis', labelKey: 'nav.analysis', fallback: 'Analysis', to: '/analysis', icon: 'analysis', audience: 'guest' },
       { key: 'database', labelKey: 'nav.database', fallback: 'Games database', to: '/book', icon: 'database', audience: 'guest' },
     ],
   },
   {
-    key: 'my',
-    labelKey: 'nav.groups.my',
-    fallback: 'My learning',
-    mode: 'learn',
+    key: 'myClub', labelKey: 'nav.groups.myClub', fallback: 'My club', mode: 'learn',
     items: [
       { key: 'myClasses', labelKey: 'nav.myClasses', fallback: 'My classes', to: '/my-classes', icon: 'classroom', audience: 'student', isActive: startsWith('/my-classes') },
-      { key: 'schedule', labelKey: 'nav.schedule', fallback: 'Schedule & homework', to: '/students-shedule', icon: 'schedule', audience: 'student' },
-      { key: 'myGames', labelKey: 'nav.myGames', fallback: 'My games', to: '/my-games', icon: 'games', audience: 'student' },
-      {
-        key: 'inbox', labelKey: 'nav.inbox', fallback: 'Inbox', to: '/inbox', icon: 'inbox', audience: 'student',
-        isActive: (pathname, search) => pathname === '/inbox' && !/[?&]tab=homework\b/.test(search),
-      },
-      { key: 'profile', labelKey: 'nav.profile', fallback: 'Profile', to: '/profile', icon: 'profile', audience: 'student', isActive: startsWith('/profile') },
-    ],
-  },
-  {
-    key: 'school',
-    labelKey: 'nav.groups.school',
-    fallback: 'School',
-    mode: 'learn',
-    items: [
-      { key: 'home', labelKey: 'navbar.home', fallback: 'Home', to: '/', icon: 'home', audience: 'guest', isActive: (pathname) => pathname === '/' },
-      { key: 'about', labelKey: 'navbar.aboutUs', fallback: 'About us', to: '/about', icon: 'about', audience: 'guest' },
-      { key: 'coaches', labelKey: 'navbar.coaches', fallback: 'Coaches', to: '/coaches', icon: 'coaches', audience: 'guest' },
-      { key: 'achievements', labelKey: 'navbar.achievements', fallback: 'Achievements', to: '/achievements', icon: 'achievements', audience: 'guest' },
+      { key: 'schedule', labelKey: 'nav.schedule', fallback: 'Schedule & homework', to: '/schedule', icon: 'schedule', audience: 'student', isActive: (p) => startsWith('/schedule')(p) || startsWith('/students-shedule')(p) },
     ],
   },
   // ─────────────── Режим COACH (тренер/админ) ───────────────
   {
-    key: 'consoleTop',
-    labelKey: '', fallback: '', // без заголовка секции — отдельный верхний пункт
-    mode: 'coach',
+    key: 'consoleTop', labelKey: '', fallback: '', mode: 'coach',
     items: [
-      { key: 'clubConsole', labelKey: 'nav.clubConsole', fallback: 'Club console', to: '/club', icon: 'console', audience: 'coach', isActive: (pathname) => pathname === '/club' },
+      { key: 'clubConsole', labelKey: 'nav.clubOverview', fallback: 'Club overview', to: '/club', icon: 'console', audience: 'coach', isActive: (pathname) => pathname === '/club' },
     ],
   },
   {
-    key: 'people',
-    labelKey: 'nav.groups.people',
-    fallback: 'People',
-    mode: 'coach',
+    key: 'people', labelKey: 'nav.groups.people', fallback: 'People', mode: 'coach',
     items: [
       { key: 'students', labelKey: 'nav.students', fallback: 'Students', to: '/students', icon: 'students', audience: 'coach' },
       { key: 'groups', labelKey: 'nav.groups.list', fallback: 'Groups', to: '/groups', icon: 'groups', audience: 'coach', isActive: startsWith('/groups') },
-      { key: 'coachApplications', labelKey: 'nav.coachApplications', fallback: 'Coach applications', to: '/coach-applications', icon: 'coachApps', audience: 'admin', badge: 'coachApplications' },
+      { key: 'clubLeads', labelKey: 'nav.clubLeads', fallback: 'Leads', to: '/club/leads', icon: 'inbox', audience: 'coach', isActive: startsWith('/club/leads') },
     ],
   },
   {
-    key: 'teaching',
-    labelKey: 'nav.groups.teaching',
-    fallback: 'Teaching',
-    mode: 'coach',
+    key: 'lessons', labelKey: 'nav.groups.lessons', fallback: 'Lessons', mode: 'coach',
     items: [
-      {
-        key: 'courses', labelKey: 'nav.courses', fallback: 'Courses', to: '/club/courses', icon: 'courseBuilder', audience: 'coach',
-        isActive: startsWith('/club/courses'),
-      },
+      { key: 'lessonsCoach', labelKey: 'nav.lessons', fallback: 'Lessons', to: '/my-classes', icon: 'classroom', audience: 'coach', isActive: startsWith('/my-classes') },
       {
         key: 'review', labelKey: 'nav.review', fallback: 'Review work', to: '/inbox?tab=homework', icon: 'review', audience: 'coach', badge: 'review',
         isActive: (pathname, search) => pathname === '/inbox' && /[?&]tab=homework\b/.test(search),
       },
-      {
-        // Редактор книги — /digitizer/books/:id/edit; список книг для редактирования — на странице оцифровщика
-        key: 'courseBuilder', labelKey: 'nav.courseBuilder', fallback: 'Course builder', to: '/digitizer#library', icon: 'courseBuilder', audience: 'coach',
-        isActive: (pathname, _search, hash) => pathname.startsWith('/digitizer/books/') || (pathname === '/digitizer' && hash === '#library'),
-      },
-      {
-        key: 'digitizer', labelKey: 'nav.digitizer', fallback: 'PDF digitizer', to: '/digitizer', icon: 'digitizer', audience: 'coach',
-        isActive: (pathname, _search, hash) => pathname === '/digitizer' && hash !== '#library',
-      },
+      { key: 'courses', labelKey: 'nav.courses', fallback: 'Courses', to: '/club/courses', icon: 'courseBuilder', audience: 'coach', isActive: startsWith('/club/courses') },
     ],
   },
   {
-    key: 'club',
-    labelKey: 'nav.groups.club',
-    fallback: 'Club',
-    mode: 'coach',
+    key: 'tools', labelKey: 'nav.groups.tools', fallback: 'Tools', mode: 'coach',
     items: [
-      { key: 'clubSettings', labelKey: 'nav.clubSettings', fallback: 'Club settings', to: '/club/settings', icon: 'settings', audience: 'coach', isActive: startsWith('/club/settings') },
+      // «Course builder» + «PDF digitizer» слиты: /digitizer — библиотека задачников и оцифровка.
+      { key: 'puzzleBooksCoach', labelKey: 'nav.puzzleBooks', fallback: 'Puzzle books', to: '/digitizer', icon: 'digitizer', audience: 'coach', isActive: (pathname) => startsWith('/digitizer')(pathname) },
+      { key: 'analysisCoach', labelKey: 'nav.analysis', fallback: 'Analysis', to: '/analysis', icon: 'analysis', audience: 'coach' },
+      { key: 'databaseCoach', labelKey: 'nav.database', fallback: 'Games database', to: '/book', icon: 'database', audience: 'coach' },
+    ],
+  },
+  {
+    key: 'club', labelKey: 'nav.groups.club', fallback: 'Club', mode: 'coach',
+    items: [
       { key: 'clubWebsite', labelKey: 'nav.clubWebsite', fallback: 'Website', to: '/club/site', icon: 'website', audience: 'coach', isActive: startsWith('/club/site') },
-      { key: 'clubLeads', labelKey: 'nav.clubLeads', fallback: 'Leads', to: '/club/leads', icon: 'inbox', audience: 'coach', isActive: startsWith('/club/leads') },
       { key: 'clubMedia', labelKey: 'nav.clubMedia', fallback: 'Media library', to: '/club/media', icon: 'media', audience: 'coach', isActive: startsWith('/club/media') },
+      { key: 'clubSettings', labelKey: 'nav.clubSettings', fallback: 'Club settings', to: '/club/settings', icon: 'settings', audience: 'coach', isActive: startsWith('/club/settings') },
       { key: 'publicClub', labelKey: 'nav.publicClub', fallback: 'Public club page', to: '/', icon: 'public', audience: 'coach', external: true },
+    ],
+  },
+  {
+    key: 'admin', labelKey: 'nav.groups.admin', fallback: 'Administration', mode: 'coach',
+    items: [
+      { key: 'coachApplications', labelKey: 'nav.coachApplications', fallback: 'Coach applications', to: '/coach-applications', icon: 'coachApps', audience: 'admin', badge: 'coachApplications' },
     ],
   },
 ];

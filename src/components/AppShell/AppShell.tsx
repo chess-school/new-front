@@ -24,6 +24,7 @@ import ExtensionRoundedIcon from '@mui/icons-material/ExtensionRounded';
 import TrendingUpRoundedIcon from '@mui/icons-material/TrendingUpRounded';
 import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
 import VisibilityOffRoundedIcon from '@mui/icons-material/VisibilityOffRounded';
+import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
 import QueryStatsRoundedIcon from '@mui/icons-material/QueryStatsRounded';
 import StorageRoundedIcon from '@mui/icons-material/StorageRounded';
 import EventNoteRoundedIcon from '@mui/icons-material/EventNoteRounded';
@@ -217,15 +218,35 @@ const SidebarContent: React.FC<{ onNavigate?: () => void }> = ({ onNavigate }) =
         <Box sx={{ px: 2, pb: 1 }}><ClubSwitcher /></Box>
       )}
 
-      {/* Тумблер режима Learn / Coach — только для тренера/админа */}
+      {/* Тумблер режима Learn / Coach — только для тренера/админа. Смена режима ведёт на его
+          стартовую страницу (иначе остаёшься на чужой). Режим — только отрисовка, права на сервере реальные. */}
       {coachCapable && (
         <Box sx={{ px: 2, pb: 1 }}>
           <ToggleButtonGroup exclusive fullWidth size="small" value={effMode}
-            onChange={(_, v: NavMode | null) => { if (v) { setMode(v); try { localStorage.setItem('debiut.navMode', v); } catch { /* ignore */ } } }}
+            onChange={(_, v: NavMode | null) => {
+              if (!v || v === effMode) return;
+              setMode(v);
+              try { localStorage.setItem('debiut.navMode', v); } catch { /* ignore */ }
+              navigate(v === 'coach' ? '/club' : '/puzzles');
+            }}
             sx={{ '& .MuiToggleButton-root': { py: 0.6, gap: 0.75, fontWeight: 600 } }}>
             <ToggleButton value="learn"><SchoolRoundedIcon sx={{ fontSize: 18 }} />{t('nav.mode.learn', 'Learn')}</ToggleButton>
             <ToggleButton value="coach"><VideoCameraFrontRoundedIcon sx={{ fontSize: 18 }} />{t('nav.mode.coach', 'Coach')}</ToggleButton>
           </ToggleButtonGroup>
+        </Box>
+      )}
+
+      {/* «Смотрите как ученик» — тренер в режиме Learn. Заметная плашка с быстрым выходом в Coach. */}
+      {coachCapable && effMode === 'learn' && (
+        <Box sx={{ mx: 2, mb: 1, px: 1.5, py: 1, borderRadius: 2, bgcolor: 'warning.main', color: 'warning.contrastText', display: 'flex', alignItems: 'center', gap: 1 }}>
+          <VisibilityRoundedIcon sx={{ fontSize: 18 }} />
+          <Typography variant="caption" sx={{ fontWeight: 700, flexGrow: 1, lineHeight: 1.2 }}>
+            {t('nav.viewingAsStudent', 'Viewing as student')}
+          </Typography>
+          <Button size="small" color="inherit" sx={{ minWidth: 0, fontWeight: 800, textDecoration: 'underline' }}
+            onClick={() => { setMode('coach'); try { localStorage.setItem('debiut.navMode', 'coach'); } catch { /* ignore */ } navigate('/club'); }}>
+            {t('nav.exitViewAs', 'Exit')}
+          </Button>
         </Box>
       )}
 
