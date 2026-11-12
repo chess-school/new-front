@@ -679,7 +679,7 @@
     }
   },
   "digitizer": {
-    "title": "Digitalizator książek i kursy",
+    "title": "Digitalizator książek",
     "subtitle": "Wgraj szachową książkę w PDF: pozycje zostaną rozpoznane automatycznie i zamienione w interaktywny kurs.",
     "exercises": "Zadania",
     "form": {

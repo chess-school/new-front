@@ -678,7 +678,7 @@
     }
   },
   "digitizer": {
-    "title": "Book Digitizer & Courses",
+    "title": "Book digitizer",
     "subtitle": "Upload a PDF chess book: positions are recognized automatically and turned into an interactive course.",
     "exercises": "Exercises",
     "form": {
