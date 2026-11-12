@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
 import { AuthPage } from '@/pages/auth-page';
 import { AppShell } from '@/components/AppShell/AppShell';
@@ -43,6 +43,7 @@ const LeadsPage = lazy(() => import('./features/console/LeadsPage'));
 const CoursesListPage = lazy(() => import('./features/CourseBuilder/pages/CoursesListPage').then((m) => ({ default: m.CoursesListPage })));
 const CourseEditorPage = lazy(() => import('./features/CourseBuilder/pages/CourseEditorPage').then((m) => ({ default: m.CourseEditorPage })));
 const CoursePlayerPage = lazy(() => import('./features/CoursePlayer/pages/CoursePlayerPage').then((m) => ({ default: m.CoursePlayerPage })));
+const MyCoursesPage = lazy(() => import('./features/CoursePlayer/pages/MyCoursesPage').then((m) => ({ default: m.MyCoursesPage })));
 const ClubSitePage = lazy(() => import('./pages/club-site/club-site-page'));
 const CoachProfilePage = lazy(() => import('./pages/club-site/coach-profile-page'));
 import { GroupsPage } from './pages/groups-page/groups-page';
@@ -86,12 +87,14 @@ function MainLayout() {
 
       <Route element={<PrivateRoute />}>
         <Route path="/profile/:uuid" element={<TestProfileV2Page />} key={location.pathname} />
-        <Route path="/students-shedule" element={<StudentSchedulePage />} />
+        <Route path="/schedule" element={<StudentSchedulePage />} />
+        <Route path="/students-shedule" element={<Navigate to="/schedule" replace />} />
         <Route path="/my-games" element={<MyGamesPage />} />
         <Route path="/inbox" element={<InboxPage />} />
         <Route path="/books" element={<PuzzleBooksPage />} />
         <Route path="/books/:bookId/solve" element={<BookSolvePage />} />
         <Route path="/courses/:courseId" element={<CoursePlayerPage />} />
+        <Route path="/my-courses" element={<MyCoursesPage />} />
         <Route path="/play" element={<PlayLobbyPage />} />
         <Route path="/play/:gameId" element={<PlayGamePage />} />
         <Route path="/my-classes" element={<MyClassesPage />} />
