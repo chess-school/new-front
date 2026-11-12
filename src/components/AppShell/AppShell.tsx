@@ -3,8 +3,8 @@ import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { accentText } from '@/theme/tokens';
 import {
-  AppBar, Avatar, Badge, Box, Button, Chip, Divider, Drawer, IconButton, InputBase, List, ListItemButton, ListItemIcon, ListItemText,
-  ListSubheader, Menu, MenuItem, Skeleton, Stack, Toolbar, ToggleButton, ToggleButtonGroup, Tooltip, Typography, useMediaQuery, useTheme,
+  AppBar, Avatar, Badge, Box, Button, Chip, Divider, Drawer, FormControl, IconButton, InputBase, List, ListItemButton, ListItemIcon, ListItemText,
+  ListSubheader, Menu, MenuItem, Select, Skeleton, Stack, Toolbar, ToggleButton, ToggleButtonGroup, Tooltip, Typography, useMediaQuery, useTheme,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
@@ -49,7 +49,7 @@ import PhotoLibraryRoundedIcon from '@mui/icons-material/PhotoLibraryRounded';
 import WebRoundedIcon from '@mui/icons-material/WebRounded';
 import { useClubStore } from '@/features/clubs/clubStore';
 import { useSiteSettings } from '@/features/site/SiteSettingsContext';
-import { canCoach, isItemActive, NavIcon, NavItem, NavMode, visibleNav } from './navigation';
+import { canCoach, isItemActive, NavIcon, NavItem, NavMode, NavUser, visibleNav } from './navigation';
 
 export const SIDEBAR_WIDTH = 264;
 
@@ -175,7 +175,26 @@ const SidebarContent: React.FC<{ onNavigate?: () => void }> = ({ onNavigate }) =
   const auth = useContext(AuthContext);
   const user = auth?.user ?? null;
   const isAuthenticated = !!auth?.isAuthenticated;
-  const coachCapable = canCoach(user, isAuthenticated);
+
+  // Admin-only «смотреть как роль» — для детального аудита UI с позиции разных ролей.
+  // ТОЛЬКО отрисовка меню/вида: права на сервере остаются реальными (это не обход прав).
+  const realIsAdmin = (user?.roles ?? []).map((r) => String(r).toUpperCase()).includes('ADMIN');
+  const [roleView, setRoleView] = useState<string>(() => {
+    try { return realIsAdmin ? localStorage.getItem('debiut.roleView') || 'real' : 'real'; } catch { return 'real'; }
+  });
+  const setRole = (v: string) => {
+    setRoleView(v);
+    try { localStorage.setItem('debiut.roleView', v); } catch { /* ignore */ }
+  };
+  // Эффективные user/auth для меню (подмена только у реального ADMIN).
+  const simulating = realIsAdmin && roleView !== 'real';
+  const effUser: NavUser | null = !simulating
+    ? user
+    : roleView === 'guest'
+      ? null
+      : { roles: [roleView === 'student' ? 'USER' : roleView === 'coach' ? 'COACH' : 'ADMIN'] };
+  const effAuth = simulating ? roleView !== 'guest' : isAuthenticated;
+  const coachCapable = canCoach(effUser, effAuth);
 
   // Режим сайдбара Learn/Coach (тумблер виден только тренеру/админу), запоминается
   const [mode, setMode] = useState<NavMode>(() => {
@@ -187,7 +206,7 @@ const SidebarContent: React.FC<{ onNavigate?: () => void }> = ({ onNavigate }) =
   });
   useEffect(() => { if (!coachCapable && mode === 'coach') setMode('learn'); }, [coachCapable, mode]);
   const effMode: NavMode = coachCapable ? mode : 'learn';
-  const groups = visibleNav(user, isAuthenticated, effMode);
+  const groups = visibleNav(effUser, effAuth, effMode);
 
   // Счётчики-бейджи (coach applications, review) появятся с данными backend; пока пусто
   const badgeCounts: Record<string, number> = {};
@@ -218,6 +237,31 @@ const SidebarContent: React.FC<{ onNavigate?: () => void }> = ({ onNavigate }) =
         <Box sx={{ px: 2, pb: 1 }}><ClubSwitcher /></Box>
       )}
 
+      {/* Admin-only: смотреть интерфейс как другая роль (для аудита). Только отрисовка меню —
+          права на сервере реальные. Смена ведёт на стартовую страницу роли. */}
+      {realIsAdmin && (
+        <Box sx={{ px: 2, pb: 1 }}>
+          <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', mb: 0.5 }}>
+            {t('nav.viewAsRole', 'View as (admin)')}
+          </Typography>
+          <FormControl size="small" fullWidth>
+            <Select
+              value={roleView}
+              onChange={(e) => {
+                const v = String(e.target.value);
+                setRole(v);
+                navigate(v === 'coach' || v === 'real' || v === 'admin' ? '/club' : '/puzzles');
+              }}
+            >
+              <MenuItem value="real">{t('nav.roleAdmin', 'Admin (you)')}</MenuItem>
+              <MenuItem value="coach">{t('nav.roleCoach', 'Coach')}</MenuItem>
+              <MenuItem value="student">{t('nav.roleStudent', 'Student')}</MenuItem>
+              <MenuItem value="guest">{t('nav.roleGuest', 'Guest')}</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+      )}
+
       {/* Тумблер режима Learn / Coach — только для тренера/админа. Смена режима ведёт на его
           стартовую страницу (иначе остаёшься на чужой). Режим — только отрисовка, права на сервере реальные. */}
       {coachCapable && (
@@ -236,15 +280,20 @@ const SidebarContent: React.FC<{ onNavigate?: () => void }> = ({ onNavigate }) =
         </Box>
       )}
 
-      {/* «Смотрите как ученик» — тренер в режиме Learn. Заметная плашка с быстрым выходом в Coach. */}
-      {coachCapable && effMode === 'learn' && (
+      {/* Заметная плашка: админ смотрит как другая роль ЛИБО тренер превьюит режим Learn. */}
+      {(simulating || (coachCapable && effMode === 'learn')) && (
         <Box sx={{ mx: 2, mb: 1, px: 1.5, py: 1, borderRadius: 2, bgcolor: 'warning.main', color: 'warning.contrastText', display: 'flex', alignItems: 'center', gap: 1 }}>
           <VisibilityRoundedIcon sx={{ fontSize: 18 }} />
           <Typography variant="caption" sx={{ fontWeight: 700, flexGrow: 1, lineHeight: 1.2 }}>
-            {t('nav.viewingAsStudent', 'Viewing as student')}
+            {simulating
+              ? t('nav.viewingAsRole', 'Viewing as {{role}}', { role: t(`nav.role${roleView.charAt(0).toUpperCase()}${roleView.slice(1)}`, roleView) })
+              : t('nav.viewingAsStudent', 'Viewing as student')}
           </Typography>
           <Button size="small" color="inherit" sx={{ minWidth: 0, fontWeight: 800, textDecoration: 'underline' }}
-            onClick={() => { setMode('coach'); try { localStorage.setItem('debiut.navMode', 'coach'); } catch { /* ignore */ } navigate('/club'); }}>
+            onClick={() => {
+              if (simulating) { setRole('real'); navigate('/club'); return; }
+              setMode('coach'); try { localStorage.setItem('debiut.navMode', 'coach'); } catch { /* ignore */ } navigate('/club');
+            }}>
             {t('nav.exitViewAs', 'Exit')}
           </Button>
         </Box>
