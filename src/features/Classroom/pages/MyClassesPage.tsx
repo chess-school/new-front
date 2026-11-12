@@ -12,7 +12,7 @@ import moment from 'moment';
 import { notification } from 'antd';
 import { getMyLessons, Lesson } from '@/api/lessons';
 import { getMyGroups, CoachGroup } from '@/api/students';
-import { useAuth } from '@/context/AuthContext';
+import { useView } from '@/components/AppShell/ViewContext';
 import { PageContainer, PageHeader } from '@/shared/components/ui/PageHeader';
 import { CreateLessonDialog } from '@/components/Schedule/CreateLessonDialog';
 
@@ -24,8 +24,8 @@ import { CreateLessonDialog } from '@/components/Schedule/CreateLessonDialog';
 export const MyClassesPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const isCoach = !!user?.roles?.some((r) => r === 'COACH' || r === 'ADMIN');
+  // По эффективному виду (режим Coach), а не реальной роли — чтобы «как ученик» не показывал «Create a lesson».
+  const { canViewCoach: isCoach } = useView();
 
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [groups, setGroups] = useState<CoachGroup[]>([]);

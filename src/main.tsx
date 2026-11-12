@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { AppThemeProvider } from '@/theme';
 import { AuthProvider } from '@/context/AuthContext.tsx';
+import { ViewProvider } from '@/components/AppShell/ViewContext';
 import '@/styles'; 
 import './index.css';
 import './i18n'; 
@@ -31,7 +32,9 @@ root.render(
       <BrowserRouter>
         <AppThemeProvider>
           <AuthProvider>
-            <App />
+            <ViewProvider>
+              <App />
+            </ViewProvider>
           </AuthProvider>
         </AppThemeProvider>
       </BrowserRouter>
