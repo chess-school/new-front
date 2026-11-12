@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { accentText } from '@/theme/tokens';
@@ -208,6 +208,10 @@ const SidebarContent: React.FC<{ onNavigate?: () => void }> = ({ onNavigate }) =
   const effMode: NavMode = coachCapable ? mode : 'learn';
   const groups = visibleNav(effUser, effAuth, effMode);
 
+  // При смене режима/симулируемой роли меню прокручиваем наверх (иначе открывается с середины).
+  const navScrollRef = useRef<HTMLDivElement>(null);
+  useEffect(() => { if (navScrollRef.current) navScrollRef.current.scrollTop = 0; }, [effMode, roleView]);
+
   // Счётчики-бейджи (coach applications, review) появятся с данными backend; пока пусто
   const badgeCounts: Record<string, number> = {};
 
@@ -311,7 +315,7 @@ const SidebarContent: React.FC<{ onNavigate?: () => void }> = ({ onNavigate }) =
         </Box>
       )}
 
-      <Box component="nav" aria-label={t('nav.main', 'Main navigation')} sx={{ flex: 1, overflowY: 'auto', px: 1.5, pt: 0.5, pb: 2 }}>
+      <Box ref={navScrollRef} component="nav" aria-label={t('nav.main', 'Main navigation')} sx={{ flex: 1, overflowY: 'auto', px: 1.5, pt: 0.5, pb: 2 }}>
         {auth?.loading ? (
           <Stack spacing={1} sx={{ px: 1, pt: 1 }}>{[0, 1, 2, 3, 4].map((i) => <Skeleton key={i} height={36} />)}</Stack>
         ) : groups.map((group) => (

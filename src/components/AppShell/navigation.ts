@@ -91,7 +91,7 @@ export const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
-    key: 'lessons', labelKey: 'nav.groups.lessons', fallback: 'Lessons', mode: 'coach',
+    key: 'lessons', labelKey: 'nav.groups.teaching', fallback: 'Teaching', mode: 'coach',
     items: [
       { key: 'lessonsCoach', labelKey: 'nav.lessons', fallback: 'Lessons', to: '/my-classes', icon: 'classroom', audience: 'coach', isActive: startsWith('/my-classes') },
       {
@@ -105,7 +105,7 @@ export const NAV_GROUPS: NavGroup[] = [
     key: 'tools', labelKey: 'nav.groups.tools', fallback: 'Tools', mode: 'coach',
     items: [
       // «Course builder» + «PDF digitizer» слиты: /digitizer — библиотека задачников и оцифровка.
-      { key: 'puzzleBooksCoach', labelKey: 'nav.puzzleBooks', fallback: 'Puzzle books', to: '/digitizer', icon: 'digitizer', audience: 'coach', isActive: (pathname) => startsWith('/digitizer')(pathname) },
+      { key: 'puzzleBooksCoach', labelKey: 'nav.bookDigitizer', fallback: 'Book digitizer', to: '/digitizer', icon: 'digitizer', audience: 'coach', isActive: (pathname) => startsWith('/digitizer')(pathname) },
       { key: 'analysisCoach', labelKey: 'nav.analysis', fallback: 'Analysis', to: '/analysis', icon: 'analysis', audience: 'coach' },
       { key: 'databaseCoach', labelKey: 'nav.database', fallback: 'Games database', to: '/book', icon: 'database', audience: 'coach' },
     ],
