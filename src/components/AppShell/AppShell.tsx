@@ -254,7 +254,11 @@ const SidebarContent: React.FC<{ onNavigate?: () => void }> = ({ onNavigate }) =
               onChange={(e) => {
                 const v = String(e.target.value);
                 setRole(v);
-                navigate(v === 'coach' || v === 'real' || v === 'admin' ? '/club' : '/puzzles');
+                // Coach/Admin → сразу режим Coach (иначе меню осталось бы в Learn на /club); иначе Learn.
+                const toCoach = v === 'coach' || v === 'real' || v === 'admin';
+                setMode(toCoach ? 'coach' : 'learn');
+                try { localStorage.setItem('debiut.navMode', toCoach ? 'coach' : 'learn'); } catch { /* ignore */ }
+                navigate(toCoach ? '/club' : '/puzzles');
               }}
             >
               <MenuItem value="real">{t('nav.roleAdmin', 'Admin (you)')}</MenuItem>
@@ -284,8 +288,9 @@ const SidebarContent: React.FC<{ onNavigate?: () => void }> = ({ onNavigate }) =
         </Box>
       )}
 
-      {/* Заметная плашка: админ смотрит как другая роль ЛИБО тренер превьюит режим Learn. */}
-      {(simulating || (coachCapable && effMode === 'learn')) && (
+      {/* Плашка: админ симулирует роль (роль-переключатель) ЛИБО ОБЫЧНЫЙ тренер превьюит Learn.
+          У админа «как ученик» при Learn не показываем — у него для этого есть селектор ролей. */}
+      {(simulating || (!realIsAdmin && coachCapable && effMode === 'learn')) && (
         <Box sx={{ mx: 2, mb: 1, px: 1.5, py: 1, borderRadius: 2, bgcolor: 'warning.main', color: 'warning.contrastText', display: 'flex', alignItems: 'center', gap: 1 }}>
           <VisibilityRoundedIcon sx={{ fontSize: 18 }} />
           <Typography variant="caption" sx={{ fontWeight: 700, flexGrow: 1, lineHeight: 1.2 }}>
