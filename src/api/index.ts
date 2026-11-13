@@ -6,6 +6,8 @@ declare module 'axios' {
   interface AxiosRequestConfig {
     /** Не показывать общее уведомление об ошибке — страница покажет своё */
     silent?: boolean;
+    /** Не редиректить на /login при 401 (начальная проверка сессии — гость это норма) */
+    skipAuthRedirect?: boolean;
   }
 }
 
@@ -30,10 +32,7 @@ const getIssueMessage = (error: AxiosError<ApiErrorData>, description: string) =
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    // Токен авторизации теперь в HttpOnly-cookie (withCredentials: true) — JS его не трогает.
     const language = i18n.language;
     if (language) {
       config.headers['Accept-Language'] = language;
@@ -55,15 +54,19 @@ axiosInstance.interceptors.response.use(
   (error: AxiosError<ApiErrorData>) => {
 
     if (error.response?.status === 401) {
+      // Начальная проверка сессии (AuthContext): 401 = гость, не ошибка — не редиректим/не шумим.
+      if (error.config?.skipAuthRedirect) {
+        return Promise.reject(error);
+      }
+
       notification.error({
         message: i18n.t('common.sessionExpired', 'Session expired'),
         description: error.response?.data?.msg || error.response?.data?.message || i18n.t('common.pleaseLoginAgain', 'Please log in again.'),
       });
-      
-      localStorage.removeItem('token');
-      localStorage.removeItem('user'); 
-      
-      window.location.href = '/login'; 
+
+      localStorage.removeItem('user');
+
+      window.location.href = '/login';
 
       return new Promise(() => {});
     }

@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, ReactNode, useCallback, useContext } from 'react';
-import { User } from '@/types/User'; 
+import { User } from '@/types/User';
 import { getMyProfile } from '@/api/profile';
+import { logoutUser } from '@/api/auth';
 import { LoginResponse } from '@/types/Auth';
 
 interface AuthContextType {
@@ -8,7 +9,7 @@ interface AuthContextType {
   loading: boolean;
   isAuthenticated: boolean;
   login: (loginResponse: LoginResponse) => Promise<User>;
-  logout: () => void;
+  logout: () => Promise<void>;
   refetchUser: () => Promise<void>;
 }
 
@@ -22,48 +23,39 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true); 
 
-  const logout = useCallback(() => {
-    localStorage.removeItem('token');
+  const logout = useCallback(async () => {
+    await logoutUser(); // сервер удаляет HttpOnly-cookie
+    localStorage.removeItem('user');
     setUser(null);
   }, []);
 
   useEffect(() => {
+    // Сессия определяется наличием валидной HttpOnly-cookie: просто пробуем загрузить профиль.
+    // 401 (гость) — не ошибка: skipAuthRedirect не даёт глобальному перехватчику редиректить.
     const checkAuthStatus = async () => {
       setLoading(true);
-      const token = localStorage.getItem('token');
-      
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-
       try {
-        const profile = await getMyProfile();
+        const profile = await getMyProfile({ skipAuthRedirect: true });
         setUser(profile);
-      } catch (error) {
-        console.error('Session check failed, token is invalid. Logging out.', error);
-        logout(); 
+      } catch {
+        setUser(null); // гость или протухшая сессия
       } finally {
         setLoading(false);
       }
     };
     checkAuthStatus();
-  }, [logout]);
+  }, []);
 
-  const login = useCallback(async (loginResponse: LoginResponse) => {
-    if (!loginResponse || !loginResponse.token) {
-      throw new Error("Invalid login response");
-    }
-    
-    localStorage.setItem('token', loginResponse.token);
-    
+  const login = useCallback(async () => {
+    // Токен уже установлен сервером в HttpOnly-cookie при POST /auth/login.
+    // Нам остаётся подтянуть профиль (cookie уйдёт автоматически через withCredentials).
     try {
         const fullUserProfile = await getMyProfile();
         setUser(fullUserProfile);
         return fullUserProfile;
     } catch (error) {
-        console.error("Failed to fetch profile after login. Rolling back.", error);
-        logout();
+        console.error("Failed to fetch profile after login.", error);
+        await logout();
         throw error;
     }
   }, [logout]);
@@ -75,7 +67,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(profile);
     } catch (error) {
         console.error("Failed to refetch user data", error);
-        logout();
+        await logout();
     } finally {
         setLoading(false);
     }

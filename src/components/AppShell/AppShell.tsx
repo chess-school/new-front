@@ -201,7 +201,7 @@ const SidebarContent: React.FC<{ onNavigate?: () => void }> = ({ onNavigate }) =
   };
   const handleLogout = () => {
     useClubStore.getState().reset();
-    auth?.logout();
+    void auth?.logout();
     onNavigate?.();
     navigate('/login');
   };

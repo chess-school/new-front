@@ -31,7 +31,7 @@ const page = (data: CoachDto[], totalPages = 1, currentPage = 1) => ({ data, pag
 const renderPage = (user: { _id: string; roles: string[] } | null) => render(
   <AuthContext.Provider value={{
     user: user ? { ...user, uuid: 'me', firstName: 'Me', lastName: 'User', email: 'me@x', createdAt: '' } as never : null,
-    loading: false, isAuthenticated: !!user, login: async () => ({} as never), logout: () => {}, refetchUser: async () => {},
+    loading: false, isAuthenticated: !!user, login: async () => ({} as never), logout: async () => {}, refetchUser: async () => {},
   }}>
     <MemoryRouter><CoachesPage /></MemoryRouter>
   </AuthContext.Provider>,

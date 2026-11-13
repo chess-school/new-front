@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { createClassroomSocket, ClassroomSocketFactory, ClassroomSocketLike } from './classroomApi';
+import { useAuth } from '@/context/AuthContext';
 
-// Одно подключение к /classroom на вкладку. Новый токен (другой пользователь) — новое подключение.
+// Одно подключение к /classroom на вкладку. Авторизация — по HttpOnly-cookie; ключ сессии
+// (id пользователя) только для кэша: другой пользователь — новое подключение.
 
 let factory: ClassroomSocketFactory = createClassroomSocket;
-let current: { token: string; socket: ClassroomSocketLike } | null = null;
+let current: { key: string; socket: ClassroomSocketLike } | null = null;
 
 /** Подменить фабрику сокета (тесты) */
 export const setClassroomSocketFactory = (f: ClassroomSocketFactory) => {
@@ -13,25 +15,31 @@ export const setClassroomSocketFactory = (f: ClassroomSocketFactory) => {
   current = null;
 };
 
-export const getClassroomSocket = (token: string): ClassroomSocketLike => {
-  if (current && current.token === token) return current.socket;
+export const getClassroomSocket = (key: string): ClassroomSocketLike => {
+  if (current && current.key === key) return current.socket;
   current?.socket.disconnect();
-  current = { token, socket: factory(token) };
+  current = { key, socket: factory(key) };
   return current.socket;
 };
 
-const readToken = () => {
-  try { return localStorage.getItem('token'); } catch { return null; }
+/** Закрыть подключение (выход из системы) */
+export const closeClassroomSocket = () => {
+  current?.socket.disconnect();
+  current = null;
 };
 
 /** Сокет /classroom текущего пользователя (null — не вошёл) и признак подключения */
 export const useClassroomSocket = () => {
-  const token = readToken();
-  const socket = token ? getClassroomSocket(token) : null;
+  const { user } = useAuth();
+  const key = user?._id ? String(user._id) : null;
+  const socket = key ? getClassroomSocket(key) : null;
   const [connected, setConnected] = useState(!!socket?.connected);
 
   useEffect(() => {
-    if (!socket) return undefined;
+    if (!socket) {
+      closeClassroomSocket();
+      return undefined;
+    }
     const on = () => setConnected(true);
     const off = () => setConnected(false);
     socket.on('connect', on);

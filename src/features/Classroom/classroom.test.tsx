@@ -51,7 +51,7 @@ const Where = () => <span data-testid="where">{useLocation().pathname}</span>;
 const renderPage = (userId = 'me') => render(
   <AuthContext.Provider value={{
     user: { _id: userId, uuid: `u-${userId}`, firstName: 'Me', lastName: 'P', email: 'me@x', roles: ['USER'], createdAt: '' } as never,
-    loading: false, isAuthenticated: true, login: async () => ({} as never), logout: () => {}, refetchUser: async () => {},
+    loading: false, isAuthenticated: true, login: async () => ({} as never), logout: async () => {}, refetchUser: async () => {},
   }}>
     <MemoryRouter initialEntries={['/classroom/ev1']}>
       <Routes>
@@ -76,7 +76,6 @@ describe('Интерактивный класс — страница', () => {
     // Грузим реальные en-переводы: компонент использует чистые i18n-ключи (без инлайновых
     // фоллбэков), поэтому тест проверяет фактически локализованный UI, а не сырые ключи.
     await i18n.use(initReactI18next).init({ lng: 'en', resources: { en: { translation: enTranslation } }, interpolation: { escapeValue: false } });
-    localStorage.setItem('token', 'tok');
     Object.defineProperty(window, 'matchMedia', {
       writable: true, value: () => ({ matches: false, addEventListener: () => {}, removeEventListener: () => {} }),
     });

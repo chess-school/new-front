@@ -102,7 +102,7 @@ const Where = () => <span data-testid="where">{useLocation().pathname}</span>;
 const renderAt = (path: string, ui: React.ReactElement, route: string) => render(
   <AuthContext.Provider value={{
     user: { _id: 'me', uuid: 'u-me', firstName: 'Me', lastName: 'P', email: 'me@x', roles: ['USER'], createdAt: '' } as never,
-    loading: false, isAuthenticated: true, login: async () => ({} as never), logout: () => {}, refetchUser: async () => {},
+    loading: false, isAuthenticated: true, login: async () => ({} as never), logout: async () => {}, refetchUser: async () => {},
   }}>
     <MemoryRouter initialEntries={[path]}>
       <Routes>
@@ -119,7 +119,6 @@ describe('страница партии и лобби', () => {
   const realRO = globalThis.ResizeObserver;
   beforeAll(async () => {
     await i18n.use(initReactI18next).init({ lng: 'en', resources: { en: { translation: {} } }, interpolation: { escapeValue: false } });
-    localStorage.setItem('token', 'tok');
     globalThis.ResizeObserver = class {
       cb: ResizeObserverCallback;
       constructor(cb: ResizeObserverCallback) { this.cb = cb; }

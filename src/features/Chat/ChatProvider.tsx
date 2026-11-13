@@ -63,11 +63,10 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children, socketFact
     dispatch({ type: 'reset', myId });
     setContacts([]);
     if (!myId) return undefined;
-    const token = localStorage.getItem('token');
-    if (!token) return undefined;
 
+    // Авторизация сокета — по HttpOnly-cookie; myId служит ключом сессии.
     void refreshRooms();
-    const socket = socketFactory(token);
+    const socket = socketFactory(myId);
     socketRef.current = socket;
 
     const onConnect = () => {
