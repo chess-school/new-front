@@ -59,7 +59,7 @@ const Probe = () => { chatApi = useChat(); return null; };
 const mount = () => render(
   <AuthContext.Provider value={{
     user: { _id: ME, uuid: 'u-s', firstName: 'Ivan', lastName: 'Student', email: 's@x', roles: ['USER'], createdAt: '' } as never,
-    loading: false, isAuthenticated: true, login: async () => ({} as never), logout: () => {}, refetchUser: async () => {},
+    loading: false, isAuthenticated: true, login: async () => ({} as never), logout: async () => {}, refetchUser: async () => {},
   }}>
     <ChatProvider socketFactory={() => socket}>
       <ChatButton />
@@ -77,7 +77,6 @@ afterEach(() => cleanup());
 
 beforeEach(() => {
   vi.clearAllMocks();
-  localStorage.setItem('token', 'jwt');
   socket = new FakeSocket();
   vi.mocked(api.getChatRooms).mockResolvedValue([directRoom]);
   vi.mocked(api.getChatMessages).mockResolvedValue({ data: history, hasMore: false });

@@ -18,7 +18,8 @@ export interface ChatSocketLike {
   disconnect(): unknown;
 }
 
-export type ChatSocketFactory = (token: string) => ChatSocketLike;
+// Аргумент — ключ сессии (id пользователя); авторизация по HttpOnly-cookie (withCredentials).
+export type ChatSocketFactory = (sessionKey: string) => ChatSocketLike;
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
@@ -30,9 +31,9 @@ export const chatSocketOrigin = (apiUrl: string = API_URL) => {
   }
 };
 
-export const createChatSocket: ChatSocketFactory = (token) =>
+export const createChatSocket: ChatSocketFactory = () =>
   io(`${chatSocketOrigin()}/chat`, {
-    auth: { token },
+    withCredentials: true,
     transports: ['websocket', 'polling'],
     reconnectionDelay: 1000,
     reconnectionDelayMax: 10000,

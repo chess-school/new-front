@@ -157,11 +157,12 @@ export interface ClassroomSocketLike {
   disconnect(): unknown;
 }
 
-export type ClassroomSocketFactory = (token: string) => ClassroomSocketLike;
+// Аргумент — ключ сессии (id пользователя); авторизация по HttpOnly-cookie (withCredentials).
+export type ClassroomSocketFactory = (sessionKey: string) => ClassroomSocketLike;
 
-export const createClassroomSocket: ClassroomSocketFactory = (token) =>
+export const createClassroomSocket: ClassroomSocketFactory = () =>
   io(`${chatSocketOrigin()}/classroom`, {
-    auth: { token },
+    withCredentials: true,
     transports: ['websocket', 'polling'],
     reconnectionDelay: 500,
     reconnectionDelayMax: 5000,

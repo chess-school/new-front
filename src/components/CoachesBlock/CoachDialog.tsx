@@ -57,9 +57,9 @@ import {
       try {
         const res = await fetch('/coach/profile', {
           method: 'PUT',
+          credentials: 'include', // авторизация по HttpOnly-cookie
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
           body: JSON.stringify({
             title: form.title,

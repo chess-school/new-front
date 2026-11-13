@@ -53,11 +53,13 @@ export interface PlaySocketLike {
   disconnect(): unknown;
 }
 
-export type PlaySocketFactory = (token: string) => PlaySocketLike;
+// Аргумент — ключ сессии (id пользователя) для кэша подключения в хуке; авторизация идёт
+// по HttpOnly-cookie (withCredentials), а не через auth.token.
+export type PlaySocketFactory = (sessionKey: string) => PlaySocketLike;
 
-export const createPlaySocket: PlaySocketFactory = (token) =>
+export const createPlaySocket: PlaySocketFactory = () =>
   io(`${chatSocketOrigin()}/play`, {
-    auth: { token },
+    withCredentials: true,
     transports: ['websocket', 'polling'],
     reconnectionDelay: 500,
     reconnectionDelayMax: 5000,
