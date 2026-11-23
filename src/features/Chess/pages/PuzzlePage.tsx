@@ -162,7 +162,7 @@ export const PuzzlePage: React.FC = () => {
     // Текущий рейтинг решения задач игрока: оптимистично из последней попытки, иначе из профиля.
     const currentRating = ratingResult?.userRating ?? user?.puzzleRating;
     const info = puzzle && (
-        <Stack spacing={2} sx={{ height: '100%' }}>
+        <Stack spacing={2}>
             {bookSource ? (
                 <Box>
                     <Typography variant="overline" color="text.secondary" sx={{ display: 'block' }}>{bookSource.bookTitle}</Typography>
@@ -180,13 +180,11 @@ export const PuzzlePage: React.FC = () => {
                     {puzzle.themes.filter((th) => !META_THEMES.has(th)).slice(0, 8).map((theme) => <Chip key={theme} size="small" variant="outlined" label={t(`puzzleThemes.${theme}`, humanizeTheme(theme))} />)}
                 </Stack>
             )}
-            {/* Распорка: «твой рейтинг» прижимается к низу панели — без пустого провала посередине */}
-            <Box sx={{ flexGrow: 1, minHeight: 8 }} />
             {currentRating != null && (
-                <Box sx={{ pt: 1.5, borderTop: 1, borderColor: 'divider' }}>
+                <Box sx={{ pt: 1.5, mt: 0.5, borderTop: 1, borderColor: 'divider' }}>
                     <Typography variant="overline" color="text.secondary" sx={{ display: 'block' }}>{t('puzzles.yourRating', 'Your rating')}</Typography>
                     <Stack direction="row" alignItems="baseline" spacing={1}>
-                        <Typography sx={{ fontFamily: tokens.font.mono, fontWeight: 800, fontSize: '2rem', lineHeight: 1 }}>{currentRating}</Typography>
+                        <Typography sx={{ fontFamily: tokens.font.mono, fontWeight: 800, fontSize: '1.75rem', lineHeight: 1.1 }}>{currentRating}</Typography>
                         {ratingResult && (
                             <Typography sx={{ fontWeight: 700 }} color={ratingResult.userDelta >= 0 ? 'success.main' : 'error.main'}>
                                 {ratingResult.userDelta >= 0 ? '+' : ''}{ratingResult.userDelta}
