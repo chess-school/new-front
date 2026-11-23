@@ -28,6 +28,7 @@ import { AttachmentImage } from '@/components/Homework/AttachmentImage';
 import { SubmissionForReview } from '@/types/Homework';
 import { PageContainer, PageHeader } from '@/shared/components/ui/PageHeader';
 import { AskInChatButton } from '@/features/Chat';
+import { useAuth } from '@/context/AuthContext';
 
 // Заявки учеников со страницы «Тренеры» и сдачи ДЗ — API v2
 // (/api/v2/coaches/me/requests, /api/v2/submissions)
@@ -42,6 +43,10 @@ const homeworkTitle = (item: Homework) => item.assignment?.schedule?.title || it
 
 export const InboxPage: React.FC = () => {
   const { t } = useTranslation();
+  // Входящие (заявки учеников + проверка ДЗ) — инструмент тренера/админа. У обычного ученика
+  // эндпоинты coach-only отдавали 403 (шумела консоль + тост об ошибке). Не дёргаем их без роли.
+  const { user } = useAuth();
+  const isCoachOrAdmin = !!user?.roles?.some((r) => r === 'COACH' || r === 'ADMIN');
   // На телефоне детали — под списком: после выбора прокручиваем к ним
   const detailsRef = useRef<HTMLDivElement | null>(null);
   // ?tab=homework — пункт меню «Проверка работ»
@@ -63,6 +68,12 @@ export const InboxPage: React.FC = () => {
   const fetchData = useCallback(async (currentView: ViewType) => {
     setIsLoading(true);
     setSelectedItem(null);
+    // Ученик без тренерских прав: входящих для него нет — показываем пустое состояние без запросов.
+    if (!isCoachOrAdmin) {
+      setItems([]);
+      setIsLoading(false);
+      return;
+    }
     try {
       const data = currentView === 'requests'
         ? await getCoachRequests()
@@ -77,7 +88,7 @@ export const InboxPage: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [t]);
+  }, [t, isCoachOrAdmin]);
 
   useEffect(() => {
     fetchData(view);
