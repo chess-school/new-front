@@ -5,7 +5,8 @@ import AxeBuilder from '@axe-core/playwright';
  * Реальная проверка контраста (WCAG AA) в ОБЕИХ темах на живых страницах.
  * jsdom/jest-axe контраст НЕ считает — только настоящий браузер. Тема переключается через
  * localStorage['mob-theme'] до загрузки; authed-страницы получают токен (E2E_TOKEN) в
- * localStorage['token'] — иначе они редиректят на /login и реальный контент не отрисуется.
+ * HttpOnly-cookie `accessToken` (B9: приложение перешло на cookie и больше НЕ читает
+ * localStorage['token'] — старый способ молча редиректил authed-маршруты на /login).
  *
  * Запуск:  E2E_TOKEN=$(cd ../backend && node scripts/e2e-token.js --role=ADMIN) npx playwright test
  */
@@ -20,13 +21,20 @@ const PUBLIC_ROUTES = ['/login', '/analysis', '/blindfold', '/coaches', '/c/mind
 const AUTH_ROUTES = ['/puzzles', '/books', ...(COURSE_ID ? [`/courses/${COURSE_ID}`, '/club/courses'] : ['/club/courses'])];
 
 const storage = (theme: string, withToken: boolean) => ({
-  cookies: [],
+  // Авторизация — через HttpOnly-cookie accessToken (B9); тема — через localStorage['mob-theme'].
+  cookies: withToken && TOKEN ? [{
+    name: 'accessToken',
+    value: TOKEN,
+    domain: new URL(ORIGIN).hostname,
+    path: '/',
+    expires: Math.floor(Date.now() / 1000) + 6 * 60 * 60,
+    httpOnly: true,
+    secure: ORIGIN.startsWith('https'),
+    sameSite: 'Strict' as const,
+  }] : [],
   origins: [{
     origin: ORIGIN,
-    localStorage: [
-      { name: 'mob-theme', value: theme },
-      ...(withToken && TOKEN ? [{ name: 'token', value: TOKEN }] : []),
-    ],
+    localStorage: [{ name: 'mob-theme', value: theme }],
   }],
 });
 
