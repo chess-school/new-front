@@ -27,6 +27,9 @@ export interface User {
   createdAt: string;
   /** Рейтинги онлайн-партий по категориям контроля времени (Glicko-2) */
   ratings?: UserRatings;
+  /** Рейтинг решения задач (Elo, Module 4) — показывается на /puzzles */
+  puzzleRating?: number;
+  puzzleRatingGames?: number;
 
     firebaseUID?: string;
     students?: Student[];

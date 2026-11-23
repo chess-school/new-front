@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { Square } from 'chess.js';
 import { Typography, Box, Paper, Button, Stack, Link, Chip, Skeleton } from '@mui/material';
 import ExtensionRoundedIcon from '@mui/icons-material/ExtensionRounded';
-import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
 import LightbulbRoundedIcon from '@mui/icons-material/LightbulbRounded';
@@ -19,7 +18,6 @@ import { PageContainer, PageHeader } from '@/shared/components/ui/PageHeader';
 import { tokens, accentText } from '@/theme/tokens';
 import { ChessBoard } from '../components/ChessBoard';
 import { PuzzleAnalysis } from '../components/PuzzleAnalysis';
-import { PuzzleSourcePicker } from '../components/PuzzleSourcePicker';
 import { ChessArena, ArenaPanel } from '../components/ChessArena';
 import { StatusBadge } from '../components/RunStats';
 import { usePuzzleSession } from '../hooks/usePuzzleSession';
@@ -40,7 +38,7 @@ const humanizeTheme = (theme: string) => {
 
 export const PuzzlePage: React.FC = () => {
     const { t } = useTranslation();
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams] = useSearchParams();
     const bookId = searchParams.get('bookId') ?? undefined;
     // Задачи конкретной книги — всегда «из книг» (иначе подставилось бы рейтинговое окно Lichess)
     const source: PuzzleSourceFilter = bookId
@@ -119,11 +117,6 @@ export const PuzzlePage: React.FC = () => {
         return verdict === 'correct';
     };
 
-    const changeSource = (value: PuzzleSourceFilter) => {
-        if (value === source) return;
-        setSearchParams(value === 'lichess' ? {} : { source: value }, { replace: true });
-    };
-
     const orientation = session.playerColor === 'w' ? 'white' : 'black';
     const finished = session.status === 'solved' || session.status === 'failed';
     const bookSource = puzzle?.source.kind === 'book' ? puzzle.source : null;
@@ -166,8 +159,10 @@ export const PuzzlePage: React.FC = () => {
     const lastPlayed = session.played[session.played.length - 1];
     const lastMove = lastPlayed ? { from: lastPlayed.slice(0, 2), to: lastPlayed.slice(2, 4) } : null;
 
+    // Текущий рейтинг решения задач игрока: оптимистично из последней попытки, иначе из профиля.
+    const currentRating = ratingResult?.userRating ?? user?.puzzleRating;
     const info = puzzle && (
-        <Stack spacing={1.5}>
+        <Stack spacing={2} sx={{ height: '100%' }}>
             {bookSource ? (
                 <Box>
                     <Typography variant="overline" color="text.secondary" sx={{ display: 'block' }}>{bookSource.bookTitle}</Typography>
@@ -175,23 +170,37 @@ export const PuzzlePage: React.FC = () => {
                     <Link component={RouterLink} to={`/books/${bookSource.book}/solve`} sx={{ fontWeight: 600 }}>{t('puzzles.openBook')}</Link>
                 </Box>
             ) : (
-                <Stack direction="row" spacing={1} alignItems="center">
-                    <Typography color="text.secondary">{t('puzzles.ratingLabel')}</Typography>
-                    <Chip label={puzzle.rating} size="small" sx={{ fontFamily: tokens.font.mono, fontWeight: 700, bgcolor: tokens.accent.goldSoft, color: accentText }} />
-                </Stack>
+                <Box>
+                    <Typography variant="overline" color="text.secondary" sx={{ display: 'block' }}>{t('puzzles.ratingLabel')}</Typography>
+                    <Typography sx={{ fontFamily: tokens.font.mono, fontWeight: 800, fontSize: '1.6rem', lineHeight: 1, color: accentText }}>{puzzle.rating}</Typography>
+                </Box>
             )}
             {puzzle.themes?.some((th) => !META_THEMES.has(th)) && (
                 <Stack direction="row" flexWrap="wrap" useFlexGap spacing={0.75}>
                     {puzzle.themes.filter((th) => !META_THEMES.has(th)).slice(0, 8).map((theme) => <Chip key={theme} size="small" variant="outlined" label={t(`puzzleThemes.${theme}`, humanizeTheme(theme))} />)}
                 </Stack>
             )}
+            {/* Распорка: «твой рейтинг» прижимается к низу панели — без пустого провала посередине */}
+            <Box sx={{ flexGrow: 1, minHeight: 8 }} />
+            {currentRating != null && (
+                <Box sx={{ pt: 1.5, borderTop: 1, borderColor: 'divider' }}>
+                    <Typography variant="overline" color="text.secondary" sx={{ display: 'block' }}>{t('puzzles.yourRating', 'Your rating')}</Typography>
+                    <Stack direction="row" alignItems="baseline" spacing={1}>
+                        <Typography sx={{ fontFamily: tokens.font.mono, fontWeight: 800, fontSize: '2rem', lineHeight: 1 }}>{currentRating}</Typography>
+                        {ratingResult && (
+                            <Typography sx={{ fontWeight: 700 }} color={ratingResult.userDelta >= 0 ? 'success.main' : 'error.main'}>
+                                {ratingResult.userDelta >= 0 ? '+' : ''}{ratingResult.userDelta}
+                            </Typography>
+                        )}
+                    </Stack>
+                </Box>
+            )}
         </Stack>
     );
 
+    // Источник на /puzzles — только Lichess (тактический тренажёр). Книжные задачи решаются в /books.
     const panels: ArenaPanel[] = [
-        // Вкладка есть всегда (и во время загрузки): арена запоминает первую вкладку при монтировании
         { key: 'puzzle', label: t('puzzles.tabs.puzzle', 'Puzzle'), icon: <ExtensionRoundedIcon />, content: info || <Skeleton height={56} /> },
-        { key: 'source', label: t('puzzles.tabs.source', 'Source'), icon: <TuneRoundedIcon />, content: <PuzzleSourcePicker value={source} onChange={changeSource} fullWidth /> },
     ];
 
     const newPuzzleButton = (
@@ -204,7 +213,6 @@ export const PuzzlePage: React.FC = () => {
         <PageHeader dense
             eyebrow={t('nav.groups.training', 'Training')}
             title={t('puzzles.title')}
-            subtitle={t('puzzles.subtitle', 'Find the best move. After every puzzle, review it with the engine.')}
         />
     );
 
@@ -214,7 +222,6 @@ export const PuzzlePage: React.FC = () => {
                 {header}
                 <Paper sx={{ p: { xs: 3, md: 5 }, maxWidth: 560, mx: 'auto' }}>
                     {status}
-                    <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}><PuzzleSourcePicker value={source} onChange={changeSource} /></Box>
                     {!empty && <Box sx={{ mt: 3 }}>{newPuzzleButton}</Box>}
                 </Paper>
             </PageContainer>
