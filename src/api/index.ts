@@ -1,6 +1,6 @@
 import axios, { AxiosResponse, AxiosError } from 'axios';
-import { notification } from 'antd';
-import i18n from '@/i18n'; 
+import { toast } from '@/shared/toast/toast';
+import i18n from '@/i18n';
 
 declare module 'axios' {
   interface AxiosRequestConfig {
@@ -23,10 +23,7 @@ const reduceMessage = (arr: string[]) => arr?.reduce((acc, item) => (acc += item
 type ApiErrorData = { msg?: string; message?: string; detail?: string; data?: unknown; [field: string]: unknown };
 
 const getIssueMessage = (error: AxiosError<ApiErrorData>, description: string) => {
-  notification.error({
-    message: i18n.t('common.error', 'Error'),
-    description,
-  });
+  toast.error(description || i18n.t('common.error', 'Error'));
   return Promise.reject(error);
 };
 
@@ -59,10 +56,11 @@ axiosInstance.interceptors.response.use(
         return Promise.reject(error);
       }
 
-      notification.error({
-        message: i18n.t('common.sessionExpired', 'Session expired'),
-        description: error.response?.data?.msg || error.response?.data?.message || i18n.t('common.pleaseLoginAgain', 'Please log in again.'),
-      });
+      toast.error(
+        error.response?.data?.msg
+          || error.response?.data?.message
+          || i18n.t('common.pleaseLoginAgain', 'Please log in again.'),
+      );
 
       localStorage.removeItem('user');
 
@@ -91,10 +89,7 @@ axiosInstance.interceptors.response.use(
         );
         return getIssueMessage(error, description);
       }
-      notification.error({
-        message: i18n.t('common.error', 'Error'),
-        description: message || error.message,
-      });
+      toast.error(message || error.message || i18n.t('common.error', 'Error'));
     }
 
     return Promise.reject(error);

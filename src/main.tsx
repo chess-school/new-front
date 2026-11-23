@@ -5,7 +5,8 @@ import { HelmetProvider } from 'react-helmet-async';
 import { AppThemeProvider } from '@/theme';
 import { AuthProvider } from '@/context/AuthContext.tsx';
 import { ViewProvider } from '@/components/AppShell/ViewContext';
-import '@/styles'; 
+import { ToastHost } from '@/shared/toast/ToastHost';
+import '@/styles';
 import './index.css';
 import './i18n'; 
 import App from './App.tsx';
@@ -34,6 +35,7 @@ root.render(
           <AuthProvider>
             <ViewProvider>
               <App />
+              <ToastHost />
             </ViewProvider>
           </AuthProvider>
         </AppThemeProvider>
