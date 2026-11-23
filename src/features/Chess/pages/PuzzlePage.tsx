@@ -13,7 +13,7 @@ import { AxiosError } from 'axios';
 import { notification } from '@/shared/toast/compat';
 import { useTranslation } from 'react-i18next';
 
-import { getRandomPuzzle } from '@/api/puzzles';
+import { getRandomPuzzle, recordPuzzleAttempt, type PuzzleAttemptResult } from '@/api/puzzles';
 import { IPuzzle, PUZZLE_SOURCES, PuzzleSourceFilter } from '@/types/Puzzles';
 import { PageContainer, PageHeader } from '@/shared/components/ui/PageHeader';
 import { tokens, accentText } from '@/theme/tokens';
@@ -55,6 +55,12 @@ export const PuzzlePage: React.FC = () => {
     const [empty, setEmpty] = useState(false);
     const [wrongFlash, setWrongFlash] = useState(false);
     const [hintShown, setHintShown] = useState(false);
+    // Lichess-style рейтинговая прогрессия: попытку по задаче записываем один раз (success = решено
+    // с 1-й попытки без подсказок). hadWrong/usedHint — за текущую задачу, recorded — защита от дубля.
+    const [ratingResult, setRatingResult] = useState<PuzzleAttemptResult | null>(null);
+    const hadWrongRef = useRef(false);
+    const usedHintRef = useRef(false);
+    const recordedRef = useRef(false);
     const lastId = useRef<string | undefined>();
     const session = usePuzzleSession(puzzle);
     const { user } = useAuth();
@@ -72,6 +78,10 @@ export const PuzzlePage: React.FC = () => {
             lastId.current = next._id;
             setHintShown(false);
             setWrongFlash(false);
+            hadWrongRef.current = false;
+            usedHintRef.current = false;
+            recordedRef.current = false;
+            setRatingResult(null);
             setPuzzle(next);
         } catch (error) {
             setPuzzle(null);
@@ -91,9 +101,20 @@ export const PuzzlePage: React.FC = () => {
         if (session.status === 'solved') notification.success({ message: t('puzzles.solved'), description: undefined, duration: 2 });
     }, [session.status, t]);
 
+    // Записать попытку и обновить рейтинг пользователя один раз на задачу (как только решено или сдано).
+    useEffect(() => {
+        if (!puzzle || recordedRef.current) return;
+        if (session.status === 'solved' || session.status === 'failed') {
+            recordedRef.current = true;
+            const success = session.status === 'solved' && !hadWrongRef.current && !usedHintRef.current;
+            recordPuzzleAttempt(puzzle._id, success).then(setRatingResult).catch(() => { /* не критично */ });
+        }
+    }, [session.status, puzzle]);
+
     const onMove = (from: Square, to: Square, promotion?: string): boolean => {
         const verdict = session.tryMove(from, to, promotion);
         setWrongFlash(verdict === 'wrong');
+        if (verdict === 'wrong') hadWrongRef.current = true;
         if (verdict === 'correct') setHintShown(false);
         return verdict === 'correct';
     };
@@ -122,6 +143,17 @@ export const PuzzlePage: React.FC = () => {
         : statusTone === 'red' ? <CancelRoundedIcon />
         : <Box component="span" sx={{ width: 14, height: 14, borderRadius: '50%', border: 2, borderColor: 'text.secondary', bgcolor: session.playerColor === 'w' ? tokens.evalBar.white : tokens.evalBar.black }} />;
     const status = <StatusBadge tone={statusTone} icon={statusIcon} testId="puzzle-status">{statusText}</StatusBadge>;
+
+    // Lichess-style: после решения/сдачи — новый рейтинг игрока и дельта (зелёная/красная).
+    const ratingBadge = ratingResult && (
+        <Chip
+            size="small"
+            color={ratingResult.userDelta >= 0 ? 'success' : 'error'}
+            data-testid="puzzle-rating-delta"
+            label={`${t('puzzles.yourRating', 'Your rating')}: ${ratingResult.userRating} (${ratingResult.userDelta >= 0 ? '+' : ''}${ratingResult.userDelta})`}
+            sx={{ fontFamily: tokens.font.mono, fontWeight: 700 }}
+        />
+    );
 
     // Подсказка: поле фигуры, которой нужно ходить
     const expected = puzzle && session.status === 'playing' ? session.solutionLine[session.index] : undefined;
@@ -200,7 +232,7 @@ export const PuzzlePage: React.FC = () => {
                     initialPly={session.status === 'solved' ? puzzle.moves.length : session.played.length}
                     orientation={orientation}
                     variant="arena"
-                    header={status}
+                    header={<Stack spacing={1} alignItems="flex-start">{status}{ratingBadge}</Stack>}
                     extraPanels={panels}
                     extraControls={newPuzzleButton}
                 />
@@ -216,7 +248,7 @@ export const PuzzlePage: React.FC = () => {
                         <Stack spacing={1}>
                             <Stack direction="row" spacing={1}>
                                 <Button variant="outlined" color="inherit" fullWidth startIcon={<LightbulbRoundedIcon />}
-                                    onClick={() => setHintShown(true)} disabled={!expected || hintShown}>
+                                    onClick={() => { setHintShown(true); usedHintRef.current = true; }} disabled={!expected || hintShown}>
                                     {t('puzzles.hint', 'Hint')}
                                 </Button>
                                 <Button variant="outlined" color="inherit" fullWidth startIcon={<VisibilityRoundedIcon />}
