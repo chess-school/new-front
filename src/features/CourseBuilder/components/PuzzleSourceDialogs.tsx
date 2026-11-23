@@ -6,7 +6,7 @@ import {
 import TravelExploreRounded from '@mui/icons-material/TravelExploreRounded';
 import MenuBookRounded from '@mui/icons-material/MenuBookRounded';
 import { useTranslation } from 'react-i18next';
-import { notification } from 'antd';
+import { notification } from '@/shared/toast/compat';
 
 import type { CoursePuzzle } from '@/features/Courses/types/courseBlocks';
 import type { Exercise } from '@/types/PuzzleBook';

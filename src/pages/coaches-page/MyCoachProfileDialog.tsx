@@ -3,7 +3,7 @@ import {
   Alert, Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Stack, TextField,
   useMediaQuery, useTheme,
 } from '@mui/material';
-import { notification } from 'antd';
+import { notification } from '@/shared/toast/compat';
 import { useTranslation } from 'react-i18next';
 import { FideTitle, getMyCoachProfile, MyCoachProfile, updateMyCoachProfile, verifyMyCoachProfile } from '@/api/coaches';
 import { useAuth } from '@/context/AuthContext';

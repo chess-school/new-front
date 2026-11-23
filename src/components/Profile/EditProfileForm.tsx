@@ -11,7 +11,7 @@ import {
   CircularProgress
 } from '@mui/material';
 import { updateProfile } from '@/api/profile'; // <-- Используем V2 сервис
-import { notification } from 'antd';
+import { notification } from '@/shared/toast/compat';
 import { useTranslation } from 'react-i18next';
 import { User } from '@/types/User';
 

@@ -3,7 +3,7 @@ import {
   Box, Chip, CircularProgress, MenuItem, Paper, Select, Stack, Table, TableBody, TableCell,
   TableContainer, TableHead, TableRow, Typography,
 } from '@mui/material';
-import { message } from 'antd';
+import { message } from '@/shared/toast/compat';
 import { useTranslation } from 'react-i18next';
 import { PageContainer } from '@/shared/components/ui/PageHeader';
 import { SEOHead } from '@/shared/components/seo/SEOHead';

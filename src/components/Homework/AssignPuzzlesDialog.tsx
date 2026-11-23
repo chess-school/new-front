@@ -6,7 +6,7 @@ import {
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { useTranslation } from 'react-i18next';
-import { notification } from 'antd';
+import { notification } from '@/shared/toast/compat';
 import { getMyGroups, getStudents, CoachGroup } from '@/api/students';
 import { getPuzzleBooks } from '@/api/digitizer';
 import { createPuzzleAssignment } from '@/api/homework';

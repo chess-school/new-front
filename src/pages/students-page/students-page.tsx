@@ -8,7 +8,7 @@ import VideoCameraFrontIcon from '@mui/icons-material/VideoCameraFront';
 import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { notification } from 'antd';
+import { notification } from '@/shared/toast/compat';
 
 import { getCatalogCourses, getMyCourses, getMyGroups, getStudents, CoachCourse, CoachGroup } from '@/api/students';
 import { useAuth } from '@/context/AuthContext';

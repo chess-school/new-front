@@ -6,7 +6,7 @@ import {
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import PhotoCameraRoundedIcon from '@mui/icons-material/PhotoCameraRounded';
-import { notification } from 'antd';
+import { notification } from '@/shared/toast/compat';
 import { useTranslation } from 'react-i18next';
 import { updateProfile, getAvatarUrl } from '@/api/profile';
 import { User } from '@/types/User';

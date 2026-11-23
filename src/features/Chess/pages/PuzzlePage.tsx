@@ -10,7 +10,7 @@ import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
 import SkipNextRoundedIcon from '@mui/icons-material/SkipNextRounded';
 import { Link as RouterLink, useSearchParams } from 'react-router-dom';
 import { AxiosError } from 'axios';
-import { notification } from 'antd';
+import { notification } from '@/shared/toast/compat';
 import { useTranslation } from 'react-i18next';
 
 import { getRandomPuzzle } from '@/api/puzzles';

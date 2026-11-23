@@ -6,7 +6,7 @@ import {
 import BackupIcon from '@mui/icons-material/Backup';
 import { AxiosError } from 'axios';
 import moment from 'moment';
-import { notification } from 'antd';
+import { notification } from '@/shared/toast/compat';
 import { useTranslation } from 'react-i18next';
 
 import { submitAssignment } from '@/api/homework';

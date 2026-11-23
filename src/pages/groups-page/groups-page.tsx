@@ -8,7 +8,7 @@ import VideoCameraFrontIcon from '@mui/icons-material/VideoCameraFront';
 import PersonAddAlt1RoundedIcon from '@mui/icons-material/PersonAddAlt1Rounded';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { notification } from 'antd';
+import { notification } from '@/shared/toast/compat';
 import {
   addGroupMember, createGroup, getMyGroups, getStudents, removeGroupMember, CoachGroup, GroupMember,
 } from '@/api/students';

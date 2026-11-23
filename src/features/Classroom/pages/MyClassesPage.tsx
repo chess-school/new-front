@@ -9,7 +9,7 @@ import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded';
 import EventNoteRoundedIcon from '@mui/icons-material/EventNoteRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import moment from 'moment';
-import { notification } from 'antd';
+import { notification } from '@/shared/toast/compat';
 import { getMyLessons, Lesson } from '@/api/lessons';
 import { getMyGroups, CoachGroup } from '@/api/students';
 import { useView } from '@/components/AppShell/ViewContext';

@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 import { Calendar, momentLocalizer, Event as BigCalendarEvent } from 'react-big-calendar';
 import moment from 'moment';
-import { notification } from 'antd';
+import { notification } from '@/shared/toast/compat';
 import { useTranslation } from 'react-i18next';
 
 // MUI Icons

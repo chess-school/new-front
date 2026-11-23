@@ -10,7 +10,7 @@ import {
   } from '@mui/material';
   import { useState } from 'react';
   import { useTranslation } from 'react-i18next';
-  import { notification } from 'antd';
+  import { notification } from '@/shared/toast/compat';
   
   interface Coach {
     _id: string;

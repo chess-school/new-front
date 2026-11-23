@@ -18,7 +18,7 @@ import {
   Chip,
   MenuItem,
 } from '@mui/material';
-import { notification } from 'antd';
+import { notification } from '@/shared/toast/compat';
 import { useTranslation } from 'react-i18next';
 
 import { CoachRequestDto, decideCoachRequest, getCoachRequests } from '@/api/coaches';

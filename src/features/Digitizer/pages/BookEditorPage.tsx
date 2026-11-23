@@ -19,7 +19,7 @@ import { Chessboard } from 'react-chessboard';
 import { ResizableBoard } from '@/features/Chess/components/ResizableBoard';
 import { Arrow } from 'react-chessboard/dist/chessboard/types';
 import { Square } from 'chess.js';
-import { notification } from 'antd';
+import { notification } from '@/shared/toast/compat';
 import { useTranslation } from 'react-i18next';
 
 import { getPuzzleBook, updateExercise, updatePuzzleBook } from '@/api/digitizer';

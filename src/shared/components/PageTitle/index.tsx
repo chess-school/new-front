@@ -1,8 +1,10 @@
-import { LeftOutlined } from '@ant-design/icons';
-import classNames from 'classnames';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { NavLink } from 'react-router-dom';
 
 import './styles.scss';
+
+// Мини-замена classnames (удалён вместе с antd-экосистемой, A.2).
+const cx = (...parts: Array<string | false | null | undefined>): string => parts.filter(Boolean).join(' ');
 
 interface PageTitleProps {
   text: string;
@@ -23,18 +25,18 @@ const PageTitle: React.FC<PageTitleProps> = ({
   inline = false,
   state,
 }) => (
-  <div className={classNames('PageTitle', { flex: inline })}>
+  <div className={cx('PageTitle', inline && 'flex')}>
     {backLinkText && backLinkPath && (
       <NavLink
-        className={classNames('PageTitle__back fl-inline', { 'PageTitle__back--no-margin': inline })}
+        className={cx('PageTitle__back fl-inline', inline && 'PageTitle__back--no-margin')}
         to={backLinkPath}
         relative={relative}
         state={state}
       >
-        <LeftOutlined /> {backLinkText}
+        <ChevronLeftIcon fontSize="small" sx={{ verticalAlign: 'middle' }} /> {backLinkText}
       </NavLink>
     )}
-    <h2 className={classNames('PageTitle__head', { 'PageTitle__head--no-margin': resetMargin || inline })}>{text}</h2>
+    <h2 className={cx('PageTitle__head', (resetMargin || inline) && 'PageTitle__head--no-margin')}>{text}</h2>
   </div>
 );
 

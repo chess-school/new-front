@@ -7,7 +7,7 @@ import {
 import AddRounded from '@mui/icons-material/AddRounded';
 import SchoolRounded from '@mui/icons-material/SchoolRounded';
 import { useTranslation } from 'react-i18next';
-import { notification } from 'antd';
+import { notification } from '@/shared/toast/compat';
 
 import { PageContainer, PageHeader } from '@/shared/components/ui/PageHeader';
 import type { CourseSummary } from '@/types/Course';

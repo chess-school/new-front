@@ -3,7 +3,7 @@ import {
   Box, Typography, Grid, Paper, Stack, Button, TextField, Divider, CircularProgress, Chip, InputAdornment,
 } from '@mui/material';
 import SaveRoundedIcon from '@mui/icons-material/SaveRounded';
-import { message } from 'antd';
+import { message } from '@/shared/toast/compat';
 import { useTranslation } from 'react-i18next';
 import { PageContainer } from '@/shared/components/ui/PageHeader';
 import { SEOHead } from '@/shared/components/seo/SEOHead';

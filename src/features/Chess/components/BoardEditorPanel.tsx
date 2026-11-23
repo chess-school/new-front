@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Paper, Stack, Typography, Divider, Button, TextField, Box } from '@mui/material';
 import { Piece } from 'chess.js';
 import { useTranslation } from 'react-i18next';
-import { notification } from 'antd';
+import { notification } from '@/shared/toast/compat';
 import { tokens } from '@/theme/tokens';
 
 // Типы для пропсов

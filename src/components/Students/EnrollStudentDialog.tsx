@@ -3,7 +3,7 @@ import {
   Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Stack, TextField,
 } from '@mui/material';
 import { AxiosError } from 'axios';
-import { notification } from 'antd';
+import { notification } from '@/shared/toast/compat';
 import { useTranslation } from 'react-i18next';
 
 import { enrollStudent, CoachCourse, CoachGroup } from '@/api/students';

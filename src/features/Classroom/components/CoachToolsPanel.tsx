@@ -15,7 +15,7 @@ import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded';
 import FirstPageRoundedIcon from '@mui/icons-material/FirstPageRounded';
 import LastPageRoundedIcon from '@mui/icons-material/LastPageRounded';
 import { Chess } from 'chess.js';
-import { notification } from 'antd';
+import { notification } from '@/shared/toast/compat';
 import { useTranslation } from 'react-i18next';
 
 import { EnginePanel } from '@/features/Chess/components/EnginePanel';

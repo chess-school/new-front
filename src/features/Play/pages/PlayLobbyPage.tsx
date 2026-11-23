@@ -7,7 +7,7 @@ import {
 import BoltRoundedIcon from '@mui/icons-material/BoltRounded';
 import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
 import LinkRoundedIcon from '@mui/icons-material/LinkRounded';
-import { notification } from 'antd';
+import { notification } from '@/shared/toast/compat';
 import { useTranslation } from 'react-i18next';
 import { PageContainer, PageHeader } from '@/shared/components/ui/PageHeader';
 import { tokens } from '@/theme/tokens';

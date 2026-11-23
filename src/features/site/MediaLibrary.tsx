@@ -6,7 +6,7 @@ import UploadRoundedIcon from '@mui/icons-material/UploadRounded';
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
 import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
-import { message } from 'antd';
+import { message } from '@/shared/toast/compat';
 import { useTranslation } from 'react-i18next';
 import { MediaItem, fetchMedia, uploadMedia, deleteMedia, mediaUrl } from './mediaApi';
 

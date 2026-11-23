@@ -3,7 +3,7 @@ import {
   Alert, Box, Button, Chip, CircularProgress, Divider, Grid, List, ListItemButton, ListItemText, MenuItem,
   Paper, Stack, TextField, Typography,
 } from '@mui/material';
-import { notification } from 'antd';
+import { notification } from '@/shared/toast/compat';
 import { useTranslation } from 'react-i18next';
 
 import { CoachApplicationDto, CoachApplicationStatus, decideCoachApplication, getCoachApplications } from '@/api/coaches/coachApplications';

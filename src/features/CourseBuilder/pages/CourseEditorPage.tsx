@@ -14,7 +14,8 @@ import VisibilityRounded from '@mui/icons-material/VisibilityRounded';
 import ExpandMoreRounded from '@mui/icons-material/ExpandMoreRounded';
 import ExpandLessRounded from '@mui/icons-material/ExpandLessRounded';
 import { useTranslation } from 'react-i18next';
-import { notification, Modal } from 'antd';
+import { confirmDialog } from '@/shared/confirm/confirm';
+import { notification } from '@/shared/toast/compat';
 
 import { PageContainer, PageHeader } from '@/shared/components/ui/PageHeader';
 import type { CourseContent, CourseBlock, CourseBlockType, CourseChapter } from '@/features/Courses/types/courseBlocks';
@@ -304,11 +305,11 @@ export const CourseEditorPage: React.FC = () => {
             total={content.chapters.length}
             onPatch={(patch) => mutate(updateChapter(content, ch.id, patch))}
             onMove={(dir) => mutate(moveChapter(content, ch.id, dir))}
-            onRemove={() => Modal.confirm({
+            onRemove={() => confirmDialog({
               title: t('courses.deleteChapterConfirm', 'Delete this chapter?'),
               content: ch.title || undefined,
               okText: t('common.delete', 'Delete'),
-              okButtonProps: { danger: true },
+              danger: true,
               cancelText: t('common.cancel', 'Cancel'),
               onOk: () => mutate(removeChapter(content, ch.id)),
             })}

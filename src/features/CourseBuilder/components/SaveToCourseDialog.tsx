@@ -4,7 +4,7 @@ import {
   MenuItem, CircularProgress, Alert, Box, Typography,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { notification } from 'antd';
+import { notification } from '@/shared/toast/compat';
 
 import type { CourseSummary } from '@/types/Course';
 import { getMyCourses, getCourse, updateCourse } from '@/api/courses';

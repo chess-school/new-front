@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { notification } from 'antd';
+import { notification } from '@/shared/toast/compat';
 import { createLesson } from '@/api/lessons';
 import { getMyGroups, getStudents, CoachGroup } from '@/api/students';
 import { Student } from '@/types/Student';

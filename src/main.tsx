@@ -6,6 +6,7 @@ import { AppThemeProvider } from '@/theme';
 import { AuthProvider } from '@/context/AuthContext.tsx';
 import { ViewProvider } from '@/components/AppShell/ViewContext';
 import { ToastHost } from '@/shared/toast/ToastHost';
+import { ConfirmHost } from '@/shared/confirm/ConfirmHost';
 import '@/styles';
 import './index.css';
 import './i18n'; 
@@ -36,6 +37,7 @@ root.render(
             <ViewProvider>
               <App />
               <ToastHost />
+              <ConfirmHost />
             </ViewProvider>
           </AuthProvider>
         </AppThemeProvider>

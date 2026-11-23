@@ -11,7 +11,7 @@ import SkipNextIcon from '@mui/icons-material/SkipNext';
 import MenuBookRoundedIcon from '@mui/icons-material/MenuBookRounded';
 import PersonSearchRoundedIcon from '@mui/icons-material/PersonSearchRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import { notification } from 'antd';
+import { notification } from '@/shared/toast/compat';
 import { useTranslation } from 'react-i18next';
 
 import { getOpeningBook, getPlayerGames } from '@/api/chessDB';

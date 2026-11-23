@@ -5,7 +5,7 @@ import {
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import ExtensionRoundedIcon from '@mui/icons-material/ExtensionRounded';
 import moment from 'moment';
-import { notification } from 'antd';
+import { notification } from '@/shared/toast/compat';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 

@@ -8,7 +8,8 @@ import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
 import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
 import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 import UploadFileRoundedIcon from '@mui/icons-material/UploadFileRounded';
-import { message, Modal } from 'antd';
+import { confirmDialog } from '@/shared/confirm/confirm';
+import { message } from '@/shared/toast/compat';
 import { useTranslation } from 'react-i18next';
 import { PageContainer } from '@/shared/components/ui/PageHeader';
 import { SEOHead } from '@/shared/components/seo/SEOHead';
@@ -95,7 +96,7 @@ export default function ClubSitePagesPage() {
       return;
     }
     if (Object.keys(pageStatuses).length > 0) {
-      Modal.confirm({
+      confirmDialog({
         title: t('site.gen.confirmTitle', 'Replace all page drafts?'),
         content: t('site.gen.confirmBody', 'AI generation overwrites the current drafts of all four pages. Already-published pages stay live until you publish again. Continue?'),
         okText: t('site.gen.generate', 'Generate'),

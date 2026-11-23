@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Square } from 'chess.js';
 import { Box, LinearProgress, Alert } from '@mui/material';
-import { notification } from 'antd';
+import { notification } from '@/shared/toast/compat';
 import { useTranslation } from 'react-i18next';
 
 import { IPuzzle, PUZZLE_SOURCES, PuzzleSourceFilter } from '@/types/Puzzles';

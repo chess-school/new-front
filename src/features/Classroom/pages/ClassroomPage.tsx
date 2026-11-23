@@ -13,7 +13,7 @@ import SwapVertRoundedIcon from '@mui/icons-material/SwapVertRounded';
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 import StopRoundedIcon from '@mui/icons-material/StopRounded';
 import VideocamOffRoundedIcon from '@mui/icons-material/VideocamOffRounded';
-import { notification } from 'antd';
+import { notification } from '@/shared/toast/compat';
 import { Arrow } from 'react-chessboard/dist/chessboard/types';
 import { useAuth } from '@/context/AuthContext';
 import { ChessBoard } from '@/features/Chess/components/ChessBoard';

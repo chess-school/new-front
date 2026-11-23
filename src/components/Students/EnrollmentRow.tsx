@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PaidIcon from '@mui/icons-material/Paid';
-import { notification } from 'antd';
+import { notification } from '@/shared/toast/compat';
 import { useTranslation } from 'react-i18next';
 
 import { deleteEnrollment, updateEnrollment, CoachGroup } from '@/api/students';

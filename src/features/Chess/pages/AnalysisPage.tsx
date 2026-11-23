@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Chess } from 'chess.js';
 import { Typography, Box, Stack, Button, IconButton, CircularProgress, Chip, TextField } from '@mui/material';
-import { notification } from 'antd';
+import { notification } from '@/shared/toast/compat';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
