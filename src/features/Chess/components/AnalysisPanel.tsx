@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Chip, CircularProgress, Stack, Switch, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { tokens } from '@/theme/tokens';
+import { evalColorFromString } from '../evalColor';
 
 interface AnalysisPanelProps {
   evaluation: string | null;
@@ -13,14 +14,6 @@ interface AnalysisPanelProps {
   /** Имя движка из ответа UCI 'id name' (в public/workers сейчас Stockfish 2018, asm.js) */
   engineName?: string;
 }
-
-/** Цвет оценки: перевес белых — светлый, чёрных — мягкий красный, равенство — янтарный */
-const evalColor = (evaluation: string | null) => {
-  if (!evaluation) return 'text.secondary';
-  if (evaluation.startsWith('-')) return 'error.main';
-  if (evaluation === '0.00') return tokens.accent.gold;
-  return 'text.primary';
-};
 
 export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
   evaluation,
@@ -38,7 +31,7 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({
         <Stack direction="row" alignItems="center" spacing={1.5} sx={{ minWidth: 0 }}>
           <Typography
             data-testid="live-eval"
-            sx={{ fontFamily: tokens.font.mono, fontWeight: 700, fontSize: '1.9rem', lineHeight: 1, color: isEngineOn ? evalColor(evaluation) : 'text.disabled', minWidth: '4.5ch' }}
+            sx={{ fontFamily: tokens.font.mono, fontWeight: 700, fontSize: '1.9rem', lineHeight: 1, color: isEngineOn ? evalColorFromString(evaluation) : 'text.disabled', minWidth: '4.5ch' }}
           >
             {isEngineOn ? evaluation ?? '…' : '—'}
           </Typography>
