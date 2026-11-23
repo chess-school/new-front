@@ -14,7 +14,6 @@
 //   FormGroup,
 //   Paper,
 // } from '@mui/material';
-// import { notification } from 'antd';
 // import ChessBoard from '../ChessGame/ChessBoard';
 
 // interface PuzzleEditorProps {
