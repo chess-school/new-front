@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { AuthContext } from '@/context/AuthContext';
 import { createClub as createClubApi } from '@/features/clubs/clubsApi';
 import { useClubStore } from '@/features/clubs/clubStore';
+import { clubSiteUrl } from '@/features/clubs/clubHost';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
@@ -68,7 +69,12 @@ export const CreateClubPage = () => {
       try {
         const club = await createClubApi({ name, slug, city, plan, brand: { primaryColor: color } });
         try { localStorage.setItem('debiut.activeClub', club._id); } catch { /* ignore */ }
-        useClubStore.getState().reset();
+        // Бэкенд выдал владельцу глобальную роль COACH — перечитываем профиль, иначе
+        // RoleRoute('COACH') на /club и пункты навигации останутся скрытыми.
+        await auth?.refetchUser?.();
+        // Форс-рефетч /clubs/mine: SPA-переход не перемонтирует ClubSwitcher, поэтому без
+        // этого новый клуб не появится до ручного F5 (NB: reset() стирал activeClub — не зовём).
+        await useClubStore.getState().load(true);
         navigate('/club');
       } catch {
         setSubmitting(false); // ошибку покажет общий перехватчик axios
@@ -101,7 +107,7 @@ export const CreateClubPage = () => {
               <LogoPreview />
               <Box sx={{ textAlign: 'left' }}>
                 <Typography sx={{ fontWeight: 700 }}>{name || 'My club'}</Typography>
-                <Typography variant="body2" color="text.secondary">debiut.app/{slug}</Typography>
+                <Typography variant="body2" color="text.secondary">{clubSiteUrl(slug).replace(/^https?:\/\//, '')}</Typography>
               </Box>
             </Stack>
             <Typography color="text.secondary" sx={{ mb: 3 }}>
@@ -134,7 +140,7 @@ export const CreateClubPage = () => {
             {active === 0 && (
               <Stack spacing={3}>
                 <TextField label={t('onboard.clubName', 'Club name')} value={name} onChange={(e) => setName(e.target.value)} fullWidth autoFocus
-                  placeholder="SKS Hetman Poznań" helperText={name ? `debiut.app/${slug}` : t('onboard.slugHint', 'Your club address is generated from the name')} />
+                  placeholder="SKS Hetman Poznań" helperText={name ? clubSiteUrl(slug).replace(/^https?:\/\//, '') : t('onboard.slugHint', 'Your club address is generated from the name')} />
                 <TextField label={t('onboard.city', 'City / address')} value={city} onChange={(e) => setCity(e.target.value)} fullWidth placeholder="Poznań" />
               </Stack>
             )}

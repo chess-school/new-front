@@ -11,12 +11,37 @@ export interface ClubSummary {
   city?: string;
 }
 
-export type ClubRole = 'owner' | 'trainer' | 'student' | 'parent';
+export type ClubRole = 'owner' | 'admin' | 'trainer' | 'manager' | 'student' | 'parent';
 
 export interface MyClubEntry {
   role: ClubRole;
   club: ClubSummary;
 }
+
+export interface ClubMember {
+  userId: string;
+  role: ClubRole;
+  status: 'active' | 'invited' | 'removed';
+  createdAt?: string;
+  user: { uuid: string; firstName: string; lastName: string; email: string; avatarUrl?: string } | null;
+}
+
+/** Участники активного клуба (экран «Участники»). Клуб берётся из X-Club-Id. */
+export const fetchClubMembers = async (): Promise<ClubMember[]> =>
+  (await api.get('/members')).data.data;
+
+/** Сменить роль участника. */
+export const changeMemberRole = async (userId: string, role: ClubRole): Promise<ClubMember> =>
+  (await api.patch(`/members/${userId}/role`, { role })).data.data;
+
+/** Пригласить существующего пользователя по email. */
+export const inviteMember = async (email: string, role: ClubRole): Promise<ClubMember> =>
+  (await api.post('/members/invite', { email, role })).data.data;
+
+/** Удалить участника из клуба. */
+export const removeMember = async (userId: string): Promise<void> => {
+  await api.delete(`/members/${userId}`);
+};
 
 export interface CreateClubPayload {
   name: string;

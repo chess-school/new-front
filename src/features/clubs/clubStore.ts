@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { fetchMyClubs, MyClubEntry } from './clubsApi';
+import { clubSlugFromHost } from './clubHost';
 
 const STORAGE = 'debiut.activeClub';
 
@@ -35,7 +36,15 @@ export const useClubStore = create<ClubState>((set, get) => ({
     try {
       const clubs = await fetchMyClubs();
       let activeClubId = get().activeClubId;
-      if (!activeClubId || !clubs.some((c) => c.club._id === activeClubId)) {
+      // Поддомен <slug>.chess.motorcycles: если пользователь — участник этого клуба, делаем
+      // его активным (приоритет над сохранённым), чтобы X-Club-Id совпадал с поддоменом.
+      // Без window.reload — выставляем состояние напрямую (вызывается на старте приложения).
+      const hostSlug = clubSlugFromHost();
+      const hostClub = hostSlug ? clubs.find((c) => c.club.slug === hostSlug) : undefined;
+      if (hostClub) {
+        activeClubId = hostClub.club._id;
+        writeActive(activeClubId);
+      } else if (!activeClubId || !clubs.some((c) => c.club._id === activeClubId)) {
         activeClubId = clubs[0]?.club._id ?? null;
         writeActive(activeClubId);
       }

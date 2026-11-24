@@ -37,6 +37,7 @@ const MyClassesPage = lazy(() => import('./features/Classroom/pages/MyClassesPag
 const BlindfoldTrainerPage = lazy(() => import('./features/Blindfold/pages/BlindfoldTrainerPage').then((m) => ({ default: m.BlindfoldTrainerPage })));
 const OwnerDashboardPage = lazy(() => import('./features/console/OwnerDashboardPage'));
 const ClubSettingsPage = lazy(() => import('./features/console/ClubSettingsPage'));
+const MembersPage = lazy(() => import('./features/console/MembersPage'));
 const MediaLibraryPage = lazy(() => import('./features/console/MediaLibraryPage'));
 const ClubSitePagesPage = lazy(() => import('./features/console/ClubSitePagesPage'));
 const LeadsPage = lazy(() => import('./features/console/LeadsPage'));
@@ -51,20 +52,25 @@ import { NotFoundPage } from '@/pages/not-found/NotFoundPage';
 import { SEOHead } from '@/shared/components/seo/SEOHead';
 import { SEO_ROUTES } from '@/shared/components/seo/routes';
 import { SiteSettingsProvider } from '@/features/site/SiteSettingsContext';
+import { clubSlugFromHost } from '@/features/clubs/clubHost';
 
 function MainLayout() {
   const location = useLocation();
+  // На поддомене <slug>.chess.motorcycles корень «/» — это публичная витрина клуба, а не лендинг
+  // платформы. На apex/localhost hostSlug === null → поведение прежнее.
+  const hostSlug = clubSlugFromHost();
+  const isClubHome = !!hostSlug && location.pathname === '/';
   const authPaths = ['/login', '/register'];
   const hideNavbar = authPaths.includes(location.pathname);
   // Публичные маркетинговые страницы — со своим навбаром/футером (MarketingShell), без app-сайдбара
   const marketingPaths = ['/', '/pricing', '/create-club'];
-  const isMarketing = marketingPaths.includes(location.pathname);
-  // Публичный сайт клуба /c/<slug> — свой брендированный каркас, без app-сайдбара
-  const isClubSite = location.pathname.startsWith('/c/');
+  const isMarketing = marketingPaths.includes(location.pathname) && !isClubHome;
+  // Публичный сайт клуба /c/<slug> (и корень поддомена) — свой брендированный каркас, без app-сайдбара
+  const isClubSite = location.pathname.startsWith('/c/') || isClubHome;
 
   const routes = (
     <Routes>
-      <Route path="/" element={<><SEOHead {...SEO_ROUTES['/']} /><Home /></>} />
+      <Route path="/" element={isClubHome ? <ClubSitePage slug={hostSlug!} /> : <><SEOHead {...SEO_ROUTES['/']} /><Home /></>} />
       <Route path="/pricing" element={<PricingPage />} />
       <Route path="/create-club" element={<CreateClubPage />} />
       <Route path="/c/:slug" element={<ClubSitePage />} />
@@ -105,6 +111,7 @@ function MainLayout() {
       <Route element={<RoleRoute roles={['COACH', 'ADMIN']} />}>
         <Route path="/club" element={<OwnerDashboardPage />} />
         <Route path="/club/settings" element={<ClubSettingsPage />} />
+        <Route path="/club/members" element={<MembersPage />} />
         <Route path="/club/media" element={<MediaLibraryPage />} />
         <Route path="/club/site" element={<ClubSitePagesPage />} />
         <Route path="/club/leads" element={<LeadsPage />} />

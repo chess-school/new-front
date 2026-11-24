@@ -6,7 +6,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { fetchMyClubs, MyClubEntry, ClubRole } from '@/features/clubs/clubsApi';
 
-const ROLE_FALLBACK: Record<ClubRole, string> = { owner: 'Owner', trainer: 'Coach', student: 'Student', parent: 'Parent' };
+const ROLE_FALLBACK: Record<ClubRole, string> = { owner: 'Owner', admin: 'Admin', manager: 'Manager', trainer: 'Coach', student: 'Student', parent: 'Parent' };
 
 /** Вкладка «Клубы»: членства пользователя из /clubs/mine с ролью и переходом на сайт клуба. */
 export const ProfileClubs: React.FC = () => {

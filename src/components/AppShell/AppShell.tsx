@@ -11,6 +11,7 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import PersonAddAlt1RoundedIcon from '@mui/icons-material/PersonAddAlt1Rounded';
 import PublicRoundedIcon from '@mui/icons-material/PublicRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
+import ManageAccountsRoundedIcon from '@mui/icons-material/ManageAccountsRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import UnfoldMoreRoundedIcon from '@mui/icons-material/UnfoldMoreRounded';
 import OpenInNewRoundedIcon from '@mui/icons-material/OpenInNewRounded';
@@ -48,6 +49,7 @@ import SpaceDashboardRoundedIcon from '@mui/icons-material/SpaceDashboardRounded
 import PhotoLibraryRoundedIcon from '@mui/icons-material/PhotoLibraryRounded';
 import WebRoundedIcon from '@mui/icons-material/WebRounded';
 import { useClubStore } from '@/features/clubs/clubStore';
+import { clubSiteUrl } from '@/features/clubs/clubHost';
 import { useSiteSettings } from '@/features/site/SiteSettingsContext';
 import { isItemActive, NavIcon, NavItem, NavMode, visibleNav } from './navigation';
 import { useView, RoleView } from './ViewContext';
@@ -83,6 +85,7 @@ const ICONS: Record<NavIcon, React.ReactElement> = {
   settings: <SettingsRoundedIcon />,
   media: <PhotoLibraryRoundedIcon />,
   website: <WebRoundedIcon />,
+  members: <ManageAccountsRoundedIcon />,
 };
 
 const clubInitials = (name: string) =>
@@ -191,11 +194,12 @@ const SidebarContent: React.FC<{ onNavigate?: () => void }> = ({ onNavigate }) =
 
   const hrefOf = (item: NavItem) => {
     if (item.key === 'profile' && user?.uuid) return `/profile/${user.uuid}`;
-    // «Public club page» ведёт на витрину активного клуба /c/<slug>, а не на лендинг платформы.
+    // «Public club page» ведёт на витрину активного клуба: поддомен <slug>.chess.motorcycles
+    // в проде (clubSiteUrl), иначе /c/<slug>. Не на лендинг платформы.
     if (item.key === 'publicClub') {
       const st = useClubStore.getState();
       const slug = st.clubs.find((c) => c.club._id === st.activeClubId)?.club?.slug;
-      return slug ? `/c/${slug}` : '/';
+      return slug ? clubSiteUrl(slug) : '/';
     }
     return item.to;
   };

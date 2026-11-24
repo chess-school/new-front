@@ -34,8 +34,10 @@ const onAccent = (hex: string) => {
   return (r * 299 + g * 587 + b * 114) / 1000 > 150 ? '#141B2E' : '#ffffff';
 };
 
-export const ClubSitePage = () => {
-  const { slug = '', page = 'home' } = useParams();
+export const ClubSitePage = ({ slug: slugProp }: { slug?: string } = {}) => {
+  // slug берём из пропа (рендер на корне поддомена <slug>.chess.motorcycles) либо из URL /c/:slug.
+  const { slug: slugParam = '', page = 'home' } = useParams();
+  const slug = slugProp || slugParam;
   const { t } = useTranslation();
   const settings = useSiteSettings();
   const siteMode = settings.theme?.mode === 'dark' ? 'dark' : 'light';

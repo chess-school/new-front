@@ -18,6 +18,8 @@ import { registerUser } from '@/api/register/register';
 import { LoginCredentials, RegistrationData } from '@/types/Auth';
 import { loginValidation, passwordValidation, nameValidation } from '@/shared/validation';
 import { AuthContext } from '@/context/AuthContext';
+import { createClub as createClubApi } from '@/features/clubs/clubsApi';
+import { useClubStore } from '@/features/clubs/clubStore';
 import './styles.scss';
 
 // Экран авторизации всегда тёмный (фирменный «угольный» экран) независимо от темы приложения.
@@ -26,6 +28,35 @@ const authTheme = buildTheme('dark');
 /** Сообщение бэкенда из ошибки запроса ({ msg } в ответе), если оно есть */
 const apiErrorMsg = (error: unknown): string | undefined =>
   isAxiosError<{ msg?: string }>(error) ? error.response?.data?.msg : undefined;
+
+/**
+ * Гостевой онбординг: на лендинге гость заполняет клуб ДО регистрации — черновик лежит в
+ * localStorage('debiut.clubDraft'). После первого входа дочитываем его и создаём клуб, иначе
+ * клуб гостя терялся навсегда. Возвращает true, если клуб был создан (→ ведём в кабинет).
+ */
+const consumeClubDraft = async (): Promise<boolean> => {
+  let raw: string | null = null;
+  try { raw = localStorage.getItem('debiut.clubDraft'); } catch { /* ignore */ }
+  if (!raw) return false;
+  // Черновик дочитываем один раз: чистим ДО создания, чтобы повторный вход не плодил клубы.
+  try { localStorage.removeItem('debiut.clubDraft'); } catch { /* ignore */ }
+  try {
+    const d = JSON.parse(raw) as { name?: string; slug?: string; city?: string; color?: string; plan?: string };
+    if (!d?.name) return false;
+    const club = await createClubApi({
+      name: d.name,
+      slug: d.slug,
+      city: d.city,
+      plan: (['start', 'club', 'academy'].includes(d.plan ?? '') ? d.plan : undefined) as 'start' | 'club' | 'academy' | undefined,
+      brand: d.color ? { primaryColor: d.color } : undefined,
+    });
+    try { localStorage.setItem('debiut.activeClub', club._id); } catch { /* ignore */ }
+    await useClubStore.getState().load(true);
+    return true;
+  } catch {
+    return false; // не блокируем вход, если создание клуба не удалось
+  }
+};
 
 interface AuthFormProps {
   mode: 'login' | 'register';
@@ -72,7 +103,15 @@ export const AuthForm: React.FC<AuthFormProps> = ({ mode }) => {
         const loginResponse = await loginUser(creds);
         const fullUserProfile = await authLogin(loginResponse);
         if (fullUserProfile && fullUserProfile.uuid) {
-          navigate(`/profile/${fullUserProfile.uuid}`, { replace: true });
+          // Если это первый вход после гостевого онбординга — создаём отложенный клуб и ведём
+          // в кабинет (с перечитанным профилем: бэкенд выдал владельцу роль COACH).
+          const createdClub = await consumeClubDraft();
+          if (createdClub) {
+            await auth.refetchUser();
+            navigate('/club', { replace: true });
+          } else {
+            navigate(`/profile/${fullUserProfile.uuid}`, { replace: true });
+          }
         } else {
           throw new Error('Failed to retrieve user profile after login.');
         }
