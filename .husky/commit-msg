@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# СЕРВЕРНАЯ КОНСТАНТА (24.11.2026, по требованию Никиты): во всех git-коммитах не должно быть
+# следов Claude как соавтора. Вырезаем Co-Authored-By: ...Claude... и "Generated with Claude Code"
+# из сообщения любого коммита. Авторство задаётся глобальным git-config (NikitaSemenukha).
+msg_file="$1"
+[ -f "$msg_file" ] || exit 0
+sed -i \
+  -e '/[Cc]o-[Aa]uthored-[Bb]y:.*[Cc]laude/d' \
+  -e '/🤖 Generated with/d' \
+  -e '/Generated with \[Claude Code\]/d' \
+  "$msg_file"
+exit 0

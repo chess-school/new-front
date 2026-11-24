@@ -53,25 +53,55 @@ const iconBox = {
 };
 
 // ─────────────────────────────────────────────────────────────────────
-// Декоративный live-виджет урока в герое (CSS-only, без шахматных движков)
+// Декоративный live-виджет урока в герое (CSS-only, без шахматных движков).
+// Позиция — итальянская партия после 1.e4 e5 2.Nf3 Nc6 3.Bc4 Nf6; подсвечен ход Nf3.
 // ─────────────────────────────────────────────────────────────────────
 const LIGHT_SQ = '#EEF1F8';
 const DARK_SQ = '#9AA8C9';
+const HL = 'rgba(43,80,224,0.38)';
+
+// Позиция, сверху ряд 0 = 8-я горизонталь (чёрные). Заглавные — белые, строчные — чёрные.
+const BOARD = (
+  'r.bqkb.r' +
+  'pppp.ppp' +
+  '..n..n..' +
+  '....p...' +
+  '..B.P...' +
+  '.....N..' +
+  'PPPP.PPP' +
+  'RNBQK..R'
+).split('');
+// Единый набор «залитых» глифов — красиво и чётко; цвет задаём по регистру буквы.
+const GLYPH: Record<string, string> = { k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟' };
+const HIGHLIGHT = new Set([45, 62]); // f3 (куда пошёл конь) и g1 (откуда)
 
 const MiniBoard = () => (
   <Box sx={{
     width: '100%', aspectRatio: '1', borderRadius: 2.5, overflow: 'hidden',
     display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gridTemplateRows: 'repeat(8, 1fr)',
     border: '1px solid rgba(20,27,46,0.12)', boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.4)',
+    containerType: 'inline-size', // фигуры масштабируются от ширины доски (cqi)
   }}>
-    {Array.from({ length: 64 }).map((_, i) => {
+    {BOARD.map((p, i) => {
       const row = Math.floor(i / 8); const col = i % 8;
       const dark = (row + col) % 2 === 1;
-      const highlight = i === 52 || i === 35; // пара подсвеченных полей
+      const isWhite = p !== '.' && p === p.toUpperCase();
       return (
         <Box key={i} sx={{
-          bgcolor: highlight ? 'rgba(43,80,224,0.38)' : (dark ? DARK_SQ : LIGHT_SQ),
-        }} />
+          display: 'grid', placeItems: 'center',
+          bgcolor: HIGHLIGHT.has(i) ? HL : (dark ? DARK_SQ : LIGHT_SQ),
+        }}>
+          {p !== '.' && (
+            <Box component="span" sx={{
+              fontSize: '10.5cqi', lineHeight: 1, userSelect: 'none',
+              color: isWhite ? '#FFFFFF' : '#141B2E',
+              WebkitTextStroke: isWhite ? '0.6px rgba(20,27,46,0.55)' : '0.5px rgba(255,255,255,0.22)',
+              textShadow: isWhite ? '0 1px 1px rgba(20,27,46,0.25)' : '0 1px 1px rgba(255,255,255,0.15)',
+            }}>
+              {GLYPH[p.toLowerCase()]}
+            </Box>
+          )}
+        </Box>
       );
     })}
   </Box>
